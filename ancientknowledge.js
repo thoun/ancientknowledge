@@ -1752,6 +1752,57 @@ var VoidStock = /** @class */ (function (_super) {
     };
     return VoidStock;
 }(CardStock));
+var AllVisibleDeck = /** @class */ (function (_super) {
+    __extends(AllVisibleDeck, _super);
+    function AllVisibleDeck(manager, element, settings) {
+        var _this = this;
+        var _a;
+        _this = _super.call(this, manager, element, settings) || this;
+        _this.manager = manager;
+        _this.element = element;
+        element.classList.add('all-visible-deck');
+        var cardWidth = _this.manager.getCardWidth();
+        var cardHeight = _this.manager.getCardHeight();
+        if (cardWidth && cardHeight) {
+            _this.element.style.setProperty('--width', "".concat(cardWidth, "px"));
+            _this.element.style.setProperty('--height', "".concat(cardHeight, "px"));
+        }
+        else {
+            throw new Error("You need to set cardWidth and cardHeight in the card manager to use Deck.");
+        }
+        element.style.setProperty('--shift', (_a = settings.shift) !== null && _a !== void 0 ? _a : '3px');
+        return _this;
+    }
+    AllVisibleDeck.prototype.addCard = function (card, animation, settings) {
+        var promise;
+        var order = this.cards.length;
+        promise = _super.prototype.addCard.call(this, card, animation, settings);
+        var cardId = this.manager.getId(card);
+        var cardDiv = document.getElementById(cardId);
+        cardDiv.style.setProperty('--order', '' + order);
+        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+        return promise;
+    };
+    /**
+     * Set opened state. If true, all cards will be entirely visible.
+     *
+     * @param opened indicate if deck must be always opened. If false, will open only on hover/touch
+     */
+    AllVisibleDeck.prototype.setOpened = function (opened) {
+        this.element.classList.toggle('opened', opened);
+    };
+    AllVisibleDeck.prototype.cardRemoved = function (card) {
+        var _this = this;
+        _super.prototype.cardRemoved.call(this, card);
+        this.cards.forEach(function (c, index) {
+            var cardId = _this.manager.getId(c);
+            var cardDiv = document.getElementById(cardId);
+            cardDiv.style.setProperty('--order', '' + index);
+        });
+        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+    };
+    return AllVisibleDeck;
+}(CardStock));
 function sortFunction() {
     var sortedFields = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -1994,521 +2045,161 @@ var CardManager = /** @class */ (function () {
     };
     return CardManager;
 }());
-var CardsManager = /** @class */ (function (_super) {
-    __extends(CardsManager, _super);
-    function CardsManager(game) {
+var BuilderCardsManager = /** @class */ (function (_super) {
+    __extends(BuilderCardsManager, _super);
+    function BuilderCardsManager(game) {
         var _this = _super.call(this, game, {
-            getId: function (card) { return "card-".concat(card.id); },
+            getId: function (card) { return "builder-card-".concat(card.id); },
             setupDiv: function (card, div) {
-                div.classList.add('ancientknowledge-card');
+                div.classList.add('builder-card');
                 div.dataset.cardId = '' + card.id;
-            },
-            setupFrontDiv: function (card, div) {
-                div.dataset.color = '' + card.color;
-                div.dataset.gain = '' + card.gain;
-                game.setTooltip(div.id, _this.getTooltip(card));
-            },
-            isCardVisible: function (card) { return Boolean(card.color); },
-            cardWidth: 120,
-            cardHeight: 221,
-        }) || this;
-        _this.game = game;
-        return _this;
-    }
-    CardsManager.prototype.getTooltip = function (card) {
-        var message = "\n        <strong>".concat(_("Color:"), "</strong> ").concat(this.game.getTooltipColor(card.color), "\n        <br>\n        <strong>").concat(_("Gain:"), "</strong> <strong>1</strong> ").concat(this.game.getTooltipGain(card.gain), "\n        ");
-        return message;
-    };
-    return CardsManager;
-}(CardManager));
-var DestinationsManager = /** @class */ (function (_super) {
-    __extends(DestinationsManager, _super);
-    function DestinationsManager(game) {
-        var _this = _super.call(this, game, {
-            getId: function (card) { return "destination-".concat(card.id); },
-            setupDiv: function (card, div) {
-                div.classList.add('ancientknowledge-destination');
-                div.dataset.cardId = '' + card.id;
-                div.dataset.type = '' + card.type;
-            },
-            setupFrontDiv: function (card, div) {
-                div.dataset.number = '' + card.number;
-                if (card.number) {
-                    game.setTooltip(div.id, _this.getTooltip(card));
-                }
-            },
-            isCardVisible: function (card) { return Boolean(card.number); },
-            cardWidth: 221,
-            cardHeight: 120,
-        }) || this;
-        _this.game = game;
-        return _this;
-    }
-    DestinationsManager.prototype.getCost = function (cost) {
-        var _this = this;
-        var keys = Object.keys(cost).map(function (c) { return Number(c); });
-        if (keys.length == 1 && keys[0] == DIFFERENT) {
-            return _("${number} different color cards").replace('${number}', "<strong>".concat(cost[keys[0]], "</strong>"));
-        }
-        else if (keys.length == 1 && keys[0] == EQUAL) {
-            return _("${number} cards of the same color").replace('${number}', "<strong>".concat(cost[keys[0]], "</strong>"));
-        }
-        else {
-            return keys.map(function (color) { return _("${number} ${color} cards").replace('${number}', "<strong>".concat(cost[color], "</strong>")).replace('${color}', _this.game.getTooltipColor(color)); }).join(', ');
-        }
-    };
-    DestinationsManager.prototype.getGains = function (gains) {
-        var _this = this;
-        return Object.entries(gains).map(function (entry) { return "<strong>".concat(entry[1], "</strong> ").concat(_this.game.getTooltipGain(Number(entry[0]))); }).join(', ');
-    };
-    DestinationsManager.prototype.getType = function (type) {
-        switch (type) {
-            case 1: return _("Trading Lands");
-            case 2: return _("Lands of Influence");
-        }
-    };
-    DestinationsManager.prototype.getTooltip = function (destination) {
-        var message = "\n        <strong>".concat(_("Exploration cost:"), "</strong> ").concat(this.getCost(destination.cost), " (recruits can be used as jokers)\n        <br>\n        <strong>").concat(_("Immediate gains:"), "</strong> ").concat(this.getGains(destination.immediateGains), "\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(destination.type), "\n        ");
-        return message;
-    };
-    return DestinationsManager;
-}(CardManager));
-var ArtifactsManager = /** @class */ (function (_super) {
-    __extends(ArtifactsManager, _super);
-    function ArtifactsManager(game) {
-        var _this = _super.call(this, game, {
-            getId: function (card) { return "artifact-".concat(card); },
-            setupDiv: function (card, div) {
-                div.classList.add('artifact');
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
-            isCardVisible: function () { return true; },
+            isCardVisible: function (card) { return Boolean(card.type); },
+            cardWidth: 120,
+            cardHeight: 221,
+            animationManager: game.animationManager,
         }) || this;
         _this.game = game;
         return _this;
     }
-    ArtifactsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+    BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
-        div.dataset.number = '' + card;
+        div.dataset.type = '' + card.type;
+        div.dataset.number = '' + card.number;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
-    ArtifactsManager.prototype.getArtifactName = function (number) {
-        switch (number) {
-            case 1: return _("Mead Cup");
-            case 2: return _("Silver coin");
-            case 3: return _("Cauldron");
-            case 4: return _("Golden bracelet");
-            case 5: return _("Helmet");
-            case 6: return _("Amulet");
-            case 7: return _("Weathervane");
+    BuilderCardsManager.prototype.getTooltip = function (card) {
+        var message = "\n        <strong>".concat(_("Type:"), "</strong> ").concat(card.type, "\n        <br>\n        <strong>").concat(_("TODO number:"), "</strong> ").concat(card.number, "\n        ");
+        return message;
+    };
+    return BuilderCardsManager;
+}(CardManager));
+var TechnologyTilesManager = /** @class */ (function (_super) {
+    __extends(TechnologyTilesManager, _super);
+    function TechnologyTilesManager(game) {
+        var _this = _super.call(this, game, {
+            getId: function (card) { return "technology-tile-".concat(card.id); },
+            setupDiv: function (card, div) {
+                div.classList.add('technology-tile');
+                div.dataset.level = '' + card.level;
+            },
+            setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
+            isCardVisible: function (card) { return Boolean(card.type); },
+            cardWidth: 221,
+            cardHeight: 120,
+            animationManager: game.animationManager,
+        }) || this;
+        _this.game = game;
+        return _this;
+    }
+    TechnologyTilesManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+        if (ignoreTooltip === void 0) { ignoreTooltip = false; }
+        div.dataset.type = '' + card.type;
+        div.dataset.number = '' + card.number;
+        if (!ignoreTooltip) {
+            this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
-    ArtifactsManager.prototype.getArtifactEffect = function (number) {
-        switch (number) {
-            case 1: return _("If a player takes an Explore action, they may discard a viking from the board and replace them with the first card from the deck.");
-            case 2: return _("For each viking of the same color a player Recruits beyond their 3rd viking of that color, they gain 1 Victory Point.");
-            case 3: return _("If a player Recruits a 2nd viking of the same color, they may take the Viking card of their choice instead of the one imposed by the card they played.");
-            case 4: return _("If a player recruits a 3rd viking of the same color, they can reserve a Destination card of their choice. It is taken from the available cards and placed next to their playing area. When that player takes an Explore action, they may choose to Explore a destination they have reserved instead of an available destination. Each player can have up to 2 reserved Destination cards at a time.");
-            case 5: return _("If a player places a Lands of Influence card which they have just Explored directly onto a Trading Lands card, they may immediately carry out a Recruit action.");
-            case 6: return _("If a player completes a line of vikings with all 5 different colors, they can take 1 silver bracelet and 1 recruit, and gains 1 Reputation Point.");
-            case 7: return _("If a player completes a line of vikings with all 5 different colors, they can immediately carry out an Explore action. They still have to pay the exploration cost.");
-        }
+    TechnologyTilesManager.prototype.getTooltip = function (card) {
+        var message = "\n        <strong>".concat(_("Level:"), "</strong> ").concat(card.level, "\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(card.type, "\n        <br>\n        <strong>").concat(_("TODO number:"), "</strong> ").concat(card.number, "\n        ");
+        return message;
     };
-    ArtifactsManager.prototype.getTooltip = function (number) {
-        return "\n            <div class=\"artifact-tooltip\">\n                <div class=\"title\">".concat(this.getArtifactName(number), "</div>\n                <div class=\"effect\">").concat(this.getArtifactEffect(number), "</div>\n            </div>\n        ");
-    };
-    ArtifactsManager.prototype.setForHelp = function (card, divId) {
+    TechnologyTilesManager.prototype.setForHelp = function (card, divId) {
         var div = document.getElementById(divId);
-        div.classList.add('card', 'artifact');
+        div.classList.add('card', 'technology-tile');
         div.dataset.side = 'front';
         div.innerHTML = "\n        <div class=\"card-sides\">\n            <div class=\"card-side front\">\n            </div>\n            <div class=\"card-side back\">\n            </div>\n        </div>";
         this.setupFrontDiv(card, div.querySelector('.front'), true);
     };
-    return ArtifactsManager;
+    return TechnologyTilesManager;
 }(CardManager));
-var POINT_CASE_SIZE_LEFT = 38.8;
-var POINT_CASE_SIZE_TOP = 37.6;
 var TableCenter = /** @class */ (function () {
     function TableCenter(game, gamedatas) {
+        var _this = this;
         this.game = game;
-        this.destinationsDecks = [];
-        this.destinations = [];
-        this.vp = new Map();
-        this.reputation = new Map();
-        /*['A', 'B'].forEach(letter => {
-            this.destinationsDecks[letter] = new Deck<Destination>(game.destinationsManager, document.getElementById(`table-destinations-${letter}-deck`), {
-                cardNumber: gamedatas.centerDestinationsDeckCount[letter],
-                topCard: gamedatas.centerDestinationsDeckTop[letter],
-                counter: {
-                    position: 'right',
-                },
+        this.technologyTilesDecks = [];
+        this.technologyTilesStocks = [];
+        [1, 2].forEach(function (level) {
+            _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
+            // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+            // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
+            // TODO counter: {},
             });
-
-            this.destinations[letter] = new SlotStock<Destination>(game.destinationsManager, document.getElementById(`table-destinations-${letter}`), {
+        });
+        [1, 2, 3].forEach(function (number) {
+            _this.technologyTilesStocks[number] = new SlotStock(game.technologyTilesManager, document.getElementById("table-technology-tiles-".concat(number)), {
                 slotsIds: [1, 2, 3],
-                mapCardToSlot: card => card.locationArg,
             });
-            this.destinations[letter].addCards(gamedatas.centerDestinations[letter]);
-            this.destinations[letter].onCardClick = (card: Destination) => this.game.onTableDestinationClick(card);
-        })
-
-        const cardDeckDiv = document.getElementById(`card-deck`);
-        this.cardDeck = new Deck<Card>(game.cardsManager, cardDeckDiv, {
-            cardNumber: gamedatas.cardDeckCount,
-            topCard: gamedatas.cardDeckTop,
-            counter: {
-                counterId: 'deck-counter',
-            },
+            // TODO this.technologyTilesStocks[number].addCards(gamedatas.tableTiles[number]);
         });
-        cardDeckDiv.insertAdjacentHTML('beforeend', `
-            <div id="discard-counter" class="bga-cards_deck-counter round">${gamedatas.cardDiscardCount}</div>
-        `);
-        const deckCounterDiv = document.getElementById('deck-counter');
-        const discardCounterDiv = document.getElementById('discard-counter');
-        this.game.setTooltip(deckCounterDiv.id, _('Deck size'));
-        this.game.setTooltip(discardCounterDiv.id, _('Discard size'));
-        this.cardDiscard = new VoidStock<Card>(game.cardsManager, discardCounterDiv);
-
-        this.cards = new SlotStock<Card>(game.cardsManager, document.getElementById(`table-cards`), {
-            slotsIds: [1, 2, 3, 4, 5],
-            mapCardToSlot: card => card.locationArg,
-            gap: '12px',
+        var cardDeckDiv = document.getElementById("builder-deck");
+        this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
+        // TODO cardNumber: gamedatas.cardDeckCount,
+        // TODO topCard: gamedatas.cardDeckTop,
+        // TODO counter: { counterId: 'deck-counter', },
         });
-        this.cards.onCardClick = card => this.game.onTableCardClick(card);
-        this.cards.addCards(gamedatas.centerCards);
-
-        const players = Object.values(gamedatas.players);
-        let html = '';
-        // points
-        players.forEach(player =>
-            html += `
-            <div id="player-${player.id}-vp-marker" class="marker " data-player-id="${player.id}" data-player-no="${player.playerNo}" data-color="${player.color}"><div class="inner vp"></div></div>
-            <div id="player-${player.id}-reputation-marker" class="marker" data-player-id="${player.id}" data-player-no="${player.playerNo}" data-color="${player.color}"><div class="inner reputation"></div></div>
-            `
-        );
-        dojo.place(html, 'board');
-        players.forEach(player => {
-            this.vp.set(Number(player.id), Number(player.score));
-            this.reputation.set(Number(player.id), Math.min(14, Number(player.reputation)));
-        });
-        this.moveVP();
-        this.moveReputation();
-
-        if (gamedatas.variantOption >= 2) {
-            document.getElementById('table-center').insertAdjacentHTML('afterbegin', `<div></div><div id="artifacts"></div>`);
-        
-            this.artifacts = new LineStock<number>(this.game.artifactsManager, document.getElementById(`artifacts`));
-            this.artifacts.addCards(gamedatas.artifacts);
-        }*/
     }
-    TableCenter.prototype.newTableCard = function (card) {
-        return this.cards.addCard(card);
-    };
-    TableCenter.prototype.newTableDestination = function (destination, letter, destinationDeckCount, destinationDeckTop) {
-        var promise = this.destinations[letter].addCard(destination);
-        this.destinationsDecks[letter].setCardNumber(destinationDeckCount, destinationDeckTop);
-        return promise;
-    };
-    TableCenter.prototype.setDestinationsSelectable = function (selectable, selectableCards) {
+    TableCenter.prototype.setTechonologyTilesSelectable = function (selectable, selectableCards) {
         var _this = this;
         if (selectableCards === void 0) { selectableCards = null; }
-        ['A', 'B'].forEach(function (letter) {
-            _this.destinations[letter].setSelectionMode(selectable ? 'single' : 'none');
-            _this.destinations[letter].setSelectableCards(selectableCards);
+        [1, 2, 3].forEach(function (number) {
+            _this.technologyTilesDecks[number].setSelectionMode(selectable ? 'single' : 'none');
+            _this.technologyTilesDecks[number].setSelectableCards(selectableCards);
         });
-    };
-    TableCenter.prototype.getVPCoordinates = function (points) {
-        var cases = points % 40;
-        var top = cases >= 16 ? (cases > 36 ? (40 - cases) : Math.min(4, cases - 16)) * POINT_CASE_SIZE_TOP : 0;
-        var left = cases > 20 ? (36 - Math.min(cases, 36)) * POINT_CASE_SIZE_LEFT : Math.min(16, cases) * POINT_CASE_SIZE_LEFT;
-        return [22 + left, 39 + top];
-    };
-    TableCenter.prototype.moveVP = function () {
-        var _this = this;
-        this.vp.forEach(function (points, playerId) {
-            var markerDiv = document.getElementById("player-".concat(playerId, "-vp-marker"));
-            var coordinates = _this.getVPCoordinates(points);
-            var left = coordinates[0];
-            var top = coordinates[1];
-            var topShift = 0;
-            var leftShift = 0;
-            _this.vp.forEach(function (iPoints, iPlayerId) {
-                if (iPoints % 40 === points % 40 && iPlayerId < playerId) {
-                    topShift += 5;
-                    //leftShift += 5;
-                }
-            });
-            markerDiv.style.transform = "translateX(".concat(left + leftShift, "px) translateY(").concat(top + topShift, "px)");
-        });
-    };
-    TableCenter.prototype.setScore = function (playerId, points) {
-        this.vp.set(playerId, points);
-        this.moveVP();
-    };
-    TableCenter.prototype.getReputationCoordinates = function (points) {
-        var cases = points;
-        var top = cases % 2 ? -14 : 0;
-        var left = cases * 16.9;
-        return [368 + left, 123 + top];
-    };
-    TableCenter.prototype.moveReputation = function () {
-        var _this = this;
-        this.reputation.forEach(function (points, playerId) {
-            var markerDiv = document.getElementById("player-".concat(playerId, "-reputation-marker"));
-            var coordinates = _this.getReputationCoordinates(points);
-            var left = coordinates[0];
-            var top = coordinates[1];
-            var topShift = 0;
-            var leftShift = 0;
-            _this.reputation.forEach(function (iPoints, iPlayerId) {
-                if (iPoints === points && iPlayerId < playerId) {
-                    topShift += 5;
-                    //leftShift += 5;
-                }
-            });
-            markerDiv.style.transform = "translateX(".concat(left + leftShift, "px) translateY(").concat(top + topShift, "px)");
-        });
-    };
-    TableCenter.prototype.setReputation = function (playerId, reputation) {
-        this.reputation.set(playerId, Math.min(14, reputation));
-        this.moveReputation();
-    };
-    TableCenter.prototype.getReputation = function (playerId) {
-        return this.reputation.get(playerId);
-    };
-    TableCenter.prototype.setCardsSelectable = function (selectable, freeColor, recruits) {
-        if (freeColor === void 0) { freeColor = null; }
-        if (recruits === void 0) { recruits = null; }
-        this.cards.setSelectionMode(selectable ? 'single' : 'none');
-        if (selectable) {
-            var selectableCards = this.cards.getCards().filter(function (card) { return freeColor === null || card.locationArg == freeColor || recruits >= 1; });
-            this.cards.setSelectableCards(selectableCards);
-        }
-    };
-    TableCenter.prototype.getVisibleDestinations = function () {
-        return __spreadArray(__spreadArray([], this.destinations['A'].getCards(), true), this.destinations['B'].getCards(), true);
-    };
-    TableCenter.prototype.highlightPlayerTokens = function (playerId) {
-        document.querySelectorAll('#board .marker').forEach(function (elem) { return elem.classList.toggle('highlight', Number(elem.dataset.playerId) === playerId); });
-    };
-    TableCenter.prototype.setDiscardCount = function (cardDiscardCount) {
-        var discardCounterDiv = document.getElementById('discard-counter');
-        discardCounterDiv.innerHTML = '' + cardDiscardCount;
     };
     return TableCenter;
 }());
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
-;
 var log = isDebug ? console.log.bind(window.console) : function () { };
 var PlayerTable = /** @class */ (function () {
-    function PlayerTable(game, player, reservePossible) {
+    function PlayerTable(game, player) {
+        var _this = this;
         this.game = game;
-        this.played = [];
-        this.limitSelection = null;
+        this.technologyTilesDecks = [];
         this.playerId = Number(player.id);
         this.currentPlayer = this.playerId == this.game.getPlayerId();
-        /*let html = `
-        <div id="player-table-${this.playerId}" class="player-table" style="--player-color: #${player.color};">
-            <div id="player-table-${this.playerId}-name" class="name-wrapper">${player.name}</div>
-            <div class="cols">
-            <div class="col col1">
-        `;
+        var html = "\n        <div id=\"player-table-".concat(this.playerId, "\" class=\"player-table\" style=\"--player-color: #").concat(player.color, ";\">\n            <div id=\"player-table-").concat(this.playerId, "-name\" class=\"name-wrapper\">").concat(player.name, "</div>\n        ");
         if (this.currentPlayer) {
-            html += `
-            <div class="block-with-text hand-wrapper">
-                <div class="block-label">${_('Your hand')}</div>
-                <div id="player-table-${this.playerId}-hand" class="hand cards"></div>
-            </div>`;
+            html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += `
-            <div id="player-table-${this.playerId}-destinations" class="destinations"></div>
-            <div id="player-table-${this.playerId}-boat" class="boat ${this.game.getBoatSide() == 2 ? 'advanced' : 'normal'}" data-color="${player.color}" data-recruits="${player.recruit}" data-bracelets="${player.bracelet}">`;
-        for (let i = 1; i <= 3; i++) {
-            if (this.currentPlayer) {
-                html += `<div id="player-table-${this.playerId}-column${i}" class="column" data-number="${i}"></div>`;
-            }
-            html += `
-            <div class="icon bracelet" data-number="${i}"></div>
-            <div class="icon recruit" data-number="${i}"></div>
-            `;
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        for (var i = 1; i <= 3; i++) {
+            html += "\n                <div id=\"player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i, "\" class=\"technology-tiles-deck\"></div>\n                ");
         }
-        html += `
-            </div>
-            <div class="visible-cards">`;
-            for (let i = 1; i <= 5; i++) {
-                html += `
-                <div id="player-table-${this.playerId}-played-${i}" class="cards"></div>
-                `;
-            }
-            html += `
-            </div>
-        `;
-
-        if (reservePossible) {
-            html += `
-            <div id="player-table-${this.playerId}-reserved-destinations-wrapper" class="block-with-text hand-wrapper">
-                <div class="block-label">${_('Reserved destinations')}</div>
-                <div id="player-table-${this.playerId}-reserved-destinations"></div>
-            </div>`;
-        }
-        html += `
-            </div>
-            
-            <div class="col col2"></div>
-            </div>
-        </div>
-        `;
-
+        html += "\n            </div>\n        </div>\n        ";
         dojo.place(html, document.getElementById('tables'));
-
         if (this.currentPlayer) {
-            const handDiv = document.getElementById(`player-table-${this.playerId}-hand`);
-            this.hand = new LineStock<Card>(this.game.cardsManager, handDiv, {
-                sort: (a: Card, b: Card) => a.color == b.color ? a.gain - b.gain : a.color - b.color,
+            var handDiv = document.getElementById("player-table-".concat(this.playerId, "-hand"));
+            this.hand = new LineStock(this.game.builderCardsManager, handDiv, {
+                sort: function (a, b) { return a.type == b.type ? a.number - b.number : a.type - b.type; },
             });
-            this.hand.onCardClick = (card: Card) => this.game.onHandCardClick(card);
-            
-            this.hand.addCards(player.hand);
-
+            this.hand.onCardClick = function (card) { return _this.game.onHandCardClick(card); };
+            // TODO this.hand.addCards(player.hand);
         }
-        this.voidStock = new VoidStock<Card>(this.game.cardsManager, document.getElementById(`player-table-${this.playerId}-name`));
-                
-        for (let i = 1; i <= 5; i++) {
-            const playedDiv = document.getElementById(`player-table-${this.playerId}-played-${i}`);
-            this.played[i] = new LineStock<Card>(this.game.cardsManager, playedDiv, {
-                direction: 'column',
-                center: false,
-            });
-            this.played[i].onCardClick = card => {
-                this.game.onPlayedCardClick(card);
-                if (this.limitSelection !== null) {
-                    this.updateSelectable();
-                }
-            }
-            this.played[i].addCards(player.playedCards[i]);
-            playedDiv.style.setProperty('--card-overlap', '195px');
-        }
-        
-        const destinationsDiv = document.getElementById(`player-table-${this.playerId}-destinations`);
-        this.destinations = new LineStock<Destination>(this.game.destinationsManager, destinationsDiv, {
-            center: false,
+        var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
+        this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
+            slotsIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
         });
-        destinationsDiv.style.setProperty('--card-overlap', '94px');
-        
-        this.destinations.addCards(player.destinations);
-
-        if (reservePossible) {
-            this.reservedDestinations = new LineStock<Destination>(this.game.destinationsManager, document.getElementById(`player-table-${this.playerId}-reserved-destinations`), {
-                center: false,
-            });
-            this.reservedDestinations.addCards(player.reservedDestinations);
-            this.reservedDestinations.onCardClick = (card: Destination) => this.game.onTableDestinationClick(card);
+        // TODO this.timeline.addCards(player.timeline);
+        var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
+        this.artifacts = new SlotStock(this.game.builderCardsManager, artifactsDiv, {
+            slotsIds: [1, 2, 3, 4, 5]
+        });
+        // TODO this.artifacts.addCards(player.artifacts);
+        var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
+        this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
+        // TODO this.past.addCards(player.past);
+        for (var i = 1; i <= 3; i++) {
+            var technologyTilesDeckDiv = document.getElementById("player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i));
+            this.technologyTilesDecks[i] = new AllVisibleDeck(this.game.technologyTilesManager, technologyTilesDeckDiv, {});
+            // TODO this.technologyTilesDecks[i].addCards(player.technologyTiles[i]);
         }
-
-        [document.getElementById(`player-table-${this.playerId}-name`), document.getElementById(`player-table-${this.playerId}-boat`)].forEach(elem => {
-            elem.addEventListener('mouseenter', () => this.game.highlightPlayerTokens(this.playerId));
-            elem.addEventListener('mouseleave', () => this.game.highlightPlayerTokens(null));
-        });*/
     }
-    PlayerTable.prototype.updateCounter = function (type, count) {
-        document.getElementById("player-table-".concat(this.playerId, "-boat")).dataset[type] = '' + count;
-    };
-    PlayerTable.prototype.playCard = function (card, fromElement) {
-        return this.played[card.color].addCard(card, {
-            fromElement: fromElement
-        });
-    };
     PlayerTable.prototype.setHandSelectable = function (selectable) {
         this.hand.setSelectionMode(selectable ? 'single' : 'none');
-    };
-    PlayerTable.prototype.setCardsSelectable = function (selectable, cost) {
-        if (cost === void 0) { cost = null; }
-        var colors = cost == null ? [] : Object.keys(cost).map(function (key) { return Number(key); });
-        var equalOrDifferent = cost == null ? false : [-1, 0].includes(colors[0]);
-        this.limitSelection = equalOrDifferent ? colors[0] : null;
-        for (var i = 1; i <= 5; i++) {
-            this.played[i].setSelectionMode(selectable ? 'multiple' : 'none');
-            if (selectable) {
-                var selectableCards = this.played[i].getCards().filter(function (card) {
-                    var disabled = !selectable || cost == null;
-                    if (!disabled) {
-                        if (colors.length != 1 || (colors.length == 1 && !equalOrDifferent)) {
-                            disabled = !colors.includes(card.color);
-                        }
-                    }
-                    return !disabled;
-                });
-                this.played[i].setSelectableCards(selectableCards);
-            }
-        }
-    };
-    PlayerTable.prototype.getSelectedCards = function () {
-        var cards = [];
-        for (var i = 1; i <= 5; i++) {
-            cards.push.apply(cards, this.played[i].getSelection());
-        }
-        return cards;
-    };
-    PlayerTable.prototype.reserveDestination = function (destination) {
-        return this.reservedDestinations.addCard(destination);
-    };
-    PlayerTable.prototype.setDestinationsSelectable = function (selectable, selectableCards) {
-        if (selectableCards === void 0) { selectableCards = null; }
-        if (!this.reservedDestinations) {
-            return;
-        }
-        this.reservedDestinations.setSelectionMode(selectable ? 'single' : 'none');
-        this.reservedDestinations.setSelectableCards(selectableCards);
-    };
-    PlayerTable.prototype.showColumns = function (number) {
-        if (number > 0) {
-            document.getElementById("player-table-".concat(this.playerId, "-boat")).style.setProperty('--column-height', "".concat(35 * (this.destinations.getCards().length + 1), "px"));
-        }
-        for (var i = 1; i <= 3; i++) {
-            document.getElementById("player-table-".concat(this.playerId, "-column").concat(i)).classList.toggle('highlight', i <= number);
-        }
-    };
-    PlayerTable.prototype.updateSelectable = function () {
-        var _this = this;
-        var selectedCards = this.getSelectedCards();
-        var selectedColors = selectedCards.map(function (card) { return card.color; });
-        var color = selectedCards.length ? selectedCards[0].color : null;
-        for (var i = 1; i <= 5; i++) {
-            var selectableCards = this.played[i].getCards().filter(function (card) {
-                var disabled = false;
-                if (_this.limitSelection === 0) {
-                    disabled = selectedColors.includes(card.color) && !selectedCards.includes(card);
-                }
-                else if (_this.limitSelection === -1) {
-                    disabled = color !== null && card.color != color;
-                }
-                return !disabled;
-            });
-            this.played[i].setSelectableCards(selectableCards);
-        }
-    };
-    PlayerTable.prototype.setDoubleColumn = function (isDoublePlayerColumn) {
-        var destinations = document.getElementById("player-table-".concat(this.playerId, "-destinations"));
-        var boat = document.getElementById("player-table-".concat(this.playerId, "-boat"));
-        var reservedDestinations = document.getElementById("player-table-".concat(this.playerId, "-reserved-destinations-wrapper"));
-        if (isDoublePlayerColumn) {
-            var col2 = document.getElementById("player-table-".concat(this.playerId)).querySelector('.col2');
-            col2.appendChild(destinations);
-            col2.appendChild(boat);
-            if (reservedDestinations) {
-                col2.appendChild(reservedDestinations);
-            }
-        }
-        else {
-            var visibleCards = document.getElementById("player-table-".concat(this.playerId)).querySelector('.visible-cards');
-            visibleCards.insertAdjacentElement('beforebegin', destinations);
-            visibleCards.insertAdjacentElement('beforebegin', boat);
-            if (reservedDestinations) {
-                visibleCards.insertAdjacentElement('afterend', reservedDestinations);
-            }
-        }
     };
     return PlayerTable;
 }());
@@ -2539,30 +2230,20 @@ var AncientKnowledge = /** @class */ (function () {
     */
     AncientKnowledge.prototype.setup = function (gamedatas) {
         var _this = this;
-        if (!gamedatas.variantOption) {
-            this.dontPreloadImage('artefacts.jpg');
-        }
-        if (gamedatas.boatSideOption == 2) {
-            this.dontPreloadImage('boats-normal.png');
-        }
-        else {
-            this.dontPreloadImage('boats-advanced.png');
-        }
         log("Starting game setup");
         this.gamedatas = gamedatas;
         log('gamedatas', gamedatas);
-        this.cardsManager = new CardsManager(this);
-        this.destinationsManager = new DestinationsManager(this);
-        this.artifactsManager = new ArtifactsManager(this);
         this.animationManager = new AnimationManager(this);
-        /*new JumpToManager(this, {
+        this.builderCardsManager = new BuilderCardsManager(this);
+        this.technologyTilesManager = new TechnologyTilesManager(this);
+        new JumpToManager(this, {
             localStorageFoldedKey: LOCAL_STORAGE_JUMP_TO_FOLDED_KEY,
             topEntries: [
                 new JumpToEntry(_('Main board'), 'table-center', { 'color': '#224757' })
             ],
-            entryClasses: 'triangle-point',
+            entryClasses: 'round-point',
             defaultFolded: true,
-        });*/
+        });
         this.tableCenter = new TableCenter(this, gamedatas);
         this.createPlayerPanels(gamedatas);
         this.createPlayerTables(gamedatas);
@@ -2576,13 +2257,7 @@ var AncientKnowledge = /** @class */ (function () {
             onDimensionsChange: function () {
                 var tablesAndCenter = document.getElementById('tables-and-center');
                 var clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478);
-                var wasDoublePlayerColumn = tablesAndCenter.classList.contains('double-player-column');
-                var isDoublePlayerColumn = clientWidth > 1798;
-                if (wasDoublePlayerColumn != isDoublePlayerColumn) {
-                    tablesAndCenter.classList.toggle('double-player-column', isDoublePlayerColumn);
-                    _this.playersTables.forEach(function (table) { return table.setDoubleColumn(isDoublePlayerColumn); });
-                }
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478); // TODO
             },
         });
         if (gamedatas.lastTurn) {
@@ -2642,7 +2317,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.updatePageTitle();
     };
     AncientKnowledge.prototype.onEnteringPlayAction = function (args) {
-        var _a, _b;
+        var _a;
         if (!args.canExplore && !args.canRecruit) {
             this.setGamestateDescription('TradeOnly');
         }
@@ -2654,11 +2329,10 @@ var AncientKnowledge = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive()) {
             if (args.canExplore) {
-                this.tableCenter.setDestinationsSelectable(true, args.possibleDestinations);
-                (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setDestinationsSelectable(true, args.possibleDestinations);
+                this.tableCenter.setTechonologyTilesSelectable(true, args.possibleDestinations);
             }
             if (args.canRecruit) {
-                (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable(true);
+                (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(true);
             }
         }
     };
@@ -2680,7 +2354,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringPayDestination = function (args) {
         var _a;
-        var selectedCardDiv = this.destinationsManager.getCardElement(args.selectedDestination);
+        var selectedCardDiv = this.technologyTilesManager.getCardElement(args.selectedDestination);
         selectedCardDiv.classList.add('selected-pay-destination');
         if (this.isCurrentPlayerActive()) {
             (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setCardsSelectable(true, args.selectedDestination.cost);
@@ -2688,7 +2362,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringReserveDestination = function () {
         if (this.isCurrentPlayerActive()) {
-            this.tableCenter.setDestinationsSelectable(true, this.tableCenter.getVisibleDestinations());
+            this.tableCenter.setTechonologyTilesSelectable(true, this.tableCenter.getVisibleDestinations());
         }
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
@@ -2716,7 +2390,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onLeavingPlayAction = function () {
         var _a, _b;
-        this.tableCenter.setDestinationsSelectable(false);
+        this.tableCenter.setTechonologyTilesSelectable(false);
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
         (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setDestinationsSelectable(false);
     };
@@ -2736,7 +2410,7 @@ var AncientKnowledge = /** @class */ (function () {
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setCardsSelectable(false);
     };
     AncientKnowledge.prototype.onLeavingReserveDestination = function () {
-        this.tableCenter.setDestinationsSelectable(false);
+        this.tableCenter.setTechonologyTilesSelectable(false);
     };
     AncientKnowledge.prototype.setPayDestinationLabelAndState = function (args) {
         if (!args) {
@@ -2961,14 +2635,14 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.getHelpHtml = function () {
         var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Assets"), "</h2>\n            <div class=\"help-section\">\n                <div class=\"icon vp\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon recruit\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon bracelet\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("They are used for Trading."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon reputation\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon take-card\"></div>\n                <div class=\"help-label\">").concat(_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player’s Crew Zone (without taking any assets)."), "</div>\n            </div>\n\n            <h1>").concat(_("Powers of the artifacts (variant option)"), "</h1>\n        ");
         for (var i = 1; i <= 7; i++) {
-            html += "\n            <div class=\"help-section\">\n                <div id=\"help-artifact-".concat(i, "\"></div>\n                <div>").concat(this.artifactsManager.getTooltip(i), "</div>\n            </div> ");
+            html += "\n            <div class=\"help-section\">\n                <div id=\"help-artifact-".concat(i, "\"></div>\n                <div>").concat(this.technologyTilesManager.getTooltip(i), "</div>\n            </div> ");
         }
         html += "</div>";
         return html;
     };
     AncientKnowledge.prototype.populateHelp = function () {
         for (var i = 1; i <= 7; i++) {
-            this.artifactsManager.setForHelp(i, "help-artifact-".concat(i));
+            this.technologyTilesManager.setForHelp(i, "help-artifact-".concat(i));
         }
     };
     AncientKnowledge.prototype.onTableDestinationClick = function (destination) {

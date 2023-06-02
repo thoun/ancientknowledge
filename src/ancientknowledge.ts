@@ -12,12 +12,11 @@ const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 const LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 
 class AncientKnowledge implements AncientKnowledgeGame {
-    public cardsManager: CardsManager;
-    public destinationsManager: DestinationsManager;
-    public artifactsManager: ArtifactsManager;
+    public animationManager: AnimationManager;
+    public builderCardsManager: BuilderCardsManager;
+    public technologyTilesManager: TechnologyTilesManager;
 
     private zoomManager: ZoomManager;
-    private animationManager: AnimationManager;
     private gamedatas: AncientKnowledgeGamedatas;
     private tableCenter: TableCenter;
     private playersTables: PlayerTable[] = [];
@@ -45,34 +44,24 @@ class AncientKnowledge implements AncientKnowledgeGame {
     */
 
     public setup(gamedatas: AncientKnowledgeGamedatas) {
-        if (!gamedatas.variantOption) {
-            (this as any).dontPreloadImage('artefacts.jpg');
-        }
-        if (gamedatas.boatSideOption == 2) {
-            (this as any).dontPreloadImage('boats-normal.png');
-        } else {
-            (this as any).dontPreloadImage('boats-advanced.png');
-        }
-
         log( "Starting game setup" );
         
         this.gamedatas = gamedatas;
 
         log('gamedatas', gamedatas);
 
-
-        this.cardsManager = new CardsManager(this);
-        this.destinationsManager = new DestinationsManager(this);        
-        this.artifactsManager = new ArtifactsManager(this);
         this.animationManager = new AnimationManager(this);
-        /*new JumpToManager(this, {
+        this.builderCardsManager = new BuilderCardsManager(this);
+        this.technologyTilesManager = new TechnologyTilesManager(this);
+        
+        new JumpToManager(this, {
             localStorageFoldedKey: LOCAL_STORAGE_JUMP_TO_FOLDED_KEY,
             topEntries: [
                 new JumpToEntry(_('Main board'), 'table-center', { 'color': '#224757' })
             ],
-            entryClasses: 'triangle-point',
+            entryClasses: 'round-point',
             defaultFolded: true,
-        });*/
+        });
 
         this.tableCenter = new TableCenter(this, gamedatas);
         this.createPlayerPanels(gamedatas);
@@ -88,13 +77,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             onDimensionsChange: () => {
                 const tablesAndCenter = document.getElementById('tables-and-center');
                 const clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478);
-                const wasDoublePlayerColumn = tablesAndCenter.classList.contains('double-player-column');
-                const isDoublePlayerColumn = clientWidth > 1798;
-                if (wasDoublePlayerColumn != isDoublePlayerColumn) {
-                    tablesAndCenter.classList.toggle('double-player-column', isDoublePlayerColumn);
-                    this.playersTables.forEach(table => table.setDoubleColumn(isDoublePlayerColumn));
-                }
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478); // TODO
             },
         });
 
@@ -171,8 +154,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         if ((this as any).isCurrentPlayerActive()) {
             if (args.canExplore) {
-                this.tableCenter.setDestinationsSelectable(true, args.possibleDestinations);
-                this.getCurrentPlayerTable()?.setDestinationsSelectable(true, args.possibleDestinations);
+                this.tableCenter.setTechonologyTilesSelectable(true, args.possibleDestinations);
             }
             if (args.canRecruit) {
                 this.getCurrentPlayerTable()?.setHandSelectable(true);
@@ -199,7 +181,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onEnteringPayDestination(args: EnteringPayDestinationArgs) {
-        const selectedCardDiv = this.destinationsManager.getCardElement(args.selectedDestination);
+        const selectedCardDiv = this.technologyTilesManager.getCardElement(args.selectedDestination);
         selectedCardDiv.classList.add('selected-pay-destination');
 
         if ((this as any).isCurrentPlayerActive()) {
@@ -209,7 +191,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onEnteringReserveDestination() {
         if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setDestinationsSelectable(true, this.tableCenter.getVisibleDestinations());
+            this.tableCenter.setTechonologyTilesSelectable(true, this.tableCenter.getVisibleDestinations());
         }
     }
 
@@ -239,7 +221,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onLeavingPlayAction() {
-        this.tableCenter.setDestinationsSelectable(false);
+        this.tableCenter.setTechonologyTilesSelectable(false);
         this.getCurrentPlayerTable()?.setHandSelectable(false);
         this.getCurrentPlayerTable()?.setDestinationsSelectable(false);
     }
@@ -262,7 +244,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onLeavingReserveDestination() {
-        this.tableCenter.setDestinationsSelectable(false);
+        this.tableCenter.setTechonologyTilesSelectable(false);
     }
 
     private setPayDestinationLabelAndState(args?: EnteringPayDestinationArgs) {
@@ -578,7 +560,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             html += `
             <div class="help-section">
                 <div id="help-artifact-${i}"></div>
-                <div>${this.artifactsManager.getTooltip(i)}</div>
+                <div>${this.technologyTilesManager.getTooltip(i as any)}</div>
             </div> `;
         }
         html += `</div>`;
@@ -588,11 +570,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private populateHelp() {
         for (let i = 1; i <=7; i++) {
-            this.artifactsManager.setForHelp(i, `help-artifact-${i}`);
+            this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
         }
     }
     
-    public onTableDestinationClick(destination: Destination): void {
+    public onTableDestinationClick(destination: TechnologyTile): void {
         if (this.gamedatas.gamestate.name == 'reserveDestination') {
             this.reserveDestination(destination.id);
         } else {
@@ -600,11 +582,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    public onHandCardClick(card: Card): void {
+    public onHandCardClick(card: BuilderCard): void {
         this.playCard(card.id);
     }
 
-    public onTableCardClick(card: Card): void {
+    public onTableCardClick(card: BuilderCard): void {
         if (this.gamedatas.gamestate.name == 'discardTableCard') {
             this.discardTableCard(card.id);
         } else {
@@ -612,7 +594,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    public onPlayedCardClick(card: Card): void {
+    public onPlayedCardClick(card: BuilderCard): void {
         if (this.gamedatas.gamestate.name == 'discardCard') {
             this.discardCard(card.id);
         } else {

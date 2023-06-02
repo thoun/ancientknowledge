@@ -1,4 +1,4 @@
-.ancientknowledge-card {
+.builder-card {
     display: inline-block;
     position: relative;
     width: 120px;
@@ -9,7 +9,7 @@
         .card-side {
             border-radius: 8px;
             background-size: auto 100%;
-            background-image: url('img/cards.jpg');
+            background-image: url('img/builder-cards.png');
 
             &>* {
                 pointer-events: none;

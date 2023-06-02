@@ -2,35 +2,14 @@
  * Your game interfaces
  */
 
-interface Card {
-    id: number;
-    location: string;
-    locationArg: number;
-    color: number;
-    gain: number;
-}
-
-interface Destination {
-    id: number;
-    location: string;
-    locationArg: number;
-    type: number;
-    number: number;
-    cost: { [color: number]: number };
-    immediateGains: { [type: number]: number };
-    gains: (number | null)[];
-}
-
 interface AncientKnowledgePlayer extends Player {
     playerNo: number;
-    reputation: number;
-    recruit: number;
-    bracelet: number;
-    //handCount: number;
-    hand?: Card[];
-    playedCards: { [color: number]: Card[] };
-    destinations: Destination[];
-    reservedDestinations?: Destination[];
+    hand?: BuilderCard[]; // only set for currentPlayer
+    timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
+    artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
+    past: BuilderCard[];
+    handCount: number;
+    technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3
 }
 
 interface AncientKnowledgeGamedatas {
@@ -46,30 +25,18 @@ interface AncientKnowledgeGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    cardDeckTop?: Card;
-    cardDeckCount: number;
-    cardDiscardCount: number;
-    centerCards: Card[];
-    centerDestinationsDeckTop: { [letter: string]: Destination };
-    centerDestinationsDeckCount: { [letter: string]: number };
-    centerDestinations: { [letter: string]: Destination[] };
-    boatSideOption: number;
-    variantOption: number;
-    artifacts?: number[];
+    tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;
-    lastTurn: boolean;
-    reservePossible: boolean;
+    // TODO deck counters ? discard counters ?
 }
 
 interface AncientKnowledgeGame extends Game {
-    cardsManager: CardsManager;
-    destinationsManager: DestinationsManager;
-    artifactsManager: ArtifactsManager;
+    animationManager: AnimationManager;
+    builderCardsManager: BuilderCardsManager;
+    technologyTilesManager: TechnologyTilesManager;
 
     getPlayerId(): number;
     getPlayer(playerId: number): AncientKnowledgePlayer;
-    //getGain(type: number): string;
-    //getColor(color: number): string;
     getTooltipGain(type: number): string;
     getTooltipColor(color: number): string;
     getBoatSide(): number;
@@ -79,28 +46,28 @@ interface AncientKnowledgeGame extends Game {
 
     setTooltip(id: string, html: string): void;
     highlightPlayerTokens(playerId: number | null): void;
-    onTableDestinationClick(destination: Destination): void;
-    onHandCardClick(card: Card): void;
-    onTableCardClick(card: Card): void;
-    onPlayedCardClick(card: Card): void;
+    onTableDestinationClick(destination: TechnologyTile): void;
+    onHandCardClick(card: BuilderCard): void;
+    onTableCardClick(card: BuilderCard): void;
+    onPlayedCardClick(card: BuilderCard): void;
 }
 
 interface EnteringPlayActionArgs {
     canRecruit: boolean;
     canExplore: boolean;
     canTrade: boolean;
-    possibleDestinations: Destination[];
+    possibleDestinations: TechnologyTile[];
 }
 
 interface EnteringChooseNewCardArgs {
-    centerCards: Card[];
+    centerCards: BuilderCard[];
     freeColor: number;
     recruits: number;
     allFree: boolean;
 }
 
 interface EnteringPayDestinationArgs {
-    selectedDestination: Destination;
+    selectedDestination: TechnologyTile;
     recruits: number;
 }
 
@@ -112,31 +79,31 @@ interface EnteringTradeArgs {
 // playCard
 interface NotifPlayCardArgs {
     playerId: number;
-    card: Card;
-    newHandCard: Card;
+    card: BuilderCard;
+    newHandCard: BuilderCard;
     effectiveGains: { [type: number]: number };
 }
 
 // card
 interface NotifNewCardArgs {
     playerId: number;
-    card: Card;
-    cardDeckTop?: Card;
+    card: BuilderCard;
+    cardDeckTop?: BuilderCard;
     cardDeckCount: number;
 }
 
 // takeDestination
 interface NotifTakeDestinationArgs {
     playerId: number;
-    destination: Destination;
+    destination: TechnologyTile;
     effectiveGains: { [type: number]: number };
 }
 
 // newTableDestination
 interface NotifNewTableDestinationArgs {
-    destination: Destination;
+    destination: TechnologyTile;
     letter: string;    
-    destinationDeckTop?: Destination;
+    destinationDeckTop?: TechnologyTile;
     destinationDeckCount: number;
 }
 
@@ -149,19 +116,19 @@ interface NotifTradeArgs {
 // discardCards
 interface NotifDiscardCardsArgs {
     playerId: number;
-    cards: Card[];
+    cards: BuilderCard[];
     cardDiscardCount: number;
 }
 
 // discardTableCard
 interface NotifDiscardTableCardArgs {
-    card: Card;
+    card: BuilderCard;
 }
 
 // reserveDestination
 interface NotifReserveDestinationArgs {
     playerId: number;
-    destination: Destination;
+    destination: TechnologyTile;
 }
 
 // score
@@ -173,7 +140,7 @@ interface NotifScoreArgs {
 
 // cardDeckReset
 interface NotifCardDeckResetArgs {  
-    cardDeckTop?: Card;
+    cardDeckTop?: BuilderCard;
     cardDeckCount: number;
     cardDiscardCount: number;
 }
