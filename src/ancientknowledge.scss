@@ -1,0 +1,184 @@
+$playerColors: '7c5654', 'd6d6d7', 'b79d86', '1e2c36';
+
+@import '../node_modules/bga-help/bga-help';
+@import '../node_modules/bga-zoom/bga-zoom';
+@import '../node_modules/bga-jump-to/bga-jump-to';
+@import '../node_modules/bga-cards/bga-cards';
+@import 'builder-cards';
+@import 'technology-tiles';
+@import 'table-center';
+@import 'playerboards';
+@import 'player-table';
+@import 'help';
+
+/* make space between buttons on touch devices */
+@media (hover: none) {
+  #page-title .action-button.bgabutton, #page-title .bgabutton {
+    margin-bottom: 8px;
+    margin-top: 8px;
+  }
+}
+
+@font-face {
+    font-family: 'copperplate-gothic-bold';
+    src: url('img/copperplate-gothic-bold.woff2') format('woff2'),
+         url('img/copperplate-gothic-bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+html, .mode_3d #game_play_area_background {
+  background: url('img/background.jpg') #b5b4b4;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+
+#bga-zoom-wrapper {
+  padding-top: 32px;
+}
+
+#round-counter-row {
+  display: flex;
+  justify-content: center;
+
+  #round-counter-block {
+    background: #FFFFFF99;
+    font-size: 120%;
+    padding: 8px 16px;
+    margin: 0 5px;
+    border-radius: 10px;
+    text-shadow: 0 0 1px black, 0 0 2px black, 0 0 3px black, 0 0 4px black;
+    color: white;
+  }
+}
+
+.icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url('img/icons.png');
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  border-radius: 50%;
+  
+  &.vp, &[data-type="1"] {
+    background-position-x: #{0 * 100% / 4};
+  }  
+  &.reputation, &[data-type="4"] {
+    background-position-x: #{1 * 100% / 4};
+  }  
+  &.bracelet, &[data-type="2"] {
+    background-position-x: #{2 * 100% / 4};
+  }
+  &.recruit, &[data-type="3"] {
+    background-position-x: #{3 * 100% / 4};
+  }
+  &.take-card, &[data-type="5"] {
+    background-position-x: #{4 * 100% / 4};
+  }
+}
+
+.color {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url('img/colors.png');
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  border-radius: 2px;
+  
+  @for $color from 1 through 5 {
+    &[data-color="#{$color}"] {
+        background-position-x: #{($color - 1) * 100% / 4};
+    }
+  }
+}
+
+.action-button, .log {
+  .icon, .color {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.dijitTooltipContents {
+  .icon, .color {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+
+#tables-and-center {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  flex-direction: column;
+  margin-right: 10px;
+
+  #tables {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    flex-direction: column;
+  }
+
+  &.double-column {
+    flex-direction: row;
+    justify-content: center;
+    align-items: start;
+
+    &>div {
+      flex: 1;
+    }
+  }
+}
+
+.artifact-tooltip {
+  &>div {
+    padding: 5px;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid gray;
+    }
+  }
+}
+
+#last-round {
+    margin: 5px -5px -5px;
+    text-align: center;
+    background-color: #900;
+    color: white;
+    text-shadow: 0 0 1px #900, 0 0 5px #900, 0 0 6px #900, 0 0 7px #900;
+
+    .last-round-text {
+        display: inline-block;
+
+        &.animate {
+            animation: last-round-animation 2s 1 forwards ease-in-out;
+        }
+    }
+}
+
+@keyframes last-round-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(3);
+  }
+  100% { 
+    transform: scale(1);
+  }
+}
