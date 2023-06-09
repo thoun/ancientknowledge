@@ -2,110 +2,157 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * AncientKnowledge implementation : © <Your name here> <Your email address here>
+ * AncientKnowledge implementation : © Timothée Pecatte <tim.pecatte@gmail.com>, Guy Baudin <guy.thoun@gmail.com>
  *
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
  * -----
- * 
+ *
  * states.inc.php
  *
  * AncientKnowledge game states description
  *
  */
 
-/*
-   Game state machine is a tool used to facilitate game developpement by doing common stuff that can be set up
-   in a very easy way from this configuration file.
+$machinestates = [
+  // The initial state. Please do not modify.
+  ST_GAME_SETUP => [
+    'name' => 'gameSetup',
+    'description' => '',
+    'type' => 'manager',
+    'action' => 'stGameSetup',
+    'transitions' => ['' => 9],
+  ],
 
-   Please check the BGA Studio presentation about game state to understand this, and associated documentation.
+  9 => [
+    'name' => 'foo',
+    'description' => clienttranslate('FOo'),
+    'descriptionmyturn' => clienttranslate('Foo'),
+    'type' => 'activeplayer',
+    'possibleactions' => ['actConfirmTurn', 'actRestart'],
+    'transitions' => [],
+  ],
 
-   Summary:
+  //////////////////////////////
+  //  _____
+  // |_   _|   _ _ __ _ __
+  //   | || | | | '__| '_ \
+  //   | || |_| | |  | | | |
+  //   |_| \__,_|_|  |_| |_|
+  //////////////////////////////
 
-   States types:
-   _ activeplayer: in this type of state, we expect some action from the active player.
-   _ multipleactiveplayer: in this type of state, we expect some action from multiple players (the active players)
-   _ game: this is an intermediary state where we don't expect any actions from players. Your game logic must decide what is the next game state.
-   _ manager: special type for initial and final state
+  ////////////////////////////////////
+  //  _____             _
+  // | ____|_ __   __ _(_)_ __   ___
+  // |  _| | '_ \ / _` | | '_ \ / _ \
+  // | |___| | | | (_| | | | | |  __/
+  // |_____|_| |_|\__, |_|_| |_|\___|
+  //              |___/
+  ////////////////////////////////////
 
-   Arguments of game states:
-   _ name: the name of the GameState, in order you can recognize it on your own code.
-   _ description: the description of the current game state is always displayed in the action status bar on
-                  the top of the game. Most of the time this is useless for game state with "game" type.
-   _ descriptionmyturn: the description of the current game state when it's your turn.
-   _ type: defines the type of game states (activeplayer / multipleactiveplayer / game / manager)
-   _ action: name of the method to call when this game state become the current game state. Usually, the
-             action method is prefixed by "st" (ex: "stMyGameStateName").
-   _ possibleactions: array that specify possible player actions on this step. It allows you to use "checkAction"
-                      method on both client side (Javacript: this.checkAction) and server side (PHP: self::checkAction).
-   _ transitions: the transitions are the possible paths to go from a game state to another. You must name
-                  transitions in order to use transition names in "nextState" PHP method, and use IDs to
-                  specify the next game state for each transition.
-   _ args: name of the method to call to retrieve arguments for this gamestate. Arguments are sent to the
-           client side to be used on "onEnteringState" or to set arguments in the gamestate description.
-   _ updateGameProgression: when specified, the game progression is updated (=> call to your getGameProgression
-                            method).
-*/
+  // Used just to change active player....
+  ST_GENERIC_NEXT_PLAYER => [
+    'name' => 'genericNextPlayer',
+    'type' => 'game',
+  ],
 
-//    !! It is not a good idea to modify this file when a game is running !!
+  ST_RESOLVE_STACK => [
+    'name' => 'resolveStack',
+    'type' => 'game',
+    'action' => 'stResolveStack',
+    'transitions' => [],
+  ],
 
- 
-$machinestates = array(
+  ST_CONFIRM_TURN => [
+    'name' => 'confirmTurn',
+    'description' => clienttranslate('${actplayer} must confirm or restart their turn'),
+    'descriptionmyturn' => clienttranslate('${you} must confirm or restart your turn'),
+    'type' => 'activeplayer',
+    'args' => 'argsConfirmTurn',
+    'action' => 'stConfirmTurn',
+    'possibleactions' => ['actConfirmTurn', 'actRestart'],
+    'transitions' => [],
+  ],
 
-    // The initial state. Please do not modify.
-    1 => array(
-        "name" => "gameSetup",
-        "description" => "",
-        "type" => "manager",
-        "action" => "stGameSetup",
-        "transitions" => array( "" => 2 )
+  ST_CONFIRM_PARTIAL_TURN => [
+    'name' => 'confirmPartialTurn',
+    'description' => clienttranslate('${actplayer} must confirm the switch of player'),
+    'descriptionmyturn' => clienttranslate('${you} must confirm the switch of player. You will not be able to restart turn'),
+    'type' => 'activeplayer',
+    'args' => 'argsConfirmTurn',
+    // 'action' => 'stConfirmPartialTurn',
+    'possibleactions' => ['actConfirmPartialTurn', 'actRestart'],
+  ],
+
+  ST_RESOLVE_CHOICE => [
+    'name' => 'resolveChoice',
+    'description' => clienttranslate('${actplayer} must choose which effect to resolve'),
+    'descriptionmyturn' => clienttranslate('${you} must choose which effect to resolve'),
+    'descriptionxor' => clienttranslate('${actplayer} must choose exactly one effect'),
+    'descriptionmyturnxor' => clienttranslate('${you} must choose exactly one effect'),
+    'type' => 'activeplayer',
+    'args' => 'argsResolveChoice',
+    'action' => 'stResolveChoice',
+    'possibleactions' => ['actChooseAction', 'actRestart'],
+    'transitions' => [],
+  ],
+
+  ST_IMPOSSIBLE_MANDATORY_ACTION => [
+    'name' => 'impossibleAction',
+    'description' => clienttranslate('${actplayer} can\'t take the mandatory action and must restart his turn or exchange/cook'),
+    'descriptionmyturn' => clienttranslate(
+      '${you} can\'t take the mandatory action. Restart your turn or exchange/cook to make it possible'
     ),
-    
-    // Note: ID=2 => your first state
+    'type' => 'activeplayer',
+    'args' => 'argsImpossibleAction',
+    'possibleactions' => ['actRestart'],
+  ],
 
-    2 => array(
-    		"name" => "playerTurn",
-    		"description" => clienttranslate('${actplayer} must play a card or pass'),
-    		"descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-    		"type" => "activeplayer",
-    		"possibleactions" => array( "playCard", "pass" ),
-    		"transitions" => array( "playCard" => 2, "pass" => 2 )
-    ),
-    
-/*
-    Examples:
-    
-    2 => array(
-        "name" => "nextPlayer",
-        "description" => '',
-        "type" => "game",
-        "action" => "stNextPlayer",
-        "updateGameProgression" => true,   
-        "transitions" => array( "endGame" => 99, "nextPlayer" => 10 )
-    ),
-    
-    10 => array(
-        "name" => "playerTurn",
-        "description" => clienttranslate('${actplayer} must play a card or pass'),
-        "descriptionmyturn" => clienttranslate('${you} must play a card or pass'),
-        "type" => "activeplayer",
-        "possibleactions" => array( "playCard", "pass" ),
-        "transitions" => array( "playCard" => 2, "pass" => 2 )
-    ), 
+  ////////////////////////////////////////////////////////////////////////////
+  //     _   _                  _         _        _   _
+  //    / \ | |_ ___  _ __ ___ (_) ___   / \   ___| |_(_) ___  _ __  ___
+  //   / _ \| __/ _ \| '_ ` _ \| |/ __| / _ \ / __| __| |/ _ \| '_ \/ __|
+  //  / ___ \ || (_) | | | | | | | (__ / ___ \ (__| |_| | (_) | | | \__ \
+  // /_/   \_\__\___/|_| |_| |_|_|\___/_/   \_\___|\__|_|\___/|_| |_|___/
+  //
+  ////////////////////////////////////////////////////////////////////////////
+  // ST_PLACE_AMBASSADOR => [
+  //   'name' => 'placeAmbassador',
+  //   'type' => 'activeplayer',
+  //   'description' => clienttranslate('${actplayer} must place an ambassador on a Senate action space'),
+  //   'descriptionmyturn' => clienttranslate('${you}  must place an ambassador on a Senate action space'),
+  //   'args' => 'argsAtomicAction',
+  //   'possibleactions' => ['actPlaceAmbassador', 'actRestart'],
+  // ],
 
-*/    
-   
-    // Final state.
-    // Please do not modify (and do not overload action/args methods).
-    99 => array(
-        "name" => "gameEnd",
-        "description" => clienttranslate("End of game"),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd"
-    )
+  // ST_GAIN => [
+  //   'name' => 'gainResources',
+  //   'type' => 'game',
+  //   'action' => 'stAtomicAction',
+  // ],
 
-);
+  //////////////////////////////////////////////////////////////////
+  //  _____           _    ___   __    ____
+  // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___
+  // |  _| | '_ \ / _` | | | | | |_  | |  _ / _` | '_ ` _ \ / _ \
+  // | |___| | | | (_| | | |_| |  _| | |_| | (_| | | | | | |  __/
+  // |_____|_| |_|\__,_|  \___/|_|    \____|\__,_|_| |_| |_|\___|
+  //////////////////////////////////////////////////////////////////
 
+  ST_PRE_END_OF_GAME => [
+    'name' => 'preEndOfGame',
+    'type' => 'game',
+    'action' => 'stPreEndOfGame',
+    'transitions' => ['' => ST_END_GAME],
+  ],
 
-
+  // Final state.
+  // Please do not modify (and do not overload action/args methods).
+  ST_END_GAME => [
+    'name' => 'gameEnd',
+    'description' => clienttranslate('End of game'),
+    'type' => 'manager',
+    'action' => 'stGameEnd',
+    'args' => 'argGameEnd',
+  ],
+];
