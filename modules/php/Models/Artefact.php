@@ -30,6 +30,7 @@ class Artefact extends \AK\Helpers\DB_Model
     ['name', 'str'],
     ['text', 'obj'],
     ['country', 'str'],
+    ['startingHand', 'int'],
     ['discard', 'int'],
     ['activation', 'string'],
     ['effect', 'obj'],

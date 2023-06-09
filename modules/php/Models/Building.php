@@ -30,6 +30,7 @@ class Building extends \AK\Helpers\DB_Model
     ['name', 'str'],
     ['text', 'obj'],
     ['country', 'str'],
+    ['startingHand', 'int'],
     ['startingSpace', 'int'],
     ['initialKnowledge', 'int'],
     ['victoryPoint', 'int'],

@@ -59,16 +59,37 @@ class Cards extends \AK\Helpers\Pieces
     // Load list of cards
     include dirname(__FILE__) . '/../Cards/list.inc.php';
 
-    foreach ($cardIds as $cId) {
-      //   $card = self::getCardInstance($cId);
-      //   if (!$card->isSupported($players, $options)) {
-      //     continue;
-      //   }
+    // Randomly assign a starting hand to each player
+    $isPreMadeHands = ($options[OPTION_FIRST_GAME] ?? 1) == OPTION_FIRST_GAME_ENABLED;
+    if ($isPreMadeHands) {
+      $pIds = array_keys($players);
+      shuffle($pIds);
+      $hands = [1, 2, 3, 4];
+      shuffle($hands);
 
-      $cards[$cId] = [
+      $mapping = [];
+      foreach ($pIds as $i => $pId) {
+        $mapping[$hands[$i]] = $pId;
+      }
+    }
+
+    // Create cards
+    foreach ($cardIds as $cId) {
+      $data = [
         'id' => $cId,
         'location' => 'deck',
       ];
+
+      if ($isPreMadeHands) {
+        $card = self::getCardInstance($cId);
+        $n = $card->getStartingHand();
+        if (array_key_exists($n, $mapping)) {
+          $data['location'] = 'hand';
+          $data['player_id'] = $mapping[$n];
+        }
+      }
+
+      $cards[$cId] = $data;
     }
 
     // Create the cards

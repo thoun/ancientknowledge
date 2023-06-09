@@ -4,6 +4,10 @@
  * Game options
  */
 
+const OPTION_FIRST_GAME = 101;
+const OPTION_FIRST_GAME_ENABLED = 0;
+const OPTION_FIRST_GAME_DISABLED = 1;
+
 /*
  * User preferences
  */

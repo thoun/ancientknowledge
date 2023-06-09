@@ -28,7 +28,21 @@ namespace AK;
 
 require_once 'modules/php/constants.inc.php';
 
-$game_options = [];
+$game_options = [
+  OPTION_FIRST_GAME => [
+    'name' => totranslate('First game'),
+    'values' => [
+      OPTION_FIRST_GAME_ENABLED => [
+        'name' => totranslate('Enabled'),
+        'tmdisplay' => totranslate('First game'),
+        'description' => totranslate('Each player will receive a pre-made starting hand'),
+      ],
+      OPTION_FIRST_GAME_DISABLED => [
+        'name' => totranslate('Disabled'),
+      ],
+    ],
+  ],
+];
 
 $game_preferences = [
   OPTION_CONFIRM => [

@@ -22,7 +22,7 @@ trait SetupTrait
     Players::setupNewGame($players, $options);
     Preferences::setupNewGame($players, $this->player_preferences);
     //        Meeples::setupNewGame($players, $options);
-    // Cards::setupNewGame($players, $options);
+    Cards::setupNewGame($players, $options);
     // Stats::checkExistence();
 
     Globals::setFirstPlayer($this->getNextPlayerTable()[0]);
