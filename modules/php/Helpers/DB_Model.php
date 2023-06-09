@@ -67,7 +67,7 @@ abstract class DB_Model extends \APP_DbObject implements \JsonSerializable
         if (in_array($match[1], ['get', 'is'])) {
           foreach ($this->staticAttributes as $attr) {
             if (is_array($attr) && $name == $attr[0]) {
-              return $this->$name ?? ($attr[1] == 'int' ? 0 : []);
+              return $this->$name ?? ($attr[1] == 'int' ? 0 : ($attr[1] == 'bool' ? false : []));
             } elseif ($attr == $name) {
               return $this->$name ?? '';
             }

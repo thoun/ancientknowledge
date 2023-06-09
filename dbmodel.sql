@@ -17,7 +17,7 @@
 -- PIECES TABLES
 
 CREATE TABLE IF NOT EXISTS `cards` (
-  `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `card_id` varchar(50) NOT NULL,
   `card_location` varchar(32) NOT NULL,
   `card_state` int(10),
   `player_id` int(10) NULL,

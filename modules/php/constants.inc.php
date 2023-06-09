@@ -51,16 +51,39 @@ const PASS = 99;
  * Atomic action
  */
 
-const PLACE_AMBASSADOR = 'PLACE_AMBASSADOR';
 const GAIN = 'GAIN';
 
+const CREATE = 'CREATE';
+const LEARN = 'LEARN';
+const ARCHIVE = 'ARCHIVE';
+const EXCAVATE = 'EXCAVATE';
+const SEARCH = 'SEARCH';
+
 /*
- * Resources
+ * Cards
  */
+
+const CITY = 'city';
+const MONOLITH = 'monolith';
+const PYRAMID = 'pyramid';
+const ARTEFACT = 'artefact';
+
+const ANYTIME = 'anytime';
+const DECLINE = 'decline';
+const IMMEDIATE = 'immediate';
+const ENDTURN = 'endturn';
+const ENDGAME = 'endgame';
+
+const ANCIENT = 'ancient';
+const WRITING = 'writing';
+const SECRET = 'secret';
 
 /*
  * MISC
  */
+
+const KNOWLEDGE = 'knowledge';
+const LOST_KNOWLEDGE = 'lost-knowledge';
 
 /******************
  ****** STATS ******

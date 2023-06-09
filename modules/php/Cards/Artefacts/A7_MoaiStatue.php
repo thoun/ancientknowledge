@@ -1,0 +1,20 @@
+<?php
+namespace AK\Cards\Artefacts;
+
+class A7_MoaiStatue extends \AK\Models\Artefact
+{
+  public function __construct($row)
+  {
+    parent::__construct($row);
+    $this->id = 'A7_MoaiStatue';
+    $this->type = ARTEFACT;
+    $this->number = 7;
+    $this->name = clienttranslate('Moai Statue');
+    $this->country = clienttranslate('Chile');
+    $this->text = [
+      clienttranslate('Discovered in Colombia, this statue is strangely reminiscent of the Moai statues of Easter Island.'),
+    ];
+    $this->activation = ENDTURN;
+    $this->effect = [clienttranslate('You may discard 2 [artefact] from your hand. If you do, draw 4 cards.')];
+  }
+}

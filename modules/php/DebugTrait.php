@@ -2,6 +2,7 @@
 namespace AK;
 use AK\Managers\Players;
 use AK\Managers\Meeples;
+use AK\Managers\Cards;
 use AK\Core\Globals;
 use AK\Core\Engine;
 use AK\Core\Game;
@@ -14,6 +15,7 @@ trait DebugTrait
 {
   function tp()
   {
+    Cards::setupNewGame([], []);
   }
 
   function engDisplay()

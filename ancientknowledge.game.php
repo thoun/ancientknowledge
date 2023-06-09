@@ -33,6 +33,7 @@ spl_autoload_register($swdNamespaceAutoload, true, true);
 require_once APP_GAMEMODULE_PATH . 'module/table/table.game.php';
 
 use AK\Managers\Meeples;
+use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Helpers\Log;
 use AK\Core\Globals;
@@ -78,6 +79,7 @@ class AncientKnowledge extends Table
     return [
       'prefs' => Preferences::getUiData($pId),
       'players' => Players::getUiData($pId),
+      'cards' => Cards::getUiData(),
       //   'meeples' => Meeples::getUiData(),
     ];
   }

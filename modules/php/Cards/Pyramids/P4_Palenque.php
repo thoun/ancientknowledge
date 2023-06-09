@@ -1,0 +1,28 @@
+<?php
+namespace AK\Cards\Pyramids;
+
+class P4_Palenque extends \AK\Models\Building
+{
+  public function __construct($row)
+  {
+    parent::__construct($row);
+    $this->id = 'P4_Palenque';
+    $this->type = PYRAMID;
+    $this->number = 4;
+    $this->name = clienttranslate('Palenque');
+    $this->country = clienttranslate('Mexico');
+    $this->text = [
+      clienttranslate('Made up of several temples and pyramids, it is one of the most impressive sites of Mayan culture.'),
+    ];
+
+    $this->victoryPoint = 0;
+    $this->initialKnowledge = 4;
+    $this->startingSpace = 4;
+    $this->discard = 1;
+    $this->activation = ENDGAME;
+    $this->effect = [
+      clienttranslate("• If you have 3 [écriture] or 4 [écriture], gain 4 <VP>;
+• or, if you have 5 [écriture] or more, gain 7 <VP>."),
+    ];
+  }
+}
