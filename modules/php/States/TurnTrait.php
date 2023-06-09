@@ -7,56 +7,53 @@ use AK\Core\Stats;
 use AK\Helpers\Log;
 use AK\Managers\Players;
 use AK\Managers\Meeples;
+use AK\Managers\Cards;
 use AK\Managers\Actions;
 
 trait TurnTrait
 {
-  /**
-   * State function when starting a turn
-   *  useful to intercept for some cards that happens at that moment
-   */
-  function stPreAmbassadorPhase()
+  function actOrderCards($cardIds)
   {
-    $skipped = Players::getAll()
-      ->filter(function ($player) {
-        return $player->isZombie();
-      })
-      ->getIds();
-    Globals::setSkippedPlayers($skipped);
-    //TODO use president as first player
-    $this->initCustomDefaultTurnOrder('ambassador', ST_AMBASSADOR_PHASE, ST_EXECUTIVE_PHASE, true);
+    $player = Players::getCurrent();
+    foreach ($cardIds as $i => $cardId) {
+      $card = Cards::getSingle($cardId);
+      if (is_null($card) || $card->isPlayed() || $card->getPId() != $player->getId()) {
+        throw new \BgaVisibleSystemException("You can't reorder that card:" . $card->getId());
+      }
+
+      Cards::setState($cardId, $i);
+    }
   }
 
-  /*************************************
-   *************************************
-   ********** AMBASSADOR PHASE *********
-   *************************************
-   ************************************/
-
   /**
-   * Activate next player
+   * Start Engine
    */
-  function stAmbassadorPhase()
+  function stTurnAction()
   {
     $player = Players::getActive();
-
-    // Already out of round ? => Go to the next player if one is left
-    $skipped = Globals::getSkippedPlayers();
-    if (in_array($player->getId(), $skipped)) {
-      // Everyone is out of round => end it
-      $remaining = array_diff(Players::getAll()->getIds(), $skipped);
-      if (empty($remaining)) {
-        $this->endCustomOrder('ambassador');
-      } else {
-        $this->nextPlayerCustomOrder('ambassador');
-      }
-      return;
-    }
     self::giveExtraTime($player->getId());
 
+    // if (Globals::isEndTriggered() && Globals::getEndRemainingPlayers() == []) {
+    //   $this->endOfGameInit();
+    //   return;
+    // }
+
+    // Stats::incTurns($player);
     $node = [
-      'action' => PLACE_AMBASSADOR,
-      'pId' => $player->getId(),
+      'childs' => [
+        [
+          'action' => CHOOSE_ACTION,
+          'pId' => $player->getId(),
+        ],
+        [
+          'action' => TIMELINE_PHASE,
+          'pId' => $player->getId(),
+        ],
+        [
+          'action' => DECLINE_PHASE,
+          'pId' => $player->getId(),
+        ],
+      ],
     ];
 
     // Inserting leaf Action card
@@ -64,31 +61,47 @@ trait TurnTrait
     Engine::proceed();
   }
 
+  /*******************************
+   ********************************
+   ********** END OF TURN *********
+   ********************************
+   *******************************/
+
   /**
    * End of turn : replenish and check break
    */
   function stEndOfTurn()
   {
+    Globals::setUsedVenom(false);
+    Globals::setVenomPaid(false);
+    Globals::setVenomTriggered(false);
+    Globals::setEffectMap4(false);
     $player = Players::getActive();
-    // No Ambassador to allocate ?
-    if (!$player->hasAmbassadorAvailable()) {
-      $skipped = Globals::getSkippedPlayers();
-      $skipped[] = $player->getId();
-      Globals::setSkippedPlayers($skipped);
+
+    // Solo mode: move one cube to the right
+    if (Globals::isSolo()) {
+      $this->stEndOfSoloTurn();
     }
-    $this->nextPlayerCustomOrder('ambassador');
-  }
 
-  /************************************
-   ************************************
-   ********** EXECUTIVE PHASE *********
-   ************************************
-   ***********************************/
+    // Replenish pool of cards
+    ZooCards::fillPool();
+    Players::checkEndOfGamePlayer($player);
 
-  function stPreEndOfGame()
-  {
-    Log::clearUndoableStepNotifications(true);
-    Globals::setEnd(true);
-    $this->gamestate->nextState('');
+    if (Globals::isEndTriggered()) {
+      $remaining = Globals::getEndRemainingPlayers();
+      $remaining = array_diff($remaining, [$player->getId()]);
+      Globals::setEndRemainingPlayers($remaining);
+    }
+
+    if (Globals::isMustBreak()) {
+      Globals::setFirstPlayer(Players::getNextId(Players::getActiveId())); // for next start of order.
+      Globals::setBreakPlayer(Players::getActiveId());
+      Globals::setMustBreak(false);
+      $this->endCustomOrder('labor');
+    } elseif (Globals::isEndTriggered() && Globals::getEndRemainingPlayers() == []) {
+      $this->endOfGameInit();
+    } else {
+      $this->nextPlayerCustomOrder('labor');
+    }
   }
 }

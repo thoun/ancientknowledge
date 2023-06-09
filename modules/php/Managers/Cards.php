@@ -4,6 +4,7 @@ namespace AK\Managers;
 use BgaVisibleSystemException;
 use AK\Core\Stats;
 use AK\Core\Globals;
+use AK\Core\Notifications;
 use AK\Helpers\UserException;
 use AK\Helpers\Collection;
 
@@ -13,7 +14,7 @@ class Cards extends \AK\Helpers\Pieces
 {
   protected static $table = 'cards';
   protected static $prefix = 'card_';
-  protected static $customFields = ['player_id'];
+  protected static $customFields = ['player_id', 'knowledge'];
   protected static $autoIncrement = false;
   protected static $autoremovePrefix = false;
   protected static $autoreshuffle = true;
@@ -95,5 +96,75 @@ class Cards extends \AK\Helpers\Pieces
     // Create the cards
     self::create($cards, null);
     self::shuffle('deck');
+  }
+
+  public static function initialDraw()
+  {
+    foreach (Players::getAll() as $pId => $player) {
+      $cards = self::draw($player, 10);
+      Notifications::drawCards($player, $cards);
+    }
+  }
+
+  public static function extraInitialDraw()
+  {
+    $turnOrder = Players::getTurnOrder();
+    for ($i = 2; $i < count($turnOrder); $i++) {
+      $cards = self::draw($turnOrder[$i], 1);
+      Notifications::drawCards($player, $cards);
+    }
+  }
+
+  ///////////////////////////////////////////////
+  //    ____                                 _
+  //   |  _ \ ___ _ __ ___  ___  _ __   __ _| |
+  //   | |_) / _ \ '__/ __|/ _ \| '_ \ / _` | |
+  //   |  __/  __/ |  \__ \ (_) | | | | (_| | |
+  //   |_|   \___|_|  |___/\___/|_| |_|\__,_|_|
+  ///////////////////////////////////////////////
+
+  /**
+   * Draw cards from the deck
+   */
+  public static function draw($player, $n = 1, $fromLocation = 'deck', $toLocation = 'hand')
+  {
+    $cards = self::pickForLocation($n, $fromLocation, $toLocation);
+    foreach ($cards as $cId => &$c) {
+      self::insertOnTop($cId, $toLocation);
+      $c->setPId($player->getId());
+    }
+    return $cards;
+  }
+
+  /**
+   * Get all cards in hand of player matching the given type
+   */
+  public static function getHand($pId, $type = null)
+  {
+    return self::getFilteredQuery($pId, 'hand')
+      ->orderBy(['card_state', 'ASC'])
+      ->get()
+      ->filter(function ($card) use ($type) {
+        return $type == null || $card->getType() == $type;
+      });
+  }
+
+  /**
+   * Get all cards played by player matching the given type
+   */
+  public static function getPlayedCards($pId, $type = null)
+  {
+    return self::getFiltered($pId, 'inPlay')->filter(function ($card) use ($type) {
+      return $type == null || $card->getType() == $type;
+    });
+  }
+
+  /**
+   * Check whether a player played a specific card
+   */
+  public static function hasPlayedCard($pId, $id)
+  {
+    $card = self::getSingle($id, false);
+    return !is_null($card) && $card->isPlayed() && $card->getPId() == $pId;
   }
 }

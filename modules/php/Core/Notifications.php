@@ -63,6 +63,56 @@ class Notifications
     ]);
   }
 
+  ///////////////////////////
+  //    ____              _
+  //   / ___|__ _ _ __ __| |___
+  //  | |   / _` | '__/ _` / __|
+  //  | |__| (_| | | | (_| \__ \
+  //   \____\__,_|_|  \__,_|___/
+  ///////////////////////////
+
+  public static function drawCards($player, $cards, $privateMsg = null, $publicMsg = null, $args = [])
+  {
+    self::notifyAll(
+      'drawCards',
+      $publicMsg ?? clienttranslate('${player_name} draws ${n} card(s) from the deck'),
+      $args + [
+        'player' => $player,
+        'n' => count($cards),
+      ]
+    );
+    self::notify(
+      $player,
+      'pDrawCards',
+      $privateMsg ?? clienttranslate('You draw ${card_names} from the deck'),
+      $args + [
+        'player' => $player,
+        'cards' => is_array($cards) ? $cards : $cards->toArray(),
+      ]
+    );
+  }
+
+  public static function discardCards($player, $cards, $privateMsg = null, $publicMsg = null, $args = [], $privateArgs = null)
+  {
+    self::notifyAll(
+      'discardCards',
+      $publicMsg ?? clienttranslate('${player_name} discards ${n} card(s)'),
+      $args + [
+        'player' => $player,
+        'n' => count($cards),
+      ]
+    );
+    self::notify(
+      $player,
+      'pDiscardCards',
+      $privateMsg ?? clienttranslate('You discard ${card_names}'),
+      ($privateArgs ?? $args) + [
+        'player' => $player,
+        'cards' => $cards->toArray(),
+      ]
+    );
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___
@@ -106,6 +156,36 @@ class Notifications
       // Get an associative array $resource => $amount
       $resources = Utils::reduceResources($data['resources']);
       $data['resources_desc'] = Utils::resourcesToStr($resources);
+    }
+
+    if (isset($data['card'])) {
+      $data['card_id'] = $data['card']->getId();
+      $data['card_name'] = $data['card']->getName();
+      $data['i18n'][] = 'card_name';
+      $data['preserve'][] = 'card_id';
+    }
+
+    if (isset($data['cards'])) {
+      $args = [];
+      $logs = [];
+      foreach ($data['cards'] as $i => $card) {
+        $logs[] = '${card_name_' . $i . '}';
+        $args['i18n'][] = 'card_name_' . $i;
+        $args['card_name_' . $i] = [
+          'log' => '${card_name}',
+          'args' => [
+            'i18n' => ['card_name'],
+            'card_name' => is_array($card) ? $card['name'] : $card->getName(),
+            'card_id' => is_array($card) ? $card['id'] : $card->getId(),
+            'preserve' => ['card_id'],
+          ],
+        ];
+      }
+      $data['card_names'] = [
+        'log' => join(', ', $logs),
+        'args' => $args,
+      ];
+      $data['i18n'][] = 'card_names';
     }
   }
 }

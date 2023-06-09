@@ -23,6 +23,7 @@ class Building extends \AK\Helpers\DB_Model
     'location' => 'location',
     'state' => 'state',
     'pId' => ['player_id', 'int'],
+    'knowledge' => ['knowledge', 'int'],
   ];
 
   protected $staticAttributes = [

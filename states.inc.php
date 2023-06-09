@@ -21,15 +21,39 @@ $machinestates = [
     'description' => '',
     'type' => 'manager',
     'action' => 'stGameSetup',
-    'transitions' => ['' => 9],
+    'transitions' => ['' => ST_SETUP_BRANCH],
   ],
 
-  9 => [
-    'name' => 'foo',
-    'description' => clienttranslate('FOo'),
-    'descriptionmyturn' => clienttranslate('Foo'),
-    'type' => 'activeplayer',
-    'possibleactions' => ['actConfirmTurn', 'actRestart'],
+  ///////////////////////////////////
+  //    ____       _
+  //   / ___|  ___| |_ _   _ _ __
+  //   \___ \ / _ \ __| | | | '_ \
+  //    ___) |  __/ |_| |_| | |_) |
+  //   |____/ \___|\__|\__,_| .__/
+  //                        |_|
+  ///////////////////////////////////
+  ST_SETUP_BRANCH => [
+    'name' => 'setupBranch',
+    'description' => '',
+    'type' => 'game',
+    'action' => 'stSetupBranch',
+    'transitions' => ['selection' => ST_INITIAL_SELECTION, 'done' => ST_FINISH_SETUP],
+  ],
+
+  ST_INITIAL_SELECTION => [
+    'name' => 'initialSelection',
+    'description' => clienttranslate('Waiting for others to choose the 6 cards they want to keep'),
+    'descriptionmyturn' => clienttranslate('${you} must select the 6 cards you want to keep'),
+    'type' => 'multipleactiveplayer',
+    'args' => 'argsInitialSelection',
+    'possibleactions' => ['actSelect', 'actCancelSelection'],
+    'transitions' => ['done' => ST_FINISH_SETUP, 'zombiePass' => ST_FINISH_SETUP],
+  ],
+
+  ST_FINISH_SETUP => [
+    'name' => 'finishSetup',
+    'type' => 'game',
+    'action' => 'stFinishSetup',
     'transitions' => [],
   ],
 
@@ -40,6 +64,17 @@ $machinestates = [
   //   | || |_| | |  | | | |
   //   |_| \__,_|_|  |_| |_|
   //////////////////////////////
+
+  ST_TURNACTION => [
+    'name' => 'turnAction',
+    'description' => '',
+    'type' => 'game',
+    'action' => 'stTurnAction',
+    'transitions' => [
+      'done' => ST_BREAK_PHASE,
+    ],
+    'updateGameProgression' => true,
+  ],
 
   ////////////////////////////////////
   //  _____             _
@@ -116,14 +151,14 @@ $machinestates = [
   // /_/   \_\__\___/|_| |_| |_|_|\___/_/   \_\___|\__|_|\___/|_| |_|___/
   //
   ////////////////////////////////////////////////////////////////////////////
-  // ST_PLACE_AMBASSADOR => [
-  //   'name' => 'placeAmbassador',
-  //   'type' => 'activeplayer',
-  //   'description' => clienttranslate('${actplayer} must place an ambassador on a Senate action space'),
-  //   'descriptionmyturn' => clienttranslate('${you}  must place an ambassador on a Senate action space'),
-  //   'args' => 'argsAtomicAction',
-  //   'possibleactions' => ['actPlaceAmbassador', 'actRestart'],
-  // ],
+  ST_CHOOSE_ACTION => [
+    'name' => 'chooseAction',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose an action'),
+    'descriptionmyturn' => clienttranslate('${you} must choose an action'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actChooseAction', 'actRestart'],
+  ],
 
   // ST_GAIN => [
   //   'name' => 'gainResources',

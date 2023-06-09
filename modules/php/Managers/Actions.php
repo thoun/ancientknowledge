@@ -10,6 +10,7 @@ use AK\Core\Globals;
 class Actions
 {
   static $classes = [
+    CHOOSE_ACTION => 'ChooseAction',
     GAIN => 'Gain',
   ];
 

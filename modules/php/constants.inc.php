@@ -22,10 +22,17 @@ const OPTION_CONFIRM_UNDOABLE = 104;
  * State constants
  */
 const ST_GAME_SETUP = 1;
+const ST_SETUP_BRANCH = 2;
+const ST_INITIAL_SELECTION = 3;
+const ST_FINISH_SETUP = 4;
+
+const ST_TURNACTION = 6;
+const ST_BREAK_MULTIACTIVE = 7; // TODO : useless I think
+const ST_BREAK_PHASE = 8; // TODO : useless I think
 
 // ATOMIC ACTIONS
 const ST_GAIN = 10;
-const ST_PLACE_AMBASSADOR = 11;
+const ST_CHOOSE_ACTION = 11;
 
 // ENGINE
 const ST_RESOLVE_STACK = 90;
@@ -54,6 +61,10 @@ const PASS = 99;
 /*
  * Atomic action
  */
+
+const CHOOSE_ACTION = 'CHOOSE_ACTION';
+const TIMELINE_PHASE = 'TIMELINE_PHASE';
+const DECLINE_PHASE = 'DECLINE_PHASE';
 
 const GAIN = 'GAIN';
 

@@ -17,9 +17,13 @@ class Globals extends \AK\Helpers\DB_Manager
     'anytimeRecursion' => 'int', // DO NOT MODIFY, USED IN ENGINE MODULE
     'customTurnOrders' => 'obj', // DO NOT MODIFY, USED FOR CUSTOM TURN ORDER FEATURE
 
+    'initialSelection' => 'obj',
+
     'firstPlayer' => 'int',
     'skippedPlayers' => 'obj',
+
     // Game options
+    'startingHands' => 'bool',
   ];
 
   protected static $table = 'global_variables';
@@ -148,5 +152,6 @@ class Globals extends \AK\Helpers\DB_Manager
    */
   public static function setupNewGame($players, $options)
   {
+    Globals::setStartingHands($options[OPTION_FIRST_GAME] == OPTION_FIRST_GAME_ENABLED);
   }
 }

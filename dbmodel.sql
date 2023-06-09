@@ -11,7 +11,7 @@
 
 
 -- Additional player's info
--- ALTER TABLE `player` ADD `lavandium` int(2) NOT NULL DEFAULT 0;
+ALTER TABLE `player` ADD `lost_knowledge` int(10) NOT NULL DEFAULT 0;
 
 
 -- PIECES TABLES
@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `cards` (
   `card_location` varchar(32) NOT NULL,
   `card_state` int(10),
   `player_id` int(10) NULL,
+  `knowledge` int(10) NOT NULL DEFAULT 0,
   PRIMARY KEY (`card_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
