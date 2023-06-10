@@ -4,32 +4,25 @@ interface BuilderCard {
     state;
     pId: number;
 
-    /*id: number;
-    location: string;
-    locationArg: number;
-    type: number;
-    number: number; // TODO discuss name
-    startingSpace: number;
-    initialKnowledge: number;
-    victoryPoints: number;
+    number: number;
     name: string;
+    text: string[];
     country: string;
+    startingSpace: string;
+    initialKnowledge: string;
+    victoryPoint: string;
+    discard: string;
+    locked: boolean;
     activation: string;
-    effect: string;*/
-
-    /*
-    ['number', 'int'],
-    ['name', 'str'],
-    ['text', 'obj'],
-    ['country', 'str'],
-    ['startingSpace', 'int'],
-    ['initialKnowledge', 'int'],
-    ['victoryPoint', 'int'],
-    ['discard', 'int'],
-    ['locked', 'bool'],
-    ['activation', 'string'],
-    ['effect', 'obj'],*/
+    effect: string[];
 }
+
+const CARD_COLORS = {
+  'A': '#734073',
+  'C': '#d66b2a',
+  'M': '#4a82a3',
+  'P': '#87a04f',
+};
 
 class BuilderCardsManager extends CardManager<BuilderCard> {
     constructor (public game: AncientKnowledgeGame) {
@@ -40,29 +33,89 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 div.dataset.cardId = ''+card.id;
             },
             setupFrontDiv: (card: BuilderCard, div: HTMLElement) => this.setupFrontDiv(card, div),
-            isCardVisible: card => true, // TODO Boolean(card.type),
-            cardWidth: 120,
-            cardHeight: 221,
+            isCardVisible: card => Boolean(card.number),
+            cardWidth: 163,
+            cardHeight: 228,
             animationManager: game.animationManager,
         });
     }
 
     private setupFrontDiv(card: BuilderCard, div: HTMLElement, ignoreTooltip: boolean = false) { 
-        div.innerHTML = card.id; // TODO TEMP
+        const typeLetter = card.id.substring(0, 1);
+        div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
+        /*
         div.dataset.type = ''+card.type;
-        div.dataset.number = ''+card.number;
+        div.dataset.number = ''+card.number;*/
+        const backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
+        const backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
+        let html = `
+        <div class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
+        <div class="top-box" data-type="${typeLetter}">
+            <div class="type" data-type="${typeLetter}">
+                <div class="type-icon"></div>
+            </div>
+        `;
+        if (card.startingSpace) {
+            html += `<div class="starting-space">${card.startingSpace}</div>`;
+        }
+        html += `</div>`;
+
+        if (card.discard) {
+            html += `
+            <div class="discard">
+                <div class="discard-text">${card.discard}</div>
+                <div class="discard-icon"></div>
+            </div>`;
+        } else if (card.locked) {
+            html += `
+            <div class="discard">
+                <div class="lock-icon"></div>
+            </div>`;
+        }
+
+        html += `
+        <div class="center-box">
+            <div class="activation-box"></div>
+            <div class="line bottom"></div>
+            <div class="line top"></div>
+            <div class="line middle"></div>`;
+        if (typeLetter != 'A') {
+            html += `
+            <div class="center-zone">
+                <div class="initial-knowledge">${card.initialKnowledge ?? ''}</div>
+                <div class="knowledge-icon"></div>
+                <div class="victory-point">${card.victoryPoint ?? ''}</div>
+                <div class="vp-icon"></div>
+            </div>
+            `;
+        }
+        html += `
+            <div class="activation" data-type="${card.activation}"></div>
+        </div>
+        <div class="left-box">
+            <div class="name-and-country">
+                <div class="name">${card.name ?? ''}</div>
+                <div class="country">${card.country ?? ''}</div>
+            </div>
+        </div>
+        <div class="effect">${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+        `;
+
+        div.innerHTML = html;
+
         if (!ignoreTooltip) {            
-            // TODO this.game.setTooltip(div.id, this.getTooltip(card));
-            this.game.setTooltip(div.id, `<pre>${JSON.stringify(card, null, 2)}</pre>`); // TODO TEMP
+            this.game.setTooltip(div.id, this.getTooltip(card));
         }
     }
 
     private getTooltip(card: BuilderCard): string {
-        let message = `
+        console.log(JSON.stringify(card, null, 2));
+        let message = `<pre>${JSON.stringify(card, null, 2)}</pre>`; // TODO TEMP
+        /*let message = `
         <strong>${_("Type:")}</strong> ${card.type}
         <br>
         <strong>${_("TODO number:")}</strong> ${card.number}
-        `;
+        `;*/
  
         return message;
     }

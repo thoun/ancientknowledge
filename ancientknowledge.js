@@ -2045,6 +2045,25 @@ var CardManager = /** @class */ (function () {
     };
     return CardManager;
 }());
+function formatTextIcons(rawText) {
+    if (!rawText) {
+        return '';
+    }
+    return rawText
+        .replace(/<KNOWLEDGE>/ig, '<span class="icon knowledge"></span>')
+        .replace(/<VP>/ig, '<span class="icon vp"></span>')
+        .replace(/<CITY>/ig, '<span class="icon city"></span>')
+        .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')
+        .replace(/<MONOLITH>/ig, '<span class="icon megalith"></span>') // TODO
+        .replace(/<PYRAMID>/ig, '<span class="icon pyramid"></span>')
+        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>');
+}
+var CARD_COLORS = {
+    'A': '#734073',
+    'C': '#d66b2a',
+    'M': '#4a82a3',
+    'P': '#87a04f',
+};
 var BuilderCardsManager = /** @class */ (function (_super) {
     __extends(BuilderCardsManager, _super);
     function BuilderCardsManager(game) {
@@ -2055,26 +2074,53 @@ var BuilderCardsManager = /** @class */ (function (_super) {
                 div.dataset.cardId = '' + card.id;
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
-            isCardVisible: function (card) { return true; },
-            cardWidth: 120,
-            cardHeight: 221,
+            isCardVisible: function (card) { return Boolean(card.number); },
+            cardWidth: 163,
+            cardHeight: 228,
             animationManager: game.animationManager,
         }) || this;
         _this.game = game;
         return _this;
     }
     BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+        var _a, _b, _c, _d, _e, _f;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
-        div.innerHTML = card.id; // TODO TEMP
-        div.dataset.type = '' + card.type;
-        div.dataset.number = '' + card.number;
+        var typeLetter = card.id.substring(0, 1);
+        div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
+        /*
+        div.dataset.type = ''+card.type;
+        div.dataset.number = ''+card.number;*/
+        var backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
+        var backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
+        var html = "\n        <div class=\"background\" data-type=\"".concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"top-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
+        if (card.startingSpace) {
+            html += "<div class=\"starting-space\">".concat(card.startingSpace, "</div>");
+        }
+        html += "</div>";
+        if (card.discard) {
+            html += "\n            <div class=\"discard\">\n                <div class=\"discard-text\">".concat(card.discard, "</div>\n                <div class=\"discard-icon\"></div>\n            </div>");
+        }
+        else if (card.locked) {
+            html += "\n            <div class=\"discard\">\n                <div class=\"lock-icon\"></div>\n            </div>";
+        }
+        html += "\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line bottom\"></div>\n            <div class=\"line top\"></div>\n            <div class=\"line middle\"></div>";
+        if (typeLetter != 'A') {
+            html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_a = card.initialKnowledge) !== null && _a !== void 0 ? _a : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_b = card.victoryPoint) !== null && _b !== void 0 ? _b : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
+        }
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"left-box\">\n            <div class=\"name-and-country\">\n                <div class=\"name\">").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
+        div.innerHTML = html;
         if (!ignoreTooltip) {
-            // TODO this.game.setTooltip(div.id, this.getTooltip(card));
-            this.game.setTooltip(div.id, "<pre>".concat(JSON.stringify(card, null, 2), "</pre>")); // TODO TEMP
+            this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
     BuilderCardsManager.prototype.getTooltip = function (card) {
-        var message = "\n        <strong>".concat(_("Type:"), "</strong> ").concat(card.type, "\n        <br>\n        <strong>").concat(_("TODO number:"), "</strong> ").concat(card.number, "\n        ");
+        console.log(JSON.stringify(card, null, 2));
+        var message = "<pre>".concat(JSON.stringify(card, null, 2), "</pre>"); // TODO TEMP
+        /*let message = `
+        <strong>${_("Type:")}</strong> ${card.type}
+        <br>
+        <strong>${_("TODO number:")}</strong> ${card.number}
+        `;*/
         return message;
     };
     return BuilderCardsManager;

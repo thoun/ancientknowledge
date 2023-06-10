@@ -1,22 +1,14 @@
-// TODO TEMP
-.card .front {
-    color: black;
-    text-shadow: 0 0 1px white, 0 0 2px white, 0 0 3px white;
-    font-size: 14px;
-}
-
 .builder-card {
     display: inline-block;
     position: relative;
-    width: 120px;
-    height: 221px;
+    width: 163px;
+    height: 228px;
     border-radius: 8px;
+    font-family: 'Apotek Comp'; // TODO ask Juricafor Adobe font (regular)
 
     .card-sides {
         .card-side {
             border-radius: 8px;
-            background-size: auto 100%;
-            background-image: url('img/builder-cards.png');
 
             &>* {
                 pointer-events: none;
@@ -43,12 +35,362 @@
         }
     }
 
-    @for $color from 1 through 5 {
-        @for $gain from 1 through 4 {
-            .front[data-color="#{$color}"][data-gain="#{$gain}"] {
-                background-position-x: #{(($color - 1) * 4 + $gain) * 100% / 20};
+    $cardBackground: #f8f4f0;
+
+    .front {
+      color: white;
+      font-size: 14px;
+      background-color: $cardBackground;
+
+      &>* {
+        position: absolute;
+      }
+
+      .background {
+        top: 8px;
+        left: 8px;
+        right: 7px;
+        height: 128px;
+        background-size: 600% auto;
+        
+        &[data-type="A"] {
+            background-image: url('img/cards-background-artifact.jpg');
+            height: 152px;
+        }
+        &[data-type="C"] {
+            background-image: url('img/cards-background-city.jpg');
+        }
+        &[data-type="M"] {
+            background-image: url('img/cards-background-megalith.jpg');
+        }
+        &[data-type="P"] {
+            background-image: url('img/cards-background-pyramid.jpg');
+        }
+      }
+
+      .top-box {
+        top: 8px;
+        left: 8px;
+        padding: 0 3px 3px 0;
+        border-radius: 0 0 12px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: $cardBackground;
+        gap: 4px;
+        
+        &[data-type="A"] {
+            border-radius: 0 0 7px 0;
+        }
+
+        .type {
+            width: 22px;
+            height: 22px;
+            border-radius: 5px 0 5px 5px;
+
+            .type-icon {
+                width: 100%;
+                height: 100%;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 70%;
+            }
+
+            &[data-type="A"] {
+                background: $artifactColor;
+                border-radius: 5px 0 5px 0;
+
+                .type-icon {
+                    background-image: url('img/artifact-icon-white.svg');
+                }
+            }
+            &[data-type="C"] {
+                background: $cityColor;
+
+                .type-icon {
+                    background-image: url('img/monument-icon-city-white.svg');
+                }
+            }
+            &[data-type="M"] {
+                background: $megalithColor;
+
+                .type-icon {
+                    background-image: url('img/monument-icon-megalith-white.svg');
+                }
+            }
+            &[data-type="P"] {
+                background: $pyramidColor;
+
+                .type-icon {
+                    background-image: url('img/monument-icon-pyramid-white.svg');
+                }
             }
         }
+
+        .starting-space {
+            position: relative;
+            width: 21px;
+            height: 21px;
+            text-align: center;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--card-color);
+            border-radius: 50%;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+
+                background-image: url('img/starting-space-icon.svg');
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 90%;
+            }
+        }
+
+      }
+
+      .discard {
+        top: 8px;
+        left: 33px;
+        border-radius: 0 0 5px 0;
+        background: var(--card-color);
+        display: flex;
+        align-items: center;
+        padding: 2px;
+
+        .discard-icon {
+            background-image: url('img/discard-icon.svg');
+            width: 18px;
+            height: 18px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 70%;
+        }
+
+        .lock-icon {
+            background-image: url('img/lock-icon-white.svg');
+            width: 18px;
+            height: 18px;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 70%;
+        }
+      }   
+
+      .center-box {
+        left: 34px;
+        top: 138px;
+        right: 7px;
+        height: 28px;
+
+        &>* {            
+            position: absolute;
+        }
+        
+        .activation-box {
+            background: $cardBackground;
+            top: -2px;
+            width: 28px;
+            right: 0;
+            bottom: 0;
+        }
+
+        .line {
+            background: var(--card-color);
+            width: 2px;
+            height: 2px;
+            padding: 0;
+
+            &.bottom {
+                left: 0;
+                bottom: 0;
+                width: 97px;
+            }
+
+            &.top {
+                left: 97px;
+                width: unset;
+                right: 0;
+                top: 0;
+            }
+
+            &.middle {
+                top: 0;
+                left: 97px;
+                height: 100%;
+            }
+        }
+
+        .center-zone {
+            top: 0;
+            left: 0;
+            background: var(--card-color);
+            width: 94px;
+            height: 24px;
+
+            &>* {            
+                position: absolute;
+            }
+
+            .initial-knowledge {
+                top: 4px;
+                left: -3px;
+                width: 18px;
+                text-align: right;
+            }
+
+            .knowledge-icon {
+                top: 4px;
+                left: 16px;
+                background-image: url('img/knowledge-icon-white.svg');
+                width: 18px;
+                height: 18px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 70%;
+            }
+    
+            .victory-point {
+                top: 4px;
+                left: 34px;
+                width: 18px;
+                text-align: right;
+            }
+
+            .vp-icon {
+                top: 2px;
+                left: 51px;
+                background-image: url('img/vp-icon-white.svg');
+                width: 18px;
+                height: 18px;
+                background-repeat: no-repeat;
+                background-position: center center;
+                background-size: 70%;
+            }
+        }
+
+        .activation {
+            top: 2px;
+            right: 0px;
+            width: 23px;
+            height: 23px;
+            background-repeat: no-repeat;
+            background-position: center center;
+    
+            &[data-type="anytime"] {
+                background-image: url('img/anytime-icon.svg');
+                background-size: 80%;
+            }
+            &[data-type="decline"] {
+                background-image: url('img/decline-icon.svg');
+                background-size: 80%;
+            }
+            &[data-type="immediate"] {
+                background-image: url('img/immediate-icon.svg');
+                background-size: 50%;
+            }
+            &[data-type="endturn"] {
+                background-image: url('img/timeline-icon.svg');
+                background-size: 80%;
+            }
+            &[data-type="endgame"] {
+                background-image: url('img/vp-icon.svg');
+                background-size: 80%;
+            }
+    
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -3px;
+                right: 5px;
+                width: 0px;
+                height: 0px;
+                border-style: solid;
+                border-width: 3px 7px 0 7px;
+                border-color: var(--card-color) transparent transparent transparent;
+            }
+          }
+      }
+
+      .left-box {  
+        top: 220px;
+        left: 8px;
+        min-width: 84px;
+        max-width: 140px;
+        height: 22px;
+        transform-origin: top left;
+        transform: rotate(-90deg);
+
+        background: $cardBackground;
+        padding-bottom: 4px;
+
+        $nameAndCountryHeight: 24px;
+        $nameAndCountryHeightMargin: 27px;
+
+        &::before {
+            position: absolute;
+            content: "";
+            top: 0;
+            right: -$nameAndCountryHeightMargin;
+            width: 0;
+            height: 0;
+            border-width: $nameAndCountryHeightMargin $nameAndCountryHeightMargin 0 0;
+            border-color: $cardBackground transparent transparent transparent;
+            border-style: solid;
+        }
+
+        .name-and-country {
+          line-height: 12px;
+          text-align: left;
+          background: var(--card-color);
+  
+          .name {
+            white-space: nowrap;
+            text-overflow: clip;
+          }
+  
+          .country {
+            font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
+            font-size: 10px;
+            font-style: italic;
+          }
+  
+          &::after {
+              position: absolute;
+              content: "";
+              top: 0;
+              right: -$nameAndCountryHeight;
+              width: 0;
+              height: 0;
+              border-width: $nameAndCountryHeight $nameAndCountryHeight 0 0;
+              border-color: var(--card-color) transparent transparent transparent;
+              border-style: solid;
+          }
+        }
+      }
+
+      .effect {
+        left: 32px;
+        right: 5px;
+        bottom: 5px;
+        min-height: 56px;
+        color: #404040;
+        text-align: center;
+        font-size: 13px;
+        font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
+        
+        .icon {
+            width: 16px;
+            height: 16px;
+        }
+      }
     }
 }
 

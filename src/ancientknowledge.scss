@@ -1,5 +1,10 @@
 $playerColors: '6f3766', 'bc6328', '597f9e', '929f40';
 
+$artifactColor: #734073;
+$cityColor: #d66b2a;
+$megalithColor: #4a82a3;
+$pyramidColor: #87a04f;
+
 @import '../node_modules/bga-help/bga-help';
 @import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-jump-to/bga-jump-to';
@@ -39,33 +44,34 @@ html, .mode_3d #game_play_area_background {
   padding-top: 32px;
 }
 
-/*.icon {
+.icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url('img/icons.png');
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-  border-radius: 50%;
   
-  &.vp, &[data-type="1"] {
-    background-position-x: #{0 * 100% / 4};
-  }  
-  &.reputation, &[data-type="4"] {
-    background-position-x: #{1 * 100% / 4};
-  }  
-  &.bracelet, &[data-type="2"] {
-    background-position-x: #{2 * 100% / 4};
+  &.knowledge {
+    background-image: url('img/knowledge-icon.svg');
   }
-  &.recruit, &[data-type="3"] {
-    background-position-x: #{3 * 100% / 4};
+  &.vp {
+    background-image: url('img/vp-icon.svg');
   }
-  &.take-card, &[data-type="5"] {
-    background-position-x: #{4 * 100% / 4};
+  &.city {
+    background-image: url('img/monument-icon-city.svg');
   }
-}*/
+  &.megalith {
+    background-image: url('img/monument-icon-megalith.svg');
+  }
+  &.pyramid {
+    background-image: url('img/monument-icon-pyramid.svg');
+  }
+  &.artifact {
+    background-image: url('img/artifact-icon.svg');
+  }
+}
 
 .action-icon {
   display: inline-block;

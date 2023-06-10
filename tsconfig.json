@@ -31,6 +31,7 @@
         "node_modules/bga-cards/src/stocks/all-visible-deck.ts",
         "node_modules/bga-cards/src/sort.ts",
         "node_modules/bga-cards/src/card-manager.ts",
+        "src/text-icons-formatter.ts",
         "src/builder-cards.ts",
         "src/technology-tiles.ts",
         "src/table-center.ts",

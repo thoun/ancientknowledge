@@ -497,23 +497,16 @@ body > .card {
   top: calc((var(--height) + var(--shift)) * var(--order));
 }
 
-.card .front {
-  color: black;
-  text-shadow: 0 0 1px white, 0 0 2px white, 0 0 3px white;
-  font-size: 14px;
-}
-
 .builder-card {
   display: inline-block;
   position: relative;
-  width: 120px;
-  height: 221px;
+  width: 163px;
+  height: 228px;
   border-radius: 8px;
+  font-family: "Apotek Comp";
 }
 .builder-card .card-sides .card-side {
   border-radius: 8px;
-  background-size: auto 100%;
-  background-image: url("img/builder-cards.png");
 }
 .builder-card .card-sides .card-side > * {
   pointer-events: none;
@@ -531,65 +524,313 @@ body > .card {
 .builder-card.bga-cards_selected-card:not(.bga-cards_disabled-card) .card-side {
   box-shadow: unset;
 }
-.builder-card .front[data-color="1"][data-gain="1"] {
-  background-position-x: 5%;
+.builder-card .front {
+  color: white;
+  font-size: 14px;
+  background-color: #f8f4f0;
 }
-.builder-card .front[data-color="1"][data-gain="2"] {
-  background-position-x: 10%;
+.builder-card .front > * {
+  position: absolute;
 }
-.builder-card .front[data-color="1"][data-gain="3"] {
-  background-position-x: 15%;
+.builder-card .front .background {
+  top: 8px;
+  left: 8px;
+  right: 7px;
+  height: 128px;
+  background-size: 600% auto;
 }
-.builder-card .front[data-color="1"][data-gain="4"] {
-  background-position-x: 20%;
+.builder-card .front .background[data-type=A] {
+  background-image: url("img/cards-background-artifact.jpg");
+  height: 152px;
 }
-.builder-card .front[data-color="2"][data-gain="1"] {
-  background-position-x: 25%;
+.builder-card .front .background[data-type=C] {
+  background-image: url("img/cards-background-city.jpg");
 }
-.builder-card .front[data-color="2"][data-gain="2"] {
-  background-position-x: 30%;
+.builder-card .front .background[data-type=M] {
+  background-image: url("img/cards-background-megalith.jpg");
 }
-.builder-card .front[data-color="2"][data-gain="3"] {
-  background-position-x: 35%;
+.builder-card .front .background[data-type=P] {
+  background-image: url("img/cards-background-pyramid.jpg");
 }
-.builder-card .front[data-color="2"][data-gain="4"] {
-  background-position-x: 40%;
+.builder-card .front .top-box {
+  top: 8px;
+  left: 8px;
+  padding: 0 3px 3px 0;
+  border-radius: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f4f0;
+  gap: 4px;
 }
-.builder-card .front[data-color="3"][data-gain="1"] {
-  background-position-x: 45%;
+.builder-card .front .top-box[data-type=A] {
+  border-radius: 0 0 7px 0;
 }
-.builder-card .front[data-color="3"][data-gain="2"] {
-  background-position-x: 50%;
+.builder-card .front .top-box .type {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px 0 5px 5px;
 }
-.builder-card .front[data-color="3"][data-gain="3"] {
-  background-position-x: 55%;
+.builder-card .front .top-box .type .type-icon {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 70%;
 }
-.builder-card .front[data-color="3"][data-gain="4"] {
-  background-position-x: 60%;
+.builder-card .front .top-box .type[data-type=A] {
+  background: #734073;
+  border-radius: 5px 0 5px 0;
 }
-.builder-card .front[data-color="4"][data-gain="1"] {
-  background-position-x: 65%;
+.builder-card .front .top-box .type[data-type=A] .type-icon {
+  background-image: url("img/artifact-icon-white.svg");
 }
-.builder-card .front[data-color="4"][data-gain="2"] {
-  background-position-x: 70%;
+.builder-card .front .top-box .type[data-type=C] {
+  background: #d66b2a;
 }
-.builder-card .front[data-color="4"][data-gain="3"] {
-  background-position-x: 75%;
+.builder-card .front .top-box .type[data-type=C] .type-icon {
+  background-image: url("img/monument-icon-city-white.svg");
 }
-.builder-card .front[data-color="4"][data-gain="4"] {
-  background-position-x: 80%;
+.builder-card .front .top-box .type[data-type=M] {
+  background: #4a82a3;
 }
-.builder-card .front[data-color="5"][data-gain="1"] {
-  background-position-x: 85%;
+.builder-card .front .top-box .type[data-type=M] .type-icon {
+  background-image: url("img/monument-icon-megalith-white.svg");
 }
-.builder-card .front[data-color="5"][data-gain="2"] {
-  background-position-x: 90%;
+.builder-card .front .top-box .type[data-type=P] {
+  background: #87a04f;
 }
-.builder-card .front[data-color="5"][data-gain="3"] {
-  background-position-x: 95%;
+.builder-card .front .top-box .type[data-type=P] .type-icon {
+  background-image: url("img/monument-icon-pyramid-white.svg");
 }
-.builder-card .front[data-color="5"][data-gain="4"] {
-  background-position-x: 100%;
+.builder-card .front .top-box .starting-space {
+  position: relative;
+  width: 21px;
+  height: 21px;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--card-color);
+  border-radius: 50%;
+}
+.builder-card .front .top-box .starting-space::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url("img/starting-space-icon.svg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 90%;
+}
+.builder-card .front .discard {
+  top: 8px;
+  left: 33px;
+  border-radius: 0 0 5px 0;
+  background: var(--card-color);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+.builder-card .front .discard .discard-icon {
+  background-image: url("img/discard-icon.svg");
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 70%;
+}
+.builder-card .front .discard .lock-icon {
+  background-image: url("img/lock-icon-white.svg");
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 70%;
+}
+.builder-card .front .center-box {
+  left: 34px;
+  top: 138px;
+  right: 7px;
+  height: 28px;
+}
+.builder-card .front .center-box > * {
+  position: absolute;
+}
+.builder-card .front .center-box .activation-box {
+  background: #f8f4f0;
+  top: -2px;
+  width: 28px;
+  right: 0;
+  bottom: 0;
+}
+.builder-card .front .center-box .line {
+  background: var(--card-color);
+  width: 2px;
+  height: 2px;
+  padding: 0;
+}
+.builder-card .front .center-box .line.bottom {
+  left: 0;
+  bottom: 0;
+  width: 97px;
+}
+.builder-card .front .center-box .line.top {
+  left: 97px;
+  width: unset;
+  right: 0;
+  top: 0;
+}
+.builder-card .front .center-box .line.middle {
+  top: 0;
+  left: 97px;
+  height: 100%;
+}
+.builder-card .front .center-box .center-zone {
+  top: 0;
+  left: 0;
+  background: var(--card-color);
+  width: 94px;
+  height: 24px;
+}
+.builder-card .front .center-box .center-zone > * {
+  position: absolute;
+}
+.builder-card .front .center-box .center-zone .initial-knowledge {
+  top: 4px;
+  left: -3px;
+  width: 18px;
+  text-align: right;
+}
+.builder-card .front .center-box .center-zone .knowledge-icon {
+  top: 4px;
+  left: 16px;
+  background-image: url("img/knowledge-icon-white.svg");
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 70%;
+}
+.builder-card .front .center-box .center-zone .victory-point {
+  top: 4px;
+  left: 34px;
+  width: 18px;
+  text-align: right;
+}
+.builder-card .front .center-box .center-zone .vp-icon {
+  top: 2px;
+  left: 51px;
+  background-image: url("img/vp-icon-white.svg");
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 70%;
+}
+.builder-card .front .center-box .activation {
+  top: 2px;
+  right: 0px;
+  width: 23px;
+  height: 23px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.builder-card .front .center-box .activation[data-type=anytime] {
+  background-image: url("img/anytime-icon.svg");
+  background-size: 80%;
+}
+.builder-card .front .center-box .activation[data-type=decline] {
+  background-image: url("img/decline-icon.svg");
+  background-size: 80%;
+}
+.builder-card .front .center-box .activation[data-type=immediate] {
+  background-image: url("img/immediate-icon.svg");
+  background-size: 50%;
+}
+.builder-card .front .center-box .activation[data-type=endturn] {
+  background-image: url("img/timeline-icon.svg");
+  background-size: 80%;
+}
+.builder-card .front .center-box .activation[data-type=endgame] {
+  background-image: url("img/vp-icon.svg");
+  background-size: 80%;
+}
+.builder-card .front .center-box .activation::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  right: 5px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 3px 7px 0 7px;
+  border-color: var(--card-color) transparent transparent transparent;
+}
+.builder-card .front .left-box {
+  top: 220px;
+  left: 8px;
+  min-width: 84px;
+  max-width: 140px;
+  height: 22px;
+  transform-origin: top left;
+  transform: rotate(-90deg);
+  background: #f8f4f0;
+  padding-bottom: 4px;
+}
+.builder-card .front .left-box::before {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: -27px;
+  width: 0;
+  height: 0;
+  border-width: 27px 27px 0 0;
+  border-color: #f8f4f0 transparent transparent transparent;
+  border-style: solid;
+}
+.builder-card .front .left-box .name-and-country {
+  line-height: 12px;
+  text-align: left;
+  background: var(--card-color);
+}
+.builder-card .front .left-box .name-and-country .name {
+  white-space: nowrap;
+  text-overflow: clip;
+}
+.builder-card .front .left-box .name-and-country .country {
+  font-family: "Quador Display";
+  font-size: 10px;
+  font-style: italic;
+}
+.builder-card .front .left-box .name-and-country::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  right: -24px;
+  width: 0;
+  height: 0;
+  border-width: 24px 24px 0 0;
+  border-color: var(--card-color) transparent transparent transparent;
+  border-style: solid;
+}
+.builder-card .front .effect {
+  left: 32px;
+  right: 5px;
+  bottom: 5px;
+  min-height: 56px;
+  color: #404040;
+  text-align: center;
+  font-size: 13px;
+  font-family: "Quador Display";
+}
+.builder-card .front .effect .icon {
+  width: 16px;
+  height: 16px;
 }
 
 @keyframes selectable-card-animation {
@@ -816,6 +1057,10 @@ body > .card {
 .player-board .icon {
   margin-right: 5px;
 }
+.player-board .icon.vp {
+  width: 24px;
+  height: 24px;
+}
 .player-board .counters {
   display: flex;
   align-items: center;
@@ -1013,33 +1258,34 @@ html, .mode_3d #game_play_area_background {
   padding-top: 32px;
 }
 
-/*.icon {
+.icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url('img/icons.png');
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-  border-radius: 50%;
+}
+.icon.knowledge {
+  background-image: url("img/knowledge-icon.svg");
+}
+.icon.vp {
+  background-image: url("img/vp-icon.svg");
+}
+.icon.city {
+  background-image: url("img/monument-icon-city.svg");
+}
+.icon.megalith {
+  background-image: url("img/monument-icon-megalith.svg");
+}
+.icon.pyramid {
+  background-image: url("img/monument-icon-pyramid.svg");
+}
+.icon.artifact {
+  background-image: url("img/artifact-icon.svg");
+}
 
-  &.vp, &[data-type="1"] {
-    background-position-x: 0%;
-  }  
-  &.reputation, &[data-type="4"] {
-    background-position-x: 25%;
-  }  
-  &.bracelet, &[data-type="2"] {
-    background-position-x: 50%;
-  }
-  &.recruit, &[data-type="3"] {
-    background-position-x: 75%;
-  }
-  &.take-card, &[data-type="5"] {
-    background-position-x: 100%;
-  }
-}*/
 .action-icon {
   display: inline-block;
   width: 32px;
