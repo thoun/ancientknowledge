@@ -2434,10 +2434,16 @@ var AncientKnowledge = /** @class */ (function () {
             switch (stateName) {
                 case 'chooseAction':
                     //const chooseActionArgs = args as EnteringChooseActionArgs;
-                    [_('Create'), _('Learn'), _('Excavate'), _('Archive'), _('Search')].forEach(function (label, index) {
-                        return _this.addActionButton("actChooseAction".concat(index + 1, "_button"), label, function () { return _this.actChooseAction(index + 1); });
+                    [
+                        ['create', _('Create')],
+                        ['learn', _('Learn')],
+                        ['excavate', _('Excavate')],
+                        ['archive', _('Archive')],
+                        ['search', _('Search')],
+                    ].forEach(function (codeAndLabel) {
+                        return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
-                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
+                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.takeAtomicAction('actRestart'); }, null, null, 'gray');
                     break;
             }
         }
@@ -2621,19 +2627,14 @@ var AncientKnowledge = /** @class */ (function () {
             this.setPayDestinationLabelAndState();
         }
     };
-    AncientKnowledge.prototype.actChooseAction = function (action) {
-        if (!this.checkAction('actChooseAction')) {
-            return;
-        }
-        this.takeAction('actChooseAction', {
-            id: action
-        });
-    };
-    AncientKnowledge.prototype.actRestart = function () {
-        if (!this.checkAction('actRestart')) {
-            return;
-        }
-        this.takeAction('actRestart');
+    AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {
+        if (args === void 0) { args = {}; }
+        if (warning === void 0) { warning = false; }
+        if (!this.checkAction(action))
+            return false;
+        //(this as any).askConfirmation(warning, () =>
+        this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) } /*, false*/);
+        //);
     };
     AncientKnowledge.prototype.takeAction = function (action, data) {
         data = data || {};

@@ -39,22 +39,7 @@ html, .mode_3d #game_play_area_background {
   padding-top: 32px;
 }
 
-#round-counter-row {
-  display: flex;
-  justify-content: center;
-
-  #round-counter-block {
-    background: #FFFFFF99;
-    font-size: 120%;
-    padding: 8px 16px;
-    margin: 0 5px;
-    border-radius: 10px;
-    text-shadow: 0 0 1px black, 0 0 2px black, 0 0 3px black, 0 0 4px black;
-    color: white;
-  }
-}
-
-.icon {
+/*.icon {
   display: inline-block;
   width: 32px;
   height: 32px;
@@ -80,23 +65,33 @@ html, .mode_3d #game_play_area_background {
   &.take-card, &[data-type="5"] {
     background-position-x: #{4 * 100% / 4};
   }
-}
+}*/
 
-.color {
+.action-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url('img/colors.png');
+  background-image: url('img/action-icons.png');
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-  border-radius: 2px;
+  border-radius: 50%;
   
-  @for $color from 1 through 5 {
-    &[data-color="#{$color}"] {
-        background-position-x: #{($color - 1) * 100% / 4};
-    }
+  &.create {
+    background-position-x: #{0 * 100% / 4};
+  }  
+  &.learn {
+    background-position-x: #{1 * 100% / 4};
+  }  
+  &.archive {
+    background-position-x: #{2 * 100% / 4};
+  }
+  &.excavate {
+    background-position-x: #{3 * 100% / 4};
+  }
+  &.search {
+    background-position-x: #{4 * 100% / 4};
   }
 }
 

@@ -1013,71 +1013,57 @@ html, .mode_3d #game_play_area_background {
   padding-top: 32px;
 }
 
-#round-counter-row {
-  display: flex;
-  justify-content: center;
-}
-#round-counter-row #round-counter-block {
-  background: rgba(255, 255, 255, 0.6);
-  font-size: 120%;
-  padding: 8px 16px;
-  margin: 0 5px;
-  border-radius: 10px;
-  text-shadow: 0 0 1px black, 0 0 2px black, 0 0 3px black, 0 0 4px black;
-  color: white;
-}
-
-.icon {
+/*.icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url("img/icons.png");
+  background-image: url('img/icons.png');
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  border-radius: 50%;
+
+  &.vp, &[data-type="1"] {
+    background-position-x: 0%;
+  }  
+  &.reputation, &[data-type="4"] {
+    background-position-x: 25%;
+  }  
+  &.bracelet, &[data-type="2"] {
+    background-position-x: 50%;
+  }
+  &.recruit, &[data-type="3"] {
+    background-position-x: 75%;
+  }
+  &.take-card, &[data-type="5"] {
+    background-position-x: 100%;
+  }
+}*/
+.action-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url("img/action-icons.png");
   background-size: auto 100%;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
   border-radius: 50%;
 }
-.icon.vp, .icon[data-type="1"] {
+.action-icon.create {
   background-position-x: 0%;
 }
-.icon.reputation, .icon[data-type="4"] {
+.action-icon.learn {
   background-position-x: 25%;
 }
-.icon.bracelet, .icon[data-type="2"] {
+.action-icon.archive {
   background-position-x: 50%;
 }
-.icon.recruit, .icon[data-type="3"] {
+.action-icon.excavate {
   background-position-x: 75%;
 }
-.icon.take-card, .icon[data-type="5"] {
-  background-position-x: 100%;
-}
-
-.color {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-image: url("img/colors.png");
-  background-size: auto 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-  border-radius: 2px;
-}
-.color[data-color="1"] {
-  background-position-x: 0%;
-}
-.color[data-color="2"] {
-  background-position-x: 25%;
-}
-.color[data-color="3"] {
-  background-position-x: 50%;
-}
-.color[data-color="4"] {
-  background-position-x: 75%;
-}
-.color[data-color="5"] {
+.action-icon.search {
   background-position-x: 100%;
 }
 

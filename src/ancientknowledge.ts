@@ -264,9 +264,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
             switch (stateName) {
                 case 'chooseAction':
                     //const chooseActionArgs = args as EnteringChooseActionArgs;
-                    [_('Create'), _('Learn'), _('Excavate'), _('Archive'), _('Search')].forEach((label, index) => 
-                        (this as any).addActionButton(`actChooseAction${index + 1}_button`, label, () => this.actChooseAction(index + 1))
-                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    [
+                        ['create', _('Create')], 
+                        ['learn', _('Learn')], 
+                        ['excavate', _('Excavate')], 
+                        ['archive', _('Archive')], 
+                        ['search', _('Search')],
+                    ].forEach(codeAndLabel => 
+                        (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
+                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.takeAtomicAction('actRestart'), null, null, 'gray');
                     break;
             }
         }
@@ -543,23 +549,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.setPayDestinationLabelAndState();
         }
     }
-  	
-    public actChooseAction(action: number) {
-        if(!(this as any).checkAction('actChooseAction')) {
-            return;
-        }
 
-        this.takeAction('actChooseAction', {
-            id: action
-        });
-    }
-  	
-    public actRestart() {
-        if(!(this as any).checkAction('actRestart')) {
-            return;
-        }
-
-        this.takeAction('actRestart');
+    private takeAtomicAction(action: string, args: any = {}, warning = false) {
+        if (!(this as any).checkAction(action)) return false;
+  
+        //(this as any).askConfirmation(warning, () =>
+          this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) }/*, false*/)
+        //);
     }
 
     public takeAction(action: string, data?: any) {
