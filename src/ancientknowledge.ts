@@ -48,6 +48,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         
         this.gamedatas = gamedatas;
 
+        Object.values(gamedatas.players).forEach(player => {
+            const playerId = Number(player.id);
+            if (playerId == this.getPlayerId()) {
+                gamedatas.players[playerId].hand = gamedatas.cards.filter(card => card.location == null && card.pId == playerId);
+            }
+        })
+
         log('gamedatas', gamedatas);
 
         this.animationManager = new AnimationManager(this);
@@ -118,7 +125,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         log('Entering state: ' + stateName, args.args);
 
         switch (stateName) {
-            case 'playAction':
+            /*case 'playAction':
                 this.onEnteringPlayAction(args.args);
                 break;
             case 'chooseNewCard':
@@ -132,11 +139,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;
             case 'reserveDestination':
                 this.onEnteringReserveDestination();
-                break;
+                break;*/
         }
     }
     
-    private setGamestateDescription(property: string = '') {
+    /*private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
         this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
         this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
@@ -193,13 +200,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             this.tableCenter.setTechonologyTilesSelectable(true, this.tableCenter.getVisibleDestinations());
         }
-    }
+    }*/
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
-            case 'playAction':
+            /*case 'playAction':
                 this.onLeavingPlayAction();
                 break;
             case 'chooseNewCard':
@@ -216,11 +223,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;
             case 'reserveDestination':
                 this.onLeavingReserveDestination();
-                break;
+                break;*/
         }
     }
 
-    private onLeavingPlayAction() {
+    /*private onLeavingPlayAction() {
         this.tableCenter.setTechonologyTilesSelectable(false);
         this.getCurrentPlayerTable()?.setHandSelectable(false);
         this.getCurrentPlayerTable()?.setDestinationsSelectable(false);
@@ -245,33 +252,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onLeavingReserveDestination() {
         this.tableCenter.setTechonologyTilesSelectable(false);
-    }
-
-    private setPayDestinationLabelAndState(args?: EnteringPayDestinationArgs) {
-        if (!args) {
-            args = this.gamedatas.gamestate.args;
-        }
-
-        const selectedCards = this.getCurrentPlayerTable().getSelectedCards();
-
-        const button = document.getElementById(`payDestination_button`);
-
-        const total = Object.values(args.selectedDestination.cost).reduce((a, b) => a + b, 0);
-        const cards = selectedCards.length;
-        const recruits = total - cards;
-        let message = '';
-        if (recruits > 0 && cards > 0) {
-            message = _("Pay the ${cards} selected card(s) and ${recruits} recruit(s)")
-        } else if (cards > 0) {
-            message = _("Pay the ${cards} selected card(s)");
-        } else if (recruits > 0) {
-            message = _("Pay ${recruits} recruit(s)");
-        }
-
-        button.innerHTML = message.replace('${recruits}', ''+recruits).replace('${cards}', ''+cards);
-        button.classList.toggle('disabled', args.recruits < recruits);
-        button.dataset.recruits = ''+recruits;
-    }
+    }*/
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -280,52 +261,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         
         if ((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
-                case 'playAction':
-                    const playActionArgs = args as EnteringPlayActionArgs;
-                    (this as any).addActionButton(`goTrade_button`, _("Trade"), () => this.goTrade());
-                    if (!playActionArgs.canTrade) {
-                        document.getElementById(`goTrade_button`).classList.add('disabled');
-                    }
-                    if (!playActionArgs.canExplore || !playActionArgs.canRecruit) {
-                        (this as any).addActionButton(`endTurn_button`, _("End turn"), () => this.endTurn());
-                    }
+                case 'chooseAction':
+                    //const chooseActionArgs = args as EnteringChooseActionArgs;
+                    [_('Create'), _('Learn'), _('Excavate'), _('Archive'), _('Search')].forEach((label, index) => 
+                        (this as any).addActionButton(`actChooseAction${index + 1}_button`, label, () => this.actChooseAction(index + 1))
+                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
-                case 'chooseNewCard':
-                    const chooseNewCardArgs = args as EnteringChooseNewCardArgs;
-                    [1, 2, 3, 4, 5].forEach(color => {
-                        const free = chooseNewCardArgs.allFree || color == chooseNewCardArgs.freeColor;
-                        (this as any).addActionButton(`chooseNewCard${color}_button`, _("Take ${color}").replace('${color}', `<div class="color" data-color="${color}"></div>`) + ` (${free ? _('free') : `1 <div class="recruit icon"></div>`})`, () => this.chooseNewCard(chooseNewCardArgs.centerCards.find(card => card.locationArg == color).id), null, null, free ? undefined : 'gray');
-                        if (!free && chooseNewCardArgs.recruits < 1) {
-                            document.getElementById(`chooseNewCard${color}_button`).classList.add('disabled');
-                        }
-                    });
-                    break;
-                case 'payDestination':
-                    (this as any).addActionButton(`payDestination_button`, '', () => this.payDestination());
-                    this.setPayDestinationLabelAndState(args);
-
-                    (this as any).addActionButton(`cancel_button`, _("Cancel"), () => this.cancel(), null, null, 'gray');
-                    break;
-                case 'trade':
-                    const tradeArgs = args as EnteringTradeArgs;
-                    [1, 2, 3].forEach(number => {
-                        (this as any).addActionButton(`trade${number}_button`, _("Trade ${number} bracelet(s)").replace('${number}', number), () => this.trade(number, tradeArgs.gainsByBracelets));
-                        const button = document.getElementById(`trade${number}_button`);
-                        if (tradeArgs.bracelets < number) {
-                            button.classList.add('disabled');
-                        } else {
-                            button.addEventListener('mouseenter', () => this.getCurrentPlayerTable().showColumns(number));
-                            button.addEventListener('mouseleave', () => this.getCurrentPlayerTable().showColumns(0));
-                        }
-                    });
-                    (this as any).addActionButton(`cancel_button`, _("Cancel"), () => this.cancel(), null, null, 'gray');
-                    break;
-
-                // multiplayer state    
-                case 'discardCard':
-                    this.onEnteringDiscardCard(args);
-                    break;
-                    
             }
         }
     }
@@ -602,126 +543,22 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
   	
-    public goTrade() {
-        if(!(this as any).checkAction('goTrade')) {
+    public actChooseAction(action: number) {
+        if(!(this as any).checkAction('actChooseAction')) {
             return;
         }
 
-        this.takeAction('goTrade');
-    }
-  	
-    public playCard(id: number) {
-        if(!(this as any).checkAction('playCard')) {
-            return;
-        }
-
-        this.takeAction('playCard', {
-            id
+        this.takeAction('actChooseAction', {
+            id: action
         });
     }
   	
-    public takeDestination(id: number) {
-        if(!(this as any).checkAction('takeDestination')) {
+    public actRestart() {
+        if(!(this as any).checkAction('actRestart')) {
             return;
         }
 
-        this.takeAction('takeDestination', {
-            id
-        });
-    }
-  	
-    public reserveDestination(id: number) {
-        if(!(this as any).checkAction('reserveDestination')) {
-            return;
-        }
-
-        this.takeAction('reserveDestination', {
-            id
-        });
-    }
-  	
-    public chooseNewCard(id: number) {
-        if(!(this as any).checkAction('chooseNewCard')) {
-            return;
-        }
-
-        this.takeAction('chooseNewCard', {
-            id
-        });
-    }
-  	
-    public payDestination() {
-        if(!(this as any).checkAction('payDestination')) {
-            return;
-        }
-
-        const ids = this.getCurrentPlayerTable().getSelectedCards().map(card => card.id);
-        const recruits = Number(document.getElementById(`payDestination_button`).dataset.recruits);
-
-        this.takeAction('payDestination', {
-            ids: ids.join(','),
-            recruits
-        });
-    }
-  	
-    public trade(number: number, gainsByBracelets: { [bracelets: number]: number } | null) {
-        if(!(this as any).checkAction('trade')) {
-            return;
-        }
-
-        let warning = null;
-        if (gainsByBracelets != null) {
-            if (gainsByBracelets[number] == 0) {
-                warning = _("Are you sure you want to trade ${bracelets} bracelet(s) ?").replace('${bracelets}', number) + ' '+ _("There is nothing to gain yet with this number of bracelet(s)");
-            } else if (number > 1 && gainsByBracelets[number] == gainsByBracelets[number - 1]) {
-                warning = _("Are you sure you want to trade ${bracelets} bracelet(s) ?").replace('${bracelets}', number) + ' '+ _("You would gain the same with one less bracelet");
-            }
-        }
-
-        if (warning != null) {
-            (this as any).confirmationDialog(warning, () => this.trade(number, null));
-            return;
-        }
-
-        this.takeAction('trade', {
-            number
-        });
-    }
-  	
-    public cancel() {
-        if(!(this as any).checkAction('cancel')) {
-            return;
-        }
-
-        this.takeAction('cancel');
-    }
-  	
-    public endTurn() {
-        if(!(this as any).checkAction('endTurn')) {
-            return;
-        }
-
-        this.takeAction('endTurn');
-    }
-  	
-    public discardTableCard(id: number) {
-        if(!(this as any).checkAction('discardTableCard')) {
-            return;
-        }
-
-        this.takeAction('discardTableCard', {
-            id
-        });
-    }
-  	
-    public discardCard(id: number) {
-        if(!(this as any).checkAction('discardCard')) {
-            return;
-        }
-
-        this.takeAction('discardCard', {
-            id
-        });
+        this.takeAction('actRestart');
     }
 
     public takeAction(action: string, data?: any) {
@@ -774,6 +611,20 @@ class AncientKnowledge implements AncientKnowledgeGame {
             });
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
+
+        if (isDebug) {
+            notifs.forEach((notif) => {
+                if (!this[`notif_${notif[0]}`]) {
+                    console.warn(`notif_${notif[0]} function is not declared, but listed in setupNotifications`);
+                }
+            });
+
+            Object.getOwnPropertyNames(AncientKnowledge.prototype).filter(item => item.startsWith('notif_')).map(item => item.slice(6)).forEach(item => {
+                if (!notifs.some(notif => notif[0] == item)) {
+                    console.warn(`notif_${item} function is declared, but not listed in setupNotifications`);
+                }
+            });
+        }
     }
 
     notif_playCard(args: NotifPlayCardArgs) {

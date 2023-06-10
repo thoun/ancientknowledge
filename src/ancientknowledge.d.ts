@@ -5,11 +5,11 @@
 interface AncientKnowledgePlayer extends Player {
     playerNo: number;
     hand?: BuilderCard[]; // only set for currentPlayer
-    timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
+    /*timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
     artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
     past: BuilderCard[];
     handCount: number;
-    technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3
+    technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3*/
 }
 
 interface AncientKnowledgeGamedatas {
@@ -25,9 +25,10 @@ interface AncientKnowledgeGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
+    cards: BuilderCard[];
+    /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;
-    // TODO deck counters ? discard counters ?
+    // TODO deck counters ? discard counters ?*/
 }
 
 interface AncientKnowledgeGame extends Game {
@@ -52,7 +53,7 @@ interface AncientKnowledgeGame extends Game {
     onPlayedCardClick(card: BuilderCard): void;
 }
 
-interface EnteringPlayActionArgs {
+interface EnteringChooseActionArgs {
     canRecruit: boolean;
     canExplore: boolean;
     canTrade: boolean;

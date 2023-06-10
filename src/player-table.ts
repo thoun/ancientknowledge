@@ -46,11 +46,10 @@ class PlayerTable {
         if (this.currentPlayer) {
             const handDiv = document.getElementById(`player-table-${this.playerId}-hand`);
             this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, handDiv, {
-                sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
+                // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
             });
-            this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);
-            
-            // TODO this.hand.addCards(player.hand);
+            this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);            
+            this.hand.addCards(player.hand);
         }
         
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);

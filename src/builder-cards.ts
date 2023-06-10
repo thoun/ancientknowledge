@@ -1,5 +1,10 @@
 interface BuilderCard {
-    id: number;
+    id: string;
+    location: string;
+    state;
+    pId: number;
+
+    /*id: number;
     location: string;
     locationArg: number;
     type: number;
@@ -10,7 +15,7 @@ interface BuilderCard {
     name: string;
     country: string;
     activation: string;
-    effect: string;
+    effect: string;*/
 }
 
 class BuilderCardsManager extends CardManager<BuilderCard> {
@@ -22,7 +27,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 div.dataset.cardId = ''+card.id;
             },
             setupFrontDiv: (card: BuilderCard, div: HTMLElement) => this.setupFrontDiv(card, div),
-            isCardVisible: card => Boolean(card.type),
+            isCardVisible: card => true, // TODO Boolean(card.type),
             cardWidth: 120,
             cardHeight: 221,
             animationManager: game.animationManager,
@@ -30,10 +35,12 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
     }
 
     private setupFrontDiv(card: BuilderCard, div: HTMLElement, ignoreTooltip: boolean = false) { 
+        div.innerHTML = card.id; // TODO TEMP
         div.dataset.type = ''+card.type;
         div.dataset.number = ''+card.number;
         if (!ignoreTooltip) {            
-            this.game.setTooltip(div.id, this.getTooltip(card));
+            // TODO this.game.setTooltip(div.id, this.getTooltip(card));
+            this.game.setTooltip(div.id, `<pre>${JSON.stringify(card, null, 2)}</pre>`); // TODO TEMP
         }
     }
 
