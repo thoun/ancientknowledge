@@ -20,7 +20,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private gamedatas: AncientKnowledgeGamedatas;
     private tableCenter: TableCenter;
     private playersTables: PlayerTable[] = [];
-    //private handCounters: Counter[] = [];
+    private handCounters: Counter[] = [];
     private reputationCounters: Counter[] = [];
     private recruitCounters: Counter[] = [];
     private braceletCounters: Counter[] = [];
@@ -51,8 +51,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);
             if (playerId == this.getPlayerId()) {
-                gamedatas.players[playerId].hand = gamedatas.cards.filter(card => card.location == null && card.pId == playerId);
+                player.hand = gamedatas.cards.filter(card => card.location == null && card.pId == playerId);
             }
+            player.handCount = gamedatas.cards.filter(card => card.location == null && card.pId == playerId).length;
         })
 
         log('gamedatas', gamedatas);
@@ -84,7 +85,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             onDimensionsChange: () => {
                 const tablesAndCenter = document.getElementById('tables-and-center');
                 const clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478); // TODO
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
             },
         });
 
@@ -349,16 +350,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
             document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<div class="vp icon"></div>`);
             document.getElementById(`icon_point_${player.id}`).remove();
 
-            /*
+            /**/
+            let html = `<div class="counters">
                 <div id="playerhand-counter-wrapper-${player.id}" class="playerhand-counter">
                     <div class="player-hand-card"></div> 
                     <span id="playerhand-counter-${player.id}"></span>
-                </div>*/
-            let html = `<div class="counters">
+                </div>
             
                 <div id="reputation-counter-wrapper-${player.id}" class="reputation-counter">
                     <div class="reputation icon"></div>
-                    <span id="reputation-counter-${player.id}"></span> <span class="reputation-legend"><div class="vp icon"></div> / ${_('round')}</span>
+                    <span id="reputation-counter-${player.id}"></span>
                 </div>
 
             </div><div class="counters">
@@ -378,10 +379,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
             dojo.place(html, `player_board_${player.id}`);
 
-            /*const handCounter = new ebg.counter();
+            const handCounter = new ebg.counter();
             handCounter.create(`playerhand-counter-${playerId}`);
             handCounter.setValue(player.handCount);
-            this.handCounters[playerId] = handCounter;*/
+            this.handCounters[playerId] = handCounter;
 
             this.reputationCounters[playerId] = new ebg.counter();
             this.reputationCounters[playerId].create(`reputation-counter-${playerId}`);

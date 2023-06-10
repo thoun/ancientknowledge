@@ -16,6 +16,19 @@ interface BuilderCard {
     country: string;
     activation: string;
     effect: string;*/
+
+    /*
+    ['number', 'int'],
+    ['name', 'str'],
+    ['text', 'obj'],
+    ['country', 'str'],
+    ['startingSpace', 'int'],
+    ['initialKnowledge', 'int'],
+    ['victoryPoint', 'int'],
+    ['discard', 'int'],
+    ['locked', 'bool'],
+    ['activation', 'string'],
+    ['effect', 'obj'],*/
 }
 
 class BuilderCardsManager extends CardManager<BuilderCard> {

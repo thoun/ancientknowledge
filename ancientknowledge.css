@@ -743,16 +743,16 @@ body > .card {
 #table-center #board .marker .inner.reputation {
   background-image: url("img/reputation-pawns.png");
 }
-#table-center #board .marker[data-color="7c5654"] .inner {
+#table-center #board .marker[data-color="6f3766"] .inner {
   background-position-x: 0%;
 }
-#table-center #board .marker[data-color=d6d6d7] .inner {
+#table-center #board .marker[data-color=bc6328] .inner {
   background-position-x: 33.3333333333%;
 }
-#table-center #board .marker[data-color=b79d86] .inner {
+#table-center #board .marker[data-color="597f9e"] .inner {
   background-position-x: 66.6666666667%;
 }
-#table-center #board .marker[data-color="1e2c36"] .inner {
+#table-center #board .marker[data-color="929f40"] .inner {
   background-position-x: 100%;
 }
 #table-center #board .marker.color-blind .inner::after {
@@ -883,6 +883,25 @@ body > .card {
   align-items: center;
   font-size: 20pt;
   font-family: "copperplate-gothic-bold";
+}
+.player-table .player-board {
+  position: relative;
+  width: 1200px;
+  height: 453px;
+  padding: 0;
+  margin: 0;
+}
+.player-table .player-board[data-color="6f3766"] {
+  background: url("img/player-board-6f3766.jpg");
+}
+.player-table .player-board[data-color=bc6328] {
+  background: url("img/player-board-bc6328.jpg");
+}
+.player-table .player-board[data-color="597f9e"] {
+  background: url("img/player-board-597f9e.jpg");
+}
+.player-table .player-board[data-color="929f40"] {
+  background: url("img/player-board-929f40.jpg");
 }
 .player-table .block-with-text {
   display: flex;

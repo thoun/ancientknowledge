@@ -27,6 +27,7 @@ class PlayerTable {
             </div>`;
         }
         html += `
+            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}"></div>
             <div id="player-table-${this.playerId}-past" class="past"></div>
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
             <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>

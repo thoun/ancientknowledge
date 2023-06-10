@@ -2167,7 +2167,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
         for (var i = 1; i <= 3; i++) {
             html += "\n                <div id=\"player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i, "\" class=\"technology-tiles-deck\"></div>\n                ");
         }
@@ -2212,7 +2212,7 @@ var LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 var AncientKnowledge = /** @class */ (function () {
     function AncientKnowledge() {
         this.playersTables = [];
-        //private handCounters: Counter[] = [];
+        this.handCounters = [];
         this.reputationCounters = [];
         this.recruitCounters = [];
         this.braceletCounters = [];
@@ -2237,8 +2237,9 @@ var AncientKnowledge = /** @class */ (function () {
         Object.values(gamedatas.players).forEach(function (player) {
             var playerId = Number(player.id);
             if (playerId == _this.getPlayerId()) {
-                gamedatas.players[playerId].hand = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; });
+                player.hand = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; });
             }
+            player.handCount = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; }).length;
         });
         log('gamedatas', gamedatas);
         this.animationManager = new AnimationManager(this);
@@ -2265,7 +2266,7 @@ var AncientKnowledge = /** @class */ (function () {
             onDimensionsChange: function () {
                 var tablesAndCenter = document.getElementById('tables-and-center');
                 var clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 1478); // TODO
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
             },
         });
         if (gamedatas.lastTurn) {
@@ -2502,17 +2503,13 @@ var AncientKnowledge = /** @class */ (function () {
             var playerId = Number(player.id);
             document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div class=\"vp icon\"></div>");
             document.getElementById("icon_point_".concat(player.id)).remove();
-            /*
-                <div id="playerhand-counter-wrapper-${player.id}" class="playerhand-counter">
-                    <div class="player-hand-card"></div>
-                    <span id="playerhand-counter-${player.id}"></span>
-                </div>*/
-            var html = "<div class=\"counters\">\n            \n                <div id=\"reputation-counter-wrapper-".concat(player.id, "\" class=\"reputation-counter\">\n                    <div class=\"reputation icon\"></div>\n                    <span id=\"reputation-counter-").concat(player.id, "\"></span> <span class=\"reputation-legend\"><div class=\"vp icon\"></div> / ").concat(_('round'), "</span>\n                </div>\n\n            </div><div class=\"counters\">\n            \n                <div id=\"recruit-counter-wrapper-").concat(player.id, "\" class=\"recruit-counter\">\n                    <div class=\"recruit icon\"></div>\n                    <span id=\"recruit-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"bracelet-counter-wrapper-").concat(player.id, "\" class=\"bracelet-counter\">\n                    <div class=\"bracelet icon\"></div>\n                    <span id=\"bracelet-counter-").concat(player.id, "\"></span>\n                </div>\n                \n            </div>\n            <div>").concat(playerId == gamedatas.firstPlayerId ? "<div id=\"first-player\">".concat(_('First player'), "</div>") : '', "</div>");
+            /**/
+            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" class=\"playerhand-counter\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"reputation-counter-wrapper-").concat(player.id, "\" class=\"reputation-counter\">\n                    <div class=\"reputation icon\"></div>\n                    <span id=\"reputation-counter-").concat(player.id, "\"></span>\n                </div>\n\n            </div><div class=\"counters\">\n            \n                <div id=\"recruit-counter-wrapper-").concat(player.id, "\" class=\"recruit-counter\">\n                    <div class=\"recruit icon\"></div>\n                    <span id=\"recruit-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"bracelet-counter-wrapper-").concat(player.id, "\" class=\"bracelet-counter\">\n                    <div class=\"bracelet icon\"></div>\n                    <span id=\"bracelet-counter-").concat(player.id, "\"></span>\n                </div>\n                \n            </div>\n            <div>").concat(playerId == gamedatas.firstPlayerId ? "<div id=\"first-player\">".concat(_('First player'), "</div>") : '', "</div>");
             dojo.place(html, "player_board_".concat(player.id));
-            /*const handCounter = new ebg.counter();
-            handCounter.create(`playerhand-counter-${playerId}`);
+            var handCounter = new ebg.counter();
+            handCounter.create("playerhand-counter-".concat(playerId));
             handCounter.setValue(player.handCount);
-            this.handCounters[playerId] = handCounter;*/
+            _this.handCounters[playerId] = handCounter;
             _this.reputationCounters[playerId] = new ebg.counter();
             _this.reputationCounters[playerId].create("reputation-counter-".concat(playerId));
             _this.reputationCounters[playerId].setValue(player.reputation);
