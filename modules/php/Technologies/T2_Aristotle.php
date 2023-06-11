@@ -1,0 +1,19 @@
+<?php
+namespace AK\Technologies;
+
+class T2_Aristotle extends \AK\Models\Technology
+{
+  public function __construct($row)
+  {
+    parent::__construct($row);
+    $this->id = 'T2_Aristotle';
+    $this->type = ANCIENT;
+    $this->number = 2;
+    $this->lvl = 1;
+    $this->name = clienttranslate('Aristotle');
+    $this->requirement = [clienttranslate('2 <PYRAMID> in your past.')];
+
+    $this->activation = IMMEDIATE;
+    $this->effect = [clienttranslate('Draw 3 cards.')];
+  }
+}

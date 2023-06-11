@@ -7,6 +7,7 @@ use AK\Core\Stats;
 use AK\Core\Preferences;
 use AK\Managers\Players;
 use AK\Managers\Cards;
+use AK\Managers\Technologies;
 use AK\Managers\Actions;
 use AK\Helpers\Utils;
 use AK\Helpers\Log;
@@ -23,6 +24,7 @@ trait SetupTrait
     Preferences::setupNewGame($players, $this->player_preferences);
     //        Meeples::setupNewGame($players, $options);
     Cards::setupNewGame($players, $options);
+    Technologies::setupNewGame($players, $options);
     // Stats::checkExistence();
 
     Globals::setFirstPlayer($this->getNextPlayerTable()[0]);
@@ -47,7 +49,7 @@ trait SetupTrait
     Cards::extraInitialDraw();
 
     // Setup technology tiles
-    // TODO
+    Technologies::initialDraw();
 
     // Start infinite turns loop
     $this->initCustomDefaultTurnOrder('turn', ST_TURNACTION, ST_BREAK_MULTIACTIVE, true);

@@ -17,6 +17,6 @@ class A17_GlozelArtifacts extends \AK\Models\Artefact
       ),
     ];
     $this->activation = ANYTIME;
-    $this->effect = [clienttranslate('Each time you LEARN 1 [écriture], draw 2 cards.')];
+    $this->effect = [clienttranslate('Each time you LEARN 1 <WRITING>, draw 2 cards.')];
   }
 }

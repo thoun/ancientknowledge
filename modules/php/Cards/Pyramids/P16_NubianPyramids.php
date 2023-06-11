@@ -22,6 +22,6 @@ class P16_NubianPyramids extends \AK\Models\Building
     $this->initialKnowledge = 3;
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
-    $this->effect = [clienttranslate('You may CREATE 1 [artefact].')];
+    $this->effect = [clienttranslate('You may CREATE 1 <ARTEFACT>.')];
   }
 }

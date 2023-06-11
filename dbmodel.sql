@@ -26,6 +26,15 @@ CREATE TABLE IF NOT EXISTS `cards` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE IF NOT EXISTS `technologies` (
+  `technology_id` varchar(50) NOT NULL,
+  `technology_location` varchar(32) NOT NULL,
+  `technology_state` int(10),
+  `player_id` int(10) NULL,
+  PRIMARY KEY (`technology_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 -- CORE TABLES --
 CREATE TABLE IF NOT EXISTS `global_variables` (
   `name` varchar(255) NOT NULL,

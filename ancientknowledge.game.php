@@ -35,6 +35,7 @@ require_once APP_GAMEMODULE_PATH . 'module/table/table.game.php';
 use AK\Managers\Meeples;
 use AK\Managers\Cards;
 use AK\Managers\Players;
+use AK\Managers\Technologies;
 use AK\Helpers\Log;
 use AK\Core\Globals;
 use AK\Core\Preferences;
@@ -80,6 +81,7 @@ class AncientKnowledge extends Table
       'prefs' => Preferences::getUiData($pId),
       'players' => Players::getUiData($pId),
       'cards' => Cards::getUiData(),
+      'techs' => Technologies::getUiData(),
       //   'meeples' => Meeples::getUiData(),
     ];
   }

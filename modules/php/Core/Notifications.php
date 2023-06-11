@@ -63,6 +63,21 @@ class Notifications
     ]);
   }
 
+  //////////////////////////////
+  //  _____         _
+  // |_   _|__  ___| |__  ___
+  //   | |/ _ \/ __| '_ \/ __|
+  //   | |  __/ (__| | | \__ \
+  //   |_|\___|\___|_| |_|___/
+  //////////////////////////////
+
+  public static function fillPool($techs)
+  {
+    self::notifyAll('fillPool', clienttranslate('Technology tiles are filled up with ${card_names}'), [
+      'cards' => $techs,
+    ]);
+  }
+
   ///////////////////////////
   //    ____              _
   //   / ___|__ _ _ __ __| |___

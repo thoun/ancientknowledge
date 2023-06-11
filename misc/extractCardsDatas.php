@@ -23,7 +23,6 @@ $swdNamespaceAutoload = function ($class) {
 };
 spl_autoload_register($swdNamespaceAutoload, true, true);
 
-
 function getCardInstance($id, $data = null)
 {
   $t = explode('_', $id);
@@ -49,7 +48,30 @@ foreach ($cardIds as $cardId) {
   $cards[$cardId] = $card->getStaticData();
 }
 
+function getTechInstance($id, $data = null)
+{
+  require_once "../modules/php/Technologies/$id.php";
+  $className = "\AK\Technologies\\$id";
+  return new $className($data);
+}
+
+include_once '../modules/php/Cards/list.inc.php';
+
+$cards = [];
+foreach ($cardIds as $cardId) {
+  $card = getCardInstance($cardId);
+  $cards[$cardId] = $card->getStaticData();
+}
+
+include_once '../modules/php/Technologies/list.inc.php';
+
+$techs = [];
+foreach ($techIds as $techId) {
+  $tech = getTechInstance($techId);
+  $techs[$techId] = $tech->getStaticData();
+}
 
 $fp = fopen('./cardsData.js', 'w');
 fwrite($fp, 'const CARDS_DATA = ' . json_encode($cards) . ';');
+fwrite($fp, 'const TECHS_DATA = ' . json_encode($techs) . ';');
 fclose($fp);

@@ -19,7 +19,7 @@ class M22_HireBenakal extends \AK\Models\Building
     $this->startingSpace = 5;
     $this->activation = ANYTIME;
     $this->effect = [
-      clienttranslate("Each time you LEARN 1 [écriture] : 
+      clienttranslate("Each time you LEARN 1 <WRITING> : 
 • discard 1 <KNOWLEDGE> from any of your monuments;
 • and draw 1 card."),
     ];

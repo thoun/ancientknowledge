@@ -19,7 +19,7 @@ class P13_Yonaguni extends \AK\Models\Building
     $this->activation = IMMEDIATE;
     $this->effect = [
       clienttranslate(
-        'You may discard as many [artefact] from your board as you wish. Discard 4 <KNOWLEDGE> from this monument for each [artefact] you discard.'
+        'You may discard as many <ARTEFACT> from your board as you wish. Discard 4 <KNOWLEDGE> from this monument for each <ARTEFACT> you discard.'
       ),
     ];
   }

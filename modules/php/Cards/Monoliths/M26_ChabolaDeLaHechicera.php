@@ -23,7 +23,7 @@ class M26_ChabolaDeLaHechicera extends \AK\Models\Building
     $this->startingSpace = 6;
     $this->activation = ANYTIME;
     $this->effect = [
-      clienttranslate("Each time you CREATE 1 [artefact] :
+      clienttranslate("Each time you CREATE 1 <ARTEFACT> :
 • discard 1 <KNOWLEDGE> from any of your monuments;
 • and draw 1 card."),
     ];

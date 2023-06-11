@@ -24,7 +24,7 @@ class M1_Stonehenge extends \AK\Models\Building
     $this->activation = ENDGAME;
     $this->effect = [
       clienttranslate(
-        'Gain 2 <VP> for each set of 3 different types of Technology (<ANCIENT>, [écriture] and <SECRET>) you have.'
+        'Gain 2 <VP> for each set of 3 different types of Technology (<ANCIENT>, <WRITING> and <SECRET>) you have.'
       ),
     ];
   }

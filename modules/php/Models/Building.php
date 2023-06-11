@@ -20,8 +20,8 @@ class Building extends \AK\Helpers\DB_Model
   protected $primary = 'card_id';
   protected $attributes = [
     'id' => 'card_id',
-    'location' => 'location',
-    'state' => 'state',
+    'location' => 'card_location',
+    'state' => ['card_state', 'int'],
     'pId' => ['player_id', 'int'],
     'knowledge' => ['knowledge', 'int'],
   ];

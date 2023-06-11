@@ -21,8 +21,8 @@ class P4_Palenque extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [
-      clienttranslate("• If you have 3 [écriture] or 4 [écriture], gain 4 <VP>;
-• or, if you have 5 [écriture] or more, gain 7 <VP>."),
+      clienttranslate("• If you have 3 <WRITING> or 4 <WRITING>, gain 4 <VP>;
+• or, if you have 5 <WRITING> or more, gain 7 <VP>."),
     ];
   }
 }

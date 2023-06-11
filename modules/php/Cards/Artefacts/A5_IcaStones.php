@@ -14,6 +14,6 @@ class A5_IcaStones extends \AK\Models\Artefact
     $this->text = [clienttranslate('Discovered in 1964, they constitute a collection of over 15,000 engraved andesite pebbles.')];
     $this->activation = ENDTURN;
     $this->startingHand = 2;
-    $this->effect = [clienttranslate('If you have at least 3 [artefact] on your board, draw 1 card.')];
+    $this->effect = [clienttranslate('If you have at least 3 <ARTEFACT> on your board, draw 1 card.')];
   }
 }
