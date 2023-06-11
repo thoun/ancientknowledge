@@ -38,7 +38,8 @@ trait SetupTrait
     if (Globals::isStartingHands()) {
       $this->gamestate->nextState('done');
     } else {
-      Cards::initialDraws();
+      Cards::initialDraw();
+      $this->gamestate->setAllPlayersMultiactive();
       $this->gamestate->nextState('selection');
     }
   }

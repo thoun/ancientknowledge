@@ -5,6 +5,7 @@ use AK\Core\Notifications;
 use AK\Core\Preferences;
 use AK\Managers\Actions;
 use AK\Managers\Meeples;
+use AK\Managers\Cards;
 use AK\Core\Globals;
 use AK\Core\Engine;
 use AK\Helpers\FlowConvertor;
@@ -28,27 +29,16 @@ class Player extends \AK\Helpers\DB_Model
     'score' => ['player_score', 'int'],
     'scoreAux' => ['player_score_aux', 'int'],
     'zombie' => 'player_zombie',
-    'lavandium' => ['lavandium', 'int'],
-    'coppernium' => ['coppernium', 'int'],
-    'oceanium' => ['oceanium', 'int'],
-    'gold' => ['gold', 'int'],
-    'authority' => ['authority', 'int'],
-    'deepSpace' => ['deepSpace', 'int'],
-    'infNeo' => ['infNeo', 'int'],
-    'infMoon' => ['infMoon', 'int'],
-    'infAtalum' => ['infAtalum', 'int'],
-    'infArratooine' => ['infArratooine', 'int'],
-    'infE81216' => ['infE81216', 'int'],
-    'positionNeo' => ['positionNeo', 'int'],
-    'positionMoon' => ['positionMoon', 'int'],
-    'startingTile' => ['startingTile', 'int'],
-    'isPresident' => ['isPresident', 'bool'],
+    'lost_knowledge' => ['lost_knowledge', 'int'],
   ];
 
   public function getUiData($currentPlayerId = null)
   {
     $data = parent::getUiData();
     $current = $this->id == $currentPlayerId;
+    $hand = $this->getHand();
+    $data['hand'] = $current ? $hand : [];
+    $data['handCount'] = $hand->count();
     return $data;
   }
 
@@ -68,30 +58,8 @@ class Player extends \AK\Helpers\DB_Model
     return Actions::isDoable($action, $ctx, $this);
   }
 
-  /*
-   * return all alterations token in hand of the player
-   */
-  public function getAlterations()
+  public function getHand($type = null)
   {
-    return Meeples::getMeeples(ALTERATION, $this->id);
-  }
-
-  public function getAmbassadors()
-  {
-    return Meeples::getMeeples(AMBASSADOR, $this->id);
-  }
-
-  public function getAssistant()
-  {
-    return Meeples::getMeeples(ASSISTANT, $this->id);
-  }
-
-  public function getRessources()
-  {
-    return [
-      'lavandium' => $this->getLavandium(),
-      'coppernium' => $this->getCoppernium(),
-      'gold' => $this->getGold(),
-    ];
+    return Cards::getHand($this->id, $type);
   }
 }
