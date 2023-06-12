@@ -9,7 +9,7 @@ class T13_MysterySchool extends \AK\Models\Technology
     $this->id = 'T13_MysterySchool';
     $this->type = SECRET;
     $this->number = 13;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Mystery School');
 
     $this->activation = IMMEDIATE;

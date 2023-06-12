@@ -9,7 +9,7 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
     $this->id = 'T17_EarthquakeEngineering';
     $this->type = SECRET;
     $this->number = 17;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Earthquake Engineering');
 
     $this->activation = IMMEDIATE;

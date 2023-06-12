@@ -9,7 +9,7 @@ class T14_LanguageOfTheBirds extends \AK\Models\Technology
     $this->id = 'T14_LanguageOfTheBirds';
     $this->type = SECRET;
     $this->number = 14;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Language Of The Birds');
 
     $this->activation = IMMEDIATE;

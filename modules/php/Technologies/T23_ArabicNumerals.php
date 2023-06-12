@@ -9,7 +9,7 @@ class T23_ArabicNumerals extends \AK\Models\Technology
     $this->id = 'T23_ArabicNumerals';
     $this->type = WRITING;
     $this->number = 23;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Arabic Numerals');
     $this->requirement = [clienttranslate('5 <LOST_KNOWLEDGE> on your board.')];
 

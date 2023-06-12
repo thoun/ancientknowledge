@@ -9,7 +9,7 @@ class T39_Arikat extends \AK\Models\Technology
     $this->id = 'T39_Arikat';
     $this->type = SECRET;
     $this->number = 39;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Ari-kat');
     $this->requirement = [clienttranslate('3 <CITY>, 3 <MEGALITH>, 3 <PYRAMID> in your past.')];
 

@@ -9,7 +9,7 @@ class T18_Astronomy extends \AK\Models\Technology
     $this->id = 'T18_Astronomy';
     $this->type = SECRET;
     $this->number = 18;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Astronomy');
     $this->requirement = [clienttranslate('1 <CITY>, 1 <PYRAMID> in your past.')];
 

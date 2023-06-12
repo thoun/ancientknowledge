@@ -9,7 +9,7 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
     $this->id = 'T3_HermesTrismegistus';
     $this->type = ANCIENT;
     $this->number = 3;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Hermes Trismegistus');
 
     $this->activation = IMMEDIATE;

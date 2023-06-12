@@ -9,7 +9,7 @@ class T27_LatinAlphabet extends \AK\Models\Technology
     $this->id = 'T27_LatinAlphabet';
     $this->type = WRITING;
     $this->number = 27;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Latin Alphabet');
     $this->requirement = [clienttranslate('5 monuments in your Past.')];
 

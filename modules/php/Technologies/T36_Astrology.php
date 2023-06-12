@@ -9,7 +9,7 @@ class T36_Astrology extends \AK\Models\Technology
     $this->id = 'T36_Astrology';
     $this->type = SECRET;
     $this->number = 36;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Astrology');
     $this->requirement = [clienttranslate('10 cards in your hand.')];
 

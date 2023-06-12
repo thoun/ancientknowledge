@@ -9,7 +9,7 @@ class T35_RoyalCubit extends \AK\Models\Technology
     $this->id = 'T35_RoyalCubit';
     $this->type = SECRET;
     $this->number = 35;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Royal Cubit');
     $this->requirement = [clienttranslate('3 <SECRET> in your collection.')];
 

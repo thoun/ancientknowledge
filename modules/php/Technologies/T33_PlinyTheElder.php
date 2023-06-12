@@ -9,7 +9,7 @@ class T33_PlinyTheElder extends \AK\Models\Technology
     $this->id = 'T33_PlinyTheElder';
     $this->type = ANCIENT;
     $this->number = 33;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Pliny The Elder');
     $this->requirement = [clienttranslate('3 <ANCIENT> in your collection.')];
 

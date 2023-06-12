@@ -9,7 +9,7 @@ class T21_AncientHebrew extends \AK\Models\Technology
     $this->id = 'T21_AncientHebrew';
     $this->type = WRITING;
     $this->number = 21;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Ancient Hebrew');
 
     $this->activation = IMMEDIATE;

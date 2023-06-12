@@ -9,7 +9,7 @@ class T44_PhoenicianAlphabet extends \AK\Models\Technology
     $this->id = 'T44_PhoenicianAlphabet';
     $this->type = WRITING;
     $this->number = 44;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Phoenician Alphabet');
     $this->requirement = [clienttranslate('15 <LOST_KNOWLEDGE> on your board.')];
 

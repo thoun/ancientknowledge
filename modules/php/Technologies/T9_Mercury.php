@@ -9,7 +9,7 @@ class T9_Mercury extends \AK\Models\Technology
     $this->id = 'T9_Mercury';
     $this->type = ANCIENT;
     $this->number = 9;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Mercury');
 
     $this->activation = IMMEDIATE;

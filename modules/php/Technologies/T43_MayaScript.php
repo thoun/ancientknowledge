@@ -9,7 +9,7 @@ class T43_MayaScript extends \AK\Models\Technology
     $this->id = 'T43_MayaScript';
     $this->type = WRITING;
     $this->number = 43;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Maya Script');
     $this->requirement = [clienttranslate('10 monuments in your past.')];
 

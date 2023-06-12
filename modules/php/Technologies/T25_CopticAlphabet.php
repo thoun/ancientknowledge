@@ -9,7 +9,7 @@ class T25_CopticAlphabet extends \AK\Models\Technology
     $this->id = 'T25_CopticAlphabet';
     $this->type = WRITING;
     $this->number = 25;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Coptic Alphabet');
     $this->requirement = [clienttranslate('2 <MEGALITH> in your Past.')];
 

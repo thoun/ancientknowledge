@@ -9,7 +9,7 @@ class T24_Protowriting extends \AK\Models\Technology
     $this->id = 'T24_Protowriting';
     $this->type = WRITING;
     $this->number = 24;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Proto-writing');
     $this->requirement = [clienttranslate('4 monuments in your Past.')];
 

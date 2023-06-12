@@ -9,7 +9,7 @@ class T7_Melchizedek extends \AK\Models\Technology
     $this->id = 'T7_Melchizedek';
     $this->type = ANCIENT;
     $this->number = 7;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Melchizedek');
     $this->requirement = [clienttranslate('1 <CITY>, 1 <MEGALITH>, 1 <PYRAMID> in your past.')];
 

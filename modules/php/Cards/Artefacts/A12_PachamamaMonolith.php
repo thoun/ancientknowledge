@@ -1,15 +1,15 @@
 <?php
 namespace AK\Cards\Artefacts;
 
-class A12_PachamamaMegalith extends \AK\Models\Artefact
+class A12_PachamamaMonolith extends \AK\Models\Artefact
 {
   public function __construct($row)
   {
     parent::__construct($row);
-    $this->id = 'A12_PachamamaMegalith';
+    $this->id = 'A12_PachamamaMonolith';
     $this->type = ARTEFACT;
     $this->number = 12;
-    $this->name = clienttranslate('Pachamama Megalith');
+    $this->name = clienttranslate('Pachamama Monolith');
     $this->country = clienttranslate('Bolivia');
     $this->text = [
       clienttranslate(

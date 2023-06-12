@@ -9,7 +9,7 @@ class T40_ChineseAlphabet extends \AK\Models\Technology
     $this->id = 'T40_ChineseAlphabet';
     $this->type = WRITING;
     $this->number = 40;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Chinese Alphabet');
     $this->requirement = [clienttranslate('3 <MEGALITH> in your past.')];
 

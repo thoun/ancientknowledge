@@ -9,7 +9,7 @@ class T20_RongorongoGlyphs extends \AK\Models\Technology
     $this->id = 'T20_RongorongoGlyphs';
     $this->type = WRITING;
     $this->number = 20;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Rongorongo Glyphs');
 
     $this->activation = IMMEDIATE;

@@ -9,7 +9,7 @@ class T42_SumerianCuneiforms extends \AK\Models\Technology
     $this->id = 'T42_SumerianCuneiforms';
     $this->type = WRITING;
     $this->number = 42;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Sumerian Cuneiforms');
     $this->requirement = [clienttranslate('6 Technology cards (<ANCIENT>,<WRITING> ou <SECRET>).')];
 

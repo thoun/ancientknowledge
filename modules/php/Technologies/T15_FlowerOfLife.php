@@ -9,7 +9,7 @@ class T15_FlowerOfLife extends \AK\Models\Technology
     $this->id = 'T15_FlowerOfLife';
     $this->type = SECRET;
     $this->number = 15;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Flower Of Life');
     $this->requirement = [clienttranslate('2 <CITY> in your past.')];
 

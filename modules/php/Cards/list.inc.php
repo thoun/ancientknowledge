@@ -126,7 +126,7 @@ $cardIds = [
   'A9_Tzolkin',
   'A10_IncahuasiQuipus',
   'A11_ParacasCandelabra',
-  'A12_PachamamaMegalith',
+  'A12_PachamamaMonolith',
   'A13_PiriReisMap',
   'A14_KlerksdorpSpheres',
   'A15_LudditeFlute',

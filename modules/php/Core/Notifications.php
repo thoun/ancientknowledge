@@ -86,6 +86,13 @@ class Notifications
   //   \____\__,_|_|  \__,_|___/
   ///////////////////////////
 
+  public static function updateInitialSelection($player, $args)
+  {
+    self::notify($player, 'updateInitialSelection', '', [
+      'args' => ['_private' => $args['_private'][$player->getId()]],
+    ]);
+  }
+
   public static function drawCards($player, $cards, $privateMsg = null, $publicMsg = null, $args = [])
   {
     self::notifyAll(

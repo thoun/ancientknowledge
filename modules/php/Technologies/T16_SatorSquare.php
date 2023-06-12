@@ -9,7 +9,7 @@ class T16_SatorSquare extends \AK\Models\Technology
     $this->id = 'T16_SatorSquare';
     $this->type = SECRET;
     $this->number = 16;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Sator Square');
 
     $this->activation = IMMEDIATE;

@@ -9,7 +9,7 @@ class T10_PlanetaryGrid extends \AK\Models\Technology
     $this->id = 'T10_PlanetaryGrid';
     $this->type = SECRET;
     $this->number = 10;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Planetary Grid');
 
     $this->activation = IMMEDIATE;
