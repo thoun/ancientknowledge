@@ -11,7 +11,7 @@ class T7_Melchizedek extends \AK\Models\Technology
     $this->number = 7;
     $this->lvl = 1;
     $this->name = clienttranslate('Melchizedek');
-    $this->requirement = [clienttranslate('1 <CITY>, 1 <MONOLITH>, 1 <PYRAMID> in your past.')];
+    $this->requirement = [clienttranslate('1 <CITY>, 1 <MEGALITH>, 1 <PYRAMID> in your past.')];
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 4 cards.')];

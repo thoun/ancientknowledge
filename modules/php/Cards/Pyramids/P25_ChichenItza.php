@@ -21,6 +21,6 @@ class P25_ChichenItza extends \AK\Models\Building
     $this->initialKnowledge = 2;
     $this->startingSpace = 3;
     $this->activation = ENDTURN;
-    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MONOLITH> adjacent to this card.')];
+    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> adjacent to this card.')];
   }
 }

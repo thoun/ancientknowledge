@@ -17,6 +17,6 @@ class A26_NebraSkyDisc extends \AK\Models\Artefact
       ),
     ];
     $this->activation = ANYTIME;
-    $this->effect = [clienttranslate('Your <MONOLITH> enter play with 1 <KNOWLEDGE> less.')];
+    $this->effect = [clienttranslate('Your <MEGALITH> enter play with 1 <KNOWLEDGE> less.')];
   }
 }

@@ -13,6 +13,6 @@ class T20_RongorongoGlyphs extends \AK\Models\Technology
     $this->name = clienttranslate('Rongorongo Glyphs');
 
     $this->activation = IMMEDIATE;
-    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MONOLITH> in your Timeline.')];
+    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> in your Timeline.')];
   }
 }

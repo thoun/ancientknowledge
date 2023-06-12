@@ -22,7 +22,7 @@ class P6_GreatZigguratOfUr extends \AK\Models\Building
     $this->activation = ENDGAME;
     $this->effect = [
       clienttranslate(
-        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MONOLITH> et <PYRAMID>) in your Past.'
+        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MEGALITH> et <PYRAMID>) in your Past.'
       ),
     ];
   }

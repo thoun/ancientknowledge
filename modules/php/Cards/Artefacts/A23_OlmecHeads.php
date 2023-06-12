@@ -14,6 +14,6 @@ class A23_OlmecHeads extends \AK\Models\Artefact
     $this->text = [clienttranslate('Carved in basalt, the African features of these statues unleashed passions.')];
     $this->activation = ANYTIME;
     $this->startingHand = 4;
-    $this->effect = [clienttranslate('Each time you CREATE 1 <MONOLITH>, draw 1 card.')];
+    $this->effect = [clienttranslate('Each time you CREATE 1 <MEGALITH>, draw 1 card.')];
   }
 }

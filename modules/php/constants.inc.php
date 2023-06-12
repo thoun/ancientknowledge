@@ -79,7 +79,7 @@ const SEARCH = 'SEARCH';
  */
 
 const CITY = 'city';
-const MONOLITH = 'monolith';
+const MEGALITH = 'megalith';
 const PYRAMID = 'pyramid';
 const ARTEFACT = 'artefact';
 
