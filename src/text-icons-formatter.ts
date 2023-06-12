@@ -7,7 +7,10 @@ function formatTextIcons(rawText: string) {
         .replace(/<VP>/ig, '<span class="icon vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon city"></span>')
         .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')
-        .replace(/<MONOLITH>/ig, '<span class="icon megalith"></span>') // TODO
         .replace(/<PYRAMID>/ig, '<span class="icon pyramid"></span>')
-        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>');
+        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>')
+        .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
+        .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
+        .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
+        .replace(/\[n°(\d)\]/ig, '<span class="icon starting-place">$1</span>');
 }

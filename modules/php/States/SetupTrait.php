@@ -81,7 +81,7 @@ trait SetupTrait
 
   public function actSelectCardsToDiscard($cardIds)
   {
-    self::checkAction('actSelect');
+    self::checkAction('actSelectCardsToDiscard');
 
     $player = Players::getCurrent();
     $selection = Globals::getInitialSelection();

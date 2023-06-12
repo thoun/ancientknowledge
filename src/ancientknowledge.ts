@@ -48,13 +48,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
         
         this.gamedatas = gamedatas;
 
-        Object.values(gamedatas.players).forEach(player => {
+        // TODO TEMP
+        Object.values(gamedatas.players).forEach((player, index) => {
             const playerId = Number(player.id);
             if (playerId == this.getPlayerId()) {
                 player.hand = gamedatas.cards.filter(card => card.location == null && card.pId == playerId);
             }
             player.handCount = gamedatas.cards.filter(card => card.location == null && card.pId == playerId).length;
-        })
+
+            if (index == 0) {
+                player.tiles = [2, 4, 12, 16, 20, 24].map(index => gamedatas.techs[index]);
+                gamedatas.cards.forEach(card => console.log(card.effect[0]));
+            }
+        });
 
         log('gamedatas', gamedatas);
 
@@ -99,14 +105,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     title: _("Card help").toUpperCase(),
                     html: this.getHelpHtml(),
                     onPopinCreated: () => this.populateHelp(),
-                    buttonBackground: '#5890a9',
-                }),
-                new BgaHelpExpandableButton({
-                    unfoldedHtml: this.getColorAddHtml(),
-                    foldedContentExtraClasses: 'color-help-folded-content',
-                    unfoldedContentExtraClasses: 'color-help-unfolded-content',
-                    expandedWidth: '120px',
-                    expandedHeight: '210px',
+                    buttonBackground: '#87a04f',
                 }),
             ]
         });
@@ -212,34 +211,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
         log( 'Leaving state: '+stateName );
 
         switch (stateName) {
-            /*case 'playAction':
-                this.onLeavingPlayAction();
+            case 'initialSelection':
+                this.onLeavingInitialSelection();
                 break;
-            case 'chooseNewCard':
-                this.onLeavingChooseNewCard();
-                break;
-            case 'payDestination':
-                this.onLeavingPayDestination();
-                break;
-            case 'discardTableCard':
-                this.onLeavingDiscardTableCard();
-                break;
-            case 'discardCard':
-                this.onLeavingDiscardCard();
-                break;
-            case 'reserveDestination':
-                this.onLeavingReserveDestination();
-                break;*/
         }
     }
 
-    /*private onLeavingPlayAction() {
-        this.tableCenter.setTechonologyTilesSelectable(false);
-        this.getCurrentPlayerTable()?.setHandSelectable(false);
-        this.getCurrentPlayerTable()?.setDestinationsSelectable(false);
+    private onLeavingInitialSelection() {
+        this.getCurrentPlayerTable()?.endInitialSelection();
     }
     
-    private onLeavingChooseNewCard() {
+    /*private onLeavingChooseNewCard() {
         this.tableCenter.setCardsSelectable(false);
     }
 
@@ -573,22 +555,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.setPayDestinationLabelAndState();
         }
     }
-
-    private takeAtomicAction(action: string, args: any = {}, warning = false) {
-        if (!(this as any).checkAction(action)) return false;
-  
-        //(this as any).askConfirmation(warning, () =>
-          this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) }/*, false*/)
-        //);
-    }
   	
     public actSelectCardsToDiscard() {
-        if(!(this as any).checkAction('actSelect')) {
+        if(!(this as any).checkAction('actSelectCardsToDiscard')) {
             return;
         }
 
-        this.takeAction('actSelect', {
-            cardIds: this.getCurrentPlayerTable().hand.getSelection().map(card => card.id).join(','),
+        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const discardCards = this.getCurrentPlayerTable().hand.getCards().filter(card => !selectedCards.some(sc => sc.id == card.id));
+
+        this.takeAction('actSelectCardsToDiscard', {
+            cardIds: discardCards.map(card => card.id).join(','),
         });
     }
   	
@@ -598,6 +575,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
 
         this.takeAction('actCancelSelection');
+    }
+
+    private takeAtomicAction(action: string, args: any = {}, warning = false) {
+        if (!(this as any).checkAction(action)) return false;
+  
+        //(this as any).askConfirmation(warning, () =>
+          this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) }/*, false*/)
+        //);
     }
 
     public takeAction(action: string, data?: any) {

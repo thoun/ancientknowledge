@@ -10,6 +10,7 @@ interface AncientKnowledgePlayer extends Player {
     artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
     past: BuilderCard[];
     technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3*/
+    tiles: TechnologyTile[];
 }
 
 interface AncientKnowledgeGamedatas {
@@ -26,6 +27,7 @@ interface AncientKnowledgeGamedatas {
 
     // Add here variables you set up in getAllDatas
     cards: BuilderCard[];
+    techs: TechnologyTile[];
     /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;
     // TODO deck counters ? discard counters ?*/

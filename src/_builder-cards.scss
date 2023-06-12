@@ -1,21 +1,23 @@
-.builder-card {
-    display: inline-block;
-    position: relative;
-    width: 163px;
-    height: 228px;
-    border-radius: 8px;
-    font-family: 'Apotek Comp'; // TODO ask Juricafor Adobe font (regular)
+.initial-selection {
+    .builder-card {  
 
-    .card-sides {
-        .card-side {
-            border-radius: 8px;
-
-            &>* {
-                pointer-events: none;
-                user-select: none;
+        &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
+            &:not(.bga-cards_selected-card) {
+                animation: unset;
+                box-shadow: 0 0 3px 3px red;
             }
-        }
-    }    
+        }    
+
+        &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
+            box-shadow: 0 0 5px 5px green;
+        }   
+
+    }
+}
+
+.builder-card {
+    width: 163px;
+    height: 228px;    
 
     &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
         &:not(.bga-cards_selected-card) {
@@ -35,17 +37,7 @@
         }
     }
 
-    $cardBackground: #f8f4f0;
-
     .front {
-      color: white;
-      font-size: 14px;
-      background-color: $cardBackground;
-
-      &>* {
-        position: absolute;
-      }
-
       .background {
         top: 8px;
         left: 8px;
@@ -68,36 +60,13 @@
         }
       }
 
-      .top-box {
-        top: 8px;
-        left: 8px;
-        padding: 0 3px 3px 0;
-        border-radius: 0 0 12px 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: $cardBackground;
-        gap: 4px;
-        
+      .type-box {        
         &[data-type="A"] {
             border-radius: 0 0 7px 0;
         }
 
         .type {
-            width: 22px;
-            height: 22px;
-            border-radius: 5px 0 5px 5px;
-
-            .type-icon {
-                width: 100%;
-                height: 100%;
-                background-repeat: no-repeat;
-                background-position: center center;
-                background-size: 70%;
-            }
-
             &[data-type="A"] {
-                background: $artifactColor;
                 border-radius: 5px 0 5px 0;
 
                 .type-icon {
@@ -105,22 +74,16 @@
                 }
             }
             &[data-type="C"] {
-                background: $cityColor;
-
                 .type-icon {
                     background-image: url('img/monument-icon-city-white.svg');
                 }
             }
             &[data-type="M"] {
-                background: $megalithColor;
-
                 .type-icon {
                     background-image: url('img/monument-icon-megalith-white.svg');
                 }
             }
             &[data-type="P"] {
-                background: $pyramidColor;
-
                 .type-icon {
                     background-image: url('img/monument-icon-pyramid-white.svg');
                 }
@@ -189,13 +152,8 @@
         top: 138px;
         right: 7px;
         height: 28px;
-
-        &>* {            
-            position: absolute;
-        }
         
         .activation-box {
-            background: $cardBackground;
             top: -2px;
             width: 28px;
             right: 0;
@@ -203,11 +161,6 @@
         }
 
         .line {
-            background: var(--card-color);
-            width: 2px;
-            height: 2px;
-            padding: 0;
-
             &.bottom {
                 left: 0;
                 bottom: 0;
@@ -281,98 +234,29 @@
             right: 0px;
             width: 23px;
             height: 23px;
-            background-repeat: no-repeat;
-            background-position: center center;
-    
-            &[data-type="anytime"] {
-                background-image: url('img/anytime-icon.svg');
-                background-size: 80%;
-            }
-            &[data-type="decline"] {
-                background-image: url('img/decline-icon.svg');
-                background-size: 80%;
-            }
-            &[data-type="immediate"] {
-                background-image: url('img/immediate-icon.svg');
-                background-size: 50%;
-            }
-            &[data-type="endturn"] {
-                background-image: url('img/timeline-icon.svg');
-                background-size: 80%;
-            }
-            &[data-type="endgame"] {
-                background-image: url('img/vp-icon.svg');
-                background-size: 80%;
-            }
-    
+
             &::after {
-                content: '';
-                position: absolute;
                 bottom: -3px;
                 right: 5px;
-                width: 0px;
-                height: 0px;
-                border-style: solid;
                 border-width: 3px 7px 0 7px;
                 border-color: var(--card-color) transparent transparent transparent;
             }
           }
       }
 
-      .left-box {  
+      .name-box {  
         top: 220px;
         left: 8px;
         min-width: 84px;
         max-width: 140px;
-        height: 22px;
         transform-origin: top left;
         transform: rotate(-90deg);
-
-        background: $cardBackground;
-        padding-bottom: 4px;
-
-        $nameAndCountryHeight: 24px;
-        $nameAndCountryHeightMargin: 27px;
-
-        &::before {
-            position: absolute;
-            content: "";
-            top: 0;
-            right: -$nameAndCountryHeightMargin;
-            width: 0;
-            height: 0;
-            border-width: $nameAndCountryHeightMargin $nameAndCountryHeightMargin 0 0;
-            border-color: $cardBackground transparent transparent transparent;
-            border-style: solid;
-        }
-
-        .name-and-country {
-          line-height: 12px;
-          text-align: left;
-          background: var(--card-color);
   
-          .name {
-            white-space: nowrap;
-            text-overflow: clip;
-          }
-  
-          .country {
+        .country {
             font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
             font-size: 10px;
             font-style: italic;
-          }
-  
-          &::after {
-              position: absolute;
-              content: "";
-              top: 0;
-              right: -$nameAndCountryHeight;
-              width: 0;
-              height: 0;
-              border-width: $nameAndCountryHeight $nameAndCountryHeight 0 0;
-              border-color: var(--card-color) transparent transparent transparent;
-              border-style: solid;
-          }
+            margin-top: -3px;
         }
       }
 
@@ -381,15 +265,6 @@
         right: 5px;
         bottom: 5px;
         min-height: 56px;
-        color: #404040;
-        text-align: center;
-        font-size: 13px;
-        font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
-        
-        .icon {
-            width: 16px;
-            height: 16px;
-        }
       }
     }
 }
