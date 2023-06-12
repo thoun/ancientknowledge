@@ -46,7 +46,7 @@ $machinestates = [
     'descriptionmyturn' => clienttranslate('${you} must select the 6 cards you want to keep'),
     'type' => 'multipleactiveplayer',
     'args' => 'argsInitialSelection',
-    'possibleactions' => ['actSelect', 'actCancelSelection'],
+    'possibleactions' => ['actSelectCardsToDiscard', 'actCancelSelection'],
     'transitions' => ['done' => ST_FINISH_SETUP, 'zombiePass' => ST_FINISH_SETUP],
   ],
 

@@ -35,6 +35,22 @@ class action_ancientknowledge extends APP_GameAction
     }
   }
 
+  public function actSelectCardsToDiscard()
+  {
+    self::setAjaxMode();
+    $cardIds = self::getArg('cardIds', AT_json, true);
+    $this->validateJSonAlphaNum($cardIds, 'cardIds');
+    $this->game->actSelectCardsToDiscard($cardIds);
+    self::ajaxResponse();
+  }
+
+  public function actCancelSelection()
+  {
+    self::setAjaxMode();
+    $this->game->actCancelSelection();
+    self::ajaxResponse();
+  }
+
   //////////////////
   ///// ENGINE  /////
   //////////////////
