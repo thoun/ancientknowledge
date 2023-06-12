@@ -4,6 +4,7 @@ const log = isDebug ? console.log.bind(window.console) : function () { };
 class PlayerTable {
     public playerId: number;
     public hand?: LineStock<BuilderCard>;
+    public handTech?: LineStock<TechnologyTile>;
     public timeline: SlotStock<BuilderCard>;
     public past: AllVisibleDeck<BuilderCard>;
     public artifacts: SlotStock<BuilderCard>;
@@ -27,6 +28,7 @@ class PlayerTable {
             </div>`;
         }
         html += `
+        <div id="player-table-${this.playerId}-hand-tech" class="hand tech"></div>
             <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}"></div>
             <div id="player-table-${this.playerId}-past" class="past"></div>
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
@@ -45,14 +47,15 @@ class PlayerTable {
         dojo.place(html, document.getElementById('tables'));
 
         if (this.currentPlayer) {
-            const handDiv = document.getElementById(`player-table-${this.playerId}-hand`);
-            this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, handDiv, {
+            this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, document.getElementById(`player-table-${this.playerId}-hand`), {
                 // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
             });
             this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);   
             this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);           
             this.hand.addCards(player.hand);
         }
+        this.handTech = new LineStock<TechnologyTile>(this.game.technologyTilesManager, document.getElementById(`player-table-${this.playerId}-hand-tech`));
+        this.handTech.addCards(player.tiles);
         
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);
         this.timeline = new SlotStock<BuilderCard>(this.game.builderCardsManager, timelineDiv, {
@@ -86,5 +89,11 @@ class PlayerTable {
     public setInitialSelection(cards: BuilderCard[]) {
         this.hand.addCards(cards);
         this.hand.setSelectionMode('multiple');
+        document.getElementById(`player-table-${this.playerId}-hand`).classList.add('initial-selection');
+    }
+    
+    public endInitialSelection() {
+        this.hand.setSelectionMode('none');
+        document.getElementById(`player-table-${this.playerId}-hand`).classList.remove('initial-selection');
     }
 }

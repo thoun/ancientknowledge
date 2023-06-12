@@ -50,7 +50,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         const backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
         let html = `
         <div class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
-        <div class="top-box" data-type="${typeLetter}">
+        <div class="type-box" data-type="${typeLetter}">
             <div class="type" data-type="${typeLetter}">
                 <div class="type-icon"></div>
             </div>
@@ -92,9 +92,9 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         html += `
             <div class="activation" data-type="${card.activation}"></div>
         </div>
-        <div class="left-box">
-            <div class="name-and-country">
-                <div class="name">${card.name ?? ''}</div>
+        <div class="name-box">
+            <div class="name">
+                ${card.name ?? ''}
                 <div class="country">${card.country ?? ''}</div>
             </div>
         </div>

@@ -5,10 +5,15 @@ $cityColor: #d66b2a;
 $megalithColor: #4a82a3;
 $pyramidColor: #87a04f;
 
+$ancientColor: #3c857f;
+$secretColor: #b8a222;
+$writingColor: #633c37;
+
 @import '../node_modules/bga-help/bga-help';
 @import '../node_modules/bga-zoom/bga-zoom';
 @import '../node_modules/bga-jump-to/bga-jump-to';
 @import '../node_modules/bga-cards/bga-cards';
+@import 'cards';
 @import 'builder-cards';
 @import 'technology-tiles';
 @import 'table-center';
@@ -70,6 +75,15 @@ html, .mode_3d #game_play_area_background {
   }
   &.artifact {
     background-image: url('img/artifact-icon.svg');
+  }
+  &.ancient {
+    background-image: url('img/technology-icon-ancient.svg');
+  }
+  &.secret {
+      background-image: url('img/technology-icon-secret.svg');
+  }
+  &.writing {
+      background-image: url('img/technology-icon-writing.svg');
   }
 }
 

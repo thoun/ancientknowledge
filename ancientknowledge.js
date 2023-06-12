@@ -2054,9 +2054,12 @@ function formatTextIcons(rawText) {
         .replace(/<VP>/ig, '<span class="icon vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon city"></span>')
         .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')
-        .replace(/<MONOLITH>/ig, '<span class="icon megalith"></span>') // TODO
         .replace(/<PYRAMID>/ig, '<span class="icon pyramid"></span>')
-        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>');
+        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>')
+        .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
+        .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
+        .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
+        .replace(/\[n°(\d)\]/ig, '<span class="icon starting-place">$1</span>');
 }
 var CARD_COLORS = {
     'A': '#734073',
@@ -2092,7 +2095,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         div.dataset.number = ''+card.number;*/
         var backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
         var backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
-        var html = "\n        <div class=\"background\" data-type=\"".concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"top-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
+        var html = "\n        <div class=\"background\" data-type=\"".concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
         if (card.startingSpace) {
             html += "<div class=\"starting-space\">".concat(card.startingSpace, "</div>");
         }
@@ -2107,7 +2110,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_a = card.initialKnowledge) !== null && _a !== void 0 ? _a : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_b = card.victoryPoint) !== null && _b !== void 0 ? _b : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"left-box\">\n            <div class=\"name-and-country\">\n                <div class=\"name\">").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
         div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
@@ -2124,6 +2127,11 @@ var BuilderCardsManager = /** @class */ (function (_super) {
     };
     return BuilderCardsManager;
 }(CardManager));
+var TILE_COLORS = {
+    'ancient': '#3c857f',
+    'secret': '#b8a222',
+    'writing': '#633c37',
+};
 var TechnologyTilesManager = /** @class */ (function (_super) {
     __extends(TechnologyTilesManager, _super);
     function TechnologyTilesManager(game) {
@@ -2143,15 +2151,38 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         return _this;
     }
     TechnologyTilesManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+        var _a, _b, _c, _d, _e;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
-        div.dataset.type = '' + card.type;
-        div.dataset.number = '' + card.number;
+        var type = card.type;
+        var requirement = ((_a = card.requirement) === null || _a === void 0 ? void 0 : _a.length) > 0;
+        div.dataset.requirement = requirement.toString();
+        div.style.setProperty('--card-color', TILE_COLORS[type]);
+        /*
+        div.dataset.type = ''+card.type;
+        div.dataset.number = ''+card.number;*/
+        var backgroundPositionX = ((card.number - 1) % 9) * 100 / 8;
+        var backgroundPositionY = Math.floor((card.number - 1) / 9) * 100 / 4;
+        var html = "\n        <div class=\"background\" data-type=\"".concat(type, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(type, "\">\n            <div class=\"type\" data-type=\"").concat(type, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        </div>\n        <div class=\"level-box\">\n            <div class=\"level-icon\" data-level=\"").concat(card.level, "\"></div>\n        </div>");
+        if (requirement) {
+            html += "<div class=\"requirement\">".concat((_b = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "</div>");
+        }
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>");
+        html += "<div class=\"effect\">".concat((_e = (_d = card.effect) === null || _d === void 0 ? void 0 : _d.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _e !== void 0 ? _e : '', "</div>\n        ");
+        div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
     TechnologyTilesManager.prototype.getTooltip = function (card) {
-        var message = "\n        <strong>".concat(_("Level:"), "</strong> ").concat(card.level, "\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(card.type, "\n        <br>\n        <strong>").concat(_("TODO number:"), "</strong> ").concat(card.number, "\n        ");
+        var message = "<pre>".concat(JSON.stringify(card, null, 2), "</pre>"); // TODO TEMP
+        /*let message = `
+        <strong>${_("Level:")}</strong> ${card.level}
+        <br>
+        <strong>${_("Type:")}</strong> ${card.type}
+        <br>
+        <strong>${_("TODO number:")}</strong> ${card.number}
+        `;
+ */
         return message;
     };
     TechnologyTilesManager.prototype.setForHelp = function (card, divId) {
@@ -2212,21 +2243,22 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        html += "\n        <div id=\"player-table-".concat(this.playerId, "-hand-tech\" class=\"hand tech\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
         for (var i = 1; i <= 3; i++) {
             html += "\n                <div id=\"player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i, "\" class=\"technology-tiles-deck\"></div>\n                ");
         }
         html += "\n            </div>\n        </div>\n        ";
         dojo.place(html, document.getElementById('tables'));
         if (this.currentPlayer) {
-            var handDiv = document.getElementById("player-table-".concat(this.playerId, "-hand"));
-            this.hand = new LineStock(this.game.builderCardsManager, handDiv, {
+            this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
             // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
             });
             this.hand.onCardClick = function (card) { return _this.game.onHandCardClick(card); };
             this.hand.onSelectionChange = function (selection) { return _this.game.onHandCardSelectionChange(selection); };
             this.hand.addCards(player.hand);
         }
+        this.handTech = new LineStock(this.game.technologyTilesManager, document.getElementById("player-table-".concat(this.playerId, "-hand-tech")));
+        this.handTech.addCards(player.tiles);
         var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
         this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
             slotsIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
@@ -2252,6 +2284,11 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.setInitialSelection = function (cards) {
         this.hand.addCards(cards);
         this.hand.setSelectionMode('multiple');
+        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.add('initial-selection');
+    };
+    PlayerTable.prototype.endInitialSelection = function () {
+        this.hand.setSelectionMode('none');
+        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
     };
     return PlayerTable;
 }());
@@ -2284,12 +2321,17 @@ var AncientKnowledge = /** @class */ (function () {
         var _this = this;
         log("Starting game setup");
         this.gamedatas = gamedatas;
-        Object.values(gamedatas.players).forEach(function (player) {
+        // TODO TEMP
+        Object.values(gamedatas.players).forEach(function (player, index) {
             var playerId = Number(player.id);
             if (playerId == _this.getPlayerId()) {
                 player.hand = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; });
             }
             player.handCount = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; }).length;
+            if (index == 0) {
+                player.tiles = [2, 4, 12, 16, 20, 24].map(function (index) { return gamedatas.techs[index]; });
+                gamedatas.cards.forEach(function (card) { return console.log(card.effect[0]); });
+            }
         });
         log('gamedatas', gamedatas);
         this.animationManager = new AnimationManager(this);
@@ -2328,14 +2370,7 @@ var AncientKnowledge = /** @class */ (function () {
                     title: _("Card help").toUpperCase(),
                     html: this.getHelpHtml(),
                     onPopinCreated: function () { return _this.populateHelp(); },
-                    buttonBackground: '#5890a9',
-                }),
-                new BgaHelpExpandableButton({
-                    unfoldedHtml: this.getColorAddHtml(),
-                    foldedContentExtraClasses: 'color-help-folded-content',
-                    unfoldedContentExtraClasses: 'color-help-unfolded-content',
-                    expandedWidth: '120px',
-                    expandedHeight: '210px',
+                    buttonBackground: '#87a04f',
                 }),
             ]
         });
@@ -2433,33 +2468,16 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
-            /*case 'playAction':
-                this.onLeavingPlayAction();
+            case 'initialSelection':
+                this.onLeavingInitialSelection();
                 break;
-            case 'chooseNewCard':
-                this.onLeavingChooseNewCard();
-                break;
-            case 'payDestination':
-                this.onLeavingPayDestination();
-                break;
-            case 'discardTableCard':
-                this.onLeavingDiscardTableCard();
-                break;
-            case 'discardCard':
-                this.onLeavingDiscardCard();
-                break;
-            case 'reserveDestination':
-                this.onLeavingReserveDestination();
-                break;*/
         }
     };
-    /*private onLeavingPlayAction() {
-        this.tableCenter.setTechonologyTilesSelectable(false);
-        this.getCurrentPlayerTable()?.setHandSelectable(false);
-        this.getCurrentPlayerTable()?.setDestinationsSelectable(false);
-    }
-    
-    private onLeavingChooseNewCard() {
+    AncientKnowledge.prototype.onLeavingInitialSelection = function () {
+        var _a;
+        (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.endInitialSelection();
+    };
+    /*private onLeavingChooseNewCard() {
         this.tableCenter.setCardsSelectable(false);
     }
 
@@ -2700,6 +2718,22 @@ var AncientKnowledge = /** @class */ (function () {
             this.setPayDestinationLabelAndState();
         }
     };
+    AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
+        if (!this.checkAction('actSelectCardsToDiscard')) {
+            return;
+        }
+        var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        var discardCards = this.getCurrentPlayerTable().hand.getCards().filter(function (card) { return !selectedCards.some(function (sc) { return sc.id == card.id; }); });
+        this.takeAction('actSelectCardsToDiscard', {
+            cardIds: discardCards.map(function (card) { return card.id; }).join(','),
+        });
+    };
+    AncientKnowledge.prototype.actCancelSelection = function () {
+        if (!this.checkAction('actCancelSelection')) {
+            return;
+        }
+        this.takeAction('actCancelSelection');
+    };
     AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {
         if (args === void 0) { args = {}; }
         if (warning === void 0) { warning = false; }
@@ -2708,20 +2742,6 @@ var AncientKnowledge = /** @class */ (function () {
         //(this as any).askConfirmation(warning, () =>
         this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) } /*, false*/);
         //);
-    };
-    AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
-        if (!this.checkAction('actSelect')) {
-            return;
-        }
-        this.takeAction('actSelect', {
-            cardIds: this.getCurrentPlayerTable().hand.getSelection().map(function (card) { return card.id; }).join(','),
-        });
-    };
-    AncientKnowledge.prototype.actCancelSelection = function () {
-        if (!this.checkAction('actCancelSelection')) {
-            return;
-        }
-        this.takeAction('actCancelSelection');
     };
     AncientKnowledge.prototype.takeAction = function (action, data) {
         data = data || {};
