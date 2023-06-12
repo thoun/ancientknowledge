@@ -49,15 +49,15 @@ interface AncientKnowledgeGame extends Game {
     highlightPlayerTokens(playerId: number | null): void;
     onTableDestinationClick(destination: TechnologyTile): void;
     onHandCardClick(card: BuilderCard): void;
+    onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
 }
 
-interface EnteringChooseActionArgs {
-    canRecruit: boolean;
-    canExplore: boolean;
-    canTrade: boolean;
-    possibleDestinations: TechnologyTile[];
+interface EnteringInitialSelectionArgs {
+    _private?: {
+        cards: string[];
+    }
 }
 
 interface EnteringChooseNewCardArgs {

@@ -143,6 +143,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;*/
         }
     }
+
+    private onEnteringInitialSelection(args: EnteringInitialSelectionArgs) {
+        const cards = this.gamedatas.cards.filter(card => args._private.cards.includes(card.id));
+        this.getCurrentPlayerTable().setInitialSelection(cards);
+    }
     
     /*private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
@@ -262,8 +267,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         
         if ((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
+                case 'initialSelection':
+                    //const initialSelectionArgs = args as EnteringInitialSelectionArgs;
+                    this.onEnteringInitialSelection(args);
+                    (this as any).addActionButton(`actSelectCardsToDiscard_button`, _('Keep selected cards'), () => this.actSelectCardsToDiscard());
+                    document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
+                    break;
                 case 'chooseAction':
-                    //const chooseActionArgs = args as EnteringChooseActionArgs;
                     [
                         ['create', _('Create')], 
                         ['learn', _('Learn')], 
@@ -273,6 +283,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
                     );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.takeAtomicAction('actRestart'), null, null, 'gray');
+                    break;
+            }
+        } else {
+            switch (stateName) {
+                case 'initialSelection':
+                    (this as any).addActionButton(`actCancelSelection_button`, _('Cancel'), () => this.actCancelSelection(), null, null, 'gray');
                     break;
             }
         }
@@ -531,7 +547,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     public onHandCardClick(card: BuilderCard): void {
-        this.playCard(card.id);
+        if (this.gamedatas.gamestate.name != 'initialSelection') {
+            this.playCard(card.id);
+        }
+    }
+    
+    public onHandCardSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'initialSelection') {
+            document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
+        }
     }
 
     public onTableCardClick(card: BuilderCard): void {
@@ -556,6 +580,24 @@ class AncientKnowledge implements AncientKnowledgeGame {
         //(this as any).askConfirmation(warning, () =>
           this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) }/*, false*/)
         //);
+    }
+  	
+    public actSelectCardsToDiscard() {
+        if(!(this as any).checkAction('actSelect')) {
+            return;
+        }
+
+        this.takeAction('actSelect', {
+            cardIds: this.getCurrentPlayerTable().hand.getSelection().map(card => card.id).join(','),
+        });
+    }
+  	
+    public actCancelSelection() {
+        if(!(this as any).checkAction('actCancelSelection')) {
+            return;
+        }
+
+        this.takeAction('actCancelSelection');
     }
 
     public takeAction(action: string, data?: any) {

@@ -109,7 +109,6 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
     }
 
     private getTooltip(card: BuilderCard): string {
-        console.log(JSON.stringify(card, null, 2));
         let message = `<pre>${JSON.stringify(card, null, 2)}</pre>`; // TODO TEMP
         /*let message = `
         <strong>${_("Type:")}</strong> ${card.type}

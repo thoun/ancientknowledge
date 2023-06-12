@@ -49,7 +49,8 @@ class PlayerTable {
             this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, handDiv, {
                 // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
             });
-            this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);            
+            this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);   
+            this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);           
             this.hand.addCards(player.hand);
         }
         
@@ -80,5 +81,10 @@ class PlayerTable {
 
     public setHandSelectable(selectable: boolean) {
         this.hand.setSelectionMode(selectable ? 'single' : 'none');
+    }
+    
+    public setInitialSelection(cards: BuilderCard[]) {
+        this.hand.addCards(cards);
+        this.hand.setSelectionMode('multiple');
     }
 }

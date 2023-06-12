@@ -835,10 +835,10 @@ body > .card {
 
 @keyframes selectable-card-animation {
   0% {
-    box-shadow: 0 0 3px 2px rgb(255, 212, 131);
+    box-shadow: 0 0 3px 2px white;
   }
   100% {
-    box-shadow: 0 0 5px 3px rgb(255, 212, 131);
+    box-shadow: 0 0 5px 3px white;
   }
 }
 .technology-tile {
@@ -930,14 +930,6 @@ body > .card {
   background-position-x: 100%;
 }
 
-@keyframes selectable-card-animation {
-  0% {
-    box-shadow: 0 0 3px 2px rgb(255, 212, 131);
-  }
-  100% {
-    box-shadow: 0 0 5px 3px rgb(255, 212, 131);
-  }
-}
 #table-center-wrapper {
   display: flex;
   justify-content: center;
