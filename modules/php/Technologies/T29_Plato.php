@@ -9,7 +9,7 @@ class T29_Plato extends \AK\Models\Technology
     $this->id = 'T29_Plato';
     $this->type = ANCIENT;
     $this->number = 29;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Plato');
     $this->requirement = [clienttranslate('7 monuments of the same type in your Past.')];
 

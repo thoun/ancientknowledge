@@ -9,7 +9,7 @@ class T41_EmeraldTablet extends \AK\Models\Technology
     $this->id = 'T41_EmeraldTablet';
     $this->type = WRITING;
     $this->number = 41;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Emerald Tablet');
     $this->requirement = [clienttranslate('3 <WRITING> in your collection.')];
 

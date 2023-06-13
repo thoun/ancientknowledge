@@ -9,7 +9,7 @@ class T22_AncientGreek extends \AK\Models\Technology
     $this->id = 'T22_AncientGreek';
     $this->type = WRITING;
     $this->number = 22;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Ancient Greek');
 
     $this->activation = IMMEDIATE;

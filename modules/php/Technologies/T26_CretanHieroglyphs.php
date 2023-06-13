@@ -9,7 +9,7 @@ class T26_CretanHieroglyphs extends \AK\Models\Technology
     $this->id = 'T26_CretanHieroglyphs';
     $this->type = WRITING;
     $this->number = 26;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Cretan Hieroglyphs');
 
     $this->activation = IMMEDIATE;

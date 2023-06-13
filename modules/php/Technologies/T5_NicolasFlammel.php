@@ -9,7 +9,7 @@ class T5_NicolasFlammel extends \AK\Models\Technology
     $this->id = 'T5_NicolasFlammel';
     $this->type = ANCIENT;
     $this->number = 5;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Nicolas Flammel');
 
     $this->activation = IMMEDIATE;

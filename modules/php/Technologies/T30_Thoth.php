@@ -9,7 +9,7 @@ class T30_Thoth extends \AK\Models\Technology
     $this->id = 'T30_Thoth';
     $this->type = ANCIENT;
     $this->number = 30;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Thoth');
     $this->requirement = [clienttranslate('9 <LOST_KNOWLEDGE> on your board.')];
 

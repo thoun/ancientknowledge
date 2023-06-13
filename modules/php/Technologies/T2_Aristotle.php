@@ -9,7 +9,7 @@ class T2_Aristotle extends \AK\Models\Technology
     $this->id = 'T2_Aristotle';
     $this->type = ANCIENT;
     $this->number = 2;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Aristotle');
     $this->requirement = [clienttranslate('2 <PYRAMID> in your past.')];
 

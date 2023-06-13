@@ -9,7 +9,7 @@ class T32_Akhenaten extends \AK\Models\Technology
     $this->id = 'T32_Akhenaten';
     $this->type = ANCIENT;
     $this->number = 32;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Akhenaten');
     $this->requirement = [clienttranslate('4 <PYRAMID> in your past.')];
 

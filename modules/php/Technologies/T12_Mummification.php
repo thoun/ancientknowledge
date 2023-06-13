@@ -9,7 +9,7 @@ class T12_Mummification extends \AK\Models\Technology
     $this->id = 'T12_Mummification';
     $this->type = SECRET;
     $this->number = 12;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Mummification');
 
     $this->activation = IMMEDIATE;

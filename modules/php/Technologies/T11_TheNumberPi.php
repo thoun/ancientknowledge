@@ -9,7 +9,7 @@ class T11_TheNumberPi extends \AK\Models\Technology
     $this->id = 'T11_TheNumberPi';
     $this->type = SECRET;
     $this->number = 11;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('The Number Pi');
 
     $this->activation = IMMEDIATE;

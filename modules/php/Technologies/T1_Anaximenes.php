@@ -9,7 +9,7 @@ class T1_Anaximenes extends \AK\Models\Technology
     $this->id = 'T1_Anaximenes';
     $this->type = ANCIENT;
     $this->number = 1;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Anaximenes');
     $this->requirement = [clienttranslate('3 <ARTEFACT> on your board.')];
 

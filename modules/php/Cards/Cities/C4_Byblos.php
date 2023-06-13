@@ -20,7 +20,7 @@ class C4_Byblos extends \AK\Models\Building
     $this->activation = ENDGAME;
     $this->effect = [
       clienttranslate(
-        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MONOLITH> ou <PYRAMID>) in your Past.'
+        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MEGALITH> ou <PYRAMID>) in your Past.'
       ),
     ];
   }

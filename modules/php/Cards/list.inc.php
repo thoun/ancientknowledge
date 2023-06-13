@@ -38,7 +38,7 @@ $cardIds = [
   'C35_Tulum',
   'C36_Cyrene',
 
-  // MONOLITHS
+  // MEGALITHS
   'M1_Stonehenge',
   'M2_MenhirDiMonteCorruTundu',
   'M3_AswanObelisk',

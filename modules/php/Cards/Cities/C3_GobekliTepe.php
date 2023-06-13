@@ -20,7 +20,7 @@ class C3_GobekliTepe extends \AK\Models\Building
     $this->activation = ENDGAME;
     $this->effect = [
       clienttranslate(
-        'Choose 1 type of monument (<CITY>, <MONOLITH> ou <PYRAMID> ). Gain 1 <VP> for each monument of this type in your Past.'
+        'Choose 1 type of monument (<CITY>, <MEGALITH> ou <PYRAMID> ). Gain 1 <VP> for each monument of this type in your Past.'
       ),
     ];
   }

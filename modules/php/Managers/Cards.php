@@ -31,7 +31,7 @@ class Cards extends \AK\Helpers\Pieces
     // First part before _ specify the type and the numbering
     $prefixes = [
       'C' => 'Cities',
-      'M' => 'Monoliths',
+      'M' => 'Megaliths',
       'P' => 'Pyramids',
       'A' => 'Artefacts',
     ];

@@ -20,7 +20,7 @@ class P11_PyramidOfCoba extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [
-      clienttranslate('If you have at least <MONOLITH> in your Past, discard up to 4 <LOST_KNOWLEDGE> from your board.'),
+      clienttranslate('If you have at least <MEGALITH> in your Past, discard up to 4 <LOST_KNOWLEDGE> from your board.'),
     ];
   }
 }

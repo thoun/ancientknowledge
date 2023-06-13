@@ -9,9 +9,9 @@ class T25_CopticAlphabet extends \AK\Models\Technology
     $this->id = 'T25_CopticAlphabet';
     $this->type = WRITING;
     $this->number = 25;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Coptic Alphabet');
-    $this->requirement = [clienttranslate('2 <MONOLITH> in your Past.')];
+    $this->requirement = [clienttranslate('2 <MEGALITH> in your Past.')];
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];

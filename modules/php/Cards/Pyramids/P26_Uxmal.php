@@ -19,6 +19,6 @@ class P26_Uxmal extends \AK\Models\Building
     $this->initialKnowledge = 1;
     $this->startingSpace = 2;
     $this->activation = ENDTURN;
-    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MONOLITH> adjacent to this card.')];
+    $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> adjacent to this card.')];
   }
 }

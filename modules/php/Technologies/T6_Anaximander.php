@@ -9,7 +9,7 @@ class T6_Anaximander extends \AK\Models\Technology
     $this->id = 'T6_Anaximander';
     $this->type = ANCIENT;
     $this->number = 6;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Anaximander');
 
     $this->activation = IMMEDIATE;

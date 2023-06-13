@@ -9,9 +9,9 @@ class T45_Hieroglyphs extends \AK\Models\Technology
     $this->id = 'T45_Hieroglyphs';
     $this->type = WRITING;
     $this->number = 45;
-    $this->lvl = 2;
+    $this->level = 2;
     $this->name = clienttranslate('Hieroglyphs');
-    $this->requirement = [clienttranslate('5 <MONOLITH> in your past.')];
+    $this->requirement = [clienttranslate('5 <MEGALITH> in your past.')];
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('4 <VP>')];

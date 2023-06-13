@@ -9,7 +9,7 @@ class T4_Thales extends \AK\Models\Technology
     $this->id = 'T4_Thales';
     $this->type = ANCIENT;
     $this->number = 4;
-    $this->lvl = 1;
+    $this->level = 1;
     $this->name = clienttranslate('Thales');
 
     $this->activation = IMMEDIATE;
