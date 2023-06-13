@@ -62,4 +62,21 @@ class Player extends \AK\Helpers\DB_Model
   {
     return Cards::getHand($this->id, $type);
   }
+
+  public function getFreeSlots()
+  {
+    // TODO
+    $slots = [];
+    for ($i = 1; $i <= 6; $i++) {
+      $slots[$i] = "timeline-$i-0";
+    }
+
+    return $slots;
+  }
+
+  public function getFreeArtefactSlot()
+  {
+    // TODO
+    return 'artefact-0';
+  }
 }

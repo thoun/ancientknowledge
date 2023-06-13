@@ -35,4 +35,9 @@ class Artefact extends \AK\Helpers\DB_Model
     ['activation', 'string'],
     ['effect', 'obj'],
   ];
+
+  public function isArtefact()
+  {
+    return true;
+  }
 }
