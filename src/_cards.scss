@@ -4,7 +4,7 @@ $cardBackground: #f8f4f0;
     display: inline-block;
     position: relative;
     border-radius: 8px;
-    font-family: 'Apotek Comp'; // TODO ask Juricafor Adobe font (regular)
+    font-family: "apotek-comp", sans-serif;
 
     .card-sides {
         .card-side {
@@ -132,6 +132,7 @@ $cardBackground: #f8f4f0;
           white-space: nowrap;
           text-overflow: clip;
           height: $nameHeight;
+          padding: 2px;
     
           &::after {
               position: absolute;
@@ -151,12 +152,19 @@ $cardBackground: #f8f4f0;
         color: #404040;
         text-align: center;
         font-size: 13px;
-        font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
+        font-family: "quador-display", serif;
         
         .icon {
             width: 16px;
             height: 16px;
         }
       }
+    }
+
+    .icon.starting-space {
+      display: inline-flex;
+      justify-content: center;
+      font-size: 12px;
+      line-height: 14px;
     }
 }

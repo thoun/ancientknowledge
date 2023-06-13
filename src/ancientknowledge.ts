@@ -58,7 +58,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
             if (index == 0) {
                 player.tiles = [2, 4, 12, 16, 20, 24].map(index => gamedatas.techs[index]);
-                gamedatas.cards.forEach(card => console.log(card.effect[0]));
+                //gamedatas.cards.forEach(card => console.log(card.effect[0]));
             }
         });
 

@@ -2111,7 +2111,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_a = card.initialKnowledge) !== null && _a !== void 0 ? _a : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_b = card.victoryPoint) !== null && _b !== void 0 ? _b : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons('[n°5]' + text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
         div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
@@ -2331,7 +2331,7 @@ var AncientKnowledge = /** @class */ (function () {
             player.handCount = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; }).length;
             if (index == 0) {
                 player.tiles = [2, 4, 12, 16, 20, 24].map(function (index) { return gamedatas.techs[index]; });
-                gamedatas.cards.forEach(function (card) { return console.log(card.effect[0]); });
+                //gamedatas.cards.forEach(card => console.log(card.effect[0]));
             }
         });
         log('gamedatas', gamedatas);

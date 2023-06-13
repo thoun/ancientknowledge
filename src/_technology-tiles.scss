@@ -83,6 +83,8 @@
 
         .name {
             height: 16px;
+            font-size: 16px;
+            line-height: 15px;
     
             &::after {
                 right: -$nameHeight;
@@ -166,7 +168,7 @@
         color: #404040;
         text-align: center;
         font-size: 13px;
-        font-family: 'Quador Display'; // TODO ask Juricafor Adobe font (regular and italic)
+        font-family: "quador-display", serif;
         
         .icon {
             width: 16px;

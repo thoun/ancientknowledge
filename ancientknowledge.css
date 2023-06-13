@@ -501,7 +501,7 @@ body > .card {
   display: inline-block;
   position: relative;
   border-radius: 8px;
-  font-family: "Apotek Comp";
+  font-family: "apotek-comp", sans-serif;
 }
 .card .card-sides .card-side {
   border-radius: 8px;
@@ -607,6 +607,7 @@ body > .card {
   white-space: nowrap;
   text-overflow: clip;
   height: 24px;
+  padding: 2px;
 }
 .card .front .name-box .name::after {
   position: absolute;
@@ -623,11 +624,17 @@ body > .card {
   color: #404040;
   text-align: center;
   font-size: 13px;
-  font-family: "Quador Display";
+  font-family: "quador-display", serif;
 }
 .card .front .effect .icon {
   width: 16px;
   height: 16px;
+}
+.card .icon.starting-space {
+  display: inline-flex;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .initial-selection .builder-card.bga-cards_selectable-card:not(.bga-cards_disabled-card):not(.bga-cards_selected-card) {
@@ -831,11 +838,14 @@ body > .card {
   transform-origin: top left;
   transform: rotate(-90deg);
 }
+.builder-card .front .name-box .name {
+  line-height: 10px;
+}
 .builder-card .front .name-box .country {
-  font-family: "Quador Display";
-  font-size: 10px;
+  font-family: "quador-display", serif;
   font-style: italic;
-  margin-top: -3px;
+  font-size: 10px;
+  margin-top: 4px;
 }
 .builder-card .front .effect {
   left: 32px;
@@ -918,6 +928,8 @@ body > .card {
 }
 .technology-tile .front .name-box .name {
   height: 16px;
+  font-size: 16px;
+  line-height: 15px;
 }
 .technology-tile .front .name-box .name::after {
   right: -16px;
@@ -986,7 +998,7 @@ body > .card {
   color: #404040;
   text-align: center;
   font-size: 13px;
-  font-family: "Quador Display";
+  font-family: "quador-display", serif;
 }
 .technology-tile .front .requirement .icon {
   width: 16px;
@@ -1214,7 +1226,7 @@ body > .card {
   justify-content: center;
   align-items: center;
   font-size: 20pt;
-  font-family: "copperplate-gothic-bold";
+  font-family: "apotek-comp", sans-serif;
 }
 .player-table .player-board {
   position: relative;
@@ -1299,14 +1311,6 @@ body > .card {
     margin-top: 8px;
   }
 }
-/*@font-face {
-    font-family: 'copperplate-gothic-bold';
-    src: url('img/copperplate-gothic-bold.woff2') format('woff2'),
-         url('img/copperplate-gothic-bold.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-
-}*/
 html, .mode_3d #game_play_area_background {
   background: url("img/background.jpg") #b5b4b4;
   background-size: 100% auto;
