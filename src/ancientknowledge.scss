@@ -61,6 +61,9 @@ html, .mode_3d #game_play_area_background {
   &.knowledge {
     background-image: url('img/knowledge-icon.svg');
   }
+  &.lost-knowledge {
+    background-image: url('img/lost-knowledge-icon.svg');
+  }
   &.vp {
     background-image: url('img/vp-icon.svg');
   }
@@ -85,33 +88,34 @@ html, .mode_3d #game_play_area_background {
   &.writing {
       background-image: url('img/technology-icon-writing.svg');
   }
+  &.starting-space {
+    background-image: url('img/starting-space-icon.svg');
+  }
 }
 
 .action-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url('img/action-icons.png');
-  background-size: auto 100%;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-  border-radius: 50%;
   
   &.create {
-    background-position-x: #{0 * 100% / 4};
+    background-image: url('img/action-create-white.svg');
   }  
   &.learn {
-    background-position-x: #{1 * 100% / 4};
+    background-image: url('img/action-learn-white.svg');
   }  
   &.archive {
-    background-position-x: #{2 * 100% / 4};
+    background-image: url('img/action-archive-white.svg');
   }
   &.excavate {
-    background-position-x: #{3 * 100% / 4};
+    background-image: url('img/action-excavate-white.svg');
   }
   &.search {
-    background-position-x: #{4 * 100% / 4};
+    background-image: url('img/action-search-white.svg');
   }
 }
 

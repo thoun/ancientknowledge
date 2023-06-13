@@ -711,7 +711,7 @@ body > .card {
   bottom: 0;
   left: 0;
   right: 0;
-  background-image: url("img/starting-space-icon.svg");
+  background-image: url("img/starting-space-icon-white.svg");
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 90%;
@@ -1330,6 +1330,9 @@ html, .mode_3d #game_play_area_background {
 .icon.knowledge {
   background-image: url("img/knowledge-icon.svg");
 }
+.icon.lost-knowledge {
+  background-image: url("img/lost-knowledge-icon.svg");
+}
 .icon.vp {
   background-image: url("img/vp-icon.svg");
 }
@@ -1354,32 +1357,33 @@ html, .mode_3d #game_play_area_background {
 .icon.writing {
   background-image: url("img/technology-icon-writing.svg");
 }
+.icon.starting-space {
+  background-image: url("img/starting-space-icon.svg");
+}
 
 .action-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-image: url("img/action-icons.png");
-  background-size: auto 100%;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-  border-radius: 50%;
 }
 .action-icon.create {
-  background-position-x: 0%;
+  background-image: url("img/action-create-white.svg");
 }
 .action-icon.learn {
-  background-position-x: 25%;
+  background-image: url("img/action-learn-white.svg");
 }
 .action-icon.archive {
-  background-position-x: 50%;
+  background-image: url("img/action-archive-white.svg");
 }
 .action-icon.excavate {
-  background-position-x: 75%;
+  background-image: url("img/action-excavate-white.svg");
 }
 .action-icon.search {
-  background-position-x: 100%;
+  background-image: url("img/action-search-white.svg");
 }
 
 .action-button .icon, .action-button .color, .log .icon, .log .color {

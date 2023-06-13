@@ -2051,6 +2051,7 @@ function formatTextIcons(rawText) {
     }
     return rawText
         .replace(/<KNOWLEDGE>/ig, '<span class="icon knowledge"></span>')
+        .replace(/<LOST_KNOWLEDGE>/ig, '<span class="icon lost-knowledge"></span>')
         .replace(/<VP>/ig, '<span class="icon vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon city"></span>')
         .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')
@@ -2059,7 +2060,7 @@ function formatTextIcons(rawText) {
         .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
         .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
         .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
-        .replace(/\[n°(\d)\]/ig, '<span class="icon starting-place">$1</span>');
+        .replace(/\[n°(\d)\]/ig, function (fullMatch, number) { return "<span class=\"icon starting-space\">".concat(number, "</span>"); });
 }
 var CARD_COLORS = {
     'A': '#734073',
@@ -2110,7 +2111,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_a = card.initialKnowledge) !== null && _a !== void 0 ? _a : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_b = card.victoryPoint) !== null && _b !== void 0 ? _b : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons('[n°5]' + text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
         div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
@@ -2325,9 +2326,9 @@ var AncientKnowledge = /** @class */ (function () {
         Object.values(gamedatas.players).forEach(function (player, index) {
             var playerId = Number(player.id);
             if (playerId == _this.getPlayerId()) {
-                player.hand = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; });
+                player.hand = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; });
             }
-            player.handCount = gamedatas.cards.filter(function (card) { return card.location == null && card.pId == playerId; }).length;
+            player.handCount = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; }).length;
             if (index == 0) {
                 player.tiles = [2, 4, 12, 16, 20, 24].map(function (index) { return gamedatas.techs[index]; });
                 gamedatas.cards.forEach(function (card) { return console.log(card.effect[0]); });
@@ -2685,16 +2686,15 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onTableDestinationClick = function (destination) {
-        if (this.gamedatas.gamestate.name == 'reserveDestination') {
+        /*if (this.gamedatas.gamestate.name == 'reserveDestination') {
             this.reserveDestination(destination.id);
-        }
-        else {
+        } else {
             this.takeDestination(destination.id);
-        }
+        }*/
     };
     AncientKnowledge.prototype.onHandCardClick = function (card) {
         if (this.gamedatas.gamestate.name != 'initialSelection') {
-            this.playCard(card.id);
+            //this.playCard(card.id);
         }
     };
     AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
@@ -2703,20 +2703,18 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onTableCardClick = function (card) {
-        if (this.gamedatas.gamestate.name == 'discardTableCard') {
+        /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
             this.discardTableCard(card.id);
-        }
-        else {
+        } else {
             this.chooseNewCard(card.id);
-        }
+        }*/
     };
     AncientKnowledge.prototype.onPlayedCardClick = function (card) {
-        if (this.gamedatas.gamestate.name == 'discardCard') {
+        /*if (this.gamedatas.gamestate.name == 'discardCard') {
             this.discardCard(card.id);
-        }
-        else {
+        } else {
             this.setPayDestinationLabelAndState();
-        }
+        }*/
     };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {
@@ -2725,13 +2723,10 @@ var AncientKnowledge = /** @class */ (function () {
         var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         var discardCards = this.getCurrentPlayerTable().hand.getCards().filter(function (card) { return !selectedCards.some(function (sc) { return sc.id == card.id; }); });
         this.takeAction('actSelectCardsToDiscard', {
-            cardIds: discardCards.map(function (card) { return card.id; }).join(','),
+            cardIds: JSON.stringify(discardCards.map(function (card) { return card.id; })),
         });
     };
     AncientKnowledge.prototype.actCancelSelection = function () {
-        if (!this.checkAction('actCancelSelection')) {
-            return;
-        }
         this.takeAction('actCancelSelection');
     };
     AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {

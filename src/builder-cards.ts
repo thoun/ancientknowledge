@@ -98,7 +98,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 <div class="country">${card.country ?? ''}</div>
             </div>
         </div>
-        <div class="effect">${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+        <div class="effect">${card.effect?.map(text => formatTextIcons('[n°5]'+text)).join(`<br>`) ?? ''}</div>
         `;
 
         div.innerHTML = html;

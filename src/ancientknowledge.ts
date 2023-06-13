@@ -52,9 +52,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         Object.values(gamedatas.players).forEach((player, index) => {
             const playerId = Number(player.id);
             if (playerId == this.getPlayerId()) {
-                player.hand = gamedatas.cards.filter(card => card.location == null && card.pId == playerId);
+                player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             }
-            player.handCount = gamedatas.cards.filter(card => card.location == null && card.pId == playerId).length;
+            player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
 
             if (index == 0) {
                 player.tiles = [2, 4, 12, 16, 20, 24].map(index => gamedatas.techs[index]);
@@ -521,16 +521,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     public onTableDestinationClick(destination: TechnologyTile): void {
-        if (this.gamedatas.gamestate.name == 'reserveDestination') {
+        /*if (this.gamedatas.gamestate.name == 'reserveDestination') {
             this.reserveDestination(destination.id);
         } else {
             this.takeDestination(destination.id);
-        }
+        }*/
     }
 
     public onHandCardClick(card: BuilderCard): void {
         if (this.gamedatas.gamestate.name != 'initialSelection') {
-            this.playCard(card.id);
+            //this.playCard(card.id);
         }
     }
     
@@ -541,19 +541,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     public onTableCardClick(card: BuilderCard): void {
-        if (this.gamedatas.gamestate.name == 'discardTableCard') {
+        /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
             this.discardTableCard(card.id);
         } else {
             this.chooseNewCard(card.id);
-        }
+        }*/
     }
 
     public onPlayedCardClick(card: BuilderCard): void {
-        if (this.gamedatas.gamestate.name == 'discardCard') {
+        /*if (this.gamedatas.gamestate.name == 'discardCard') {
             this.discardCard(card.id);
         } else {
             this.setPayDestinationLabelAndState();
-        }
+        }*/
     }
   	
     public actSelectCardsToDiscard() {
@@ -565,15 +565,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const discardCards = this.getCurrentPlayerTable().hand.getCards().filter(card => !selectedCards.some(sc => sc.id == card.id));
 
         this.takeAction('actSelectCardsToDiscard', {
-            cardIds: discardCards.map(card => card.id).join(','),
+            cardIds: JSON.stringify(discardCards.map(card => card.id)),
         });
     }
   	
     public actCancelSelection() {
-        if(!(this as any).checkAction('actCancelSelection')) {
-            return;
-        }
-
         this.takeAction('actCancelSelection');
     }
 
