@@ -11,6 +11,7 @@ class Actions
 {
   static $classes = [
     CHOOSE_ACTION => 'ChooseAction',
+    CREATE => 'Create',
     GAIN => 'Gain',
   ];
 

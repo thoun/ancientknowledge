@@ -115,6 +115,11 @@ class Cards extends \AK\Helpers\Pieces
     }
   }
 
+  public static function discard($cardIds, $discard = 'discard')
+  {
+    return self::move($cardIds, $discard);
+  }
+
   ///////////////////////////////////////////////
   //    ____                                 _
   //   |  _ \ ___ _ __ ___  ___  _ __   __ _| |

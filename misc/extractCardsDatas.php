@@ -29,7 +29,7 @@ function getCardInstance($id, $data = null)
   // First part before _ specify the type and the numbering
   $prefixes = [
     'C' => 'Cities',
-    'M' => 'Monoliths',
+    'M' => 'Megaliths',
     'P' => 'Pyramids',
     'A' => 'Artefacts',
   ];

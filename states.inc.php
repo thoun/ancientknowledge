@@ -166,6 +166,15 @@ $machinestates = [
   //   'action' => 'stAtomicAction',
   // ],
 
+  ST_CREATE => [
+    'name' => 'create',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose a monument to play'),
+    'descriptionmyturn' => clienttranslate('${you} must choose a monument to play'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actCreate', 'actRestart'],
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___

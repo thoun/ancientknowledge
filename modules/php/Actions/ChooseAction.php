@@ -27,16 +27,22 @@ class ChooseAction extends \AK\Models\Action
     return [];
   }
 
-  public function actChooseAction($action)
+  public function actChooseAction($actionName)
   {
     self::checkAction('actChooseAction');
+    $actions = [
+      'create' => CREATE,
+    ];
+    if (!array_key_exists($actionName, $actions)) {
+      throw new \BgaVisibleSystemException('Invalid action. Should not happen');
+    }
 
-    // // Insert cleanup actionName
-    // $this->insertAsChild([
-    //   'action' => \CLEANUP,
-    //   'pId' => $player->getId(),
-    //   'args' => ['card' => $cardId, 'hypnosis' => $isHypnosis],
-    // ]);
-    // $this->resolveAction(['card' => $cardId, 'strength' => $strength]);
+    // Insert node
+    $player = Players::getActive();
+    $this->insertAsChild([
+      'action' => $actions[$actionName],
+      'pId' => $player->getId(),
+    ]);
+    $this->resolveAction(['actionName' => $actionName]);
   }
 }

@@ -33,6 +33,7 @@ const ST_BREAK_PHASE = 8; // TODO : useless I think
 // ATOMIC ACTIONS
 const ST_GAIN = 10;
 const ST_CHOOSE_ACTION = 11;
+const ST_CREATE = 12;
 
 // ENGINE
 const ST_RESOLVE_STACK = 90;
