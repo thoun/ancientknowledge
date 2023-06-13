@@ -135,6 +135,14 @@ class Notifications
     );
   }
 
+  public static function createCard($player, $card)
+  {
+    self::notifyAll('createCard', clienttranslate('${player_name} create ${card_name}'), [
+      'player' => $player,
+      'card' => $card,
+    ]);
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___

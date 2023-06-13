@@ -82,9 +82,47 @@ class Create extends \AK\Models\Action
     ];
   }
 
-  public function actCreate($cardId, $slot, $discardedCardIds)
+  public function actCreate($cardId, $slot, $cardIdsToDiscard)
   {
+    // Sanity checks
     self::checkAction('actCreate');
-    die('test');
+    $player = Players::getActive();
+    $cards = $this->argsCreate()['_private']['active']['cards'];
+    $slots = $cards[$cardId] ?? null;
+    if (is_null($slots)) {
+      throw new \BgaVisibleSystemException('Invalid card. Should not happen');
+    }
+    if (!array_key_exists($slot, $slots)) {
+      throw new \BgaVisibleSystemException('Invalid place. Should not happen');
+    }
+    if (count($cardIdsToDiscard) != $slots[$slot]) {
+      throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
+    }
+    if (!empty(array_diff($cardIdsToDiscard, $player->getHand()->getIds()))) {
+      throw new \BgaVisibleSystemException('Invalid cards to discard . Should not happen');
+    }
+
+    // Discard cards
+    $cards = Cards::get($cardIdsToDiscard);
+    Cards::discard($cardIdsToDiscard);
+    Notifications::discardCards($player, $cards);
+
+    // Move card
+    $card = Cards::getSingle($cardId);
+    $card->setLocation($slot);
+    if (!$card->isArtefact()) {
+      $card->setKnowledge($card->getInitialKnowlede());
+    }
+    Notifications::createCard($player, $card);
+
+    // Check immediate effect
+    if ($card->getActivation() == \IMMEDIATE) {
+      die('TODO: immediate effect of created card');
+    }
+
+    // Check listener
+    // TODO
+
+    $this->resolveAction(['cardId' => $cardId, 'slot' => $slot]);
   }
 }
