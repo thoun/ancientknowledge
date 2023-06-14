@@ -27,5 +27,11 @@ class P5_CahuachiPyramids extends \AK\Models\Building
         'Gain 2 <VP> for each set of 3 different types of Technology (<ANCIENT>, <WRITING> and <SECRET>) you have.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return 2 * min($this->getPlayer()->countIcons(\TECHNOLOGIES));
   }
 }

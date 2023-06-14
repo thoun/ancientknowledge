@@ -29,7 +29,7 @@ class Player extends \AK\Helpers\DB_Model
     'score' => ['player_score', 'int'],
     'scoreAux' => ['player_score_aux', 'int'],
     'zombie' => 'player_zombie',
-    'lost_knowledge' => ['lost_knowledge', 'int'],
+    'lostKnowledge' => ['lost_knowledge', 'int'],
   ];
 
   public function getUiData($currentPlayerId = null)
@@ -78,5 +78,76 @@ class Player extends \AK\Helpers\DB_Model
   {
     // TODO
     return 'artefact-0';
+  }
+
+  public function countIcon($icon)
+  {
+    $icons = $this->countIcons();
+    return $icons[$icon] ?? 0;
+  }
+
+  public function countIcons($toKeep = null)
+  {
+    $icons = [];
+    // TODO
+
+    // foreach (ALL_PREREQUISITES as $type) {
+    //   $icons[$type] = 0;
+    // }
+
+    // $cards = $this->getPlayedCards();
+    // foreach ($cards as $aId => $card) {
+    //   foreach ($card->getIcons() as $type => $n) {
+    //     $icons[$type] += $n;
+    //   }
+    // }
+
+    // if ($this->hasUniversity(UNIVERSITY_SCIENCE_REP)) {
+    //   $icons[SCIENCE]++;
+    // }
+
+    // if ($this->hasUniversity(UNIVERSITY_SCIENCE_SCIENCE)) {
+    //   $icons[SCIENCE] += 2;
+    // }
+
+    // foreach ($this->getPartnerZoos() as $mId => $partner) {
+    //   $continent = explode('-', $partner['type'])[1];
+    //   $icons[$continent]++;
+    // }
+    // // TODO : manage map specific
+
+    // if (!is_null($toKeep)) {
+    //   foreach (array_keys($icons) as $type) {
+    //     if (!in_array($type, $toKeep)) {
+    //       unset($icons[$type]);
+    //     }
+    //   }
+    // }
+
+    // if ($onlyNonZero) {
+    //   foreach (array_keys($icons) as $type) {
+    //     if ($icons[$type] == 0) {
+    //       unset($icons[$type]);
+    //     }
+    //   }
+    // }
+
+    // // Update stats
+    // if (!$onlyNonZero && is_null($toKeep)) {
+    //   foreach (ALL_PREREQUISITES as $type) {
+    //     if (!in_array($type, CONTINENTS_AND_TYPES) && !in_array($type, [WATER, ROCK, SCIENCE])) {
+    //       continue;
+    //     }
+
+    //     $val = $icons[$type];
+    //     $statName = 'getIcon' . $type;
+    //     if (Stats::$statName($this) != $val) {
+    //       $statName = 'setIcon' . $type;
+    //       Stats::$statName($this, $val);
+    //     }
+    //   }
+    // }
+
+    return $icons;
   }
 }

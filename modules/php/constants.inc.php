@@ -94,6 +94,10 @@ const ANCIENT = 'ancient';
 const WRITING = 'writing';
 const SECRET = 'secret';
 
+const BUILDINGS = [CITY, MEGALITH, PYRAMID];
+const TECHNOLOGIES = [ANCIENT, WRITING, SECRET];
+const ICONS = [CITY, MEGALITH, PYRAMID, ARTEFACT, ANCIENT, WRITING, SECRET];
+
 /*
  * MISC
  */

@@ -24,5 +24,11 @@ class M6_DolmenOfGanghwa extends \AK\Models\Building
       clienttranslate("• If you have 3 <WRITING> or 4 <WRITING>, gain 4 <VP>.
 • or, if you have 5 <WRITING> or more, gain 7 <VP>."),
     ];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getReward(WRITING, [3 => 4, 5 => 7]);
   }
 }

@@ -27,5 +27,12 @@ class M1_Stonehenge extends \AK\Models\Building
         'Gain 2 <VP> for each set of 3 different types of Technology (<ANCIENT>, <WRITING> and <SECRET>) you have.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    $icons = $this->getPlayer()->countIcons(TECHNOLOGIES);
+    return 2 * min($icons);
   }
 }

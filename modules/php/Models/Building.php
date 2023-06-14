@@ -39,10 +39,28 @@ class Building extends \AK\Helpers\DB_Model
     ['locked', 'bool'],
     ['activation', 'string'],
     ['effect', 'obj'],
+
+    ['implemented', 'bool'],
   ];
 
   public function isArtefact()
   {
     return false;
+  }
+
+  public function getReward($n = 1, $mapBonuses = null)
+  {
+    $player = $this->getPlayer();
+    if (in_array($n, ICONS)) {
+      $n = $player->countIcon($n);
+    }
+
+    $g = 0;
+    foreach ($mapBonuses as $v => $gain) {
+      if ($n >= $v) {
+        $g = $gain;
+      }
+    }
+    return $g;
   }
 }

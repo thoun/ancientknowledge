@@ -22,5 +22,11 @@ class M2_MenhirDiMonteCorruTundu extends \AK\Models\Building
     $this->startingHand = 4;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('If you have at least 15 <LOST_KNOWLEDGE> on your board, gain 9 <VP>.')];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getPlayer()->getLostKnowledge() >= 15 ? 9 : 0;
   }
 }

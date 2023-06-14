@@ -19,6 +19,6 @@ class P36_Janggunchong extends \AK\Models\Building
     $this->initialKnowledge = 3;
     $this->startingSpace = 2;
     $this->activation = ENDGAME;
-    $this->effect = [clienttranslate('If you have at least 3 monuments in your Timeline, gain 6 <VP>.  ')];
+    $this->effect = [clienttranslate('If you have at least 3 monuments in your Timeline, gain 6 <VP>.')];
   }
 }

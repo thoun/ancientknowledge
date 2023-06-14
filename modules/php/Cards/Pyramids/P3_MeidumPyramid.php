@@ -22,5 +22,11 @@ class P3_MeidumPyramid extends \AK\Models\Building
       clienttranslate("• If you have 3 <SECRET> or 4 <SECRET>, gain 4 <VP>;
 • or, if you have 5 <SECRET> or more, gain 7 <VP>."),
     ];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getReward(SECRET, [3 => 4, 5 => 7]);
   }
 }

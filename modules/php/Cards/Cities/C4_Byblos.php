@@ -20,8 +20,16 @@ class C4_Byblos extends \AK\Models\Building
     $this->activation = ENDGAME;
     $this->effect = [
       clienttranslate(
-        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MEGALITH> ou <PYRAMID>) in your Past.'
+        'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MEGALITH> and <PYRAMID>) in your Past.'
       ),
     ];
+
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    $icons = $this->getPlayer()->countIcons(BUILDINGS);
+    return 2 * min($icons);
   }
 }

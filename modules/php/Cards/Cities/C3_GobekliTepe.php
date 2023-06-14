@@ -23,5 +23,13 @@ class C3_GobekliTepe extends \AK\Models\Building
         'Choose 1 type of monument (<CITY>, <MEGALITH> ou <PYRAMID> ). Gain 1 <VP> for each monument of this type in your Past.'
       ),
     ];
+
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    $icons = $this->getPlayer()->countIcons(BUILDINGS);
+    return max($icons);
   }
 }

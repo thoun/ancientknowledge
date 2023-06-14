@@ -23,5 +23,11 @@ class M7_CirclesOfMpumalanga extends \AK\Models\Building
     $this->discard = 2;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('Gain 1 <VP> for each <MEGALITH> in your past.')];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getPlayer()->countIcon(MEGALITH);
   }
 }

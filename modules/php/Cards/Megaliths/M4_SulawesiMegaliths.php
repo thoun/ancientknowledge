@@ -18,6 +18,12 @@ class M4_SulawesiMegaliths extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->discard = 1;
     $this->activation = ENDGAME;
-    $this->effect = [clienttranslate('If you have at least 7 <MEGALITH> in your Past, gain 6 <VP>. ')];
+    $this->effect = [clienttranslate('If you have at least 7 <MEGALITH> in your Past, gain 6 <VP>.')];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getReward(MEGALITH, [7 => 6]);
   }
 }

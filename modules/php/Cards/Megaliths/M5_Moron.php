@@ -22,5 +22,11 @@ class M5_Moron extends \AK\Models\Building
       clienttranslate("• If you have 3 <ANCIENT> or 4 <ANCIENT>, gain 4 <VP>.
 • or, if you have 5 <ANCIENT> or more, gain 7 <VP>."),
     ];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getReward(ANCIENT, [3 => 4, 5 => 7]);
   }
 }
