@@ -15,5 +15,16 @@ class T34_GoldenMean extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return $player->countIcon(CITY) >= 3;
+  }
+
+  public function getScore()
+  {
+    return 2;
   }
 }

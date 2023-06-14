@@ -15,5 +15,16 @@ class T43_MayaScript extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return sum($player->countIcons(BUIDINGS)) >= 10;
+  }
+
+  public function getScore()
+  {
+    return 2;
   }
 }

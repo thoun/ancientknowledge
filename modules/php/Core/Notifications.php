@@ -137,9 +137,17 @@ class Notifications
 
   public static function createCard($player, $card)
   {
-    self::notifyAll('createCard', clienttranslate('${player_name} create ${card_name}'), [
+    self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name}'), [
       'player' => $player,
       'card' => $card,
+    ]);
+  }
+
+  public static function learnTech($player, $tech)
+  {
+    self::notifyAll('createCard', clienttranslate('${player_name} learns ${card_name}'), [
+      'player' => $player,
+      'card' => $tech,
     ]);
   }
 

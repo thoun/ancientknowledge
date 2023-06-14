@@ -15,5 +15,16 @@ class T30_Thoth extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return $player->getLostKnowledge() >= 9;
+  }
+
+  public function getScore()
+  {
+    return 2;
   }
 }

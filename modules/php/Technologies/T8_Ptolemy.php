@@ -15,5 +15,19 @@ class T8_Ptolemy extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return $player->getHand()->count() <= 1;
+  }
+
+  public function getImmediate()
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 3],
+    ];
   }
 }

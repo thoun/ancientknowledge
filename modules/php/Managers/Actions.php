@@ -12,7 +12,9 @@ class Actions
   static $classes = [
     CHOOSE_ACTION => 'ChooseAction',
     CREATE => 'Create',
+    DRAW => 'Draw',
     GAIN => 'Gain',
+    LEARN => 'Learn',
   ];
 
   public static function get($actionId, $ctx = null)

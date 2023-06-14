@@ -15,5 +15,19 @@ class T1_Anaximenes extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return $player->countIcon(\ARTEFACT) >= 3;
+  }
+
+  public function getImmediate()
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 3],
+    ];
   }
 }

@@ -15,7 +15,7 @@ class T22_AncientGreek extends \AK\Models\Technology
     $this->activation = IMMEDIATE;
     $this->effect = [
       clienttranslate("Draw the top 10 cards of the deck:
-• choose and CREATE 1 |artefact];
+• choose and CREATE 1 <ARTEFACT>;
 • and discard the remaining cards."),
     ];
   }

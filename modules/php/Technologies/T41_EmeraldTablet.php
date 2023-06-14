@@ -15,5 +15,16 @@ class T41_EmeraldTablet extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return $player->countIcon(\WRITING) >= 3;
+  }
+
+  public function getScore()
+  {
+    return 2;
   }
 }

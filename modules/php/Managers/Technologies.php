@@ -78,4 +78,56 @@ class Technologies extends \AK\Helpers\Pieces
 
     Notifications::fillPool($techs);
   }
+
+  //////////////////////////
+  //  ____             _
+  // |  _ \ ___   ___ | |
+  // | |_) / _ \ / _ \| |
+  // |  __/ (_) | (_) | |
+  // |_|   \___/ \___/|_|
+  //////////////////////////
+
+  /**
+   * Return the cards in the pool
+   */
+  public static function getPool($type = null)
+  {
+    return self::getInLocation(['board', '%'])->filter(function ($card) use ($type) {
+      return is_null($type) || $card->getType() == $type;
+    });
+  }
+
+  /**
+   * fillPool: slide the cards on the pool to the left and draw additional cards to fill the pool
+   *
+  public static function fillPool()
+  {
+    if (self::countInLocation(['pool', '%']) == 6) {
+      return false;
+    }
+
+    // Moving cards to fill in hole on their left
+    $lastHole = null;
+    for ($i = 1; $i <= 6; $i++) {
+      $card = self::getInLocation(['pool', $i])->first();
+      if (is_null($card) && is_null($lastHole)) {
+        $lastHole = $i;
+      } elseif (!is_null($card) && !is_null($lastHole)) {
+        self::move($card->getId(), ['pool', $lastHole]);
+        $lastHole++;
+      }
+    }
+
+    // Drawing cards to fill remaining holes
+    $cards = [];
+    for ($i = $lastHole ?? 7; $i <= 6; $i++) {
+      $cards[] = self::pickOneForLocation('deck', ['pool', $i]);
+    }
+
+    if (!empty($cards)) {
+      $pool = self::getInLocation(['pool', '%']);
+      Notifications::fillPool($cards, $pool);
+    }
+  }
+  */
 }

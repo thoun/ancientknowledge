@@ -15,5 +15,16 @@ class T42_SumerianCuneiforms extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return sum($player->countIcons(\TECHNOLOGIES)) >= 6;
+  }
+
+  public function getScore()
+  {
+    return 2;
   }
 }

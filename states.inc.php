@@ -169,10 +169,19 @@ $machinestates = [
   ST_CREATE => [
     'name' => 'create',
     'type' => 'activeplayer',
-    'description' => clienttranslate('${actplayer} must choose a monument to play'),
-    'descriptionmyturn' => clienttranslate('${you} must choose a monument to play'),
+    'description' => clienttranslate('${actplayer} must choose a monument or an artifact to create'),
+    'descriptionmyturn' => clienttranslate('${you} must choose a monument or an artifact to create'),
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actCreate', 'actRestart'],
+  ],
+
+  ST_LEARN => [
+    'name' => 'learn',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose a technology to learn'),
+    'descriptionmyturn' => clienttranslate('${you} must choose a technology to learn'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actLearn', 'actRestart'],
   ],
 
   //////////////////////////////////////////////////////////////////

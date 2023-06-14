@@ -16,4 +16,9 @@ class T27_LatinAlphabet extends \AK\Models\Technology
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Choose 1 Technology [II], and put it on the bottom of the corresponding deck.')];
   }
+
+  public function canBePlayed($player)
+  {
+    return sum($player->countIcons(BUILDINGS)) >= 5;
+  }
 }

@@ -15,5 +15,16 @@ class T29_Plato extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('4 <VP>')];
+    $this->implemented = true;
+  }
+
+  public function canBePlayed($player)
+  {
+    return max($player->countIcons(BUILDINGS)) >= 7;
+  }
+
+  public function getScore()
+  {
+    return 4;
   }
 }

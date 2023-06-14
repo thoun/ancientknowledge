@@ -34,6 +34,9 @@ const ST_BREAK_PHASE = 8; // TODO : useless I think
 const ST_GAIN = 10;
 const ST_CHOOSE_ACTION = 11;
 const ST_CREATE = 12;
+const ST_LEARN = 13;
+
+const ST_DRAW = 20;
 
 // ENGINE
 const ST_RESOLVE_STACK = 90;
@@ -68,6 +71,7 @@ const TIMELINE_PHASE = 'TIMELINE_PHASE';
 const DECLINE_PHASE = 'DECLINE_PHASE';
 
 const GAIN = 'GAIN';
+const DRAW = 'DRAW';
 
 const CREATE = 'CREATE';
 const LEARN = 'LEARN';
