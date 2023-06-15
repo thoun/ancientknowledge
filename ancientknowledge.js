@@ -2218,6 +2218,7 @@ var TableCenter = /** @class */ (function () {
                 //slotsIds: [1, 2, 3],
                 center: false,
             });
+            _this.technologyTilesStocks[number].onCardClick = function (tile) { return _this.game.onTableTechnologyTileClick(tile); };
             var tiles = gamedatas.techs.filter(function (tile) { return tile.location == "board_".concat(number); });
             _this.technologyTilesStocks[number].addCards(tiles);
         });
@@ -2232,8 +2233,8 @@ var TableCenter = /** @class */ (function () {
         var _this = this;
         if (selectableCards === void 0) { selectableCards = null; }
         [1, 2, 3].forEach(function (number) {
-            _this.technologyTilesDecks[number].setSelectionMode(selectable ? 'single' : 'none');
-            _this.technologyTilesDecks[number].setSelectableCards(selectableCards);
+            _this.technologyTilesStocks[number].setSelectionMode(selectable ? 'single' : 'none');
+            _this.technologyTilesStocks[number].setSelectableCards(selectableCards);
         });
     };
     return TableCenter;
@@ -2390,6 +2391,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'create':
                 this.onEnteringCreate(args.args);
                 break;
+            case 'learn':
+                this.onEnteringLearn(args.args);
+                break;
         }
     };
     AncientKnowledge.prototype.onEnteringInitialSelection = function (args) {
@@ -2408,6 +2412,11 @@ var AncientKnowledge = /** @class */ (function () {
             (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(true);
         }
     };
+    AncientKnowledge.prototype.onEnteringLearn = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.tableCenter.setTechonologyTilesSelectable(true /*, args.techs*/);
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         switch (stateName) {
@@ -2416,6 +2425,9 @@ var AncientKnowledge = /** @class */ (function () {
                 break;
             case 'create':
                 this.onLeavingCreate();
+                break;
+            case 'learn':
+                this.onLeavingLearn();
                 break;
         }
     };
@@ -2426,6 +2438,9 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingCreate = function () {
         var _a;
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
+    };
+    AncientKnowledge.prototype.onLeavingLearn = function () {
+        this.tableCenter.setTechonologyTilesSelectable(false);
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -2608,12 +2623,12 @@ var AncientKnowledge = /** @class */ (function () {
             this.technologyTilesManager.setForHelp(i, "help-artifact-".concat(i));
         }
     };
-    AncientKnowledge.prototype.onTableDestinationClick = function (destination) {
-        /*if (this.gamedatas.gamestate.name == 'reserveDestination') {
-            this.reserveDestination(destination.id);
-        } else {
-            this.takeDestination(destination.id);
-        }*/
+    AncientKnowledge.prototype.onTableTechnologyTileClick = function (tile) {
+        if (this.gamedatas.gamestate.name == 'learn') {
+            this.takeAtomicAction('actLearn', [
+                tile.id,
+            ]);
+        }
     };
     AncientKnowledge.prototype.onHandCardClick = function (card) {
         if (this.gamedatas.gamestate.name == 'create') {

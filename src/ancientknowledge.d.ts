@@ -47,7 +47,7 @@ interface AncientKnowledgeGame extends Game {
 
     setTooltip(id: string, html: string): void;
     highlightPlayerTokens(playerId: number | null): void;
-    onTableDestinationClick(destination: TechnologyTile): void;
+    onTableTechnologyTileClick(destination: TechnologyTile): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTableCardClick(card: BuilderCard): void;
@@ -64,6 +64,10 @@ interface EnteringCreateArgs {
     _private?: {
         cards: { [id: string]: { [possiblePosition: string /*timeline-6-0*/]: number } }[];
     }
+}
+
+interface EnteringLearnArgs {
+    techs: any[]; // TODO
 }
 
 interface EnteringChooseNewCardArgs {

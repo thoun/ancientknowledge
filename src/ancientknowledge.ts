@@ -119,6 +119,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'create':
                 this.onEnteringCreate(args.args);
                 break;
+            case 'learn':
+                this.onEnteringLearn(args.args);
+                break;
         }
     }
 
@@ -140,6 +143,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
+    private onEnteringLearn(args: EnteringLearnArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.tableCenter.setTechonologyTilesSelectable(true/*, args.techs*/);
+        }
+    }
+
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
@@ -150,6 +159,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'create':
                 this.onLeavingCreate();
                 break;
+            case 'learn':
+                this.onLeavingLearn();
+                break;
         }
     }
 
@@ -159,6 +171,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onLeavingCreate() {
         this.getCurrentPlayerTable()?.setHandSelectable(false);
+    }
+
+    private onLeavingLearn() {
+        this.tableCenter.setTechonologyTilesSelectable(false);
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -431,12 +447,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
     
-    public onTableDestinationClick(destination: TechnologyTile): void {
-        /*if (this.gamedatas.gamestate.name == 'reserveDestination') {
-            this.reserveDestination(destination.id);
-        } else {
-            this.takeDestination(destination.id);
-        }*/
+    public onTableTechnologyTileClick(tile: TechnologyTile): void {
+        if (this.gamedatas.gamestate.name == 'learn') {
+            this.takeAtomicAction('actLearn', [
+                tile.id,
+            ]);
+        }
     }
 
     public onHandCardClick(card: BuilderCard): void {
