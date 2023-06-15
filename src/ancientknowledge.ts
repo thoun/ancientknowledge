@@ -536,6 +536,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const notifs = [
             ['pDiscardCards', undefined],
             ['fillPool', undefined],
+            ['discardLostKnowledge', 1],
+            ['learnTech', undefined],
         ];
     
         notifs.forEach((notif) => {
@@ -579,6 +581,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
         });
         return Promise.all(promises);
     }
+
+    notif_discardLostKnowledge(args: NotifDiscardLostKnowledgeArgs) {
+        //  TODO
+    }
+
+    notif_learnTech(args: NotifLearnTechArgs) {
+        return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
+    }
+
 
     public getGain(type: number): string {
         switch (type) {

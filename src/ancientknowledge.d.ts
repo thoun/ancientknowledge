@@ -98,3 +98,16 @@ interface NotifPDiscardCardsArgs {
 interface NotifFillPoolArgs {
     cards: TechnologyTile[];
 }
+
+// discardLostKnowledge
+interface NotifDiscardLostKnowledgeArgs {
+    player_id: number;
+    n: number | string; // discarded lost knowledge
+    m: number | string; // remaining lost knowledge
+}
+
+// learnTech
+interface NotifLearnTechArgs {
+    player_id: number;
+    card: TechnologyTile;
+}

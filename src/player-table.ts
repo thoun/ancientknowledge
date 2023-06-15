@@ -73,12 +73,12 @@ class PlayerTable {
         });
         // TODO this.past.addCards(player.past);
         
-        for (let i = 1; i <= 3; i++) {
-            const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${i}`);
-            this.technologyTilesDecks[i] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
+        ['ancient', 'writing', 'secret'].forEach(type => {
+            const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
+            this.technologyTilesDecks[type] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
             });
-            // TODO this.technologyTilesDecks[i].addCards(player.technologyTiles[i]);
-        }
+            // TODO this.technologyTilesDecks[type].addCards(player.technologyTiles[type]);
+        });
     }
 
     public setHandSelectable(selectable: boolean) {
@@ -94,5 +94,9 @@ class PlayerTable {
     public endInitialSelection() {
         this.hand.setSelectionMode('none');
         document.getElementById(`player-table-${this.playerId}-hand`).classList.remove('initial-selection');
+    }
+    
+    public addTechnologyTile(card: TechnologyTile) {
+        this.technologyTilesDecks[card.type].addCard(card);
     }
 }

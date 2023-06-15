@@ -2281,11 +2281,11 @@ var PlayerTable = /** @class */ (function () {
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
         this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
         // TODO this.past.addCards(player.past);
-        for (var i = 1; i <= 3; i++) {
-            var technologyTilesDeckDiv = document.getElementById("player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i));
-            this.technologyTilesDecks[i] = new AllVisibleDeck(this.game.technologyTilesManager, technologyTilesDeckDiv, {});
-            // TODO this.technologyTilesDecks[i].addCards(player.technologyTiles[i]);
-        }
+        ['ancient', 'writing', 'secret'].forEach(function (type) {
+            var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
+            _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
+            // TODO this.technologyTilesDecks[type].addCards(player.technologyTiles[type]);
+        });
     }
     PlayerTable.prototype.setHandSelectable = function (selectable) {
         this.hand.setSelectionMode(selectable ? 'single' : 'none');
@@ -2298,6 +2298,9 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.endInitialSelection = function () {
         this.hand.setSelectionMode('none');
         document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
+    };
+    PlayerTable.prototype.addTechnologyTile = function (card) {
+        this.technologyTilesDecks[card.type].addCard(card);
     };
     return PlayerTable;
 }());
@@ -2702,6 +2705,8 @@ var AncientKnowledge = /** @class */ (function () {
         var notifs = [
             ['pDiscardCards', undefined],
             ['fillPool', undefined],
+            ['discardLostKnowledge', 1],
+            ['learnTech', undefined],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -2738,6 +2743,12 @@ var AncientKnowledge = /** @class */ (function () {
             return _this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
         });
         return Promise.all(promises);
+    };
+    AncientKnowledge.prototype.notif_discardLostKnowledge = function (args) {
+        //  TODO
+    };
+    AncientKnowledge.prototype.notif_learnTech = function (args) {
+        return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
     };
     AncientKnowledge.prototype.getGain = function (type) {
         switch (type) {
