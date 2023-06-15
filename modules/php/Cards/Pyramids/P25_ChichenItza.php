@@ -20,7 +20,7 @@ class P25_ChichenItza extends \AK\Models\Building
     $this->victoryPoint = 1;
     $this->initialKnowledge = 2;
     $this->startingSpace = 3;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> adjacent to this card.')];
   }
 }

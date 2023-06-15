@@ -21,6 +21,18 @@ class M8_DolmenOfGochang extends \AK\Models\Building
     $this->initialKnowledge = 3;
     $this->startingSpace = 4;
     $this->activation = DECLINE;
-    $this->effect = [clienttranslate(' If you have 5 <MEGALITH> in your Past, discard 7 <LOST_KNOWLEDGE> from your board.')];
+    $this->effect = [clienttranslate('If you have 5 <MEGALITH> in your Past, discard 7 <LOST_KNOWLEDGE> from your board.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediate()
+  {
+    $n = $this->getPlayer()->countIcon(MEGALITH);
+    return $n != 5
+      ? null
+      : [
+        'action' => \DISCARD_LOST_KNOWLEDGE,
+        'args' => ['n' => 7],
+      ];
   }
 }

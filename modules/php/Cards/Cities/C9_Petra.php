@@ -18,7 +18,7 @@ class C9_Petra extends \AK\Models\Building
     $this->victoryPoint = 1;
     $this->initialKnowledge = 1;
     $this->startingSpace = 4;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('If you have 2 <LOST_KNOWLEDGE> or less on your board and at least 1 monument in your Past, draw 1 card.'),
     ];

@@ -16,7 +16,7 @@ class A27_IronPillarOfDelhi extends \AK\Models\Artefact
         'It is known for having a strong resistance to rust, due to a uniform layer of crystalline iron hydrogen phosphate which protects it from environmental effects.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate("If you have 2 monuments in space [n°1]:
 • Discard 1 <KNOWLEDGE> from any of your monument;

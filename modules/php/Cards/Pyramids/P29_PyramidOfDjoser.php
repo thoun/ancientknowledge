@@ -16,7 +16,7 @@ class P29_PyramidOfDjoser extends \AK\Models\Building
     $this->victoryPoint = 2;
     $this->initialKnowledge = 3;
     $this->startingSpace = 5;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
         'If you have 4 <LOST_KNOWLEDGE> or less on your board and at least 1 monument in your Past, discard 1 <KNOWLEDGE> from any of your monument.'

@@ -18,7 +18,19 @@ class M29_IshibutaiKofun extends \AK\Models\Building
     $this->victoryPoint = 1;
     $this->initialKnowledge = 3;
     $this->startingSpace = 4;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('If you have at least 5 <LOST_KNOWLEDGE> on your board, discard 1 <LOST_KNOWLEDGE>')];
+    $this->implemented = true;
+  }
+
+  public function getTimeline()
+  {
+    $n = $this->getPlayer()->getLostKnowledge();
+    return $n < 5
+      ? null
+      : [
+        'action' => \DISCARD_LOST_KNOWLEDGE,
+        'args' => ['n' => 1],
+      ];
   }
 }

@@ -46,6 +46,10 @@ trait TurnTrait
           'pId' => $player->getId(),
         ],
         [
+          'action' => CHOOSE_ACTION,
+          'pId' => $player->getId(),
+        ],
+        [
           'action' => TIMELINE_PHASE,
           'pId' => $player->getId(),
         ],

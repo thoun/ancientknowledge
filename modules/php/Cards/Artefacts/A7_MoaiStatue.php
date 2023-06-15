@@ -14,7 +14,7 @@ class A7_MoaiStatue extends \AK\Models\Artefact
     $this->text = [
       clienttranslate('Discovered in Colombia, this statue is strangely reminiscent of the Moai statues of Easter Island.'),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('You may discard 2 <ARTEFACT> from your hand. If you do, draw 4 cards.')];
   }
 }

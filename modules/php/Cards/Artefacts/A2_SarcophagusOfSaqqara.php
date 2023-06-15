@@ -12,7 +12,7 @@ class A2_SarcophagusOfSaqqara extends \AK\Models\Artefact
     $this->name = clienttranslate('Sarcophagus Of Saqqara');
     $this->country = clienttranslate('Egypt');
     $this->text = [clienttranslate('Built in honor of the god Apis, the serapeum contained more than 20 granite sarcophagi.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate("If you have at least 3 <CITY> in your Timeline:
 • discard 1 <KNOWLEDGE> from any of your monument;

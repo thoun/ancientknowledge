@@ -12,6 +12,7 @@ class Actions
   static $classes = [
     CHOOSE_ACTION => 'ChooseAction',
     CREATE => 'Create',
+    DISCARD_LOST_KNOWLEDGE => 'DiscardLostKnowledge',
     DRAW => 'Draw',
     GAIN => 'Gain',
     LEARN => 'Learn',

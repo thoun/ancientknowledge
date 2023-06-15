@@ -12,7 +12,7 @@ class A6_AntikytheraMechanism extends \AK\Models\Artefact
     $this->name = clienttranslate('Antikythera Mechanism');
     $this->country = clienttranslate('Greece');
     $this->text = [clienttranslate('This mechanism is considered the first astronomical position calculator.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
         'If one of your monuments in the [n°1] space of your Timeline has at least 4 <KNOWLEDGE>, move it to [n°3] if possible. Otherwise nothing happens.'

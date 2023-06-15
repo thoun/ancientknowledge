@@ -16,7 +16,7 @@ class A11_ParacasCandelabra extends \AK\Models\Artefact
         'The function of this geoglyph remains unknown. It is almost oriented North-South at 180 meters long and 70 meters wide.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
         'If you have at least 3 <PYRAMID> in your Timeline, discard up to 2 <KNOWLEDGE> from one or several of your monuments.'

@@ -12,7 +12,7 @@ class A15_LudditeFlute extends \AK\Models\Artefact
     $this->name = clienttranslate('Luddite Flute');
     $this->country = clienttranslate('Bolivia');
     $this->text = [clienttranslate('The sound vibration from these stone flutes is exactly the same as our brain waves.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('You may discard this card from your board. If you do, straighten up to 4 monuments from your Past.'),
     ];

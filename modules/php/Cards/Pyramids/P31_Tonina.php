@@ -21,7 +21,7 @@ class P31_Tonina extends \AK\Models\Building
     $this->victoryPoint = 0;
     $this->initialKnowledge = 4;
     $this->startingSpace = 4;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Draw 1 card.')];
   }
 }

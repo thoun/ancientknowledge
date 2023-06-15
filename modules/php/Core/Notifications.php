@@ -63,6 +63,19 @@ class Notifications
     ]);
   }
 
+  public static function discardLostKnowledge($player, $knowledge)
+  {
+    self::notifyAll(
+      'discardLostKnowledge',
+      clienttranslate('${player_name} discard ${n} <LOST_KNOWLEDGE> and now has ${m} left'),
+      [
+        'player' => $player,
+        'n' => $knowledge,
+        'm' => $player->getLostKnowledge(),
+      ]
+    );
+  }
+
   //////////////////////////////
   //  _____         _
   // |_   _|__  ___| |__  ___
@@ -75,6 +88,14 @@ class Notifications
   {
     self::notifyAll('fillPool', clienttranslate('Technology tiles are filled up with ${card_names}'), [
       'cards' => $techs,
+    ]);
+  }
+
+  public static function learnTech($player, $tech)
+  {
+    self::notifyAll('createCard', clienttranslate('${player_name} learns ${card_name}'), [
+      'player' => $player,
+      'card' => $tech,
     ]);
   }
 
@@ -140,14 +161,6 @@ class Notifications
     self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name}'), [
       'player' => $player,
       'card' => $card,
-    ]);
-  }
-
-  public static function learnTech($player, $tech)
-  {
-    self::notifyAll('createCard', clienttranslate('${player_name} learns ${card_name}'), [
-      'player' => $player,
-      'card' => $tech,
     ]);
   }
 

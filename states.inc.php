@@ -184,6 +184,18 @@ $machinestates = [
     'possibleactions' => ['actLearn', 'actRestart'],
   ],
 
+  ST_DRAW => [
+    'name' => 'drawCard',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
+  ST_DISCARD_LOST_KNOWLEDGE => [
+    'name' => 'discardLostKnowledge',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___

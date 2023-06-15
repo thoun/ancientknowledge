@@ -16,7 +16,7 @@ class A35_AssurbanipalsTablet extends \AK\Models\Artefact
         'The disc represents a celestial planisphere showing the position of the constellations observed at night from January 3 to 4, 650.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('If you have 0 or 1 card in your hand, draw 1 card.')];
   }
 }

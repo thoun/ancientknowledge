@@ -15,10 +15,19 @@ class T23_ArabicNumerals extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 3 <LOST_KNOWLEDGE> from your board.')];
+    $this->implemented = true;
   }
 
   public function canBePlayed($player)
   {
     return $player->getLostKnowledges() >= 5;
+  }
+
+  public function getImmediate()
+  {
+    return [
+      'action' => \DISCARD_LOST_KNOWLEDGE,
+      'args' => ['n' => 3],
+    ];
   }
 }

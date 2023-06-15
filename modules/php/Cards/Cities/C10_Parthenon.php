@@ -18,7 +18,7 @@ class C10_Parthenon extends \AK\Models\Building
     $this->victoryPoint = 0;
     $this->initialKnowledge = 4;
     $this->startingSpace = 3;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
         'If you have at least 11 <KNOWLEDGE> in your Timeline, discard up to 2 <KNOWLEDGE> from one or several of your monuments.'

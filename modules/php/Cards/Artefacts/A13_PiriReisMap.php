@@ -16,7 +16,7 @@ class A13_PiriReisMap extends \AK\Models\Artefact
         'It was drawn by the pirate Piri Reis in 1513. The continent at the bottom of the map could be Antarctica.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('You may move a monument in your Timeline with 0 <KNOWLEDGE> to any other available space.'),
     ];

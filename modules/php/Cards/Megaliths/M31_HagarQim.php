@@ -16,7 +16,15 @@ class M31_HagarQim extends \AK\Models\Building
     $this->victoryPoint = 2;
     $this->initialKnowledge = 3;
     $this->startingSpace = 2;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <LOST_KNOWLEDGE> from your board.')];
+  }
+
+  public function getTimeline()
+  {
+    return [
+      'action' => \DISCARD_LOST_KNOWLEDGE,
+      'args' => ['n' => 1],
+    ];
   }
 }

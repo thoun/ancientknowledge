@@ -20,7 +20,7 @@ class C6_Ollantaytambo extends \AK\Models\Building
     $this->victoryPoint = 2;
     $this->initialKnowledge = 2;
     $this->startingSpace = 2;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <CITY> adjacent to this card.')];
   }
 }

@@ -14,5 +14,23 @@ class T5_NicolasFlammel extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <LOST_KNOWLEDGE> from your board and draw 1 card.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediate()
+  {
+    return [
+      'type' => \NODE_SEQ,
+      'childs' => [
+        [
+          'action' => \DISCARD_LOST_KNOWLEDGE,
+          'args' => ['n' => 1],
+        ],
+        [
+          'action' => DRAW,
+          'args' => ['n' => 3],
+        ],
+      ],
+    ];
   }
 }

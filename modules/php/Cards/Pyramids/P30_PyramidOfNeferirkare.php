@@ -20,7 +20,7 @@ class P30_PyramidOfNeferirkare extends \AK\Models\Building
     $this->victoryPoint = 0;
     $this->initialKnowledge = 4;
     $this->startingSpace = 5;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from any other monument.')];
   }
 }

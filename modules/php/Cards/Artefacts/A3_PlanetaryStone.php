@@ -12,7 +12,7 @@ class A3_PlanetaryStone extends \AK\Models\Artefact
     $this->name = clienttranslate('Planetary Stone');
     $this->country = clienttranslate('Ecuador');
     $this->text = [clienttranslate('Discovered in 1984, this stone has the contours of a world map.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->startingHand = 2;
     $this->effect = [
       clienttranslate(

@@ -16,7 +16,7 @@ class C36_Cyrene extends \AK\Models\Building
     $this->victoryPoint = 7;
     $this->initialKnowledge = 8;
     $this->startingSpace = 3;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('If you have at least 4 <CITY> in your Past, discard 2 <KNOWLEDGE> from this monument.')];
   }
 }

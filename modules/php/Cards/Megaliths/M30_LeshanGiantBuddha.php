@@ -20,9 +20,20 @@ class M30_LeshanGiantBuddha extends \AK\Models\Building
     $this->victoryPoint = 2;
     $this->initialKnowledge = 3;
     $this->startingSpace = 5;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('If you have at least 3 <MEGALITH> in your Past, discard 1 <LOST_KNOWLEDGE> from your board.'),
     ];
+  }
+
+  public function getTimeline()
+  {
+    $n = $this->getPlayer()->countIcon(MEGALITH);
+    return $n < 3
+      ? null
+      : [
+        'action' => \DISCARD_LOST_KNOWLEDGE,
+        'args' => ['n' => 1],
+      ];
   }
 }

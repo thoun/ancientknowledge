@@ -16,7 +16,7 @@ class A21_BaghdadBattery extends \AK\Models\Artefact
         'Made of an iron rod and copper cylinder, they could have served as batteries. With reconstructions, researchers obtained very low electrical voltages.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
         'You may discard this card from your board. If you do, discard up to 4 <KNOWLEDGE> from one or several of your monuments.'

@@ -12,7 +12,7 @@ class A8_LaManAPyramid extends \AK\Models\Artefact
     $this->name = clienttranslate('La ManÁ Pyramid');
     $this->country = clienttranslate('Ecuador');
     $this->text = [clienttranslate('Strangely resembling the pyramid on the US dollar, its outlines shimmer under black light.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->startingHand = 1;
     $this->effect = [clienttranslate('You may discard 1 card from your hand. If you do, draw 1 card.')];
   }

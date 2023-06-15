@@ -14,7 +14,7 @@ class A9_Tzolkin extends \AK\Models\Artefact
     $this->text = [
       clienttranslate('This ritual calendar of 260 days is shared by all the pre-Columbian civilizations of Mesoamerica.'),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->startingHand = 2;
     $this->effect = [
       clienttranslate(

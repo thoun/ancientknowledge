@@ -37,6 +37,7 @@ const ST_CREATE = 12;
 const ST_LEARN = 13;
 
 const ST_DRAW = 20;
+const ST_DISCARD_LOST_KNOWLEDGE = 21;
 
 // ENGINE
 const ST_RESOLVE_STACK = 90;
@@ -72,6 +73,7 @@ const DECLINE_PHASE = 'DECLINE_PHASE';
 
 const GAIN = 'GAIN';
 const DRAW = 'DRAW';
+const DISCARD_LOST_KNOWLEDGE = 'DISCARD_LOST_KNOWLEDGE';
 
 const CREATE = 'CREATE';
 const LEARN = 'LEARN';
@@ -91,7 +93,7 @@ const ARTEFACT = 'artefact';
 const ANYTIME = 'anytime';
 const DECLINE = 'decline';
 const IMMEDIATE = 'immediate';
-const ENDTURN = 'endturn';
+const TIMELINE = 'timeline';
 const ENDGAME = 'endgame';
 
 const ANCIENT = 'ancient';

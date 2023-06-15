@@ -16,7 +16,7 @@ class A31_SaqqaraVases extends \AK\Models\Artefact
         'Thousands of vases and containers were unearthed under the pyramid of Saqqara. Made of very hard stone, some are only a few centimeters high.'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('You may discard this card from your board. If you do, move one monument to another available space.'),
     ];

@@ -19,7 +19,7 @@ class C35_Tulum extends \AK\Models\Building
     $this->initialKnowledge = 1;
     $this->startingSpace = 4;
     $this->lockedSpace = true;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 card from your hand.')];
   }
 }

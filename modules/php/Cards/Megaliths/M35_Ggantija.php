@@ -18,7 +18,7 @@ class M35_Ggantija extends \AK\Models\Building
     $this->victoryPoint = 1;
     $this->initialKnowledge = 1;
     $this->startingSpace = 2;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <CITY> adjacent to this card.')];
   }
 }

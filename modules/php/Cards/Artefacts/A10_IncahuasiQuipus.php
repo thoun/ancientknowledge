@@ -12,7 +12,7 @@ class A10_IncahuasiQuipus extends \AK\Models\Artefact
     $this->name = clienttranslate('Incahuasi Quipus');
     $this->country = clienttranslate('Peru');
     $this->text = [clienttranslate('Never translated, the quipus served the Incas as a communication and counting system.')];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('If you have 3 <LOST_KNOWLEDGE> or less on your board and at least 1 monument in your Past, draw 1 card.'),
     ];

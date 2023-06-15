@@ -16,7 +16,7 @@ class A14_KlerksdorpSpheres extends \AK\Models\Artefact
         '3 billion years old, these spheres are the source of several debates. Are their polished forms and aesthetic aspects natural?'
       ),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->startingHand = 4;
     $this->effect = [clienttranslate('If you have at least 5 <LOST_KNOWLEDGE> on your board, draw 1 card.')];
   }

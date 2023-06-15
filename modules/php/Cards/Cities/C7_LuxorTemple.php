@@ -20,7 +20,7 @@ class C7_LuxorTemple extends \AK\Models\Building
     $this->victoryPoint = 7;
     $this->initialKnowledge = 10;
     $this->startingSpace = 3;
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate('If this monument is adjacent to at least 2  <PYRAMID>, discard 3 <KNOWLEDGE> from this monument.'),
     ];

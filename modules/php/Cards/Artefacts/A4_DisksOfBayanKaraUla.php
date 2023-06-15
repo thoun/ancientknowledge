@@ -14,7 +14,7 @@ class A4_DisksOfBayanKaraUla extends \AK\Models\Artefact
     $this->text = [
       clienttranslate('These stone discs have scriptures telling the story of beings crashing on Earth 12,000 years ago.'),
     ];
-    $this->activation = ENDTURN;
+    $this->activation = TIMELINE;
     $this->startingHand = 1;
     $this->effect = [
       clienttranslate(
