@@ -2087,7 +2087,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return _this;
     }
     BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
         var typeLetter = card.id.substring(0, 1);
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
@@ -2101,6 +2101,8 @@ var BuilderCardsManager = /** @class */ (function (_super) {
             html += "<div class=\"starting-space\">".concat(card.startingSpace, "</div>");
         }
         html += "</div>";
+        // TODO TEMP
+        html += "<div class=\"implemented\" data-implemented=\"".concat((_b = (_a = card.implemented) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : 'false', "\"></div>");
         if (card.discard) {
             html += "\n            <div class=\"discard\">\n                <div class=\"discard-text\">".concat(card.discard, "</div>\n                <div class=\"discard-icon\"></div>\n            </div>");
         }
@@ -2109,9 +2111,9 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         }
         html += "\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line bottom\"></div>\n            <div class=\"line top\"></div>\n            <div class=\"line middle\"></div>";
         if (typeLetter != 'A') {
-            html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_a = card.initialKnowledge) !== null && _a !== void 0 ? _a : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_b = card.victoryPoint) !== null && _b !== void 0 ? _b : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
+            html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_c = card.initialKnowledge) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_d = card.victoryPoint) !== null && _d !== void 0 ? _d : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n                <div class=\"country\">").concat((_d = card.country) !== null && _d !== void 0 ? _d : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_f = (_e = card.effect) === null || _e === void 0 ? void 0 : _e.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _f !== void 0 ? _f : '', "</div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n                <div class=\"country\">").concat((_f = card.country) !== null && _f !== void 0 ? _f : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_h = (_g = card.effect) === null || _g === void 0 ? void 0 : _g.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _h !== void 0 ? _h : '', "</div>\n        ");
         div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
@@ -2152,7 +2154,7 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         return _this;
     }
     TechnologyTilesManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
         var type = card.type;
         var requirement = ((_a = card.requirement) === null || _a === void 0 ? void 0 : _a.length) > 0;
@@ -2164,11 +2166,13 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         var backgroundPositionX = ((card.number - 1) % 9) * 100 / 8;
         var backgroundPositionY = Math.floor((card.number - 1) / 9) * 100 / 4;
         var html = "\n        <div class=\"background\" data-type=\"".concat(type, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(type, "\">\n            <div class=\"type\" data-type=\"").concat(type, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        </div>\n        <div class=\"level-box\">\n            <div class=\"level-icon\" data-level=\"").concat(card.level, "\"></div>\n        </div>");
+        // TODO TEMP
+        html += "<div class=\"implemented\" data-implemented=\"".concat((_c = (_b = card.implemented) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : 'false', "\"></div>");
         if (requirement) {
-            html += "<div class=\"requirement\">".concat((_b = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "</div>");
+            html += "<div class=\"requirement\">".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "</div>");
         }
-        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>");
-        html += "<div class=\"effect\">".concat((_e = (_d = card.effect) === null || _d === void 0 ? void 0 : _d.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _e !== void 0 ? _e : '', "</div>\n        ");
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>");
+        html += "<div class=\"effect\">".concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        ");
         div.innerHTML = html;
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));

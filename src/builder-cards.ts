@@ -55,10 +55,14 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 <div class="type-icon"></div>
             </div>
         `;
+
         if (card.startingSpace) {
             html += `<div class="starting-space">${card.startingSpace}</div>`;
         }
         html += `</div>`;
+
+        // TODO TEMP
+        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
 
         if (card.discard) {
             html += `

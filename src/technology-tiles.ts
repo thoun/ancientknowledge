@@ -55,6 +55,9 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         <div class="level-box">
             <div class="level-icon" data-level="${card.level}"></div>
         </div>`;
+
+        // TODO TEMP
+        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
         
         if (requirement) {
             html += `<div class="requirement">${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>`;

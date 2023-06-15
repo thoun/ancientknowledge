@@ -26,6 +26,20 @@ $cardBackground: #f8f4f0;
         position: absolute;
       }
 
+      // TODO TEMP
+      .implemented {
+        top: 50px;
+        left: 50px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: red;
+
+        &[data-implemented="true"] {
+            background: green;
+        }
+      }
+
       .type-box {
         top: 8px;
         left: 8px;
