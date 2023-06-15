@@ -19,7 +19,7 @@ class C8_Mohenjodaro extends \AK\Models\Building
     $this->activation = TIMELINE;
     $this->effect = [
       clienttranslate(
-        'If this monument is adjacent to at least 2 monuments of the same type ( 2 <CITY>, 2 <MEGALITH> or 2 <PYRAMID>), discard 2 <KNOWLEDGE> from this monument.'
+        'If this monument is adjacent to at least 2 monuments of the same type (2 <CITY>, 2 <MEGALITH> or 2 <PYRAMID>), discard 2 <KNOWLEDGE> from this monument.'
       ),
     ];
   }

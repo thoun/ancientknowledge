@@ -33,7 +33,9 @@ class Technologies extends \AK\Helpers\Pieces
 
   public static function getUiData()
   {
-    return self::getAll()->ui();
+    return self::getInLocation('inPlay')
+      ->merge(self::getInLocation('board_%'))
+      ->ui();
   }
 
   ///////////////////////////////////

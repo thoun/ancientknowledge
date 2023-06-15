@@ -22,5 +22,12 @@ class M21_BaalbekTrilithon extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 4 <MEGALITH> in your Past, this monument enters play with 6 <KNOWLEDGE> less.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getInitialKnowledgeDiscount()
+  {
+    $n = $this->getPlayer()->countIcon(MEGALITH);
+    return $n >= 4 ? 6 : 0;
   }
 }

@@ -18,5 +18,12 @@ class C33_Inwa extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('If you have at least 3 <SECRET>,this monument enters play with 5 <KNOWLEDGE> less.')];
+    $this->implemented = true;
+  }
+
+  public function getInitialKnowledgeDiscount()
+  {
+    $n = $this->getPlayer()->countIcon(SECRET);
+    return $n >= 3 ? 5 : 0;
   }
 }

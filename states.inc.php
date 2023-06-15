@@ -70,10 +70,20 @@ $machinestates = [
     'description' => '',
     'type' => 'game',
     'action' => 'stTurnAction',
-    'transitions' => [
-      'done' => ST_BREAK_PHASE,
-    ],
+    'transitions' => [],
     'updateGameProgression' => true,
+  ],
+
+  ST_TIMELINE_PHASE => [
+    'name' => 'timelinePhase',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
+  ST_DECLINE_PHASE => [
+    'name' => 'declinePhase',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
   ],
 
   ////////////////////////////////////
@@ -192,6 +202,12 @@ $machinestates = [
 
   ST_DISCARD_LOST_KNOWLEDGE => [
     'name' => 'discardLostKnowledge',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
+  ST_ACTIVATE_CARD => [
+    'name' => 'activateCard',
     'type' => 'game',
     'action' => 'stAtomicAction',
   ],

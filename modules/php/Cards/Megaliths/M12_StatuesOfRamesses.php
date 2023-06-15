@@ -19,5 +19,14 @@ class M12_StatuesOfRamesses extends \AK\Models\Building
     $this->discard = 2;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Draw 4 cards.')];
+    $this->implemented = true;
+  }
+
+  public function getDecline()
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 4],
+    ];
   }
 }

@@ -48,6 +48,11 @@ class Building extends \AK\Helpers\DB_Model
     return false;
   }
 
+  public function getInitialKnowledgeDiscount()
+  {
+    return 0;
+  }
+
   public function getReward($n = 1, $mapBonuses = null)
   {
     $player = $this->getPlayer();
@@ -62,5 +67,13 @@ class Building extends \AK\Helpers\DB_Model
       }
     }
     return $g;
+  }
+
+  /**
+   * Event modifiers template
+   **/
+  public function isListeningTo($event)
+  {
+    return false;
   }
 }

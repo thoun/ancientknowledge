@@ -1,6 +1,6 @@
 <?php
 namespace AK\Actions;
-use AK\Managers\Meeples;
+use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
 use AK\Core\Stats;
@@ -95,23 +95,25 @@ class Create extends \AK\Models\Action
     if (!array_key_exists($slot, $slots)) {
       throw new \BgaVisibleSystemException('Invalid place. Should not happen');
     }
-    if (count($cardIdsToDiscard) != $slots[$slot]) {
-      throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
-    }
-    if (!empty(array_diff($cardIdsToDiscard, $player->getHand()->getIds()))) {
-      throw new \BgaVisibleSystemException('Invalid cards to discard . Should not happen');
-    }
+    // if (count($cardIdsToDiscard) != $slots[$slot]) {
+    //   throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
+    // }
+    // if (!empty(array_diff($cardIdsToDiscard, $player->getHand()->getIds()))) {
+    //   throw new \BgaVisibleSystemException('Invalid cards to discard. Should not happen');
+    // }
 
     // Discard cards
-    $cards = Cards::get($cardIdsToDiscard);
-    Cards::discard($cardIdsToDiscard);
-    Notifications::discardCards($player, $cards);
+    // $cards = Cards::get($cardIdsToDiscard);
+    // Cards::discard($cardIdsToDiscard);
+    // Notifications::discardCards($player, $cards);
 
     // Move card
     $card = Cards::getSingle($cardId);
     $card->setLocation($slot);
     if (!$card->isArtefact()) {
-      $card->setKnowledge($card->getInitialKnowlede());
+      $knowledge = $card->getInitialKnowledge();
+      $knowledge -= $card->getInitialKnowledgeDiscount();
+      $card->setKnowledge($knowledge);
     }
     Notifications::createCard($player, $card);
 

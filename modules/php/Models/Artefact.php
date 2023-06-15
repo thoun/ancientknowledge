@@ -42,4 +42,12 @@ class Artefact extends \AK\Helpers\DB_Model
   {
     return true;
   }
+
+  /**
+   * Event modifiers template
+   **/
+  public function isListeningTo($event)
+  {
+    return false;
+  }
 }

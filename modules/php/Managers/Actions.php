@@ -10,12 +10,16 @@ use AK\Core\Globals;
 class Actions
 {
   static $classes = [
+    ACTIVATE_CARD => 'ActivateCard',
     CHOOSE_ACTION => 'ChooseAction',
     CREATE => 'Create',
     DISCARD_LOST_KNOWLEDGE => 'DiscardLostKnowledge',
     DRAW => 'Draw',
     GAIN => 'Gain',
     LEARN => 'Learn',
+
+    TIMELINE_PHASE => 'TimelinePhase',
+    DECLINE_PHASE => 'DeclinePhase',
   ];
 
   public static function get($actionId, $ctx = null)

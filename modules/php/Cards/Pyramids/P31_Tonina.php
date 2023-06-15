@@ -23,5 +23,14 @@ class P31_Tonina extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Draw 1 card.')];
+    $this->implemented = true;
+  }
+
+  public function getTimeline()
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 1],
+    ];
   }
 }

@@ -25,5 +25,12 @@ class M17_FortSamaipata extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 3 <MEGALITH> in your Past, this monument comes into play with 5 <KNOWLEDGE> less.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getInitialKnowledgeDiscount()
+  {
+    $n = $this->getPlayer()->countIcon(MEGALITH);
+    return $n >= 3 ? 5 : 1;
   }
 }

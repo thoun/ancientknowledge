@@ -20,5 +20,12 @@ class C23_Sacsayhuaman extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 3 <CITY> in your Past, this monument enters play with 6 <KNOWLEDGE> less.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getInitialKnowledgeDiscount()
+  {
+    $n = $this->getPlayer()->countIcon(CITY);
+    return $n >= 3 ? 6 : 0;
   }
 }

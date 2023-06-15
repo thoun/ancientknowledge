@@ -18,5 +18,12 @@ class P17_TheQueensPyramids extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('This monument enters play with 1 <KNOWLEDGE> less for each <PYRAMID> in your Past.')];
+    $this->implemented = true;
+  }
+
+  public function getInitialKnowledgeDiscount()
+  {
+    $n = $this->getPlayer()->countIcon(PYRAMID);
+    return $n;
   }
 }

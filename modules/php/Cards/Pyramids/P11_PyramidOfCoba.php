@@ -20,7 +20,19 @@ class P11_PyramidOfCoba extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [
-      clienttranslate('If you have at least <MEGALITH> in your Past, discard up to 4 <LOST_KNOWLEDGE> from your board.'),
+      clienttranslate('If you have at least 3 <MEGALITH> in your Past, discard up to 4 <LOST_KNOWLEDGE> from your board.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getDecline()
+  {
+    $n = $this->getPlayer()->countIcon(MEGALITH);
+    return $n < 3
+      ? null
+      : [
+        'action' => \DISCARD_LOST_KNOWLEDGE,
+        'args' => ['n' => 4],
+      ];
   }
 }

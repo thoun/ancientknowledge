@@ -42,7 +42,7 @@ class Cards extends \AK\Helpers\Pieces
 
   public static function getUiData()
   {
-    return self::getAll()->ui();
+    return self::getInLocation('timeline-%')->ui();
   }
 
   ///////////////////////////////////
@@ -155,13 +155,15 @@ class Cards extends \AK\Helpers\Pieces
   }
 
   /**
-   * Get all cards played by player matching the given type
+   * Get all cards in timeline
    */
-  public static function getPlayedCards($pId, $type = null)
+  public static function getTimeline($pId, $type = null)
   {
-    return self::getFiltered($pId, 'inPlay')->filter(function ($card) use ($type) {
-      return $type == null || $card->getType() == $type;
-    });
+    return self::getFilteredQuery($pId, 'timeline-%')
+      ->get()
+      ->filter(function ($card) use ($type) {
+        return $type == null || $card->getType() == $type;
+      });
   }
 
   /**
@@ -171,5 +173,165 @@ class Cards extends \AK\Helpers\Pieces
   {
     $card = self::getSingle($id, false);
     return !is_null($card) && $card->isPlayed() && $card->getPId() == $pId;
+  }
+
+  /**
+   * Get all cards in past
+   */
+  public static function getPast($pId, $type = null)
+  {
+    return self::getFilteredQuery($pId, 'past')
+      ->get()
+      ->filter(function ($card) use ($type) {
+        return $type == null || $card->getType() == $type;
+      });
+  }
+
+  ///////////////////////////////////////
+  //  _____  __  __           _
+  // | ____|/ _|/ _| ___  ___| |_ ___
+  // |  _| | |_| |_ / _ \/ __| __/ __|
+  // | |___|  _|  _|  __/ (__| |_\__ \
+  // |_____|_| |_|  \___|\___|\__|___/
+  ///////////////////////////////////////
+
+  /**
+   * Get all the cards triggered by an event
+   */
+  public function getListeningCards($event)
+  {
+    return self::getInLocation('inPlay')
+      ->filter(function ($card) use ($event) {
+        return $card->isListeningTo($event);
+      })
+      ->getIds();
+  }
+
+  /**
+   * Get reaction in form of a PARALLEL node with all the activated card
+   */
+  public function getReaction($event, $returnNullIfEmpty = true)
+  {
+    $listeningCards = self::getListeningCards($event);
+    if (empty($listeningCards) && $returnNullIfEmpty) {
+      return null;
+    }
+
+    $childs = [];
+    $passHarvest = Globals::isHarvest() ? Globals::getSkipHarvest() ?? [] : [];
+    foreach ($listeningCards as $cardId) {
+      if (
+        in_array(
+          self::get($cardId)
+            ->getPlayer()
+            ->getId(),
+          $passHarvest
+        )
+      ) {
+        continue;
+      }
+
+      $childs[] = [
+        'action' => ACTIVATE_CARD,
+        'pId' => $event['pId'],
+        'args' => [
+          'cardId' => $cardId,
+          'event' => $event,
+        ],
+      ];
+    }
+
+    if (empty($childs) && $returnNullIfEmpty) {
+      return null;
+    }
+
+    return [
+      'type' => NODE_PARALLEL,
+      'pId' => $event['pId'],
+      'childs' => $childs,
+    ];
+  }
+
+  /**
+   * Go trough all played cards to apply effects
+   */
+  public function getAllCardsWithMethod($methodName)
+  {
+    return self::getInLocation('inPlay')->filter(function ($card) use ($methodName) {
+      return \method_exists($card, 'on' . $methodName) ||
+        \method_exists($card, 'onPlayer' . $methodName) ||
+        \method_exists($card, 'onOpponent' . $methodName);
+    });
+  }
+
+  public function applyEffects($player, $methodName, &$args)
+  {
+    // Compute a specific ordering if needed
+    $cards = self::getAllCardsWithMethod($methodName)->toAssoc();
+    $nodes = array_keys($cards);
+    $edges = [];
+    $orderName = 'order' . $methodName;
+    foreach ($cards as $cId => $card) {
+      if (\method_exists($card, $orderName)) {
+        foreach ($card->$orderName() as $constraint) {
+          $cId2 = $constraint[1];
+          if (!in_array($cId2, $nodes)) {
+            continue;
+          }
+          $op = $constraint[0];
+
+          // Add the edge
+          $edge = [$op == '<' ? $cId : $cId2, $op == '<' ? $cId2 : $cId];
+          if (!in_array($edge, $edges)) {
+            $edges[] = $edge;
+          }
+        }
+      }
+    }
+    $topoOrder = Utils::topological_sort($nodes, $edges);
+    $orderedCards = [];
+    foreach ($topoOrder as $cId) {
+      $orderedCards[] = $cards[$cId];
+    }
+
+    // Apply effects
+    $result = false;
+    foreach ($orderedCards as $card) {
+      $res = self::applyEffect($card, $player, $methodName, $args, false);
+      $result = $result || $res;
+    }
+    return $result;
+  }
+
+  public function applyEffect($card, $player, $methodName, &$args, $throwErrorIfNone = false)
+  {
+    $card = $card instanceof \AGR\Models\PlayerCard ? $card : self::get($card);
+    $res = null;
+    $listened = false;
+    if ($player != null && $player->getId() == $card->getPId() && \method_exists($card, 'onPlayer' . $methodName)) {
+      $n = 'onPlayer' . $methodName;
+      $res = $card->$n($player, $args);
+      $listened = true;
+    } elseif ($player != null && $player->getId() != $card->getPId() && \method_exists($card, 'onOpponent' . $methodName)) {
+      $n = 'onOpponent' . $methodName;
+      $res = $card->$n($player, $args);
+      $listened = true;
+    } elseif (\method_exists($card, 'on' . $methodName)) {
+      $n = 'on' . $methodName;
+      $res = $card->$n($player, $args);
+      $listened = true;
+    } elseif ($card->isAnytime($args) && \method_exists($card, 'atAnytime')) {
+      $res = $card->atAnytime($player, $args);
+      $listened = true;
+    }
+
+    if ($throwErrorIfNone && !$listened) {
+      throw new \BgaVisibleSystemException(
+        'Trying to apply effect of a card without corresponding listener : ' . $methodName . ' ' . $card->getId()
+        //print_r(\debug_print_backtrace())
+      );
+    }
+
+    return $res;
   }
 }

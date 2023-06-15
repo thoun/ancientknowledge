@@ -37,8 +37,10 @@ class Player extends \AK\Helpers\DB_Model
     $data = parent::getUiData();
     $current = $this->id == $currentPlayerId;
     $hand = $this->getHand();
-    $data['hand'] = $current ? $hand : [];
+    $data['hand'] = $current ? $hand->ui() : [];
     $data['handCount'] = $hand->count();
+    $data['timeline'] = $this->getTimeline()->ui();
+    $data['past'] = $this->getPast()->ui();
     return $data;
   }
 
@@ -61,6 +63,21 @@ class Player extends \AK\Helpers\DB_Model
   public function getHand($type = null)
   {
     return Cards::getHand($this->id, $type);
+  }
+
+  public function getTimeline($type = null)
+  {
+    return Cards::getTimeline($this->id, $type);
+  }
+
+  public function hasPlayedCard($id)
+  {
+    return Cards::hasPlayedCard($this->id, $id);
+  }
+
+  public function getPast($type = null)
+  {
+    return Cards::getPast($this->id, $type);
   }
 
   public function getFreeSlots()
