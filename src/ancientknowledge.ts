@@ -55,11 +55,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             }
             player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
-
-            if (index == 0) {
-                player.tiles = [2, 4, 12, 16, 20, 24].map(index => gamedatas.techs[index]);
-                //gamedatas.cards.forEach(card => console.log(card.effect[0]));
-            }
         });
 
         log('gamedatas', gamedatas);
@@ -95,10 +90,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
             },
         });
 
-        if (gamedatas.lastTurn) {
-            this.notif_lastTurn(false);
-        }
-
         new HelpManager(this, { 
             buttons: [
                 new BgaHelpPopinButton({
@@ -125,21 +116,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         log('Entering state: ' + stateName, args.args);
 
         switch (stateName) {
-            /*case 'playAction':
-                this.onEnteringPlayAction(args.args);
+            case 'create':
+                this.onEnteringCreate(args.args);
                 break;
-            case 'chooseNewCard':
-                this.onEnteringChooseNewCard(args.args);
-                break;
-            case 'payDestination':
-                this.onEnteringPayDestination(args.args);
-                break;
-            case 'discardTableCard':
-                this.onEnteringDiscardTableCard();
-                break;
-            case 'reserveDestination':
-                this.onEnteringReserveDestination();
-                break;*/
         }
     }
 
@@ -153,59 +132,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.gamedatas.gamestate.description = `${originalState['description' + property]}`; 
         this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
         (this as any).updatePageTitle();
-    }
-
-    private onEnteringPlayAction(args: EnteringPlayActionArgs) {
-        if (!args.canExplore && !args.canRecruit) {
-            this.setGamestateDescription('TradeOnly');
-        } else if (!args.canExplore) {
-            this.setGamestateDescription('RecruitOnly');
-        } else if (!args.canRecruit) {
-            this.setGamestateDescription('ExploreOnly');
-        }
-
-        if ((this as any).isCurrentPlayerActive()) {
-            if (args.canExplore) {
-                this.tableCenter.setTechonologyTilesSelectable(true, args.possibleDestinations);
-            }
-            if (args.canRecruit) {
-                this.getCurrentPlayerTable()?.setHandSelectable(true);
-            }
-        }
-    }
-
-    private onEnteringChooseNewCard(args: EnteringChooseNewCardArgs) {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setCardsSelectable(true, args.allFree ? null : args.freeColor, args.recruits);
-        }
-    }
-
-    private onEnteringDiscardTableCard() {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setCardsSelectable(true, null, 0);
-        }
-    }
-
-    private onEnteringDiscardCard(args: EnteringPayDestinationArgs) {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.getCurrentPlayerTable()?.setCardsSelectable(true, [0]);
-        }
-    }
-
-    private onEnteringPayDestination(args: EnteringPayDestinationArgs) {
-        const selectedCardDiv = this.technologyTilesManager.getCardElement(args.selectedDestination);
-        selectedCardDiv.classList.add('selected-pay-destination');
-
-        if ((this as any).isCurrentPlayerActive()) {
-            this.getCurrentPlayerTable()?.setCardsSelectable(true, args.selectedDestination.cost);
-        }
-    }
-
-    private onEnteringReserveDestination() {
-        if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setTechonologyTilesSelectable(true, this.tableCenter.getVisibleDestinations());
-        }
     }*/
+
+    private onEnteringCreate(args: EnteringCreateArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable()?.setHandSelectable(true);
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
@@ -214,33 +147,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'initialSelection':
                 this.onLeavingInitialSelection();
                 break;
+            case 'create':
+                this.onLeavingCreate();
+                break;
         }
     }
 
     private onLeavingInitialSelection() {
         this.getCurrentPlayerTable()?.endInitialSelection();
     }
-    
-    /*private onLeavingChooseNewCard() {
-        this.tableCenter.setCardsSelectable(false);
-    }
 
-    private onLeavingPayDestination() {
-        document.querySelectorAll('.selected-pay-destination').forEach(elem => elem.classList.remove('selected-pay-destination'));
-        this.getCurrentPlayerTable()?.setCardsSelectable(false);
+    private onLeavingCreate() {
+        this.getCurrentPlayerTable()?.setHandSelectable(false);
     }
-    
-    private onLeavingDiscardTableCard() {
-        this.tableCenter.setCardsSelectable(false);
-    }
-
-    private onLeavingDiscardCard() {
-        this.getCurrentPlayerTable()?.setCardsSelectable(false);
-    }
-
-    private onLeavingReserveDestination() {
-        this.tableCenter.setTechonologyTilesSelectable(false);
-    }*/
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -303,14 +222,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public getCurrentPlayerTable(): PlayerTable | null {
         return this.playersTables.find(playerTable => playerTable.playerId === this.getPlayerId());
-    }
-
-    public getBoatSide(): number {
-        return this.gamedatas.boatSideOption;
-    }
-
-    public getVariantOption(): number {
-        return this.gamedatas.variantOption;
     }
 
     public getGameStateName(): string {
@@ -529,8 +440,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     public onHandCardClick(card: BuilderCard): void {
-        if (this.gamedatas.gamestate.name != 'initialSelection') {
-            //this.playCard(card.id);
+        if (this.gamedatas.gamestate.name == 'create') {
+            this.takeAtomicAction('actCreate', [
+                card.id,
+                `timeline-${card.startingSpace}-0`, // TODO space to build
+                [], // TODO cards to discard
+            ]);
         }
     }
     
@@ -603,21 +518,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
         //log( 'notifications subscriptions setup' );
 
         const notifs = [
-            ['playCard', undefined],
-            ['takeCard', undefined],
-            ['newTableCard', undefined],
-            ['takeDestination', undefined],
-            ['discardCards', undefined],
-            ['newTableDestination', undefined],
-            ['trade', ANIMATION_MS],
-            ['takeDeckCard', undefined],
-            ['discardTableCard', undefined],
-            ['reserveDestination', undefined],
-            ['score', ANIMATION_MS],
-            ['bracelet', ANIMATION_MS],
-            ['recruit', ANIMATION_MS],
-            ['cardDeckReset', undefined],
-            ['lastTurn', 1],
+            ['pDiscardCards', undefined],
+            ['fillPool', undefined],
         ];
     
         notifs.forEach((notif) => {
@@ -647,103 +549,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    notif_playCard(args: NotifPlayCardArgs) {
-        const playerId = args.playerId;
-        const playerTable = this.getPlayerTable(playerId);
-
-        const promise = playerTable.playCard(args.card);
-
-        this.updateGains(playerId, args.effectiveGains);
-
-        return promise;
+    notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
+        this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
+        return Promise.resolve(true);
     }
 
-    notif_takeCard(args: NotifNewCardArgs) {
-        const playerId = args.playerId;
-        const currentPlayer = this.getPlayerId() == playerId;
-        const playerTable = this.getPlayerTable(playerId);
-        
-        return (currentPlayer ? playerTable.hand : playerTable.voidStock).addCard(args.card);
-    }
-
-    notif_newTableCard(args: NotifNewCardArgs) {
-        this.tableCenter.cardDeck.setCardNumber(args.cardDeckCount, args.cardDeckTop);
-        return this.tableCenter.newTableCard(args.card);
-    }
-
-    notif_takeDestination(args: NotifTakeDestinationArgs) {
-        const playerId = args.playerId;
-        const promise = this.getPlayerTable(playerId).destinations.addCard(args.destination);
-
-        this.updateGains(playerId, args.effectiveGains);
-
-        return promise;
-    }
-
-    notif_discardCards(args: NotifDiscardCardsArgs) {
-        return this.tableCenter.cardDiscard.addCards(args.cards, undefined, undefined, 50).then(
-            () => this.tableCenter.setDiscardCount(args.cardDiscardCount)
-        );
-    }
-
-    notif_newTableDestination(args: NotifNewTableDestinationArgs) {
-        return this.tableCenter.newTableDestination(args.destination, args.letter, args.destinationDeckCount, args.destinationDeckTop);
-    }
-
-    notif_score(args: NotifScoreArgs) {
-        this.setScore(args.playerId, +args.newScore);
-    }
-
-    notif_bracelet(args: NotifScoreArgs) {
-        this.setBracelets(args.playerId, +args.newScore);
-    }
-
-    notif_recruit(args: NotifScoreArgs) {
-        this.setRecruits(args.playerId, +args.newScore);
-    }
-
-    notif_trade(args: NotifTradeArgs) {
-        const playerId = args.playerId;
-
-        this.updateGains(playerId, args.effectiveGains);
-    }
-
-    notif_takeDeckCard(args: NotifNewCardArgs) {
-        const playerId = args.playerId;
-        const playerTable = this.getPlayerTable(playerId);
-
-        const promise = playerTable.playCard(args.card, document.getElementById('board'));
-
-        this.tableCenter.cardDeck.setCardNumber(args.cardDeckCount, args.cardDeckTop);
-
-        return promise;
-    }
-
-    notif_discardTableCard(args: NotifDiscardTableCardArgs) {
-        return this.tableCenter.cardDiscard.addCard(args.card);
-    }
-
-    notif_reserveDestination(args: NotifReserveDestinationArgs) {
-        const playerId = args.playerId;
-        const playerTable = this.getPlayerTable(playerId);
-
-        return playerTable.reserveDestination(args.destination);
-    }
-
-    notif_cardDeckReset(args: NotifCardDeckResetArgs) {
-        this.tableCenter.cardDeck.setCardNumber(args.cardDeckCount, args.cardDeckTop);
-        this.tableCenter.setDiscardCount(args.cardDiscardCount);
-
-        return this.tableCenter.cardDeck.shuffle();
-    }
-    
-    /** 
-     * Show last turn banner.
-     */ 
-    notif_lastTurn(animate: boolean = true) {
-        dojo.place(`<div id="last-round">
-            <span class="last-round-text ${animate ? 'animate' : ''}">${_("This is the final round!")}</span>
-        </div>`, 'page-title');
+    notif_fillPool(args: NotifFillPoolArgs) {
+        const tiles = Object.values(args.cards);
+        const promises = [1, 2, 3].map(number => {
+            const numberTilesId = tiles.filter(tile => tile.location == `board_${number}`).map(tile => tile.id);
+            const numberTiles = this.gamedatas.techs.filter(tile => numberTilesId.includes(tile.id));
+            return this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
+        });
+        return Promise.all(promises);
     }
 
     public getGain(type: number): string {

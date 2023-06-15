@@ -1,6 +1,7 @@
 class TableCenter {
     public technologyTilesDecks: Deck<TechnologyTile>[] = [];
-    public technologyTilesStocks: SlotStock<TechnologyTile>[] = [];
+    public technologyTilesStocks: LineStock<TechnologyTile>[] = [];
+    //public technologyTilesStocks: SlotStock<TechnologyTile>[] = [];
     public cardDeck: Deck<BuilderCard>;
         
     constructor(private game: AncientKnowledgeGame, gamedatas: AncientKnowledgeGamedatas) {
@@ -13,10 +14,13 @@ class TableCenter {
         });
 
         [1, 2, 3].forEach(number => {
-            this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
-                slotsIds: [1, 2, 3],
+            this.technologyTilesStocks[number] = new LineStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
+            //this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
+                //slotsIds: [1, 2, 3],
+                center: false,
             });
-            // TODO this.technologyTilesStocks[number].addCards(gamedatas.tableTiles[number]);
+            const tiles = gamedatas.techs.filter(tile => tile.location == `board_${number}`);
+            this.technologyTilesStocks[number].addCards(tiles);
         });
 
         const cardDeckDiv = document.getElementById(`builder-deck`);

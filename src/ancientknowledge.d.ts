@@ -42,8 +42,6 @@ interface AncientKnowledgeGame extends Game {
     getPlayer(playerId: number): AncientKnowledgePlayer;
     getTooltipGain(type: number): string;
     getTooltipColor(color: number): string;
-    getBoatSide(): number;
-    getVariantOption(): number;
     getGameStateName(): string;
     getCurrentPlayerTable(): PlayerTable | null;
 
@@ -59,6 +57,12 @@ interface AncientKnowledgeGame extends Game {
 interface EnteringInitialSelectionArgs {
     _private?: {
         cards: string[];
+    }
+}
+
+interface EnteringCreateArgs {
+    _private?: {
+        cards: { [id: string]: { [possiblePosition: string /*timeline-6-0*/]: number } }[];
     }
 }
 
@@ -79,71 +83,14 @@ interface EnteringTradeArgs {
     gainsByBracelets: { [bracelets: number]: number };
 }
 
-// playCard
-interface NotifPlayCardArgs {
-    playerId: number;
-    card: BuilderCard;
-    newHandCard: BuilderCard;
-    effectiveGains: { [type: number]: number };
-}
-
-// card
-interface NotifNewCardArgs {
-    playerId: number;
-    card: BuilderCard;
-    cardDeckTop?: BuilderCard;
-    cardDeckCount: number;
-}
-
-// takeDestination
-interface NotifTakeDestinationArgs {
-    playerId: number;
-    destination: TechnologyTile;
-    effectiveGains: { [type: number]: number };
-}
-
-// newTableDestination
-interface NotifNewTableDestinationArgs {
-    destination: TechnologyTile;
-    letter: string;    
-    destinationDeckTop?: TechnologyTile;
-    destinationDeckCount: number;
-}
-
-// trade
-interface NotifTradeArgs {
-    playerId: number;
-    effectiveGains: { [type: number]: number };
-}
-
-// discardCards
-interface NotifDiscardCardsArgs {
-    playerId: number;
+// pDiscardCards
+interface NotifPDiscardCardsArgs {
+    n: number;
+    player_id: number;
     cards: BuilderCard[];
-    cardDiscardCount: number;
 }
 
-// discardTableCard
-interface NotifDiscardTableCardArgs {
-    card: BuilderCard;
-}
-
-// reserveDestination
-interface NotifReserveDestinationArgs {
-    playerId: number;
-    destination: TechnologyTile;
-}
-
-// score
-interface NotifScoreArgs {
-    playerId: number;
-    newScore: number;
-    incScore: number;
-}
-
-// cardDeckReset
-interface NotifCardDeckResetArgs {  
-    cardDeckTop?: BuilderCard;
-    cardDeckCount: number;
-    cardDiscardCount: number;
+// fillPool
+interface NotifFillPoolArgs {
+    cards: TechnologyTile[];
 }

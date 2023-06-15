@@ -28,10 +28,9 @@ class PlayerTable {
             </div>`;
         }
         html += `
-        <div id="player-table-${this.playerId}-hand-tech" class="hand tech"></div>
+            <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
             <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}"></div>
             <div id="player-table-${this.playerId}-past" class="past"></div>
-            <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
             <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
             <div class="technology-tiles-decks">`;            
             for (let i = 1; i <= 3; i++) {
@@ -54,12 +53,12 @@ class PlayerTable {
             this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);           
             this.hand.addCards(player.hand);
         }
-        this.handTech = new LineStock<TechnologyTile>(this.game.technologyTilesManager, document.getElementById(`player-table-${this.playerId}-hand-tech`));
-        this.handTech.addCards(player.tiles);
         
+        const timelineSlotsIds = [];
+        [1, 0].forEach(line => [1,2,3,4,5,6].forEach(space => timelineSlotsIds.push(`timeline-${space}-${line}`)));
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);
         this.timeline = new SlotStock<BuilderCard>(this.game.builderCardsManager, timelineDiv, {
-            slotsIds: [1,2,3,4,5,6, 7,8,9,10,11,12],
+            slotsIds: timelineSlotsIds,
         });
         // TODO this.timeline.addCards(player.timeline);
         

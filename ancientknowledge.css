@@ -1,4 +1,3 @@
-@charset "UTF-8";
 #bga-help_buttons {
   position: fixed;
   bottom: 12px;
@@ -1042,106 +1041,18 @@ body > .card {
   justify-content: center;
 }
 
-#table-center {
-  min-width: 818px;
-  display: grid;
-  grid-template-columns: 120px 690px;
-  gap: 8px;
+#table-center .table-technology-tiles {
+  width: 730px;
+  height: 139px;
+  padding: 13px 73px;
+  box-sizing: border-box;
+  gap: 27px;
 }
-#table-center .table-destinations-deck {
-  margin-left: -102px;
+#table-center .table-technology-tiles[data-level="1"] {
+  background-image: url("img/obelisk1.png");
 }
-#table-center #table-destinations-A .slot, #table-center #table-destinations-B .slot {
-  width: 221px;
-  height: 120px;
-}
-#table-center #board {
-  position: relative;
-  width: 690px;
-  height: 256px;
-  background: url("img/board.jpg");
-}
-#table-center #board .marker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 26px;
-  height: 28px;
-  transition: transform 0.5s;
-  pointer-events: none;
-}
-#table-center #board .marker .inner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-}
-#table-center #board .marker .inner.vp {
-  background-image: url("img/vp-pawns.png");
-}
-#table-center #board .marker .inner.reputation {
-  background-image: url("img/reputation-pawns.png");
-}
-#table-center #board .marker[data-color="6f3766"] .inner {
-  background-position-x: 0%;
-}
-#table-center #board .marker[data-color=bc6328] .inner {
-  background-position-x: 33.3333333333%;
-}
-#table-center #board .marker[data-color="597f9e"] .inner {
-  background-position-x: 66.6666666667%;
-}
-#table-center #board .marker[data-color="929f40"] .inner {
-  background-position-x: 100%;
-}
-#table-center #board .marker.color-blind .inner::after {
-  font-size: 120%;
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  margin-top: -4px;
-}
-#table-center #board .marker.color-blind[data-player-no="1"] .inner::after {
-  content: "●";
-}
-#table-center #board .marker.color-blind[data-player-no="2"] .inner::after {
-  content: "▲";
-}
-#table-center #board .marker.color-blind[data-player-no="3"] .inner::after {
-  content: "■";
-}
-#table-center #board .marker.color-blind[data-player-no="4"] .inner::after {
-  content: "◆";
-}
-#table-center #board .marker.highlight::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: orange;
-  border-radius: 50%;
-  box-shadow: 0 0 5px 5px orange;
-}
-#table-center #table-cards .slot {
-  width: 120px;
-  height: 221px;
-}
-#table-center #card-deck[data-empty=true] {
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
-}
-#table-center .bga-cards_deck-counter {
-  pointer-events: all;
-}
-#table-center .bga-cards_deck-counter#deck-counter {
-  --bga-cards-deck-left: 25%;
-}
-#table-center .bga-cards_deck-counter#discard-counter {
-  background-color: #aaaaaa;
-  --bga-cards-deck-left: 75%;
+#table-center .table-technology-tiles[data-level="2"] {
+  background-image: url("img/obelisk2.png");
 }
 
 .player-board {
@@ -1269,24 +1180,18 @@ body > .card {
   align-self: stretch;
   margin-bottom: 10px;
 }
-.player-table .visible-cards {
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-  margin: 10px;
+.player-table .timeline {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+  padding-left: 81px;
 }
-.player-table .visible-cards .cards {
-  width: 120px;
-}
-.player-table .visible-cards .cards .card:not(:first-child) {
-  margin-top: calc(-1 * var(--card-overlap));
-}
-.player-table .destinations {
-  flex-direction: column-reverse;
-  width: 221px;
-}
-.player-table .destinations .card:not(:last-child) {
-  margin-top: calc(-1 * var(--card-overlap));
+.player-table .timeline .slot {
+  width: 163px;
+  height: 228px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.4);
+  outline: rgba(255, 255, 255, 0.6) 1px solid;
 }
 
 #help-popin h1 {

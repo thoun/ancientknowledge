@@ -3,7 +3,7 @@ interface TechnologyTile {
     activation: string;
     effect: string[];
     level: number; // 0..1
-    location: string;
+    location: string; // board1..3
     name: string;
     number: number;
     pId: number;
