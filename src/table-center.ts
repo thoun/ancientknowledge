@@ -19,6 +19,7 @@ class TableCenter {
                 //slotsIds: [1, 2, 3],
                 center: false,
             });
+            this.technologyTilesStocks[number].onCardClick = tile => this.game.onTableTechnologyTileClick(tile);
             const tiles = gamedatas.techs.filter(tile => tile.location == `board_${number}`);
             this.technologyTilesStocks[number].addCards(tiles);
         });
@@ -33,8 +34,8 @@ class TableCenter {
     
     public setTechonologyTilesSelectable(selectable: boolean, selectableCards: TechnologyTile[] | null = null) {
         [1, 2, 3].forEach(number => {
-            this.technologyTilesDecks[number].setSelectionMode(selectable ? 'single' : 'none');
-            this.technologyTilesDecks[number].setSelectableCards(selectableCards);
+            this.technologyTilesStocks[number].setSelectionMode(selectable ? 'single' : 'none');
+            this.technologyTilesStocks[number].setSelectableCards(selectableCards);
         });
     }
 

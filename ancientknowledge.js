@@ -2791,148 +2791,113 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
   return TechnologyTilesManager;
 })(CardManager);
 var TableCenter = /** @class */ (function () {
-  function TableCenter(game, gamedatas) {
-    var _this = this;
-    this.game = game;
-    this.technologyTilesDecks = [];
-    this.technologyTilesStocks = [];
-    [1, 2].forEach(function (level) {
-      _this.technologyTilesDecks[level] = new Deck(
-        game.technologyTilesManager,
-        document.getElementById('technology-deck-'.concat(level)),
-        {
-          // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
-          // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
-          // TODO counter: {},
-        }
-      );
-    });
-    [1, 2, 3].forEach(function (number) {
-      _this.technologyTilesStocks[number] = new LineStock(
-        game.technologyTilesManager,
-        document.getElementById('table-technology-tiles-'.concat(number)),
-        {
-          //this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
-          //slotsIds: [1, 2, 3],
-          center: false,
-        }
-      );
-      var tiles = gamedatas.techs.filter(function (tile) {
-        return tile.location == 'board_'.concat(number);
-      });
-      _this.technologyTilesStocks[number].addCards(tiles);
-    });
-    var cardDeckDiv = document.getElementById('builder-deck');
-    this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
-      // TODO cardNumber: gamedatas.cardDeckCount,
-      // TODO topCard: gamedatas.cardDeckTop,
-      // TODO counter: { counterId: 'deck-counter', },
-    });
-  }
-  TableCenter.prototype.setTechonologyTilesSelectable = function (selectable, selectableCards) {
-    var _this = this;
-    if (selectableCards === void 0) {
-      selectableCards = null;
+    function TableCenter(game, gamedatas) {
+        var _this = this;
+        this.game = game;
+        this.technologyTilesDecks = [];
+        this.technologyTilesStocks = [];
+        [1, 2].forEach(function (level) {
+            _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
+            // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+            // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
+            // TODO counter: {},
+            });
+        });
+        [1, 2, 3].forEach(function (number) {
+            _this.technologyTilesStocks[number] = new LineStock(game.technologyTilesManager, document.getElementById("table-technology-tiles-".concat(number)), {
+                //this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
+                //slotsIds: [1, 2, 3],
+                center: false,
+            });
+            _this.technologyTilesStocks[number].onCardClick = function (tile) { return _this.game.onTableTechnologyTileClick(tile); };
+            var tiles = gamedatas.techs.filter(function (tile) { return tile.location == "board_".concat(number); });
+            _this.technologyTilesStocks[number].addCards(tiles);
+        });
+        var cardDeckDiv = document.getElementById("builder-deck");
+        this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
+        // TODO cardNumber: gamedatas.cardDeckCount,
+        // TODO topCard: gamedatas.cardDeckTop,
+        // TODO counter: { counterId: 'deck-counter', },
+        });
     }
-    [1, 2, 3].forEach(function (number) {
-      _this.technologyTilesDecks[number].setSelectionMode(selectable ? 'single' : 'none');
-      _this.technologyTilesDecks[number].setSelectableCards(selectableCards);
-    });
-  };
-  return TableCenter;
-})();
+    TableCenter.prototype.setTechonologyTilesSelectable = function (selectable, selectableCards) {
+        var _this = this;
+        if (selectableCards === void 0) { selectableCards = null; }
+        [1, 2, 3].forEach(function (number) {
+            _this.technologyTilesStocks[number].setSelectionMode(selectable ? 'single' : 'none');
+            _this.technologyTilesStocks[number].setSelectableCards(selectableCards);
+        });
+    };
+    return TableCenter;
+}());
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 var log = isDebug ? console.log.bind(window.console) : function () {};
 var PlayerTable = /** @class */ (function () {
-  function PlayerTable(game, player) {
-    var _this = this;
-    this.game = game;
-    this.technologyTilesDecks = [];
-    this.playerId = Number(player.id);
-    this.currentPlayer = this.playerId == this.game.getPlayerId();
-    var html = '\n        <div id="player-table-'
-      .concat(this.playerId, '" class="player-table" style="--player-color: #')
-      .concat(player.color, ';">\n            <div id="player-table-')
-      .concat(this.playerId, '-name" class="name-wrapper">')
-      .concat(player.name, '</div>\n        ');
-    if (this.currentPlayer) {
-      html += '\n            <div class="block-with-text hand-wrapper">\n                <div class="block-label">'
-        .concat(_('Your hand'), '</div>\n                <div id="player-table-')
-        .concat(this.playerId, '-hand" class="hand cards"></div>\n            </div>');
-    }
-    html += '\n            <div id="player-table-'
-      .concat(this.playerId, '-timeline" class="timeline"></div>\n            <div id="player-table-')
-      .concat(this.playerId, '-board" class="player-board" data-color="')
-      .concat(player.color, '"></div>\n            <div id="player-table-')
-      .concat(this.playerId, '-past" class="past"></div>\n            <div id="player-table-')
-      .concat(this.playerId, '-artifacts" class="artifacts"></div>\n            <div class="technology-tiles-decks">');
-    for (var i = 1; i <= 3; i++) {
-      html += '\n                <div id="player-table-'
-        .concat(this.playerId, '-technology-tiles-deck-')
-        .concat(i, '" class="technology-tiles-deck"></div>\n                ');
-    }
-    html += '\n            </div>\n        </div>\n        ';
-    dojo.place(html, document.getElementById('tables'));
-    if (this.currentPlayer) {
-      this.hand = new LineStock(
-        this.game.builderCardsManager,
-        document.getElementById('player-table-'.concat(this.playerId, '-hand')),
-        {
-          // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
+    function PlayerTable(game, player) {
+        var _this = this;
+        this.game = game;
+        this.technologyTilesDecks = [];
+        this.playerId = Number(player.id);
+        this.currentPlayer = this.playerId == this.game.getPlayerId();
+        var html = "\n        <div id=\"player-table-".concat(this.playerId, "\" class=\"player-table\" style=\"--player-color: #").concat(player.color, ";\">\n            <div id=\"player-table-").concat(this.playerId, "-name\" class=\"name-wrapper\">").concat(player.name, "</div>\n        ");
+        if (this.currentPlayer) {
+            html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-      );
-      this.hand.onCardClick = function (card) {
-        return _this.game.onHandCardClick(card);
-      };
-      this.hand.onSelectionChange = function (selection) {
-        return _this.game.onHandCardSelectionChange(selection);
-      };
-      this.hand.addCards(player.hand);
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        for (var i = 1; i <= 3; i++) {
+            html += "\n                <div id=\"player-table-".concat(this.playerId, "-technology-tiles-deck-").concat(i, "\" class=\"technology-tiles-deck\"></div>\n                ");
+        }
+        html += "\n            </div>\n        </div>\n        ";
+        dojo.place(html, document.getElementById('tables'));
+        if (this.currentPlayer) {
+            this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
+            // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
+            });
+            this.hand.onCardClick = function (card) { return _this.game.onHandCardClick(card); };
+            this.hand.onSelectionChange = function (selection) { return _this.game.onHandCardSelectionChange(selection); };
+            this.hand.addCards(player.hand);
+        }
+        var timelineSlotsIds = [];
+        [1, 0].forEach(function (line) { return [1, 2, 3, 4, 5, 6].forEach(function (space) { return timelineSlotsIds.push("timeline-".concat(space, "-").concat(line)); }); });
+        var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
+        this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
+            slotsIds: timelineSlotsIds,
+            mapCardToSlot: (card) => card.location,
+        });
+        this.timeline.addCards(player.timeline);
+        // TODO this.timeline.addCards(player.timeline);
+        var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
+        this.artifacts = new SlotStock(this.game.builderCardsManager, artifactsDiv, {
+            slotsIds: [1, 2, 3, 4, 5]
+        });
+        // TODO this.artifacts.addCards(player.artifacts);
+        var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
+        this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
+        this.past.addCards(player.past);
+        // TODO this.past.addCards(player.past);
+        ['ancient', 'writing', 'secret'].forEach(function (type) {
+            var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
+            _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
+            // TODO this.technologyTilesDecks[type].addCards(player.technologyTiles[type]);
+        });
     }
-    var timelineSlotsIds = [];
-    [1, 0].forEach(function (line) {
-      return [1, 2, 3, 4, 5, 6].forEach(function (space) {
-        return timelineSlotsIds.push('timeline-'.concat(space, '-').concat(line));
-      });
-    });
-    var timelineDiv = document.getElementById('player-table-'.concat(this.playerId, '-timeline'));
-    this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
-      slotsIds: timelineSlotsIds,
-      mapCardToSlot: (card) => card.location,
-    });
-    this.timeline.addCards(player.timeline);
-    // TODO this.timeline.addCards(player.timeline);
-    var artifactsDiv = document.getElementById('player-table-'.concat(this.playerId, '-artifacts'));
-    this.artifacts = new SlotStock(this.game.builderCardsManager, artifactsDiv, {
-      slotsIds: [1, 2, 3, 4, 5],
-    });
-    // TODO this.artifacts.addCards(player.artifacts);
-    var pastDiv = document.getElementById('player-table-'.concat(this.playerId, '-past'));
-    this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
-    this.past.addCards(player.past);
-    // TODO this.past.addCards(player.past);
-    for (var i = 1; i <= 3; i++) {
-      var technologyTilesDeckDiv = document.getElementById(
-        'player-table-'.concat(this.playerId, '-technology-tiles-deck-').concat(i)
-      );
-      this.technologyTilesDecks[i] = new AllVisibleDeck(this.game.technologyTilesManager, technologyTilesDeckDiv, {});
-      // TODO this.technologyTilesDecks[i].addCards(player.technologyTiles[i]);
-    }
-  }
-  PlayerTable.prototype.setHandSelectable = function (selectable) {
-    this.hand.setSelectionMode(selectable ? 'single' : 'none');
-  };
-  PlayerTable.prototype.setInitialSelection = function (cards) {
-    this.hand.addCards(cards);
-    this.hand.setSelectionMode('multiple');
-    document.getElementById('player-table-'.concat(this.playerId, '-hand')).classList.add('initial-selection');
-  };
-  PlayerTable.prototype.endInitialSelection = function () {
-    this.hand.setSelectionMode('none');
-    document.getElementById('player-table-'.concat(this.playerId, '-hand')).classList.remove('initial-selection');
-  };
-  return PlayerTable;
-})();
+    PlayerTable.prototype.setHandSelectable = function (selectable) {
+        this.hand.setSelectionMode(selectable ? 'single' : 'none');
+    };
+    PlayerTable.prototype.setInitialSelection = function (cards) {
+        this.hand.addCards(cards);
+        this.hand.setSelectionMode('multiple');
+        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.add('initial-selection');
+    };
+    PlayerTable.prototype.endInitialSelection = function () {
+        this.hand.setSelectionMode('none');
+        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
+    };
+    PlayerTable.prototype.addTechnologyTile = function (card) {
+        this.technologyTilesDecks[card.type].addCard(card);
+    };
+    return PlayerTable;
+}());
 var ANIMATION_MS = 500;
 var ACTION_TIMER_DURATION = 5;
 var LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
@@ -2958,310 +2923,251 @@ var AncientKnowledge = /** @class */ (function () {
 
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
-  AncientKnowledge.prototype.setup = function (gamedatas) {
-    var _this = this;
-    log('Starting game setup');
-    this.gamedatas = gamedatas;
-    // TODO TEMP
-    Object.values(gamedatas.players).forEach(function (player, index) {
-      var playerId = Number(player.id);
-      // if (playerId == _this.getPlayerId()) {
-      //     player.hand = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; });
-      // }
-      // player.handCount = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; }).length;
-    });
-    log('gamedatas', gamedatas);
-    this.animationManager = new AnimationManager(this);
-    this.builderCardsManager = new BuilderCardsManager(this);
-    this.technologyTilesManager = new TechnologyTilesManager(this);
-    new JumpToManager(this, {
-      localStorageFoldedKey: LOCAL_STORAGE_JUMP_TO_FOLDED_KEY,
-      topEntries: [new JumpToEntry(_('Main board'), 'table-center', { color: '#224757' })],
-      entryClasses: 'round-point',
-      defaultFolded: true,
-    });
-    this.tableCenter = new TableCenter(this, gamedatas);
-    this.createPlayerPanels(gamedatas);
-    this.createPlayerTables(gamedatas);
-    this.zoomManager = new ZoomManager({
-      element: document.getElementById('table'),
-      smooth: false,
-      zoomControls: {
-        color: 'black',
-      },
-      localStorageZoomKey: LOCAL_STORAGE_ZOOM_KEY,
-      onDimensionsChange: function () {
-        var tablesAndCenter = document.getElementById('tables-and-center');
-        var clientWidth = tablesAndCenter.clientWidth;
-        tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
-      },
-    });
-    new HelpManager(this, {
-      buttons: [
-        new BgaHelpPopinButton({
-          title: _('Card help').toUpperCase(),
-          html: this.getHelpHtml(),
-          onPopinCreated: function () {
-            return _this.populateHelp();
-          },
-          buttonBackground: '#87a04f',
-        }),
-      ],
-    });
-    this.setupNotifications();
-    this.setupPreferences();
-    log('Ending game setup');
-  };
-  ///////////////////////////////////////////////////
-  //// Game & client states
-  // onEnteringState: this method is called each time we are entering into a new game state.
-  //                  You can use this method to perform some user interface changes at this moment.
-  //
-  AncientKnowledge.prototype.onEnteringState = function (stateName, args) {
-    log('Entering state: ' + stateName, args.args);
-    switch (stateName) {
-      case 'create':
-        this.onEnteringCreate(args.args);
-        break;
-    }
-  };
-  AncientKnowledge.prototype.onEnteringInitialSelection = function (args) {
-    var cards = this.gamedatas.cards.filter(function (card) {
-      return args._private.cards.includes(card.id);
-    });
-    this.getCurrentPlayerTable().setInitialSelection(cards);
-  };
-  /*private setGamestateDescription(property: string = '') {
+    AncientKnowledge.prototype.setup = function (gamedatas) {
+        var _this = this;
+        log("Starting game setup");
+        this.gamedatas = gamedatas;
+        // TODO TEMP
+        Object.values(gamedatas.players).forEach(function (player, index) {
+            var playerId = Number(player.id);
+            // if (playerId == _this.getPlayerId()) {
+            //     player.hand = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; });
+            // }
+            // player.handCount = gamedatas.cards.filter(function (card) { return card.location == 'hand' && card.pId == playerId; }).length;
+        });
+        log('gamedatas', gamedatas);
+        this.animationManager = new AnimationManager(this);
+        this.builderCardsManager = new BuilderCardsManager(this);
+        this.technologyTilesManager = new TechnologyTilesManager(this);
+        new JumpToManager(this, {
+            localStorageFoldedKey: LOCAL_STORAGE_JUMP_TO_FOLDED_KEY,
+            topEntries: [
+                new JumpToEntry(_('Main board'), 'table-center', { 'color': '#224757' })
+            ],
+            entryClasses: 'round-point',
+            defaultFolded: true,
+        });
+        this.tableCenter = new TableCenter(this, gamedatas);
+        this.createPlayerPanels(gamedatas);
+        this.createPlayerTables(gamedatas);
+        this.zoomManager = new ZoomManager({
+            element: document.getElementById('table'),
+            smooth: false,
+            zoomControls: {
+                color: 'black',
+            },
+            localStorageZoomKey: LOCAL_STORAGE_ZOOM_KEY,
+            onDimensionsChange: function () {
+                var tablesAndCenter = document.getElementById('tables-and-center');
+                var clientWidth = tablesAndCenter.clientWidth;
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
+            },
+        });
+        new HelpManager(this, {
+            buttons: [
+                new BgaHelpPopinButton({
+                    title: _("Card help").toUpperCase(),
+                    html: this.getHelpHtml(),
+                    onPopinCreated: function () { return _this.populateHelp(); },
+                    buttonBackground: '#87a04f',
+                }),
+            ]
+        });
+        this.setupNotifications();
+        this.setupPreferences();
+        log("Ending game setup");
+    };
+    ///////////////////////////////////////////////////
+    //// Game & client states
+    // onEnteringState: this method is called each time we are entering into a new game state.
+    //                  You can use this method to perform some user interface changes at this moment.
+    //
+    AncientKnowledge.prototype.onEnteringState = function (stateName, args) {
+        log('Entering state: ' + stateName, args.args);
+        switch (stateName) {
+            case 'create':
+                this.onEnteringCreate(args.args);
+                break;
+            case 'learn':
+                this.onEnteringLearn(args.args);
+                break;
+        }
+    };
+    AncientKnowledge.prototype.onEnteringInitialSelection = function (args) {
+        var cards = this.gamedatas.cards.filter(function (card) { return args._private.cards.includes(card.id); });
+        this.getCurrentPlayerTable().setInitialSelection(cards);
+    };
+    /*private setGamestateDescription(property: string = '') {
         const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
         this.gamedatas.gamestate.description = `${originalState['description' + property]}`;
         this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
         (this as any).updatePageTitle();
     }*/
-  AncientKnowledge.prototype.onEnteringCreate = function (args) {
-    var _a;
-    if (this.isCurrentPlayerActive()) {
-      (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(true);
-    }
-  };
-  AncientKnowledge.prototype.onLeavingState = function (stateName) {
-    log('Leaving state: ' + stateName);
-    switch (stateName) {
-      case 'initialSelection':
-        this.onLeavingInitialSelection();
-        break;
-      case 'create':
-        this.onLeavingCreate();
-        break;
-    }
-  };
-  AncientKnowledge.prototype.onLeavingInitialSelection = function () {
-    var _a;
-    (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.endInitialSelection();
-  };
-  AncientKnowledge.prototype.onLeavingCreate = function () {
-    var _a;
-    (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
-  };
-  // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
-  //                        action status bar (ie: the HTML links in the status bar).
-  //
-  AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
-    var _this = this;
-    if (this.isCurrentPlayerActive()) {
-      switch (stateName) {
-        case 'initialSelection':
-          //const initialSelectionArgs = args as EnteringInitialSelectionArgs;
-          this.onEnteringInitialSelection(args);
-          this.addActionButton('actSelectCardsToDiscard_button', _('Keep selected cards'), function () {
-            return _this.actSelectCardsToDiscard();
-          });
-          document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
-          break;
-        case 'chooseAction':
-          [
-            ['create', _('Create')],
-            ['learn', _('Learn')],
-            ['excavate', _('Excavate')],
-            ['archive', _('Archive')],
-            ['search', _('Search')],
-          ].forEach(function (codeAndLabel) {
-            return _this.addActionButton(
-              'actChooseAction_'.concat(codeAndLabel[0], '_button'),
-              '<div class="action-icon '.concat(codeAndLabel[0], '"></div> ').concat(codeAndLabel[1]),
-              function () {
-                return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]);
-              }
-            );
-          });
-          this.addActionButton(
-            'actRestart_button',
-            _('Restart'),
-            function () {
-              return _this.takeAtomicAction('actRestart');
-            },
-            null,
-            null,
-            'gray'
-          );
-          break;
-      }
-    } else {
-      switch (stateName) {
-        case 'initialSelection':
-          this.addActionButton(
-            'actCancelSelection_button',
-            _('Cancel'),
-            function () {
-              return _this.actCancelSelection();
-            },
-            null,
-            null,
-            'gray'
-          );
-          break;
-      }
-    }
-  };
-  ///////////////////////////////////////////////////
-  //// Utility methods
-  ///////////////////////////////////////////////////
-  AncientKnowledge.prototype.setTooltip = function (id, html) {
-    this.addTooltipHtml(id, html, this.TOOLTIP_DELAY);
-  };
-  AncientKnowledge.prototype.setTooltipToClass = function (className, html) {
-    this.addTooltipHtmlToClass(className, html, this.TOOLTIP_DELAY);
-  };
-  AncientKnowledge.prototype.getPlayerId = function () {
-    return Number(this.player_id);
-  };
-  AncientKnowledge.prototype.getPlayer = function (playerId) {
-    return Object.values(this.gamedatas.players).find(function (player) {
-      return Number(player.id) == playerId;
-    });
-  };
-  AncientKnowledge.prototype.getPlayerTable = function (playerId) {
-    return this.playersTables.find(function (playerTable) {
-      return playerTable.playerId === playerId;
-    });
-  };
-  AncientKnowledge.prototype.getCurrentPlayerTable = function () {
-    var _this = this;
-    return this.playersTables.find(function (playerTable) {
-      return playerTable.playerId === _this.getPlayerId();
-    });
-  };
-  AncientKnowledge.prototype.getGameStateName = function () {
-    return this.gamedatas.gamestate.name;
-  };
-  AncientKnowledge.prototype.setupPreferences = function () {
-    var _this = this;
-    // Extract the ID and value from the UI control
-    var onchange = function (e) {
-      var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-      if (!match) {
-        return;
-      }
-      var prefId = +match[1];
-      var prefValue = +e.target.value;
-      _this.prefs[prefId].value = prefValue;
+    AncientKnowledge.prototype.onEnteringCreate = function (args) {
+        var _a;
+        if (this.isCurrentPlayerActive()) {
+            (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(true);
+        }
     };
-    // Call onPreferenceChange() when any value changes
-    dojo.query('.preference_control').connect('onchange', onchange);
-    // Call onPreferenceChange() now
-    dojo.forEach(dojo.query('#ingame_menu_content .preference_control'), function (el) {
-      return onchange({ target: el });
-    });
-  };
-  AncientKnowledge.prototype.getOrderedPlayers = function (gamedatas) {
-    var _this = this;
-    var players = Object.values(gamedatas.players).sort(function (a, b) {
-      return a.playerNo - b.playerNo;
-    });
-    var playerIndex = players.findIndex(function (player) {
-      return Number(player.id) === Number(_this.player_id);
-    });
-    var orderedPlayers =
-      playerIndex > 0
-        ? __spreadArray(__spreadArray([], players.slice(playerIndex), true), players.slice(0, playerIndex), true)
-        : players;
-    return orderedPlayers;
-  };
-  AncientKnowledge.prototype.createPlayerPanels = function (gamedatas) {
-    var _this = this;
-    Object.values(gamedatas.players).forEach(function (player) {
-      var playerId = Number(player.id);
-      document.getElementById('player_score_'.concat(player.id)).insertAdjacentHTML('beforebegin', '<div class="vp icon"></div>');
-      document.getElementById('icon_point_'.concat(player.id)).remove();
-      /**/
-      var html = '<div class="counters">\n                <div id="playerhand-counter-wrapper-'
-        .concat(
-          player.id,
-          '" class="playerhand-counter">\n                    <div class="player-hand-card"></div> \n                    <span id="playerhand-counter-'
-        )
-        .concat(
-          player.id,
-          '"></span>\n                </div>\n            \n                <div id="reputation-counter-wrapper-'
-        )
-        .concat(
-          player.id,
-          '" class="reputation-counter">\n                    <div class="reputation icon"></div>\n                    <span id="reputation-counter-'
-        )
-        .concat(
-          player.id,
-          '"></span>\n                </div>\n\n            </div><div class="counters">\n            \n                <div id="recruit-counter-wrapper-'
-        )
-        .concat(
-          player.id,
-          '" class="recruit-counter">\n                    <div class="recruit icon"></div>\n                    <span id="recruit-counter-'
-        )
-        .concat(player.id, '"></span>\n                </div>\n            \n                <div id="bracelet-counter-wrapper-')
-        .concat(
-          player.id,
-          '" class="bracelet-counter">\n                    <div class="bracelet icon"></div>\n                    <span id="bracelet-counter-'
-        )
-        .concat(player.id, '"></span>\n                </div>\n                \n            </div>\n            <div>')
-        .concat(
-          playerId == gamedatas.firstPlayerId ? '<div id="first-player">'.concat(_('First player'), '</div>') : '',
-          '</div>'
-        );
-      dojo.place(html, 'player_board_'.concat(player.id));
-      var handCounter = new ebg.counter();
-      handCounter.create('playerhand-counter-'.concat(playerId));
-      handCounter.setValue(player.handCount);
-      _this.handCounters[playerId] = handCounter;
-      _this.reputationCounters[playerId] = new ebg.counter();
-      _this.reputationCounters[playerId].create('reputation-counter-'.concat(playerId));
-      _this.reputationCounters[playerId].setValue(player.reputation);
-      _this.recruitCounters[playerId] = new ebg.counter();
-      _this.recruitCounters[playerId].create('recruit-counter-'.concat(playerId));
-      _this.recruitCounters[playerId].setValue(player.recruit);
-      _this.braceletCounters[playerId] = new ebg.counter();
-      _this.braceletCounters[playerId].create('bracelet-counter-'.concat(playerId));
-      _this.braceletCounters[playerId].setValue(player.bracelet);
-    });
-    this.setTooltipToClass('reputation-counter', _('Reputation'));
-    this.setTooltipToClass('recruit-counter', _('Recruits'));
-    this.setTooltipToClass('bracelet-counter', _('Bracelets'));
-  };
-  AncientKnowledge.prototype.createPlayerTables = function (gamedatas) {
-    var _this = this;
-    var orderedPlayers = this.getOrderedPlayers(gamedatas);
-    orderedPlayers.forEach(function (player) {
-      return _this.createPlayerTable(gamedatas, Number(player.id));
-    });
-  };
-  AncientKnowledge.prototype.createPlayerTable = function (gamedatas, playerId) {
-    var table = new PlayerTable(this, gamedatas.players[playerId], gamedatas.reservePossible);
-    this.playersTables.push(table);
-  };
-  AncientKnowledge.prototype.updateGains = function (playerId, gains) {
-    Object.entries(gains).forEach(function (entry) {
-      var type = Number(entry[0]);
-      var amount = entry[1];
-      if (amount != 0) {
-        switch (
-          type
-          /*case VP:
+    AncientKnowledge.prototype.onEnteringLearn = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.tableCenter.setTechonologyTilesSelectable(true /*, args.techs*/);
+        }
+    };
+    AncientKnowledge.prototype.onLeavingState = function (stateName) {
+        log('Leaving state: ' + stateName);
+        switch (stateName) {
+            case 'initialSelection':
+                this.onLeavingInitialSelection();
+                break;
+            case 'create':
+                this.onLeavingCreate();
+                break;
+            case 'learn':
+                this.onLeavingLearn();
+                break;
+        }
+    };
+    AncientKnowledge.prototype.onLeavingInitialSelection = function () {
+        var _a;
+        (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.endInitialSelection();
+    };
+    AncientKnowledge.prototype.onLeavingCreate = function () {
+        var _a;
+        (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
+    };
+    AncientKnowledge.prototype.onLeavingLearn = function () {
+        this.tableCenter.setTechonologyTilesSelectable(false);
+    };
+    // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
+    //                        action status bar (ie: the HTML links in the status bar).
+    //
+    AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            switch (stateName) {
+                case 'initialSelection':
+                    //const initialSelectionArgs = args as EnteringInitialSelectionArgs;
+                    this.onEnteringInitialSelection(args);
+                    this.addActionButton("actSelectCardsToDiscard_button", _('Keep selected cards'), function () { return _this.actSelectCardsToDiscard(); });
+                    document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
+                    break;
+                case 'chooseAction':
+                    [
+                        ['create', _('Create')],
+                        ['learn', _('Learn')],
+                        ['excavate', _('Excavate')],
+                        ['archive', _('Archive')],
+                        ['search', _('Search')],
+                    ].forEach(function (codeAndLabel) {
+                        return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
+                    });
+                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.takeAtomicAction('actRestart'); }, null, null, 'gray');
+                    break;
+            }
+        }
+        else {
+            switch (stateName) {
+                case 'initialSelection':
+                    this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
+                    break;
+            }
+        }
+    };
+    ///////////////////////////////////////////////////
+    //// Utility methods
+    ///////////////////////////////////////////////////
+    AncientKnowledge.prototype.setTooltip = function (id, html) {
+        this.addTooltipHtml(id, html, this.TOOLTIP_DELAY);
+    };
+    AncientKnowledge.prototype.setTooltipToClass = function (className, html) {
+        this.addTooltipHtmlToClass(className, html, this.TOOLTIP_DELAY);
+    };
+    AncientKnowledge.prototype.getPlayerId = function () {
+        return Number(this.player_id);
+    };
+    AncientKnowledge.prototype.getPlayer = function (playerId) {
+        return Object.values(this.gamedatas.players).find(function (player) { return Number(player.id) == playerId; });
+    };
+    AncientKnowledge.prototype.getPlayerTable = function (playerId) {
+        return this.playersTables.find(function (playerTable) { return playerTable.playerId === playerId; });
+    };
+    AncientKnowledge.prototype.getCurrentPlayerTable = function () {
+        var _this = this;
+        return this.playersTables.find(function (playerTable) { return playerTable.playerId === _this.getPlayerId(); });
+    };
+    AncientKnowledge.prototype.getGameStateName = function () {
+        return this.gamedatas.gamestate.name;
+    };
+    AncientKnowledge.prototype.setupPreferences = function () {
+        var _this = this;
+        // Extract the ID and value from the UI control
+        var onchange = function (e) {
+            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
+            if (!match) {
+                return;
+            }
+            var prefId = +match[1];
+            var prefValue = +e.target.value;
+            _this.prefs[prefId].value = prefValue;
+        };
+        // Call onPreferenceChange() when any value changes
+        dojo.query(".preference_control").connect("onchange", onchange);
+        // Call onPreferenceChange() now
+        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
+    };
+    AncientKnowledge.prototype.getOrderedPlayers = function (gamedatas) {
+        var _this = this;
+        var players = Object.values(gamedatas.players).sort(function (a, b) { return a.playerNo - b.playerNo; });
+        var playerIndex = players.findIndex(function (player) { return Number(player.id) === Number(_this.player_id); });
+        var orderedPlayers = playerIndex > 0 ? __spreadArray(__spreadArray([], players.slice(playerIndex), true), players.slice(0, playerIndex), true) : players;
+        return orderedPlayers;
+    };
+    AncientKnowledge.prototype.createPlayerPanels = function (gamedatas) {
+        var _this = this;
+        Object.values(gamedatas.players).forEach(function (player) {
+            var playerId = Number(player.id);
+            document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div class=\"vp icon\"></div>");
+            document.getElementById("icon_point_".concat(player.id)).remove();
+            /**/
+            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" class=\"playerhand-counter\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"reputation-counter-wrapper-").concat(player.id, "\" class=\"reputation-counter\">\n                    <div class=\"reputation icon\"></div>\n                    <span id=\"reputation-counter-").concat(player.id, "\"></span>\n                </div>\n\n            </div><div class=\"counters\">\n            \n                <div id=\"recruit-counter-wrapper-").concat(player.id, "\" class=\"recruit-counter\">\n                    <div class=\"recruit icon\"></div>\n                    <span id=\"recruit-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"bracelet-counter-wrapper-").concat(player.id, "\" class=\"bracelet-counter\">\n                    <div class=\"bracelet icon\"></div>\n                    <span id=\"bracelet-counter-").concat(player.id, "\"></span>\n                </div>\n                \n            </div>\n            <div>").concat(playerId == gamedatas.firstPlayerId ? "<div id=\"first-player\">".concat(_('First player'), "</div>") : '', "</div>");
+            dojo.place(html, "player_board_".concat(player.id));
+            var handCounter = new ebg.counter();
+            handCounter.create("playerhand-counter-".concat(playerId));
+            handCounter.setValue(player.handCount);
+            _this.handCounters[playerId] = handCounter;
+            _this.reputationCounters[playerId] = new ebg.counter();
+            _this.reputationCounters[playerId].create("reputation-counter-".concat(playerId));
+            _this.reputationCounters[playerId].setValue(player.reputation);
+            _this.recruitCounters[playerId] = new ebg.counter();
+            _this.recruitCounters[playerId].create("recruit-counter-".concat(playerId));
+            _this.recruitCounters[playerId].setValue(player.recruit);
+            _this.braceletCounters[playerId] = new ebg.counter();
+            _this.braceletCounters[playerId].create("bracelet-counter-".concat(playerId));
+            _this.braceletCounters[playerId].setValue(player.bracelet);
+        });
+        this.setTooltipToClass('reputation-counter', _('Reputation'));
+        this.setTooltipToClass('recruit-counter', _('Recruits'));
+        this.setTooltipToClass('bracelet-counter', _('Bracelets'));
+    };
+    AncientKnowledge.prototype.createPlayerTables = function (gamedatas) {
+        var _this = this;
+        var orderedPlayers = this.getOrderedPlayers(gamedatas);
+        orderedPlayers.forEach(function (player) {
+            return _this.createPlayerTable(gamedatas, Number(player.id));
+        });
+    };
+    AncientKnowledge.prototype.createPlayerTable = function (gamedatas, playerId) {
+        var table = new PlayerTable(this, gamedatas.players[playerId], gamedatas.reservePossible);
+        this.playersTables.push(table);
+    };
+    AncientKnowledge.prototype.updateGains = function (playerId, gains) {
+        Object.entries(gains).forEach(function (entry) {
+            var type = Number(entry[0]);
+            var amount = entry[1];
+            if (amount != 0) {
+                switch (type) {
+                    /*case VP:
                         this.setScore(playerId, (this as any).scoreCtrl[playerId].getValue() + amount);
                         break;
                     case BRACELET:
@@ -3275,110 +3181,37 @@ var AncientKnowledge = /** @class */ (function () {
                         break;*/
         ) {
         }
-      }
-    });
-  };
-  AncientKnowledge.prototype.setScore = function (playerId, score) {
-    var _a;
-    (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(score);
-    this.tableCenter.setScore(playerId, score);
-  };
-  AncientKnowledge.prototype.setReputation = function (playerId, count) {
-    this.reputationCounters[playerId].toValue(count);
-    this.tableCenter.setReputation(playerId, count);
-  };
-  AncientKnowledge.prototype.setRecruits = function (playerId, count) {
-    this.recruitCounters[playerId].toValue(count);
-    this.getPlayerTable(playerId).updateCounter('recruits', count);
-  };
-  AncientKnowledge.prototype.setBracelets = function (playerId, count) {
-    this.braceletCounters[playerId].toValue(count);
-    this.getPlayerTable(playerId).updateCounter('bracelets', count);
-  };
-  AncientKnowledge.prototype.highlightPlayerTokens = function (playerId) {
-    this.tableCenter.highlightPlayerTokens(playerId);
-  };
-  AncientKnowledge.prototype.getColorAddHtml = function () {
-    var _this = this;
-    return [1, 2, 3, 4, 5]
-      .map(function (number) {
-        return '\n            <div class="color" data-color="'
-          .concat(number, '"></div>\n            <span class="label"> ')
-          .concat(_this.getColor(number), '</span>\n        ');
-      })
-      .join('');
-  };
-  AncientKnowledge.prototype.getHelpHtml = function () {
-    var html = '\n        <div id="help-popin">\n            <h1>'
-      .concat(
-        _('Assets'),
-        '</h2>\n            <div class="help-section">\n                <div class="icon vp"></div>\n                <div class="help-label">'
-      )
-      .concat(
-        _('Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track.'),
-        '</div>\n            </div>\n            <div class="help-section">\n                <div class="icon recruit"></div>\n                <div class="help-label">'
-      )
-      .concat(_('Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship.'), ' ')
-      .concat(_('It is not possible to have more than 3.'), ' ')
-      .concat(
-        _(
-          'A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration.'
-        ),
-        '</div>\n            </div>\n            <div class="help-section">\n                <div class="icon bracelet"></div>\n                <div class="help-label">'
-      )
-      .concat(_('Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship.'), ' ')
-      .concat(_('It is not possible to have more than 3.'), ' ')
-      .concat(
-        _('They are used for Trading.'),
-        '</div>\n            </div>\n            <div class="help-section">\n                <div class="icon reputation"></div>\n                <div class="help-label">'
-      )
-      .concat(
-        _('Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track.'),
-        '</div>\n            </div>\n            <div class="help-section">\n                <div class="icon take-card"></div>\n                <div class="help-label">'
-      )
-      .concat(
-        _(
-          'Draw <strong>the first Viking card</strong> from the deck: It is placed in the player’s Crew Zone (without taking any assets).'
-        ),
-        '</div>\n            </div>\n\n            <h1>'
-      )
-      .concat(_('Powers of the artifacts (variant option)'), '</h1>\n        ');
-    for (var i = 1; i <= 7; i++) {
-      html += '\n            <div class="help-section">\n                <div id="help-artifact-'
-        .concat(i, '"></div>\n                <div>')
-        .concat(this.technologyTilesManager.getTooltip(i), '</div>\n            </div> ');
-    }
-    html += '</div>';
-    return html;
-  };
-  AncientKnowledge.prototype.populateHelp = function () {
-    for (var i = 1; i <= 7; i++) {
-      this.technologyTilesManager.setForHelp(i, 'help-artifact-'.concat(i));
-    }
-  };
-  AncientKnowledge.prototype.onTableDestinationClick = function (destination) {
-    /*if (this.gamedatas.gamestate.name == 'reserveDestination') {
-            this.reserveDestination(destination.id);
-        } else {
-            this.takeDestination(destination.id);
-        }*/
-  };
-  AncientKnowledge.prototype.onHandCardClick = function (card) {
-    if (this.gamedatas.gamestate.name == 'create') {
-      this.takeAtomicAction('actCreate', [
-        card.id,
-        'timeline-'.concat(card.startingSpace, '-0'),
-        [], // TODO cards to discard
-      ]);
-    }
-  };
-  AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
-    if (this.gamedatas.gamestate.name == 'initialSelection') {
-      document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
-    }
-  };
-  AncientKnowledge.prototype.onTableCardClick = function (card) {
-    /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
+        html += "</div>";
+        return html;
+    };
+    AncientKnowledge.prototype.populateHelp = function () {
+        for (var i = 1; i <= 7; i++) {
+            this.technologyTilesManager.setForHelp(i, "help-artifact-".concat(i));
+        }
+    };
+    AncientKnowledge.prototype.onTableTechnologyTileClick = function (tile) {
+        if (this.gamedatas.gamestate.name == 'learn') {
+            this.takeAtomicAction('actLearn', [
+                tile.id,
+            ]);
+        }
+    };
+    AncientKnowledge.prototype.onHandCardClick = function (card) {
+        if (this.gamedatas.gamestate.name == 'create') {
+            this.takeAtomicAction('actCreate', [
+                card.id,
+                "timeline-".concat(card.startingSpace, "-0"),
+                [], // TODO cards to discard
+            ]);
+        }
+    };
+    AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
+        if (this.gamedatas.gamestate.name == 'initialSelection') {
+            document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
+        }
+    };
+    AncientKnowledge.prototype.onTableCardClick = function (card) {
+        /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
             this.discardTableCard(card.id);
         } else {
             this.chooseNewCard(card.id);
@@ -3442,22 +3275,21 @@ var AncientKnowledge = /** @class */ (function () {
                 your pylos.game.php file.
 
     */
-  AncientKnowledge.prototype.setupNotifications = function () {
-    //log( 'notifications subscriptions setup' );
-    var _this = this;
-    var notifs = [
-      ['pDiscardCards', undefined],
-      ['fillPool', undefined],
-    ];
-    notifs.forEach(function (notif) {
-      dojo.subscribe(notif[0], _this, function (notifDetails) {
-        log('notif_'.concat(notif[0]), notifDetails.args);
-        var promise = _this['notif_'.concat(notif[0])](notifDetails.args);
-        // tell the UI notification ends, if the function returned a promise
-        promise === null || promise === void 0
-          ? void 0
-          : promise.then(function () {
-              return _this.notifqueue.onSynchronousNotificationEnd();
+    AncientKnowledge.prototype.setupNotifications = function () {
+        //log( 'notifications subscriptions setup' );
+        var _this = this;
+        var notifs = [
+            ['pDiscardCards', undefined],
+            ['fillPool', undefined],
+            ['discardLostKnowledge', 1],
+            ['learnTech', undefined],
+        ];
+        notifs.forEach(function (notif) {
+            dojo.subscribe(notif[0], _this, function (notifDetails) {
+                log("notif_".concat(notif[0]), notifDetails.args);
+                var promise = _this["notif_".concat(notif[0])](notifDetails.args);
+                // tell the UI notification ends, if the function returned a promise
+                promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
             });
       });
       _this.notifqueue.setSynchronous(notif[0], notif[1]);
@@ -3501,75 +3333,66 @@ var AncientKnowledge = /** @class */ (function () {
         .map(function (tile) {
           return tile.id;
         });
-      var numberTiles = _this.gamedatas.techs.filter(function (tile) {
-        return numberTilesId.includes(tile.id);
-      });
-      return _this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
-    });
-    return Promise.all(promises);
-  };
-  AncientKnowledge.prototype.getGain = function (type) {
-    switch (type) {
-      case 1:
-        return _('Victory Point');
-      case 2:
-        return _('Bracelet');
-      case 3:
-        return _('Recruit');
-      case 4:
-        return _('Reputation');
-      case 5:
-        return _('Card');
-    }
-  };
-  AncientKnowledge.prototype.getTooltipGain = function (type) {
-    return ''.concat(this.getGain(type), ' (<div class="icon" data-type="').concat(type, '"></div>)');
-  };
-  AncientKnowledge.prototype.getColor = function (color) {
-    switch (color) {
-      case 1:
-        return _('Red');
-      case 2:
-        return _('Yellow');
-      case 3:
-        return _('Green');
-      case 4:
-        return _('Blue');
-      case 5:
-        return _('Purple');
-    }
-  };
-  AncientKnowledge.prototype.getTooltipColor = function (color) {
-    return ''.concat(this.getColor(color), ' (<div class="color" data-color="').concat(color, '"></div>)');
-  };
-  /* This enable to inject translatable styled things to logs or action bar */
-  /* @Override */
-  AncientKnowledge.prototype.format_string_recursive = function (log, args) {
-    try {
-      if (log && args && !args.processed) {
-        if (args.gains && (typeof args.gains !== 'string' || args.gains[0] !== '<')) {
-          var entries = Object.entries(args.gains);
-          args.gains = entries.length
-            ? entries
-                .map(function (entry) {
-                  return '<strong>'.concat(entry[1], '</strong> <div class="icon" data-type="').concat(entry[0], '"></div>');
-                })
-                .join(' ')
-            : '<strong>'.concat(_('nothing'), '</strong>');
+        return Promise.all(promises);
+    };
+    AncientKnowledge.prototype.notif_discardLostKnowledge = function (args) {
+        //  TODO
+    };
+    AncientKnowledge.prototype.notif_learnTech = function (args) {
+        return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
+    };
+    AncientKnowledge.prototype.getGain = function (type) {
+        switch (type) {
+            case 1: return _("Victory Point");
+            case 2: return _("Bracelet");
+            case 3: return _("Recruit");
+            case 4: return _("Reputation");
+            case 5: return _("Card");
         }
-        for (var property in args) {
-          if (['number', 'color', 'card_color', 'card_type', 'artifact_name'].includes(property) && args[property][0] != '<') {
-            args[property] = '<strong>'.concat(_(args[property]), '</strong>');
-          }
+    };
+    AncientKnowledge.prototype.getTooltipGain = function (type) {
+        return "".concat(this.getGain(type), " (<div class=\"icon\" data-type=\"").concat(type, "\"></div>)");
+    };
+    AncientKnowledge.prototype.getColor = function (color) {
+        switch (color) {
+            case 1: return _("Red");
+            case 2: return _("Yellow");
+            case 3: return _("Green");
+            case 4: return _("Blue");
+            case 5: return _("Purple");
         }
-      }
-    } catch (e) {
-      console.error(log, args, 'Exception thrown', e.stack);
-    }
-    return this.inherited(arguments);
-  };
-  return AncientKnowledge;
-})();
-define(['dojo', 'dojo/_base/declare', 'ebg/core/gamegui', 'ebg/counter', 'ebg/stock'], function (dojo, declare) {
-  return declare('bgagame.ancientknowledge', ebg.core.gamegui, new AncientKnowledge());
+    };
+    AncientKnowledge.prototype.getTooltipColor = function (color) {
+        return "".concat(this.getColor(color), " (<div class=\"color\" data-color=\"").concat(color, "\"></div>)");
+    };
+    /* This enable to inject translatable styled things to logs or action bar */
+    /* @Override */
+    AncientKnowledge.prototype.format_string_recursive = function (log, args) {
+        try {
+            if (log && args && !args.processed) {
+                if (args.gains && (typeof args.gains !== 'string' || args.gains[0] !== '<')) {
+                    var entries = Object.entries(args.gains);
+                    args.gains = entries.length ? entries.map(function (entry) { return "<strong>".concat(entry[1], "</strong> <div class=\"icon\" data-type=\"").concat(entry[0], "\"></div>"); }).join(' ') : "<strong>".concat(_('nothing'), "</strong>");
+                }
+                for (var property in args) {
+                    if (['number', 'color', 'card_color', 'card_type', 'artifact_name'].includes(property) && args[property][0] != '<') {
+                        args[property] = "<strong>".concat(_(args[property]), "</strong>");
+                    }
+                }
+            }
+        }
+        catch (e) {
+            console.error(log, args, "Exception thrown", e.stack);
+        }
+        return this.inherited(arguments);
+    };
+    return AncientKnowledge;
+}());
+define([
+    "dojo", "dojo/_base/declare",
+    "ebg/core/gamegui",
+    "ebg/counter",
+    "ebg/stock"
+], function (dojo, declare) {
+    return declare("bgagame.ancientknowledge", ebg.core.gamegui, new AncientKnowledge());
 });
