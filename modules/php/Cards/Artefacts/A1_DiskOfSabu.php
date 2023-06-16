@@ -18,7 +18,7 @@ class A1_DiskOfSabu extends \AK\Models\Artefact
     ];
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
     return $n < 3

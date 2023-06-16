@@ -171,6 +171,13 @@ class Cards extends \AK\Helpers\Pieces
       });
   }
 
+  public static function getOnTimelineSpace($pId, $space)
+  {
+    return self::getFilteredQuery($pId, "timeline-$space[0]-$space[1]")
+      ->get()
+      ->first();
+  }
+
   /**
    * Check whether a player played a specific card
    */

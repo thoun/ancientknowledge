@@ -86,6 +86,12 @@ $machinestates = [
     'action' => 'stAtomicAction',
   ],
 
+  ST_DECLINE_CARD => [
+    'name' => 'declineCard',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
   ////////////////////////////////////
   //  _____             _
   // | ____|_ __   __ _(_)_ __   ___

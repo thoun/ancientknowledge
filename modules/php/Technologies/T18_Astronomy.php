@@ -23,7 +23,7 @@ class T18_Astronomy extends \AK\Models\Technology
     return min($player->getIcons([\PYRAMID, CITY])) >= 1;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

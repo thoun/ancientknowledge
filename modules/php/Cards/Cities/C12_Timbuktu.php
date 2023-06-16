@@ -21,7 +21,7 @@ class C12_Timbuktu extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => \DISCARD_LOST_KNOWLEDGE,

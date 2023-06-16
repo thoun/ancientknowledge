@@ -23,7 +23,7 @@ class T25_CopticAlphabet extends \AK\Models\Technology
     return $player->countIcon(\MEGALITH) >= 2;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

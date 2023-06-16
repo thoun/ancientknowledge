@@ -26,7 +26,7 @@ class M30_LeshanGiantBuddha extends \AK\Models\Building
     ];
   }
 
-  public function getTimeline()
+  public function getTimelineEffect()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
     return $n < 3

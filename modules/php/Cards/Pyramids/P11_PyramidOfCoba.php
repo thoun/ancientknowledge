@@ -25,7 +25,7 @@ class P11_PyramidOfCoba extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getDecline()
+  public function getDeclineEffect()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
     return $n < 3

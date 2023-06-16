@@ -23,7 +23,7 @@ class T15_FlowerOfLife extends \AK\Models\Technology
     return $player->countIcon(CITY) >= 2;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

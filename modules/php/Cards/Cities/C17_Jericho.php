@@ -21,7 +21,7 @@ class C17_Jericho extends \AK\Models\Building
     $this->effect = [clienttranslate('Draw 6 cards.')];
   }
 
-  public function getDecline()
+  public function getDeclineEffect()
   {
     return [
       'action' => DRAW,

@@ -53,6 +53,53 @@ class Building extends \AK\Helpers\DB_Model
     return $this->state == 1;
   }
 
+  public function getTimelineSpace()
+  {
+    $t = explode('-', $this->location);
+    if ($t != 'timeline') {
+      return null;
+    } else {
+      return [$t[1], $t[2]];
+    }
+  }
+
+  public function getAdjacentBuildings()
+  {
+    $space = $this->getTimelineSpace();
+    if (is_null($space)) {
+      return [];
+    } else {
+      $slots = [[$t[0], 1 - $t[1]]]; // Space above/below
+      if ($t[0] > 1) {
+        $slots[] = [$t[0] - 1, $t[1]];
+      }
+      if ($t[0] < 6) {
+        $slots[] = [$t[0] + 1, $t[1]];
+      }
+
+      $cards = [];
+      $player = $this->getPlayer();
+      foreach ($slots as $space) {
+        $card = $player->getCardOnTimelineSpace($space);
+        if (!is_null($card)) {
+          $cards[] = $card;
+        }
+      }
+
+      return $cards;
+    }
+  }
+
+  public function countAdjacentBuildingTypes()
+  {
+    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0];
+    foreach ($this->getAdjacentBuildings() as $card) {
+      $icons[$card->getType()]++;
+    }
+
+    return $icons;
+  }
+
   public function getInitialKnowledgeDiscount()
   {
     return 0;

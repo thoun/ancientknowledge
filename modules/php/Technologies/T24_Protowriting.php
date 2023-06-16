@@ -23,7 +23,7 @@ class T24_Protowriting extends \AK\Models\Technology
     return sum($player->countIcons(BUILDINGS)) >= 4;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

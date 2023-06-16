@@ -22,6 +22,7 @@ class Actions
 
     TIMELINE_PHASE => 'TimelinePhase',
     DECLINE_PHASE => 'DeclinePhase',
+    DECLINE_CARD => 'DeclineCard',
   ];
 
   public static function get($actionId, $ctx = null)

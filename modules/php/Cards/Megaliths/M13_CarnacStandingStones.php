@@ -25,7 +25,7 @@ class M13_CarnacStandingStones extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getDecline()
+  public function getDeclineEffect()
   {
     $n = $this->getPlayer()->getLostKnowledge();
     return $n < 20

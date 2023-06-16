@@ -23,7 +23,7 @@ class T1_Anaximenes extends \AK\Models\Technology
     return $player->countIcon(\ARTEFACT) >= 3;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

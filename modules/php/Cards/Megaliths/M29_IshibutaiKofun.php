@@ -23,7 +23,7 @@ class M29_IshibutaiKofun extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getTimeline()
+  public function getTimelineEffect()
   {
     $n = $this->getPlayer()->getLostKnowledge();
     return $n < 5

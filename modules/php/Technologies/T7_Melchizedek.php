@@ -23,7 +23,7 @@ class T7_Melchizedek extends \AK\Models\Technology
     return min($player->getIcons(BUILDINGS)) >= 1;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

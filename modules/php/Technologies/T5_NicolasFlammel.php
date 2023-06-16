@@ -17,7 +17,7 @@ class T5_NicolasFlammel extends \AK\Models\Technology
     $this->implemented = true;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'type' => \NODE_SEQ,

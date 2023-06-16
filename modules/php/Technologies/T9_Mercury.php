@@ -17,7 +17,7 @@ class T9_Mercury extends \AK\Models\Technology
     $this->implemented = true;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => \DISCARD_LOST_KNOWLEDGE,

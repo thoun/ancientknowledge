@@ -16,7 +16,7 @@ class T13_MysterySchool extends \AK\Models\Technology
     $this->effect = [clienttranslate('Draw 1 card for each <CITY> in your Timeline.')];
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     // TODO
     return [

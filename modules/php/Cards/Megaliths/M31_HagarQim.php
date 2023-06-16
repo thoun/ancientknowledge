@@ -20,7 +20,7 @@ class M31_HagarQim extends \AK\Models\Building
     $this->effect = [clienttranslate('Discard 1 <LOST_KNOWLEDGE> from your board.')];
   }
 
-  public function getTimeline()
+  public function getTimelineEffect()
   {
     return [
       'action' => \DISCARD_LOST_KNOWLEDGE,

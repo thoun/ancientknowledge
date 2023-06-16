@@ -19,6 +19,9 @@ class Globals extends \AK\Helpers\DB_Manager
 
     'initialSelection' => 'obj',
 
+    'endOfGameTriggered' => 'bool',
+    'firstHalf' => 'bool',
+
     'firstPlayer' => 'int',
     'skippedPlayers' => 'obj',
 
@@ -153,5 +156,6 @@ class Globals extends \AK\Helpers\DB_Manager
   public static function setupNewGame($players, $options)
   {
     Globals::setStartingHands($options[OPTION_FIRST_GAME] == OPTION_FIRST_GAME_ENABLED);
+    Globals::setFirstHalf(true);
   }
 }

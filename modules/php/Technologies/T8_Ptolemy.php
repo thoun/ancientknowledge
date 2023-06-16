@@ -23,7 +23,7 @@ class T8_Ptolemy extends \AK\Models\Technology
     return $player->getHand()->count() <= 1;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

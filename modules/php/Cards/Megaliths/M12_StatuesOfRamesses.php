@@ -22,7 +22,7 @@ class M12_StatuesOfRamesses extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getDecline()
+  public function getDeclineEffect()
   {
     return [
       'action' => DRAW,

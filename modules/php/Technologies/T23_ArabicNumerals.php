@@ -23,7 +23,7 @@ class T23_ArabicNumerals extends \AK\Models\Technology
     return $player->getLostKnowledges() >= 5;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => \DISCARD_LOST_KNOWLEDGE,

@@ -23,7 +23,7 @@ class T2_Aristotle extends \AK\Models\Technology
     return $player->countIcon(PYRAMID) >= 2;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     return [
       'action' => DRAW,

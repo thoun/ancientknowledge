@@ -26,7 +26,7 @@ class P31_Tonina extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getTimeline()
+  public function getTimelineEffect()
   {
     return [
       'action' => DRAW,

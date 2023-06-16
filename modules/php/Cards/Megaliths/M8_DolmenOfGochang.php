@@ -25,7 +25,7 @@ class M8_DolmenOfGochang extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getImmediate()
+  public function getImmediateEffect()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
     return $n != 5

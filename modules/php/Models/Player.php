@@ -80,6 +80,11 @@ class Player extends \AK\Helpers\DB_Model
     return Cards::getPast($this->id, $type);
   }
 
+  public function getCardOnTimelineSpace($space)
+  {
+    return Cards::getOnTimelineSpace($this->id, $space);
+  }
+
   public function getFreeSlots()
   {
     // TODO
