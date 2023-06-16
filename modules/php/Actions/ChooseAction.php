@@ -34,6 +34,7 @@ class ChooseAction extends \AK\Models\Action
       'create' => CREATE,
       'learn' => LEARN,
       'search' => DRAW,
+      'excavate' => EXCAVATE,
     ];
     if (!array_key_exists($actionName, $actions)) {
       throw new \BgaVisibleSystemException('Invalid action. Should not happen');

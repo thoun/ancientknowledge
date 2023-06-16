@@ -194,6 +194,24 @@ $machinestates = [
     'possibleactions' => ['actLearn', 'actRestart'],
   ],
 
+  ST_EXCAVATE => [
+    'name' => 'excavate',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose cards in their past to rotate'),
+    'descriptionmyturn' => clienttranslate('${you} must choose cards in your past to rotate'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actExcavate', 'actRestart'],
+  ],
+
+  ST_ARCHIVE => [
+    'name' => 'archive',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose cards to discard before removing <KNOWLEDGE> on their timeline'),
+    'descriptionmyturn' => clienttranslate('${you} must choose cards to discard before removing <KNOWLEDGE> on your timeline'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actArchive', 'actRestart'],
+  ],
+
   ST_DRAW => [
     'name' => 'drawCard',
     'type' => 'game',
@@ -210,6 +228,15 @@ $machinestates = [
     'name' => 'activateCard',
     'type' => 'game',
     'action' => 'stAtomicAction',
+  ],
+
+  ST_REMOVE_KNOWLEDGE => [
+    'name' => 'removeKnowledge',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must remove ${n} <KNOWLEDGE> on their timeline'),
+    'descriptionmyturn' => clienttranslate('${you} must remove ${n} <KNOWLEDGE> on your timeline'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actRemoveKnowledge', 'actRestart'],
   ],
 
   //////////////////////////////////////////////////////////////////

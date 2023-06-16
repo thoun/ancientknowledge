@@ -120,6 +120,11 @@ class Cards extends \AK\Helpers\Pieces
     return self::move($cardIds, $discard);
   }
 
+  public static function rotate($cardIds)
+  {
+    return self::setState($cardIds, 1);
+  }
+
   ///////////////////////////////////////////////
   //    ____                                 _
   //   |  _ \ ___ _ __ ___  ___  _ __   __ _| |

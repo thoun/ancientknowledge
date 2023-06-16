@@ -43,11 +43,16 @@ class Draw extends \AK\Models\Action
   {
     $player = Players::getActive();
     $n = $this->getN();
+    $m = min($n, 10 - $player->getHand()->count());
 
-    // Draw cards and notify
-    $cards = Cards::draw($player, $n);
-    // Stats::incCardsDrawn($player, $nInDeck);
-    Notifications::drawCards($player, $cards);
+    if ($m == 0) {
+      Notifications::message(\clienttranslate('${player_name} already has 10 cards in hand'), ['player' => $player]);
+    } else {
+      // Draw cards and notify
+      $cards = Cards::draw($player, $m);
+      // Stats::incCardsDrawn($player, $nInDeck);
+      Notifications::drawCards($player, $cards);
+    }
 
     $this->resolveAction();
   }

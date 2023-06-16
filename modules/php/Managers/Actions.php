@@ -17,6 +17,8 @@ class Actions
     DRAW => 'Draw',
     GAIN => 'Gain',
     LEARN => 'Learn',
+    EXCAVATE => 'Excavate',
+    REMOVE_KNOWLEDGE => 'RemoveKnowledge',
 
     TIMELINE_PHASE => 'TimelinePhase',
     DECLINE_PHASE => 'DeclinePhase',

@@ -164,6 +164,14 @@ class Notifications
     ]);
   }
 
+  public static function rotateCards($player, $cards)
+  {
+    self::notifyAll($player, 'rotateCards', clienttranslate('${player_name} rotates ${card_names} in their past'), [
+      'player' => $player,
+      'cards' => is_array($cards) ? $cards : $cards->toArray(),
+    ]);
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___

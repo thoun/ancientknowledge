@@ -48,6 +48,11 @@ class Building extends \AK\Helpers\DB_Model
     return false;
   }
 
+  public function isRotated()
+  {
+    return $this->state == 1;
+  }
+
   public function getInitialKnowledgeDiscount()
   {
     return 0;
