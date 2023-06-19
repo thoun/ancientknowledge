@@ -25,5 +25,23 @@ class P10_Teotihuacan extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('You may LEARN up to 2 Technologies if you fulfill their requirements.')];
+    $this->implemented = true;
+  }
+
+  public function getDeclineEffect()
+  {
+    return [
+      'type' => NODE_SEQ,
+      'childs' => [
+        [
+          'action' => LEARN,
+          'optional' => true,
+        ],
+        [
+          'action' => LEARN,
+          'optional' => true,
+        ],
+      ],
+    ];
   }
 }

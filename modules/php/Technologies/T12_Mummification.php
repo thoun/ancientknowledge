@@ -16,5 +16,20 @@ class T12_Mummification extends \AK\Models\Technology
     $this->effect = [
       clienttranslate('Discard as many <KNOWLEDGE> from your Timeline as the number of <ARTEFACT> on your board.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    $n = $this->countIcon(\ARTEFACT);
+
+    return $n == 0
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => $n,
+        ],
+      ];
   }
 }

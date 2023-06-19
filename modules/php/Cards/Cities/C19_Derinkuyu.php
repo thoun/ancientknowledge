@@ -23,12 +23,12 @@ class C19_Derinkuyu extends \AK\Models\Building
 
   public function getDeclineEffect()
   {
-    $cardIds = [];
-    foreach ($this->getPlayer()->getTimeline() as $card) {
-      if ($card->getType() == CITY && $card->getKnowledge() >= 6) {
-        $cardIds[] = $card->getId();
-      }
-    }
+    $cardIds = $this->getPlayer()
+      ->getTimeline(CITY)
+      ->filter(function ($card) {
+        return $card->getKnowledge() >= 6;
+      })
+      ->getIds();
 
     return empty($cardIds)
       ? null

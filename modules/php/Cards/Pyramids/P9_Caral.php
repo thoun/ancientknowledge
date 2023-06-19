@@ -22,5 +22,14 @@ class P9_Caral extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('You may LEARN 1 Technology if you fulfill its requirements.')];
+    $this->implemented = true;
+  }
+
+  public function getDeclineEffect()
+  {
+    return [
+      'action' => LEARN,
+      'optional' => true,
+    ];
   }
 }

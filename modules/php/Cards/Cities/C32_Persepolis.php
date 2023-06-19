@@ -18,5 +18,14 @@ class C32_Persepolis extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('You may take an ARCHIVE action.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => ARCHIVE,
+      'optional' => true,
+    ];
   }
 }

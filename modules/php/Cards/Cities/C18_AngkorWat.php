@@ -20,5 +20,16 @@ class C18_AngkorWat extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 1 <CITY> in your Past, your other <CITY> enter play with 1 <KNOWLEDGE> less.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getKnowledgeReduction($card)
+  {
+    return $card->getType() == CITY &&
+      !$this->getPlayer()
+        ->getPast()
+        ->empty()
+      ? 1
+      : 0;
   }
 }
