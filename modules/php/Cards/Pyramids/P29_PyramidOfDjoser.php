@@ -22,5 +22,17 @@ class P29_PyramidOfDjoser extends \AK\Models\Building
         'If you have 4 <LOST_KNOWLEDGE> or less on your board and at least 1 monument in your Past, discard 1 <KNOWLEDGE> from any of your monument.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $player = $this->getPlayer();
+    return $player->getLostKnowledge() < 4 || $player->getPast()->empty()
+      ? null
+      : [
+        'action' => \REMOVE_KNOWLEDGE,
+        'args' => ['n' => 1],
+      ];
   }
 }

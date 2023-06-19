@@ -48,6 +48,11 @@ class Building extends \AK\Helpers\DB_Model
     return false;
   }
 
+  public function getPlayer()
+  {
+    return Players::get($this->pId);
+  }
+
   public function isRotated()
   {
     return $this->state == 1;
@@ -105,11 +110,20 @@ class Building extends \AK\Helpers\DB_Model
     return 0;
   }
 
+  public function getKnowledgeReduction($card)
+  {
+    return 0;
+  }
+
+  public function countIcon($icon)
+  {
+    return $this->getPlayer()->countIcon($icon);
+  }
+
   public function getReward($n = 1, $mapBonuses = null)
   {
-    $player = $this->getPlayer();
     if (in_array($n, ICONS)) {
-      $n = $player->countIcon($n);
+      $n = $this->countIcon($n);
     }
 
     $g = 0;

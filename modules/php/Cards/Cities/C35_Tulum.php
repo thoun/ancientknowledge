@@ -21,5 +21,14 @@ class C35_Tulum extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 card from your hand.')];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    return [
+      'action' => DISCARD,
+      'args' => ['n' => 1],
+    ];
   }
 }

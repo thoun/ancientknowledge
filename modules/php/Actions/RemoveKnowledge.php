@@ -15,7 +15,12 @@ class RemoveKnowledge extends \AK\Models\Action
 
   public function getDescription()
   {
-    return clienttranslate('Remove <KNOWLEDGE> on your timeline');
+    return [
+      'log' => clienttranslate('Remove ${n} <KNOWLEDGE> on your timeline'),
+      'args' => [
+        'n' => $this->getN(),
+      ],
+    ];
   }
 
   public function getN()

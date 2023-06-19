@@ -18,5 +18,27 @@ class C19_Derinkuyu extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Discard 4 <KNOWLEDGE> from any of your <CITY> with at least 6 <KNOWLEDGE>.')];
+    $this->implemented = true;
+  }
+
+  public function getDeclineEffect()
+  {
+    $cardIds = [];
+    foreach ($this->getPlayer()->getTimeline() as $card) {
+      if ($card->getType() == CITY && $card->getKnowledge() >= 6) {
+        $cardIds[] = $card->getId();
+      }
+    }
+
+    return empty($cardIds)
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 4,
+          'cardIds' => $cardIds,
+          'type' => NODE_XOR,
+        ],
+      ];
   }
 }

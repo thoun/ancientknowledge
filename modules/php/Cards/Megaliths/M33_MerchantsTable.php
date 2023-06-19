@@ -23,5 +23,13 @@ class M33_MerchantsTable extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('Gain 1 extra <VP> for each monument still in your Timeline.')];
+    $this->implemented = true;
+  }
+
+  public function getScore()
+  {
+    return $this->getPlayer()
+      ->getTimeline()
+      ->count();
   }
 }

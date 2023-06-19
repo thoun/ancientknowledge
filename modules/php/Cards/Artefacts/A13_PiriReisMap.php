@@ -21,4 +21,9 @@ class A13_PiriReisMap extends \AK\Models\Artefact
       clienttranslate('You may move a monument in your Timeline with 0 <KNOWLEDGE> to any other available space.'),
     ];
   }
+
+  public function getTimelineEffect()
+  {
+    return null;
+  }
 }

@@ -245,6 +245,15 @@ $machinestates = [
     'possibleactions' => ['actRemoveKnowledge', 'actRestart'],
   ],
 
+  ST_DISCARD => [
+    'name' => 'discard',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose ${n} card(s) to discard'),
+    'descriptionmyturn' => clienttranslate('${you} must choose ${n} card(s) to discard'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actDiscard', 'actRestart'],
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___

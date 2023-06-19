@@ -15,5 +15,16 @@ class A5_IcaStones extends \AK\Models\Artefact
     $this->activation = TIMELINE;
     $this->startingHand = 2;
     $this->effect = [clienttranslate('If you have at least 3 <ARTEFACT> on your board, draw 1 card.')];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    return $this->getPlayer()->countIcon(ARTEFACT) < 3
+      ? null
+      : [
+        'action' => DRAW,
+        'args' => ['n' => 1],
+      ];
   }
 }

@@ -15,6 +15,7 @@ class Actions
     CREATE => 'Create',
     DISCARD_LOST_KNOWLEDGE => 'DiscardLostKnowledge',
     DRAW => 'Draw',
+    DISCARD => 'Discard',
     GAIN => 'Gain',
     LEARN => 'Learn',
     EXCAVATE => 'Excavate',

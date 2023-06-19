@@ -20,5 +20,29 @@ class M35_Ggantija extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <CITY> adjacent to this card.')];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $childs = [];
+    foreach ($this->getAdjacentBuildings() as $card) {
+      if ($card->getType() == CITY && $card->getKnowledge() > 0) {
+        $childs[] = [
+          'action' => \REMOVE_KNOWLEDGE,
+          'args' => [
+            'n' => 1,
+            'cardIds' => [$card->getId()],
+          ],
+        ];
+      }
+    }
+
+    return empty($childs)
+      ? null
+      : [
+        'type' => NODE_SEQ,
+        'childs' => $childs,
+      ];
   }
 }

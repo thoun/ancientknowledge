@@ -23,5 +23,14 @@ class P16_NubianPyramids extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('You may CREATE 1 <ARTEFACT>.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => CREATE,
+      'args' => ['constraint' => [ARTEFACT]],
+    ];
   }
 }

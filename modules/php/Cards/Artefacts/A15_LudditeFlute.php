@@ -17,4 +17,9 @@ class A15_LudditeFlute extends \AK\Models\Artefact
       clienttranslate('You may discard this card from your board. If you do, straighten up to 4 monuments from your Past.'),
     ];
   }
+
+  public function getTimelineEffect()
+  {
+    return null;
+  }
 }

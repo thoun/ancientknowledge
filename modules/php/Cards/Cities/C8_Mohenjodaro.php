@@ -22,5 +22,20 @@ class C8_Mohenjodaro extends \AK\Models\Building
         'If this monument is adjacent to at least 2 monuments of the same type (2 <CITY>, 2 <MEGALITH> or 2 <PYRAMID>), discard 2 <KNOWLEDGE> from this monument.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $icons = $this->countAdjacentBuildingTypes();
+    return max($icons) < 2
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 2,
+          'cardIds' => [$this->id],
+        ],
+      ];
   }
 }

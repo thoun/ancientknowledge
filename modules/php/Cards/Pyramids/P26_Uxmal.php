@@ -20,5 +20,27 @@ class P26_Uxmal extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> adjacent to this card.')];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $cardIds = [];
+    foreach ($this->getAdjacentBuildings() as $card) {
+      if ($card->getType() == MEGALITH && $card->getKnowledge() > 0) {
+        $cardIds[] = $card->getId();
+      }
+    }
+
+    return empty($cardIds)
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 1,
+          'cardIds' => $cardIds,
+          'type' => NODE_SEQ,
+        ],
+      ];
   }
 }

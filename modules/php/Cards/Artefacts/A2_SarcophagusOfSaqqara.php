@@ -19,4 +19,9 @@ class A2_SarcophagusOfSaqqara extends \AK\Models\Artefact
 • and draw 1 card."),
     ];
   }
+
+  public function getTimelineEffect()
+  {
+    return null;
+  }
 }

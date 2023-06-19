@@ -24,5 +24,19 @@ class C10_Parthenon extends \AK\Models\Building
         'If you have at least 11 <KNOWLEDGE> in your Timeline, discard up to 2 <KNOWLEDGE> from one or several of your monuments.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $n = $this->getPlayer()->countKnowledgeOnTimeline();
+    return $n < 11
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 2,
+        ],
+      ];
   }
 }

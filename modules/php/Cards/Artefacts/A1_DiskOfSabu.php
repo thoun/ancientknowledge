@@ -16,6 +16,7 @@ class A1_DiskOfSabu extends \AK\Models\Artefact
     $this->effect = [
       clienttranslate('If you have at least 4 <MEGALITH> in your Past, discard 1 <LOST_KNOWLEDGE> from your board.'),
     ];
+    $this->implemented = true;
   }
 
   public function getImmediateEffect()

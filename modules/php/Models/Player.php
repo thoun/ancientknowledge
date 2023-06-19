@@ -85,6 +85,15 @@ class Player extends \AK\Helpers\DB_Model
     return Cards::getOnTimelineSpace($this->id, $space);
   }
 
+  public function countKnowledgeOnTimeline()
+  {
+    $knowledge = 0;
+    foreach ($this->getTimeline() as $card) {
+      $knowledge += $card->getKnowledge();
+    }
+    return $knowledge;
+  }
+
   public function getFreeSlots()
   {
     // TODO

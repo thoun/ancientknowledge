@@ -18,5 +18,19 @@ class A35_AssurbanipalsTablet extends \AK\Models\Artefact
     ];
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('If you have 0 or 1 card in your hand, draw 1 card.')];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    $n = $this->getPlayer()
+      ->getHand()
+      ->count();
+    return $n > 1
+      ? null
+      : [
+        'action' => DRAW,
+        'args' => ['n' => 1],
+      ];
   }
 }

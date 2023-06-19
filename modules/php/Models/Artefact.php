@@ -43,6 +43,21 @@ class Artefact extends \AK\Helpers\DB_Model
     return true;
   }
 
+  public function getKnowledgeReduction($card)
+  {
+    return 0;
+  }
+
+  public function getPlayer()
+  {
+    return Players::get($this->pId);
+  }
+
+  public function countIcon($icon)
+  {
+    return $this->getPlayer()->countIcon($icon);
+  }
+
   /**
    * Event modifiers template
    **/

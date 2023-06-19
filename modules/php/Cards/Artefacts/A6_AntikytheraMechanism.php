@@ -19,4 +19,9 @@ class A6_AntikytheraMechanism extends \AK\Models\Artefact
       ),
     ];
   }
+
+  public function getTimelineEffect()
+  {
+    return null;
+  }
 }

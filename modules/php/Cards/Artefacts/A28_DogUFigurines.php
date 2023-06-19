@@ -14,5 +14,11 @@ class A28_DogUFigurines extends \AK\Models\Artefact
     $this->text = [clienttranslate('The function of these enigmatic statuettes from the Jōmon period remains unknown.')];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Your <CITY> enter play with 1 <KNOWLEDGE> less.')];
+    $this->implemented = true;
+  }
+
+  public function getKnowledgeReduction($card)
+  {
+    return $card->getType() == CITY ? 1 : 0;
   }
 }

@@ -23,4 +23,9 @@ class A11_ParacasCandelabra extends \AK\Models\Artefact
       ),
     ];
   }
+
+  public function getTimelineEffect()
+  {
+    return null;
+  }
 }
