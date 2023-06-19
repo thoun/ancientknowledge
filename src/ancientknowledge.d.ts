@@ -4,12 +4,14 @@
 
 interface AncientKnowledgePlayer extends Player {
     playerNo: number;
+    lostKnowledge: number;
+
     hand?: BuilderCard[]; // only set for currentPlayer
     handCount: number;
-    /*timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
-    artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
+    timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
+    //artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
     past: BuilderCard[];
-    technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3*/
+    //technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3*/
     tiles: TechnologyTile[];
 }
 

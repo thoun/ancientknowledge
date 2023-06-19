@@ -21,9 +21,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private tableCenter: TableCenter;
     private playersTables: PlayerTable[] = [];
     private handCounters: Counter[] = [];
-    private reputationCounters: Counter[] = [];
-    private recruitCounters: Counter[] = [];
-    private braceletCounters: Counter[] = [];
+    private lostKnowledgeCounters: Counter[] = [];
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
@@ -50,11 +48,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         // TODO TEMP
         Object.values(gamedatas.players).forEach((player, index) => {
-            const playerId = Number(player.id);
-            if (playerId == this.getPlayerId()) {
-                player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
-            }
-            player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
+            //const playerId = Number(player.id);
+            //if (playerId == this.getPlayerId()) {
+            //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
+            //}
+            //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
         });
 
         log('gamedatas', gamedatas);
@@ -288,9 +286,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     <span id="playerhand-counter-${player.id}"></span>
                 </div>
             
-                <div id="reputation-counter-wrapper-${player.id}" class="reputation-counter">
-                    <div class="reputation icon"></div>
-                    <span id="reputation-counter-${player.id}"></span>
+                <div id="lost-knowledge-counter-wrapper-${player.id}" class="lost-knowledge-counter">
+                    <div class="lost-knowledge icon"></div>
+                    <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
             </div><div class="counters">
@@ -315,22 +313,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             handCounter.setValue(player.handCount);
             this.handCounters[playerId] = handCounter;
 
-            this.reputationCounters[playerId] = new ebg.counter();
-            this.reputationCounters[playerId].create(`reputation-counter-${playerId}`);
-            this.reputationCounters[playerId].setValue(player.reputation);
-
-            this.recruitCounters[playerId] = new ebg.counter();
-            this.recruitCounters[playerId].create(`recruit-counter-${playerId}`);
-            this.recruitCounters[playerId].setValue(player.recruit);
-
-            this.braceletCounters[playerId] = new ebg.counter();
-            this.braceletCounters[playerId].create(`bracelet-counter-${playerId}`);
-            this.braceletCounters[playerId].setValue(player.bracelet);
+            this.lostKnowledgeCounters[playerId] = new ebg.counter();
+            this.lostKnowledgeCounters[playerId].create(`lost-knowledge-counter-${playerId}`);
+            this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
         });
 
-        this.setTooltipToClass('reputation-counter', _('Reputation'));
-        this.setTooltipToClass('recruit-counter', _('Recruits'));
-        this.setTooltipToClass('bracelet-counter', _('Bracelets'));
+        this.setTooltipToClass('lost-knowledge-counter', _('Lost knowledge'));
     }
 
     private createPlayerTables(gamedatas: AncientKnowledgeGamedatas) {
@@ -376,7 +364,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private setReputation(playerId: number, count: number) {
-        this.reputationCounters[playerId].toValue(count);
+        this.lostKnowledgeCounters[playerId].toValue(count);
         this.tableCenter.setReputation(playerId, count);
     }
 
