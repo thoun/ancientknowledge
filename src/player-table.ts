@@ -33,11 +33,11 @@ class PlayerTable {
             <div id="player-table-${this.playerId}-past" class="past"></div>
             <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
             <div class="technology-tiles-decks">`;            
-            for (let i = 1; i <= 3; i++) {
+            ['ancient', 'writing', 'secret'].forEach(type => {
                 html += `
-                <div id="player-table-${this.playerId}-technology-tiles-deck-${i}" class="technology-tiles-deck"></div>
+                <div id="player-table-${this.playerId}-technology-tiles-deck-${type}" class="technology-tiles-deck"></div>
                 `;
-            }
+            });
             html += `
             </div>
         </div>
@@ -60,7 +60,7 @@ class PlayerTable {
         this.timeline = new SlotStock<BuilderCard>(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
         });
-        // TODO this.timeline.addCards(player.timeline);
+        this.timeline.addCards(player.timeline);
         
         const artifactsDiv = document.getElementById(`player-table-${this.playerId}-artifacts`);
         this.artifacts = new SlotStock<BuilderCard>(this.game.builderCardsManager, artifactsDiv, {
@@ -71,7 +71,7 @@ class PlayerTable {
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
         this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {
         });
-        // TODO this.past.addCards(player.past);
+        this.past.addCards(player.past);
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
