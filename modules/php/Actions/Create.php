@@ -22,9 +22,15 @@ class Create extends \AK\Models\Action
   {
     $freeSlots = $player->getFreeSlots();
     $freeArtefactSlot = $player->getFreeArtefactSlot();
+    $constraint = $this->getCtxArg('constraint');
     $hand = $player->getHand();
     $cards = [];
     foreach ($hand as $card) {
+      // Do we have any constraint ?
+      if (!is_null($constraint) && !in_array($card->getType(), $constraint)) {
+        continue;
+      }
+
       // Must be able to discard enough cards
       $discard = $card->getDiscard();
       if ($discard >= $hand->count()) {

@@ -29,16 +29,24 @@ class Discard extends \AK\Models\Action
   public function argsDiscard()
   {
     $player = Players::getActive();
+    $cards = $player->getHand();
+
+    // Do we have any constraint on the type of card to discard ?
+    $constraint = $this->getCtxArg('constraint');
+    if (!is_null($constraints)) {
+      $cards = $cards->filter(function ($card) use ($constraint) {
+        return in_array($card->getType(), $constraint);
+      });
+    }
+
     return [
       'n' => $this->getN(),
+      '_private' => [
+        'active' => [
+          'cardIds' => $cards->getIds(),
+        ],
+      ],
     ];
-
-    //   '_private' => [
-    //     'active' => [
-    //       'cards' => $this->getPlayableCards($player),
-    //     ],
-    //   ],
-    // ];
   }
 
   public function actDiscard($cardIds)
@@ -46,10 +54,11 @@ class Discard extends \AK\Models\Action
     // Sanity checks
     self::checkAction('actDiscard');
     $player = Players::getActive();
-    if (count($cardIds) != $this->getN()) {
+    $args = $this->argsDiscard();
+    if (count($cardIds) != $args['n']) {
       throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
     }
-    if (!empty(array_diff($cardIds, $player->getHand()->getIds()))) {
+    if (!empty(array_diff($cardIds, $args['_private']['active']['cardIds']))) {
       throw new \BgaVisibleSystemException('Invalid cards to discard. Should not happen');
     }
 

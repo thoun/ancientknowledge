@@ -17,13 +17,13 @@ class ActivateCard extends \AK\Models\Action
 
   public function getCard()
   {
-    return Cards::get($this->getCtxArg('cardId'));
+    return Effects::get($this->getCtxArg('cardId'));
   }
 
   public function getFlow($player)
   {
     return $this->getCard()->isPlayed()
-      ? Cards::applyEffect(
+      ? Effects::applyEffect(
         $this->getCard(),
         $player,
         $this->getCtxArgs()['event']['method'],

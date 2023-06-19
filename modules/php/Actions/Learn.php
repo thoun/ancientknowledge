@@ -23,8 +23,9 @@ class Learn extends \AK\Models\Action
   {
     $pool = Technologies::getPool();
     $techs = [];
+    $check = $this->getCtxArg('checkRequirements') ?? true;
     foreach ($pool as $tId => $tech) {
-      if (!$tech->canBePlayed($player)) {
+      if ($check && !$tech->canBePlayed($player)) {
         continue;
       }
 
