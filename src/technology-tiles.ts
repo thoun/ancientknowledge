@@ -84,16 +84,37 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         }
     }
 
-    public getTooltip(card: TechnologyTile): string {
-        let message = `<pre>${JSON.stringify(card, null, 2)}</pre>`; // TODO TEMP
-        /*let message = `
-        <strong>${_("Level:")}</strong> ${card.level}
+    private getType(type: string) {
+        switch (type) {
+            case 'ancient': return _('Ancient');
+            case 'writing': return _('Writing');
+            case 'secret': return _('Secret');
+        }
+    }
+
+    private getTooltip(card: TechnologyTile): string {
+        let message = `
+        <strong>${card.name}</strong>
         <br>
-        <strong>${_("Type:")}</strong> ${card.type}
         <br>
-        <strong>${_("TODO number:")}</strong> ${card.number}
+        <strong>${_("Type:")}</strong> ${this.getType(card.type)}
+        <br>
+        <strong>${_("Level:")}</strong> ${card.level + 1}
+        <br>
+        <strong>${_("Activation:")}</strong> ${this.game.getTooltipActivation(card.activation)}
         `;
- */
+        if (card.requirement) {
+            message += `
+            <br><br>
+            <strong>${_("Requirement:")}</strong> ${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+            `;
+        }
+        message += `
+        <br>
+        <br>
+        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        `;
+ 
         return message;
     }
     

@@ -33,10 +33,10 @@ $cardBackground: #f8f4f0;
         width: 20px;
         height: 20px;
         border-radius: 50%;
-        background: red;
+        background: transparent;
 
-        &[data-implemented="true"] {
-            background: green;
+        &[data-implemented="false"] {
+            background: red;
         }
       }
 
@@ -100,7 +100,7 @@ $cardBackground: #f8f4f0;
                 background-image: url('img/immediate-icon.svg');
                 background-size: 50%;
             }
-            &[data-type="endturn"] {
+            &[data-type="timeline"] {
                 background-image: url('img/timeline-icon.svg');
                 background-size: 80%;
             }

@@ -2119,13 +2119,32 @@ var BuilderCardsManager = /** @class */ (function (_super) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
+    BuilderCardsManager.prototype.getType = function (cardId) {
+        var typeLetter = cardId.substring(0, 1);
+        switch (typeLetter) {
+            case 'C': return _('City');
+            case 'M': return _('Megalith');
+            case 'P': return _('Pyramid');
+            case 'A': return _('Artifact');
+        }
+    };
     BuilderCardsManager.prototype.getTooltip = function (card) {
-        var message = "<pre>".concat(JSON.stringify(card, null, 2), "</pre>"); // TODO TEMP
-        /*let message = `
-        <strong>${_("Type:")}</strong> ${card.type}
-        <br>
-        <strong>${_("TODO number:")}</strong> ${card.number}
-        `;*/
+        var _a, _b;
+        var typeLetter = card.id.substring(0, 1);
+        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <i>").concat(card.country, "</i>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.id), "\n        ");
+        if (card.startingSpace) {
+            message += "\n            <br>\n            <strong>".concat(_("Starting space:"), "</strong> ").concat(card.startingSpace, "\n            ");
+        }
+        if (card.discard) {
+            message += "\n            <br>\n            <strong>".concat(_("Discard cards:"), "</strong> ").concat(card.discard, "\n            ");
+        }
+        if (card.locked) {
+            message += "\n            <br>\n            <strong>".concat(_("Locked card"), "</strong>\n            ");
+        }
+        if (typeLetter != 'A') {
+            message += "\n            <br>\n            <strong>".concat(_("Initial knowledge:"), "</strong> ").concat(card.initialKnowledge, "\n            <br>\n            <strong>").concat(_("Victory point:"), "</strong> ").concat(card.victoryPoint, "\n            ");
+        }
+        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        ");
         return message;
     };
     return BuilderCardsManager;
@@ -2178,16 +2197,20 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
+    TechnologyTilesManager.prototype.getType = function (type) {
+        switch (type) {
+            case 'ancient': return _('Ancient');
+            case 'writing': return _('Writing');
+            case 'secret': return _('Secret');
+        }
+    };
     TechnologyTilesManager.prototype.getTooltip = function (card) {
-        var message = "<pre>".concat(JSON.stringify(card, null, 2), "</pre>"); // TODO TEMP
-        /*let message = `
-        <strong>${_("Level:")}</strong> ${card.level}
-        <br>
-        <strong>${_("Type:")}</strong> ${card.type}
-        <br>
-        <strong>${_("TODO number:")}</strong> ${card.number}
-        `;
- */
+        var _a, _b, _c;
+        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.type), "\n        <br>\n        <strong>").concat(_("Level:"), "</strong> ").concat(card.level + 1, "\n        <br>\n        <strong>").concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        ");
+        if (card.requirement) {
+            message += "\n            <br><br>\n            <strong>".concat(_("Requirement:"), "</strong> ").concat((_a = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _a !== void 0 ? _a : '', "\n            ");
+        }
+        message += "\n        <br>\n        <br>\n        <strong>".concat(_("Effect:"), "</strong> ").concat((_c = (_b = card.effect) === null || _b === void 0 ? void 0 : _b.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _c !== void 0 ? _c : '', "\n        ");
         return message;
     };
     TechnologyTilesManager.prototype.setForHelp = function (card, divId) {
@@ -2397,16 +2420,28 @@ var AncientKnowledge = /** @class */ (function () {
                 break;
         }
     };
+    AncientKnowledge.prototype.changePageTitle = function (suffix, save) {
+        if (suffix === void 0) { suffix = null; }
+        if (save === void 0) { save = false; }
+        if (suffix == null) {
+            suffix = 'generic';
+        }
+        if (!this.gamedatas.gamestate['descriptionmyturn' + suffix]) {
+            return;
+        }
+        if (save) {
+            this.gamedatas.gamestate.descriptionmyturngeneric = this.gamedatas.gamestate.descriptionmyturn;
+            this.gamedatas.gamestate.descriptiongeneric = this.gamedatas.gamestate.description;
+        }
+        this.gamedatas.gamestate.descriptionmyturn = this.gamedatas.gamestate['descriptionmyturn' + suffix];
+        if (this.gamedatas.gamestate['description' + suffix])
+            this.gamedatas.gamestate.description = this.gamedatas.gamestate['description' + suffix];
+        this.updatePageTitle();
+    };
     AncientKnowledge.prototype.onEnteringInitialSelection = function (args) {
         var cards = this.gamedatas.cards.filter(function (card) { return args._private.cards.includes(card.id); });
         this.getCurrentPlayerTable().setInitialSelection(cards);
     };
-    /*private setGamestateDescription(property: string = '') {
-        const originalState = this.gamedatas.gamestates[this.gamedatas.gamestate.id];
-        this.gamedatas.gamestate.description = `${originalState['description' + property]}`;
-        this.gamedatas.gamestate.descriptionmyturn = `${originalState['descriptionmyturn' + property]}`;
-        (this as any).updatePageTitle();
-    }*/
     AncientKnowledge.prototype.onEnteringCreate = function (args) {
         var _a;
         if (this.isCurrentPlayerActive()) {
@@ -2692,6 +2727,9 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.setupNotifications = function () {
         //log( 'notifications subscriptions setup' );
         var _this = this;
+        dojo.connect(this.notifqueue, 'addToLog', function () {
+            _this.addLogClass();
+        });
         var notifs = [
             ['pDiscardCards', undefined],
             ['fillPool', undefined],
@@ -2740,6 +2778,72 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_learnTech = function (args) {
         return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
     };
+    AncientKnowledge.prototype.notif_clearTurn = function (args) {
+        this.cancelLogs(args.notifIds);
+    };
+    AncientKnowledge.prototype.cancelLogs = function (notifIds) {
+        var _this = this;
+        notifIds.forEach(function (uid) {
+            if (_this._notif_uid_to_log_id.hasOwnProperty(uid)) {
+                var logId = _this._notif_uid_to_log_id[uid];
+                if ($('log_' + logId)) {
+                    dojo.addClass('log_' + logId, 'cancel');
+                }
+            }
+            if (_this._notif_uid_to_mobile_log_id.hasOwnProperty(uid)) {
+                var mobileLogId = _this._notif_uid_to_mobile_log_id[uid];
+                if ($('dockedlog_' + mobileLogId)) {
+                    dojo.addClass('dockedlog_' + mobileLogId, 'cancel');
+                }
+            }
+        });
+    };
+    AncientKnowledge.prototype.addLogClass = function () {
+        if (this._last_notif == null) {
+            return;
+        }
+        var notif = this._last_notif;
+        var type = notif.msg.type;
+        if (type == 'history_history') {
+            type = notif.msg.args.originalType;
+        }
+        if ($('log_' + notif.logId)) {
+            dojo.addClass('log_' + notif.logId, 'notif_' + type);
+            var methodName = 'onAdding' + type.charAt(0).toUpperCase() + type.slice(1) + 'ToLog';
+            if (this[methodName] !== undefined) {
+                this[methodName](notif);
+            }
+        }
+        if ($('dockedlog_' + notif.mobileLogId)) {
+            dojo.addClass('dockedlog_' + notif.mobileLogId, 'notif_' + type);
+        }
+    };
+    AncientKnowledge.prototype.onAddingNewUndoableStepToLog = function (notif) {
+        var _this = this;
+        var _a, _b, _c, _d;
+        if (!$("log_".concat(notif.logId))) {
+            return;
+        }
+        var stepId = notif.msg.args.stepId;
+        $("log_".concat(notif.logId)).dataset.step = stepId;
+        if ($("dockedlog_".concat(notif.mobileLogId))) {
+            $("dockedlog_".concat(notif.mobileLogId)).dataset.step = stepId;
+        }
+        if ((_d = (_c = (_b = (_a = this.gamedatas) === null || _a === void 0 ? void 0 : _a.gamestate) === null || _b === void 0 ? void 0 : _b.args) === null || _c === void 0 ? void 0 : _c.previousSteps) === null || _d === void 0 ? void 0 : _d.includes(parseInt(stepId))) {
+            this.onClick($("log_".concat(notif.logId)), function () { return _this.undoToStep(stepId); });
+            if ($("dockedlog_".concat(notif.mobileLogId))) {
+                this.onClick($("dockedlog_".concat(notif.mobileLogId)), function () { return _this.undoToStep(stepId); });
+            }
+        }
+    };
+    AncientKnowledge.prototype.undoToStep = function (stepId) {
+        this.stopActionTimer();
+        this.checkAction('actRestart');
+        this.takeAction('actUndoToStep', { stepId: stepId } /*, false*/);
+    };
+    AncientKnowledge.prototype.stopActionTimer = function () {
+        console.warn('TODO');
+    };
     AncientKnowledge.prototype.getGain = function (type) {
         switch (type) {
             case 1: return _("Victory Point");
@@ -2749,20 +2853,14 @@ var AncientKnowledge = /** @class */ (function () {
             case 5: return _("Card");
         }
     };
-    AncientKnowledge.prototype.getTooltipGain = function (type) {
-        return "".concat(this.getGain(type), " (<div class=\"icon\" data-type=\"").concat(type, "\"></div>)");
-    };
-    AncientKnowledge.prototype.getColor = function (color) {
-        switch (color) {
-            case 1: return _("Red");
-            case 2: return _("Yellow");
-            case 3: return _("Green");
-            case 4: return _("Blue");
-            case 5: return _("Purple");
+    AncientKnowledge.prototype.getTooltipActivation = function (activation) {
+        switch (activation) {
+            case 'anytime': return _("Ongoing (with conditions)");
+            case 'decline': return _("Decline Phase");
+            case 'immediate': return _("Immediate");
+            case 'timeline': return _("Timeline Phase");
+            case 'endgame': return _("Final Scoring");
         }
-    };
-    AncientKnowledge.prototype.getTooltipColor = function (color) {
-        return "".concat(this.getColor(color), " (<div class=\"color\" data-color=\"").concat(color, "\"></div>)");
     };
     /* This enable to inject translatable styled things to logs or action bar */
     /* @Override */
@@ -2787,6 +2885,105 @@ var AncientKnowledge = /** @class */ (function () {
     };
     return AncientKnowledge;
 }());
+/*
+
+   onEnteringState(stateName, args) {
+      debug('Entering state: ' + stateName, args);
+      if (this.isFastMode() && !['draftPlayers'].includes(stateName)) return;
+
+      if (args.args && args.args.descSuffix) {
+        this.changePageTitle(args.args.descSuffix);
+      }
+
+      if (args.args && args.args.optionalAction) {
+        let base = args.args.descSuffix ? args.args.descSuffix : '';
+        this.changePageTitle(base + 'skippable');
+      }
+
+      if (args.args && args.args.source) {
+        if (this.gamedatas.gamestate.descriptionmyturn.search('{source}') === -1) {
+          if (args.args.sourceId) {
+            let card = { id: args.args.sourceId };
+            this.loadSaveCard(card);
+            let uid = this.registerCustomTooltip(this.tplZooCard(card, true));
+
+            $('pagemaintitletext').insertAdjacentHTML(
+              'beforeend',
+              ` (<span class="ark-log-card-name" id="${uid}">${_(args.args.source)}</span>)`
+            );
+            this.attachRegisteredTooltips();
+          } else {
+            $('pagemaintitletext').insertAdjacentHTML('beforeend', ` (${_(args.args.source)})`);
+          }
+        }
+      }
+
+      if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
+
+      if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+        this.addSecondaryActionButton(
+          'btnPassAction',
+          _('Pass'),
+          () => this.takeAction('actPassOptionalAction'),
+          'restartAction'
+        );
+      }
+
+      // Undo last steps
+      if (args.args && args.args.previousSteps) {
+        args.args.previousSteps.forEach((stepId) => {
+          let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
+          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
+
+          logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
+          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
+        });
+      }
+
+      // Restart turn button
+      if (args.args && args.args.previousEngineChoices && args.args.previousEngineChoices >= 1 && !args.args.automaticAction) {
+        if (args.args && args.args.previousSteps) {
+          let lastStep = Math.max(...args.args.previousSteps);
+          if (lastStep > 0)
+            this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
+        }
+
+        // Restart whole turn
+        this.addDangerActionButton(
+          'btnRestartTurn',
+          _('Restart turn'),
+          () => {
+            this.stopActionTimer();
+            this.takeAction('actRestart');
+          },
+          'restartAction'
+        );
+      }
+
+      if (this.isCurrentPlayerActive() && args.args) {
+        // Anytime buttons
+        if (args.args.anytimeActions) {
+          args.args.anytimeActions.forEach((action, i) => {
+            let msg = action.desc;
+            msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
+            msg = this.formatString(msg);
+
+            this.addPrimaryActionButton(
+              'btnAnytimeAction' + i,
+              msg,
+              () => this.takeAction('actAnytimeAction', { id: i }, false),
+              'anytimeActions'
+            );
+          });
+        }
+      }
+
+      // Call appropriate method
+      var methodName = 'onEnteringState' + stateName.charAt(0).toUpperCase() + stateName.slice(1);
+      if (this[methodName] !== undefined) this[methodName](args.args);
+    },
+ 
+    */ 
 define([
     "dojo", "dojo/_base/declare",
     "ebg/core/gamegui",

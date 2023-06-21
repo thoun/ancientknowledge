@@ -42,8 +42,7 @@ interface AncientKnowledgeGame extends Game {
 
     getPlayerId(): number;
     getPlayer(playerId: number): AncientKnowledgePlayer;
-    getTooltipGain(type: number): string;
-    getTooltipColor(color: number): string;
+    getTooltipActivation(activation: string): string;
     getGameStateName(): string;
     getCurrentPlayerTable(): PlayerTable | null;
 
@@ -64,7 +63,7 @@ interface EnteringInitialSelectionArgs {
 
 interface EnteringCreateArgs {
     _private?: {
-        cards: { [id: string]: { [possiblePosition: string /*timeline-6-0*/]: number } }[];
+        cards: { [id: string]: { [possiblePosition: string /*timeline-6-0 or artefact-0*/]: number } }[];
     }
 }
 

@@ -112,13 +112,60 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         }
     }
 
+    private getType(cardId: string) {
+        const typeLetter = cardId.substring(0, 1);
+        switch (typeLetter) {
+            case 'C': return _('City');
+            case 'M': return _('Megalith');
+            case 'P': return _('Pyramid');
+            case 'A': return _('Artifact');
+        }
+    }
+
     private getTooltip(card: BuilderCard): string {
-        let message = `<pre>${JSON.stringify(card, null, 2)}</pre>`; // TODO TEMP
-        /*let message = `
-        <strong>${_("Type:")}</strong> ${card.type}
+        const typeLetter = card.id.substring(0, 1);
+
+        let message = `
+        <strong>${card.name}</strong>
         <br>
-        <strong>${_("TODO number:")}</strong> ${card.number}
-        `;*/
+        <i>${card.country}</i>
+        <br>
+        <br>
+        <strong>${_("Type:")}</strong> ${this.getType(card.id)}
+        `;
+        if (card.startingSpace) {
+            message += `
+            <br>
+            <strong>${_("Starting space:")}</strong> ${card.startingSpace}
+            `;
+        }
+        if (card.discard) {
+            message += `
+            <br>
+            <strong>${_("Discard cards:")}</strong> ${card.discard}
+            `;
+        }
+        if (card.locked) {
+            message += `
+            <br>
+            <strong>${_("Locked card")}</strong>
+            `;
+        }
+        if (typeLetter != 'A') {
+            message += `
+            <br>
+            <strong>${_("Initial knowledge:")}</strong> ${card.initialKnowledge}
+            <br>
+            <strong>${_("Victory point:")}</strong> ${card.victoryPoint}
+            `;
+        }
+        message += `
+        <br>
+        <strong>${_("Activation:")}</strong> ${this.game.getTooltipActivation(card.activation)}
+        <br>
+        <br>
+        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        `;
  
         return message;
     }
