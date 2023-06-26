@@ -1174,6 +1174,16 @@ body > .card {
 .player-table .player-board[data-color="929f40"] {
   background: url("img/player-board-929f40.jpg");
 }
+.player-table .player-board .artifacts {
+  position: absolute;
+  top: 198px;
+  left: 176px;
+}
+.player-table .player-board .artifacts .slot {
+  width: 163px;
+  height: 228px;
+  border-radius: 8px;
+}
 .player-table .block-with-text {
   display: flex;
 }

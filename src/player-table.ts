@@ -29,9 +29,10 @@ class PlayerTable {
         }
         html += `
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
-            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}"></div>
+            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">
+                <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
+            </div>
             <div id="player-table-${this.playerId}-past" class="past"></div>
-            <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
             <div class="technology-tiles-decks">`;            
             ['ancient', 'writing', 'secret'].forEach(type => {
                 html += `
@@ -63,9 +64,13 @@ class PlayerTable {
         });
         this.timeline.addCards(player.timeline);
         
+        const artifactsSlotsIds = [];
+        [0,1,2,3,4].forEach(space => artifactsSlotsIds.push(`artefact-${space}`)); // TODO artifact ?
         const artifactsDiv = document.getElementById(`player-table-${this.playerId}-artifacts`);
         this.artifacts = new SlotStock<BuilderCard>(this.game.builderCardsManager, artifactsDiv, {
-            slotsIds: [1,2,3,4,5]
+            slotsIds: artifactsSlotsIds,
+            mapCardToSlot: card => card.location,
+            gap: '36px',
         });
         // TODO this.artifacts.addCards(player.artifacts);
 
@@ -98,7 +103,11 @@ class PlayerTable {
     }
     
     public createCard(card: BuilderCard) {
-        this.timeline.addCard(card);
+        if (card.id[0] == 'A') {
+            this.artifacts.addCard(card);
+        } else {
+            this.timeline.addCard(card);
+        }
     }
     
     public addTechnologyTile(card: TechnologyTile) {

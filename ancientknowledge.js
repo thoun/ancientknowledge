@@ -2298,7 +2298,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            </div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\"></div>\n                ");
         });
@@ -2320,9 +2320,13 @@ var PlayerTable = /** @class */ (function () {
             mapCardToSlot: function (card) { return card.location; },
         });
         this.timeline.addCards(player.timeline);
+        var artifactsSlotsIds = [];
+        [0, 1, 2, 3, 4].forEach(function (space) { return artifactsSlotsIds.push("artefact-".concat(space)); }); // TODO artifact ?
         var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
         this.artifacts = new SlotStock(this.game.builderCardsManager, artifactsDiv, {
-            slotsIds: [1, 2, 3, 4, 5]
+            slotsIds: artifactsSlotsIds,
+            mapCardToSlot: function (card) { return card.location; },
+            gap: '36px',
         });
         // TODO this.artifacts.addCards(player.artifacts);
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
@@ -2347,7 +2351,12 @@ var PlayerTable = /** @class */ (function () {
         document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
     };
     PlayerTable.prototype.createCard = function (card) {
-        this.timeline.addCard(card);
+        if (card.id[0] == 'A') {
+            this.artifacts.addCard(card);
+        }
+        else {
+            this.timeline.addCard(card);
+        }
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
         this.technologyTilesDecks[card.type].addCard(card);
