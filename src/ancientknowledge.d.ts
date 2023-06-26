@@ -27,6 +27,7 @@ interface AncientKnowledgeGamedatas {
     players: { [playerId: number]: AncientKnowledgePlayer };
     tablespeed: string;
 
+    techs: TechnologyTile[];
     // Add here variables you set up in getAllDatas
     /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;

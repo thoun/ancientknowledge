@@ -84,7 +84,7 @@ class PlayerTable {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
             this.technologyTilesDecks[type] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
             });
-            // TODO this.technologyTilesDecks[type].addCards(player.technologyTiles[type]);
+            this.technologyTilesDecks[type].addCards(player.tiles.filter(tile => tile.type == type));
         });
     }
 

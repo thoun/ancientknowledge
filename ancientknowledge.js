@@ -2335,7 +2335,7 @@ var PlayerTable = /** @class */ (function () {
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
-            // TODO this.technologyTilesDecks[type].addCards(player.technologyTiles[type]);
+            _this.technologyTilesDecks[type].addCards(player.tiles.filter(function (tile) { return tile.type == type; }));
         });
     }
     PlayerTable.prototype.setHandSelectable = function (selectable) {
@@ -2392,11 +2392,12 @@ var AncientKnowledge = /** @class */ (function () {
         this.gamedatas = gamedatas;
         // TODO TEMP
         Object.values(gamedatas.players).forEach(function (player, index) {
-            //const playerId = Number(player.id);
+            var playerId = Number(player.id);
             //if (playerId == this.getPlayerId()) {
             //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             //}
             //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
+            player.tiles = gamedatas.techs.filter(function (card) { return card.location == 'inPlay' && card.pId == playerId; });
         });
         log('gamedatas', gamedatas);
         this.animationManager = new AnimationManager(this);
@@ -2539,6 +2540,9 @@ var AncientKnowledge = /** @class */ (function () {
                     });
                     this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
                     break;
+                case 'confirmTurn':
+                    this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
+                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
             }
         }
         else {
@@ -2734,6 +2738,18 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.actCancelSelection = function () {
         this.takeAction('actCancelSelection');
+    };
+    AncientKnowledge.prototype.actConfirmTurn = function () {
+        if (!this.checkAction('actConfirmTurn')) {
+            return;
+        }
+        this.takeAction('actConfirmTurn');
+    };
+    AncientKnowledge.prototype.actConfirmPartialTurn = function () {
+        if (!this.checkAction('actConfirmPartialTurn')) {
+            return;
+        }
+        this.takeAction('actConfirmPartialTurn');
     };
     AncientKnowledge.prototype.actRestart = function () {
         if (!this.checkAction('actRestart')) {

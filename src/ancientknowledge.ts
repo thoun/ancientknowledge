@@ -48,11 +48,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         // TODO TEMP
         Object.values(gamedatas.players).forEach((player, index) => {
-            //const playerId = Number(player.id);
+            const playerId = Number(player.id);
             //if (playerId == this.getPlayerId()) {
             //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             //}
             //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
+            player.tiles = gamedatas.techs.filter(card => card.location == 'inPlay' && card.pId == playerId);
         });
 
         log('gamedatas', gamedatas);
@@ -210,8 +211,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         ['search', _('Search')],
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
-                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    );
+                    (this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
+                case 'confirmTurn':
+                    (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
+                    (this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
             }
         } else {
             switch (stateName) {
@@ -503,6 +508,22 @@ class AncientKnowledge implements AncientKnowledgeGame {
   	
     public actCancelSelection() {
         this.takeAction('actCancelSelection');
+    }
+  	
+    public actConfirmTurn() {
+        if(!(this as any).checkAction('actConfirmTurn')) {
+            return;
+        }
+
+        this.takeAction('actConfirmTurn');
+    }
+  	
+    public actConfirmPartialTurn() {
+        if(!(this as any).checkAction('actConfirmPartialTurn')) {
+            return;
+        }
+
+        this.takeAction('actConfirmPartialTurn');
     }
   	
     public actRestart() {
