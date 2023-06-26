@@ -594,7 +594,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const tiles = Object.values(args.cards);
         const promises = [1, 2, 3].map(number => {
             const numberTilesId = tiles.filter(tile => tile.location == `board_${number}`).map(tile => tile.id);
-            const numberTiles = this.gamedatas.techs.filter(tile => numberTilesId.includes(tile.id));
+            const numberTiles = this.technologyTilesManager.getFullCardsByIds(numberTilesId);
             return this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
         });
         return Promise.all(promises);

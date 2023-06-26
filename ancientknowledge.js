@@ -2229,6 +2229,20 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         div.innerHTML = "\n        <div class=\"card-sides\">\n            <div class=\"card-side front\">\n            </div>\n            <div class=\"card-side back\">\n            </div>\n        </div>";
         this.setupFrontDiv(card, div.querySelector('.front'), true);
     };
+    TechnologyTilesManager.prototype.getFullCard = function (tile) {
+        return __assign(__assign({}, TECHS_DATA[tile.id]), { id: tile.id });
+    };
+    TechnologyTilesManager.prototype.getFullCards = function (tiles) {
+        var _this = this;
+        return tiles.map(function (tile) { return _this.getFullCard(tile); });
+    };
+    TechnologyTilesManager.prototype.getFullCardById = function (id) {
+        return __assign(__assign({}, TECHS_DATA[id]), { id: id });
+    };
+    TechnologyTilesManager.prototype.getFullCardsByIds = function (ids) {
+        var _this = this;
+        return ids.map(function (id) { return _this.getFullCardById(id); });
+    };
     return TechnologyTilesManager;
 }(CardManager));
 var TableCenter = /** @class */ (function () {
@@ -2786,7 +2800,7 @@ var AncientKnowledge = /** @class */ (function () {
         var tiles = Object.values(args.cards);
         var promises = [1, 2, 3].map(function (number) {
             var numberTilesId = tiles.filter(function (tile) { return tile.location == "board_".concat(number); }).map(function (tile) { return tile.id; });
-            var numberTiles = _this.gamedatas.techs.filter(function (tile) { return numberTilesId.includes(tile.id); });
+            var numberTiles = _this.technologyTilesManager.getFullCardsByIds(numberTilesId);
             return _this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
         });
         return Promise.all(promises);

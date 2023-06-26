@@ -28,8 +28,6 @@ interface AncientKnowledgeGamedatas {
     tablespeed: string;
 
     // Add here variables you set up in getAllDatas
-    cards: BuilderCard[];
-    techs: TechnologyTile[];
     /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;
     // TODO deck counters ? discard counters ?*/
