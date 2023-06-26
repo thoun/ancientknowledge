@@ -57,15 +57,15 @@ class Learn extends \AK\Models\Action
     }
 
     // Move Tech
-    $tech = Technology::getSingle($techId);
+    $tech = Technologies::getSingle($techId);
     $tech->setLocation('inPlay');
     $tech->setPId($player->getId());
     Notifications::learnTech($player, $tech);
 
     // Check immediate effect
-    if ($tech->getActivation() == \IMMEDIATE) {
-      die('TODO: immediate effect of created card');
-    }
+    // if ($tech->getActivation() == \IMMEDIATE) {
+    //   die('TODO: immediate effect of created card');
+    // }
 
     // Check listener
     // TODO

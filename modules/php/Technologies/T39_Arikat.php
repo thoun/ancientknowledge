@@ -20,7 +20,7 @@ class T39_Arikat extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return min($player->countIcons(BUILDINGS)) >= 3;
+    return min(0, $player->countIcons(BUILDINGS)) >= 3;
   }
 
   public function getScore()

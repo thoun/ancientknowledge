@@ -94,7 +94,7 @@ class Technologies extends \AK\Helpers\Pieces
    */
   public static function getPool($type = null)
   {
-    return self::getInLocation(['board', '%'])->filter(function ($card) use ($type) {
+    return self::getInLocation('board_%')->filter(function ($card) use ($type) {
       return is_null($type) || $card->getType() == $type;
     });
   }

@@ -20,7 +20,7 @@ class T24_Protowriting extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return sum($player->countIcons(BUILDINGS)) >= 4;
+    return array_sum($player->countIcons(BUILDINGS)) >= 4;
   }
 
   public function getImmediateEffect()

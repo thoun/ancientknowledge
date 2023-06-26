@@ -20,7 +20,7 @@ class T7_Melchizedek extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return min($player->getIcons(BUILDINGS)) >= 1;
+    return min($player->countIcons(BUILDINGS)) >= 1;
   }
 
   public function getImmediateEffect()

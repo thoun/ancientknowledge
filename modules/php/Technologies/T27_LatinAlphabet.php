@@ -19,6 +19,6 @@ class T27_LatinAlphabet extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return sum($player->countIcons(BUILDINGS)) >= 5;
+    return array_sum($player->countIcons(BUILDINGS)) >= 5;
   }
 }

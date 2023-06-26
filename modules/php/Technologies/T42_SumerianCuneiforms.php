@@ -20,7 +20,7 @@ class T42_SumerianCuneiforms extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return sum($player->countIcons(\TECHNOLOGIES)) >= 6;
+    return array_sum($player->countIcons(\TECHNOLOGIES)) >= 6;
   }
 
   public function getScore()

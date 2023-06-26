@@ -2,6 +2,7 @@
 namespace AK\Actions;
 use AK\Managers\Meeples;
 use AK\Managers\Players;
+use AK\Managers\Cards;
 use AK\Core\Notifications;
 use AK\Core\Stats;
 use AK\Helpers\Utils;

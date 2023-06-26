@@ -119,7 +119,7 @@ class Player extends \AK\Helpers\DB_Model
 
   public function countIcons($toKeep = null)
   {
-    $icons = [];
+    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0];
     // TODO
 
     // foreach (ALL_PREREQUISITES as $type) {

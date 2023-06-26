@@ -27,7 +27,7 @@ class P1_PyramidOfKhafre extends \AK\Models\Building
 
   public function getScore()
   {
-    $n = sum($this->getPlayer()->countIcons(\TECHNOLOGIES));
+    $n = array_sum($this->getPlayer()->countIcons(\TECHNOLOGIES));
     return $this->getReward($n, [8 => 5, 12 => 12]);
   }
 }
