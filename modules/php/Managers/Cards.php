@@ -179,6 +179,14 @@ class Cards extends \AK\Helpers\Pieces
   }
 
   /**
+   * Get all artefacts played
+   */
+  public static function getArtefacts($pId)
+  {
+    return self::getFilteredQuery($pId, 'artefact-%')->get();
+  }
+
+  /**
    * Check whether a player played a specific card
    */
   public static function hasPlayedCard($pId, $id)

@@ -20,7 +20,7 @@ class T18_Astronomy extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return min($player->getIcons([\PYRAMID, CITY])) >= 1;
+    return min($player->countIcons([\PYRAMID, CITY])) >= 1;
   }
 
   public function getImmediateEffect()

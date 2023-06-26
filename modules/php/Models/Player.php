@@ -70,6 +70,11 @@ class Player extends \AK\Helpers\DB_Model
     return Cards::getTimeline($this->id, $type);
   }
 
+  public function getArtefacts()
+  {
+    return Cards::getArtefacts($this->id);
+  }
+
   public function hasPlayedCard($id)
   {
     return Cards::hasPlayedCard($this->id, $id);
@@ -96,10 +101,21 @@ class Player extends \AK\Helpers\DB_Model
 
   public function getFreeSlots()
   {
-    // TODO
+    $taken = $this->getTimeline()
+      ->map(function ($card) {
+        return $card->getLocation();
+      })
+      ->toArray();
+
     $slots = [];
     for ($i = 1; $i <= 6; $i++) {
-      $slots[$i] = "timeline-$i-0";
+      $slot0 = "timeline-$i-0";
+      $slot1 = "timeline-$i-1";
+      if (!in_array($slot0, $taken)) {
+        $slots[$i] = $slot0;
+      } elseif (!in_array($slot1, $taken)) {
+        $slots[$i] = $slot1;
+      }
     }
 
     return $slots;
@@ -107,8 +123,20 @@ class Player extends \AK\Helpers\DB_Model
 
   public function getFreeArtefactSlot()
   {
-    // TODO
-    return 'artefact-0';
+    $taken = $this->getArtefacts()
+      ->map(function ($card) {
+        return $card->getLocation();
+      })
+      ->toArray();
+
+    for ($i = 0; $i < 5; $i++) {
+      $slot = "artefact-$i";
+      if (!in_array($slot, $taken)) {
+        return $slot;
+      }
+    }
+
+    return null;
   }
 
   public function countIcon($icon)
