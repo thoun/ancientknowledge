@@ -88,6 +88,12 @@ interface EnteringTradeArgs {
     gainsByBracelets: { [bracelets: number]: number };
 }
 
+// pDrawCards
+interface NotifPDrawCardsArgs {
+    player_id: number;
+    cards: BuilderCard[];
+}
+
 // pDiscardCards
 interface NotifPDiscardCardsArgs {
     n: number;

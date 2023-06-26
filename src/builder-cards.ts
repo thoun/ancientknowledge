@@ -169,4 +169,15 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
  
         return message;
     }
+
+    public getFullCard(card: BuilderCard): BuilderCard {
+        return {
+            ...CARDS_DATA[card.id],
+            id: card.id,
+        };
+    }
+
+    public getFullCards(cards: BuilderCard[]): BuilderCard[] {
+        return cards.map(card => this.getFullCard(card));
+    }
 }

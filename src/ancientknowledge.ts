@@ -539,6 +539,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         });
 
         const notifs = [
+            ['pDrawCards', undefined],
             ['pDiscardCards', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
@@ -570,6 +571,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 }
             });
         }
+    }
+
+    notif_pDrawCards(args: NotifPDrawCardsArgs) {
+        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     }
 
     notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
@@ -694,15 +699,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public format_string_recursive(log: string, args: any) {
         try {
             if (log && args && !args.processed) {
-                if (args.gains && (typeof args.gains !== 'string' || args.gains[0] !== '<')) {
-                    const entries = Object.entries(args.gains);
-                    args.gains = entries.length ? entries.map(entry => `<strong>${entry[1]}</strong> <div class="icon" data-type="${entry[0]}"></div>`).join(' ') : `<strong>${_('nothing')}</strong>`;
-                }
-
                 for (const property in args) {
-                    if (['number', 'color', 'card_color', 'card_type', 'artifact_name'].includes(property) && args[property][0] != '<') {
+                    /*if (['card_names'].includes(property) && args[property][0] != '<') {
                         args[property] = `<strong>${_(args[property])}</strong>`;
-                    }
+                    }*/
                 }
             }
         } catch (e) {
