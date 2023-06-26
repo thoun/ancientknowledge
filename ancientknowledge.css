@@ -1161,6 +1161,7 @@ body > .card {
   height: 453px;
   padding: 0;
   margin: 0;
+  margin-right: 180px;
 }
 .player-table .player-board[data-color="6f3766"] {
   background: url("img/player-board-6f3766.jpg");
@@ -1183,6 +1184,19 @@ body > .card {
   width: 163px;
   height: 228px;
   border-radius: 8px;
+}
+.player-table .player-board .technology-tiles-decks {
+  position: absolute;
+  left: 1200px;
+}
+.player-table .player-board .technology-tiles-decks .technology-tiles-deck[data-type=ancient] {
+  top: 56px;
+}
+.player-table .player-board .technology-tiles-decks .technology-tiles-deck[data-type=writing] {
+  top: 186px;
+}
+.player-table .player-board .technology-tiles-decks .technology-tiles-deck[data-type=secret] {
+  top: 312px;
 }
 .player-table .block-with-text {
   display: flex;

@@ -592,8 +592,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     notif_createCard(args: NotifCreateCardsArgs) {
-        const card = this.builderCardsManager.getFullCard(args.card);
-        return this.getPlayerTable(args.player_id).createCard(card);
+        if (args.card.id[0] == 'T') {
+            const tile = this.technologyTilesManager.getFullCard(args.card as TechnologyTile);
+            return this.getPlayerTable(args.player_id).addTechnologyTile(tile);
+        } else {
+            const card = this.builderCardsManager.getFullCard(args.card as BuilderCard);
+            return this.getPlayerTable(args.player_id).createCard(card);
+        }
     }
 
     notif_fillPool(args: NotifFillPoolArgs) {

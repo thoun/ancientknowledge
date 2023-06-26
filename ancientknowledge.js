@@ -2298,11 +2298,11 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            </div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
-            html += "\n                <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\"></div>\n                ");
+            html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
-        html += "\n            </div>\n        </div>\n        ";
+        html += "\n            </div>\n            </div>\n            <div id=\"player-table-".concat(this.playerId, "-past\" class=\"past\"></div>\n            \n        </div>\n        ");
         dojo.place(html, document.getElementById('tables'));
         if (this.currentPlayer) {
             this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
@@ -2810,8 +2810,14 @@ var AncientKnowledge = /** @class */ (function () {
         return Promise.resolve(true);
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
-        var card = this.builderCardsManager.getFullCard(args.card);
-        return this.getPlayerTable(args.player_id).createCard(card);
+        if (args.card.id[0] == 'T') {
+            var tile = this.technologyTilesManager.getFullCard(args.card);
+            return this.getPlayerTable(args.player_id).addTechnologyTile(tile);
+        }
+        else {
+            var card = this.builderCardsManager.getFullCard(args.card);
+            return this.getPlayerTable(args.player_id).createCard(card);
+        }
     };
     AncientKnowledge.prototype.notif_fillPool = function (args) {
         var _this = this;

@@ -102,7 +102,7 @@ interface NotifPDiscardCardsArgs {
 // createCard
 interface NotifCreateCardsArgs {
     player_id: number;
-    card: BuilderCard;
+    card: BuilderCard | TechnologyTile;
 }
 
 // fillPool

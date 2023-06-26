@@ -31,16 +31,17 @@ class PlayerTable {
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
             <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">
                 <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
-            </div>
-            <div id="player-table-${this.playerId}-past" class="past"></div>
-            <div class="technology-tiles-decks">`;            
-            ['ancient', 'writing', 'secret'].forEach(type => {
-                html += `
-                <div id="player-table-${this.playerId}-technology-tiles-deck-${type}" class="technology-tiles-deck"></div>
-                `;
-            });
+                <div class="technology-tiles-decks">`;            
+                ['ancient', 'writing', 'secret'].forEach(type => {
+                    html += `
+                    <div id="player-table-${this.playerId}-technology-tiles-deck-${type}" class="technology-tiles-deck" data-type="${type}"></div>
+                    `;
+                });
             html += `
             </div>
+            </div>
+            <div id="player-table-${this.playerId}-past" class="past"></div>
+            
         </div>
         `;
 

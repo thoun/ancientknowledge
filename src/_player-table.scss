@@ -31,6 +31,7 @@
     height: 453px;
     padding: 0;
     margin: 0;
+    margin-right: 180px;
 
     @each $playerColor in $playerColors {
       &[data-color="#{$playerColor}"] { 
@@ -47,6 +48,17 @@
         width: 163px;
         height: 228px;  
         border-radius: 8px;
+      }
+    }
+
+    .technology-tiles-decks {
+      position: absolute;
+      left: 1200px;
+
+      .technology-tiles-deck {
+        &[data-type="ancient"] { top: 56px; }
+        &[data-type="writing"] { top: 186px; }
+        &[data-type="secret"] { top: 312px; }
       }
     }
   }
