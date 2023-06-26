@@ -210,7 +210,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         ['search', _('Search')],
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
-                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.takeAtomicAction('actRestart'), null, null, 'gray');
+                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
             }
         } else {
@@ -503,6 +503,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
   	
     public actCancelSelection() {
         this.takeAction('actCancelSelection');
+    }
+  	
+    public actRestart() {
+        if(!(this as any).checkAction('actRestart')) {
+            return;
+        }
+
+        this.takeAction('actRestart');
     }
 
     private takeAtomicAction(action: string, args: any = {}, warning = false) {

@@ -2510,7 +2510,7 @@ var AncientKnowledge = /** @class */ (function () {
                     ].forEach(function (codeAndLabel) {
                         return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
-                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.takeAtomicAction('actRestart'); }, null, null, 'gray');
+                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
                     break;
             }
         }
@@ -2707,6 +2707,12 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.actCancelSelection = function () {
         this.takeAction('actCancelSelection');
+    };
+    AncientKnowledge.prototype.actRestart = function () {
+        if (!this.checkAction('actRestart')) {
+            return;
+        }
+        this.takeAction('actRestart');
     };
     AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {
         if (args === void 0) { args = {}; }
