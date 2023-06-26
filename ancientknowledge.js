@@ -2150,7 +2150,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return message;
     };
     BuilderCardsManager.prototype.getFullCard = function (card) {
-        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id });
+        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id, location: card.location, knowledge: card.knowledge });
     };
     BuilderCardsManager.prototype.getFullCards = function (cards) {
         var _this = this;
@@ -2229,6 +2229,20 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         div.innerHTML = "\n        <div class=\"card-sides\">\n            <div class=\"card-side front\">\n            </div>\n            <div class=\"card-side back\">\n            </div>\n        </div>";
         this.setupFrontDiv(card, div.querySelector('.front'), true);
     };
+    TechnologyTilesManager.prototype.getFullCard = function (tile) {
+        return __assign(__assign({}, TECHS_DATA[tile.id]), { id: tile.id });
+    };
+    TechnologyTilesManager.prototype.getFullCards = function (tiles) {
+        var _this = this;
+        return tiles.map(function (tile) { return _this.getFullCard(tile); });
+    };
+    TechnologyTilesManager.prototype.getFullCardById = function (id) {
+        return __assign(__assign({}, TECHS_DATA[id]), { id: id });
+    };
+    TechnologyTilesManager.prototype.getFullCardsByIds = function (ids) {
+        var _this = this;
+        return ids.map(function (id) { return _this.getFullCardById(id); });
+    };
     return TechnologyTilesManager;
 }(CardManager));
 var TableCenter = /** @class */ (function () {
@@ -2284,7 +2298,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n            </div>\n            <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n            <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\"></div>\n                ");
         });
@@ -2303,11 +2317,16 @@ var PlayerTable = /** @class */ (function () {
         var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
         this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
+            mapCardToSlot: function (card) { return card.location; },
         });
         this.timeline.addCards(player.timeline);
+        var artifactsSlotsIds = [];
+        [0, 1, 2, 3, 4].forEach(function (space) { return artifactsSlotsIds.push("artefact-".concat(space)); }); // TODO artifact ?
         var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
         this.artifacts = new SlotStock(this.game.builderCardsManager, artifactsDiv, {
-            slotsIds: [1, 2, 3, 4, 5]
+            slotsIds: artifactsSlotsIds,
+            mapCardToSlot: function (card) { return card.location; },
+            gap: '36px',
         });
         // TODO this.artifacts.addCards(player.artifacts);
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
@@ -2330,6 +2349,14 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.endInitialSelection = function () {
         this.hand.setSelectionMode('none');
         document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
+    };
+    PlayerTable.prototype.createCard = function (card) {
+        if (card.id[0] == 'A') {
+            this.artifacts.addCard(card);
+        }
+        else {
+            this.timeline.addCard(card);
+        }
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
         this.technologyTilesDecks[card.type].addCard(card);
@@ -2510,7 +2537,7 @@ var AncientKnowledge = /** @class */ (function () {
                     ].forEach(function (codeAndLabel) {
                         return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
-                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.takeAtomicAction('actRestart'); }, null, null, 'gray');
+                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
                     break;
             }
         }
@@ -2671,7 +2698,7 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.gamedatas.gamestate.name == 'create') {
             this.takeAtomicAction('actCreate', [
                 card.id,
-                "timeline-".concat(card.startingSpace, "-0"),
+                card.id[0] == 'A' ? "artefact-0" : "timeline-".concat(card.startingSpace, "-0"),
                 [], // TODO cards to discard
             ]);
         }
@@ -2708,6 +2735,12 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.actCancelSelection = function () {
         this.takeAction('actCancelSelection');
     };
+    AncientKnowledge.prototype.actRestart = function () {
+        if (!this.checkAction('actRestart')) {
+            return;
+        }
+        this.takeAction('actRestart');
+    };
     AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {
         if (args === void 0) { args = {}; }
         if (warning === void 0) { warning = false; }
@@ -2742,6 +2775,7 @@ var AncientKnowledge = /** @class */ (function () {
         var notifs = [
             ['pDrawCards', undefined],
             ['pDiscardCards', undefined],
+            ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
@@ -2775,12 +2809,16 @@ var AncientKnowledge = /** @class */ (function () {
         this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
         return Promise.resolve(true);
     };
+    AncientKnowledge.prototype.notif_createCard = function (args) {
+        var card = this.builderCardsManager.getFullCard(args.card);
+        return this.getPlayerTable(args.player_id).createCard(card);
+    };
     AncientKnowledge.prototype.notif_fillPool = function (args) {
         var _this = this;
         var tiles = Object.values(args.cards);
         var promises = [1, 2, 3].map(function (number) {
             var numberTilesId = tiles.filter(function (tile) { return tile.location == "board_".concat(number); }).map(function (tile) { return tile.id; });
-            var numberTiles = _this.gamedatas.techs.filter(function (tile) { return numberTilesId.includes(tile.id); });
+            var numberTiles = _this.technologyTilesManager.getFullCardsByIds(numberTilesId);
             return _this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
         });
         return Promise.all(promises);

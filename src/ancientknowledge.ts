@@ -210,7 +210,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         ['search', _('Search')],
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
-                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.takeAtomicAction('actRestart'), null, null, 'gray');
+                    );(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
             }
         } else {
@@ -460,7 +460,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'create') {
             this.takeAtomicAction('actCreate', [
                 card.id,
-                `timeline-${card.startingSpace}-0`, // TODO space to build
+                card.id[0] == 'A' ? `artefact-0` : `timeline-${card.startingSpace}-0`, // TODO space to build
                 [], // TODO cards to discard
             ]);
         }
@@ -504,6 +504,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public actCancelSelection() {
         this.takeAction('actCancelSelection');
     }
+  	
+    public actRestart() {
+        if(!(this as any).checkAction('actRestart')) {
+            return;
+        }
+
+        this.takeAction('actRestart');
+    }
 
     private takeAtomicAction(action: string, args: any = {}, warning = false) {
         if (!(this as any).checkAction(action)) return false;
@@ -541,6 +549,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const notifs = [
             ['pDrawCards', undefined],
             ['pDiscardCards', undefined],
+            ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
@@ -582,11 +591,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return Promise.resolve(true);
     }
 
+    notif_createCard(args: NotifCreateCardsArgs) {
+        const card = this.builderCardsManager.getFullCard(args.card);
+        return this.getPlayerTable(args.player_id).createCard(card);
+    }
+
     notif_fillPool(args: NotifFillPoolArgs) {
         const tiles = Object.values(args.cards);
         const promises = [1, 2, 3].map(number => {
             const numberTilesId = tiles.filter(tile => tile.location == `board_${number}`).map(tile => tile.id);
-            const numberTiles = this.gamedatas.techs.filter(tile => numberTilesId.includes(tile.id));
+            const numberTiles = this.technologyTilesManager.getFullCardsByIds(numberTilesId);
             return this.tableCenter.technologyTilesStocks[number].addCards(numberTiles);
         });
         return Promise.all(promises);

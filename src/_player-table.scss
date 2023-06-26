@@ -37,6 +37,18 @@
         background: url('img/player-board-#{$playerColor}.jpg');
       }
     } 
+
+    .artifacts {
+      position: absolute;
+      top: 198px;
+      left: 176px;
+    
+      .slot {
+        width: 163px;
+        height: 228px;  
+        border-radius: 8px;
+      }
+    }
   }
   
   .block-with-text {

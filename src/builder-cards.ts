@@ -15,6 +15,8 @@ interface BuilderCard {
     locked: boolean;
     activation: string;
     effect: string[];
+
+    knowledge?: number;
 }
 
 const CARD_COLORS = {
@@ -174,6 +176,8 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         return {
             ...CARDS_DATA[card.id],
             id: card.id,
+            location: card.location,
+            knowledge: card.knowledge
         };
     }
 
