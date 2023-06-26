@@ -187,7 +187,7 @@ class Log extends \APP_DbObject
     $query = new QueryBuilder('gamelog', null, 'gamelog_packet_id');
     $notifIds = [];
     if (!empty($moveIds)) {
-      $packets = $query->whereIn('gamelog_move_id', $moveIds)->run();
+      $packets = $query->whereIn('gamelog_move_id', $moveIds)->get();
       $notifIds = self::extractNotifIds($packets);
       Notifications::clearTurn(Players::getCurrent(), $notifIds);
     }

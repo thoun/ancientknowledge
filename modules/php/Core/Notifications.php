@@ -55,11 +55,20 @@ class Notifications
     // // Keep only the thing that matters
     $fDatas = [
       'players' => $datas['players'],
-      'meeples' => $datas['meeples'],
+      'cards' => \AK\Managers\Cards::getUiData(),
+      'techs' => \AK\Managers\Technologies::getUiData(),
     ];
 
     self::notifyAll('refreshUI', '', [
       'datas' => $fDatas,
+    ]);
+  }
+
+  public static function refreshHand($player, $hand)
+  {
+    self::notify($player, 'refreshHand', '', [
+      'player' => $player,
+      'hand' => $hand,
     ]);
   }
 

@@ -76,10 +76,7 @@ trait TurnTrait
    */
   function stEndOfTurn()
   {
-    Globals::setUsedVenom(false);
-    Globals::setVenomPaid(false);
-    Globals::setVenomTriggered(false);
-    Globals::setEffectMap4(false);
+    die('TODO : end of turn');
     $player = Players::getActive();
 
     // Solo mode: move one cube to the right

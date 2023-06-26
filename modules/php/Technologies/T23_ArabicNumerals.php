@@ -20,7 +20,7 @@ class T23_ArabicNumerals extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->getLostKnowledges() >= 5;
+    return $player->getLostKnowledge() >= 5;
   }
 
   public function getImmediateEffect()

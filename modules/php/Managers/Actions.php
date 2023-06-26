@@ -60,10 +60,6 @@ class Actions
 
   public static function getErrorMessage($actionId)
   {
-    if ($actionId == VENOM_PAY) {
-      return Game::get()::translate('You no longer have enough money to pay for Venom. You must undo or restart your turn.');
-    }
-
     $actionId = ucfirst(mb_strtolower($actionId));
     $msg = sprintf(
       Game::get()::translate(

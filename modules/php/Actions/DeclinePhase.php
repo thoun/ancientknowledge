@@ -50,9 +50,9 @@ class DeclinePhase extends \AK\Models\Action
       }
     }
 
-    $this->insertAsChild([
-      'action' => 'TODO', // Slide card left
-    ]);
+    // $this->insertAsChild([
+    //   'action' => 'TODO', // Slide card left
+    // ]);
 
     $this->resolveAction();
   }

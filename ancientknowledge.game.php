@@ -82,7 +82,6 @@ class AncientKnowledge extends Table
       'players' => Players::getUiData($pId),
       'cards' => Cards::getUiData(),
       'techs' => Technologies::getUiData(),
-      //   'meeples' => Meeples::getUiData(),
     ];
   }
 
