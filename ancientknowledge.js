@@ -2150,7 +2150,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return message;
     };
     BuilderCardsManager.prototype.getFullCard = function (card) {
-        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id });
+        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id, location: card.location, knowledge: card.knowledge });
     };
     BuilderCardsManager.prototype.getFullCards = function (cards) {
         var _this = this;
@@ -2317,6 +2317,7 @@ var PlayerTable = /** @class */ (function () {
         var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
         this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
+            mapCardToSlot: function (card) { return card.location; },
         });
         this.timeline.addCards(player.timeline);
         var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
@@ -2344,6 +2345,9 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.endInitialSelection = function () {
         this.hand.setSelectionMode('none');
         document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
+    };
+    PlayerTable.prototype.createCard = function (card) {
+        this.timeline.addCard(card);
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
         this.technologyTilesDecks[card.type].addCard(card);
@@ -2685,7 +2689,7 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.gamedatas.gamestate.name == 'create') {
             this.takeAtomicAction('actCreate', [
                 card.id,
-                "timeline-".concat(card.startingSpace, "-0"),
+                card.id[0] == 'A' ? "artefact-0" : "timeline-".concat(card.startingSpace, "-0"),
                 [], // TODO cards to discard
             ]);
         }
@@ -2762,6 +2766,7 @@ var AncientKnowledge = /** @class */ (function () {
         var notifs = [
             ['pDrawCards', undefined],
             ['pDiscardCards', undefined],
+            ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
@@ -2794,6 +2799,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_pDiscardCards = function (args) {
         this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
         return Promise.resolve(true);
+    };
+    AncientKnowledge.prototype.notif_createCard = function (args) {
+        var card = this.builderCardsManager.getFullCard(args.card);
+        return this.getPlayerTable(args.player_id).createCard(card);
     };
     AncientKnowledge.prototype.notif_fillPool = function (args) {
         var _this = this;

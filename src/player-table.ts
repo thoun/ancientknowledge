@@ -59,6 +59,7 @@ class PlayerTable {
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);
         this.timeline = new SlotStock<BuilderCard>(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
+            mapCardToSlot: card => card.location,
         });
         this.timeline.addCards(player.timeline);
         
@@ -94,6 +95,10 @@ class PlayerTable {
     public endInitialSelection() {
         this.hand.setSelectionMode('none');
         document.getElementById(`player-table-${this.playerId}-hand`).classList.remove('initial-selection');
+    }
+    
+    public createCard(card: BuilderCard) {
+        this.timeline.addCard(card);
     }
     
     public addTechnologyTile(card: TechnologyTile) {

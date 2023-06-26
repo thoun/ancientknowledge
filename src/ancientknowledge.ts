@@ -460,7 +460,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'create') {
             this.takeAtomicAction('actCreate', [
                 card.id,
-                `timeline-${card.startingSpace}-0`, // TODO space to build
+                card.id[0] == 'A' ? `artefact-0` : `timeline-${card.startingSpace}-0`, // TODO space to build
                 [], // TODO cards to discard
             ]);
         }
@@ -549,6 +549,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const notifs = [
             ['pDrawCards', undefined],
             ['pDiscardCards', undefined],
+            ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
@@ -588,6 +589,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
         this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
         return Promise.resolve(true);
+    }
+
+    notif_createCard(args: NotifCreateCardsArgs) {
+        const card = this.builderCardsManager.getFullCard(args.card);
+        return this.getPlayerTable(args.player_id).createCard(card);
     }
 
     notif_fillPool(args: NotifFillPoolArgs) {

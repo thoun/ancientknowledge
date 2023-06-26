@@ -99,6 +99,12 @@ interface NotifPDiscardCardsArgs {
     cards: BuilderCard[];
 }
 
+// createCard
+interface NotifCreateCardsArgs {
+    player_id: number;
+    card: BuilderCard;
+}
+
 // fillPool
 interface NotifFillPoolArgs {
     cards: TechnologyTile[];
