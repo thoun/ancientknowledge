@@ -49,11 +49,11 @@ class PlayerTable {
 
         if (this.currentPlayer) {
             this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, document.getElementById(`player-table-${this.playerId}-hand`), {
-                // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
+                sort: (a: BuilderCard, b: BuilderCard) => a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0),
             });
             this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);   
-            this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);           
-            this.hand.addCards(this.game.builderCardsManager.getFullCards(player.hand));
+            this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);     
+            this.refreshHand(player.hand);
         }
         
         const timelineSlotsIds = [];
@@ -115,4 +115,9 @@ class PlayerTable {
     public addTechnologyTile(card: TechnologyTile) {
         this.technologyTilesDecks[card.type].addCard(card);
     }
+    
+    public refreshHand(hand: BuilderCard[]): Promise<any> {
+        this.hand.removeAll();
+        return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
+    }    
 }

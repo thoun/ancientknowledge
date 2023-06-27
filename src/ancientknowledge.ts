@@ -25,6 +25,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
+    private _notif_uid_to_log_id = [];
+    private _notif_uid_to_mobile_log_id = [];
+    private _last_notif;
+
     constructor() {
     }
     
@@ -48,13 +52,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         // TODO TEMP
         Object.values(gamedatas.players).forEach((player, index) => {
-            const playerId = Number(player.id);
+            //const playerId = Number(player.id);
             //if (playerId == this.getPlayerId()) {
             //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             //}
             //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
-            player.tiles = gamedatas.techs.filter(card => card.location == 'inPlay' && card.pId == playerId);
         });
+
+        // Create a new div for buttons to avoid BGA auto clearing it
+        dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
+        dojo.place("<div id='restartAction' style='display:inline-block'></div>", $('customActions'), 'after');
 
         log('gamedatas', gamedatas);
 
@@ -114,6 +121,75 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public onEnteringState(stateName: string, args: any) {
         log('Entering state: ' + stateName, args.args);
 
+        if (args.args && args.args.descSuffix) {
+          this.changePageTitle(args.args.descSuffix);
+        }
+  
+        if (args.args && args.args.optionalAction) {
+          let base = args.args.descSuffix ? args.args.descSuffix : '';
+          this.changePageTitle(base + 'skippable');
+        }
+
+        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
+  
+        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+          this.addSecondaryActionButton(
+            'btnPassAction',
+            _('Pass'),
+            () => this.takeAction('actPassOptionalAction'),
+            'restartAction'
+          );
+        }
+
+        // Undo last steps
+        args.args?.previousSteps?.forEach((stepId: number) => {
+            let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
+            if (logEntry) {
+                this.onClick(logEntry, () => this.undoToStep(stepId));
+            }
+
+            logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
+            if (logEntry) {
+                this.onClick(logEntry, () => this.undoToStep(stepId));
+            }
+        });
+
+        // Restart turn button
+        if (args.args?.previousEngineChoices >= 1 && !args.args.automaticAction) {
+          if (args.args?.previousSteps) {
+            let lastStep = Math.max(...args.args.previousSteps);
+            if (lastStep > 0)
+              this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
+          }
+  
+          // Restart whole turn
+          this.addDangerActionButton(
+            'btnRestartTurn',
+            _('Restart turn'),
+            () => {
+              this.stopActionTimer();
+              this.takeAction('actRestart');
+            },
+            'restartAction'
+          );
+        }
+  
+        /* TODO? if (this.isCurrentPlayerActive() && args.args) {
+            // Anytime buttons
+            args.args.anytimeActions?.forEach((action, i) => {
+                let msg = action.desc;
+                msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
+                msg = this.formatString(msg);
+
+                this.addPrimaryActionButton(
+                'btnAnytimeAction' + i,
+                msg,
+                () => this.takeAction('actAnytimeAction', { id: i }, false),
+                'anytimeActions'
+                );
+            });
+        }*/
+
         switch (stateName) {
             case 'create':
                 this.onEnteringCreate(args.args);
@@ -122,6 +198,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.onEnteringLearn(args.args);
                 break;
         }
+    }
+
+    /*
+     * Add a blue/grey button if it doesn't already exists
+     */
+    addPrimaryActionButton(id, text, callback, zone = 'customActions') {
+      if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'blue');
+    }
+
+    addSecondaryActionButton(id, text, callback, zone = 'customActions') {
+      if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'gray');
+    }
+
+    addDangerActionButton(id, text, callback, zone = 'customActions') {
+      if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'red');
     }
     
     private changePageTitle(suffix = null, save = false) {
@@ -157,12 +248,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onEnteringLearn(args: EnteringLearnArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setTechonologyTilesSelectable(true/*, args.techs*/);
+            this.tableCenter.setTechnologyTilesSelectable(true/*, args.techs*/);
         }
     }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
+
+      (this as any).removeActionButtons();
+      document.getElementById('customActions').innerHTML = '';
+      document.getElementById('restartAction').innerHTML = '';
 
         switch (stateName) {
             case 'initialSelection':
@@ -186,7 +281,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onLeavingLearn() {
-        this.tableCenter.setTechonologyTilesSelectable(false);
+        this.tableCenter.setTechnologyTilesSelectable(false);
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -212,11 +307,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
                     );
-                    (this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
-                    (this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
             }
         } else {
             switch (stateName) {
@@ -574,6 +669,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
+            ['clearTurn', 1],
+            ['refreshUI', 1],
+            ['refreshHand', 1],
         ];
     
         notifs.forEach((notif) => {
@@ -640,11 +738,40 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
     }
     
-    notif_clearTurn(args) {
+    notif_clearTurn(args: NotifClearTurnArgs) {
       this.cancelLogs(args.notifIds);
     }
     
-    private cancelLogs(notifIds: number[]) {
+    notif_refreshUI(args: NotifRefreshUIArgs) {
+        //  TODO refresh cards ?
+        //  TODO refresh players
+        this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+    }
+    
+    notif_refreshHand(args: NotifRefreshHandArgs) {
+        return this.getPlayerTable(args.player_id).refreshHand(args.hand);
+    }    
+    
+    /*
+    * [Undocumented] Called by BGA framework on any notification message
+    * Handle cancelling log messages for restart turn
+    */
+    /* @Override */
+    public onPlaceLogOnChannel(msg) {
+     var currentLogId = (this as any).notifqueue.next_log_id;
+     var currentMobileLogId = (this as any).next_log_id;
+     var res = (this as any).inherited(arguments);
+     (this as any)._notif_uid_to_log_id[msg.uid] = currentLogId;
+     (this as any)._notif_uid_to_mobile_log_id[msg.uid] = currentMobileLogId;
+     (this as any)._last_notif = {
+       logId: currentLogId,
+       mobileLogId: currentMobileLogId,
+       msg,
+     };
+     return res;
+    }
+    
+    private cancelLogs(notifIds: string[]) {
       notifIds.forEach((uid) => {
         if ((this as any)._notif_uid_to_log_id.hasOwnProperty(uid)) {
           let logId = (this as any)._notif_uid_to_log_id[uid];
@@ -676,16 +803,18 @@ class AncientKnowledge implements AncientKnowledgeGame {
         dojo.addClass('log_' + notif.logId, 'notif_' + type);
 
         var methodName = 'onAdding' + type.charAt(0).toUpperCase() + type.slice(1) + 'ToLog';
-        if (this[methodName] !== undefined) {
-            this[methodName](notif);
-        }
+        this[methodName]?.(notif);
       }
       if ($('dockedlog_' + notif.mobileLogId)) {
         dojo.addClass('dockedlog_' + notif.mobileLogId, 'notif_' + type);
       }
     }
 
-    onAddingNewUndoableStepToLog(notif) {
+    private onClick(elem: HTMLElement, callback) {
+        elem.addEventListener('click', callback);
+    }
+
+    protected onAddingNewUndoableStepToLog(notif) {
       if (!$(`log_${notif.logId}`)) {
         return;
       }
@@ -704,7 +833,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
       }
     }    
     
-    undoToStep(stepId) {
+    undoToStep(stepId: number) {
       this.stopActionTimer();
       (this as any).checkAction('actRestart');
       this.takeAction('actUndoToStep', { stepId }/*, false*/);
@@ -751,103 +880,3 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return (this as any).inherited(arguments);
     }
 }
-
-/*
-
-   onEnteringState(stateName, args) {
-      debug('Entering state: ' + stateName, args);
-      if (this.isFastMode() && !['draftPlayers'].includes(stateName)) return;
-
-      if (args.args && args.args.descSuffix) {
-        this.changePageTitle(args.args.descSuffix);
-      }
-
-      if (args.args && args.args.optionalAction) {
-        let base = args.args.descSuffix ? args.args.descSuffix : '';
-        this.changePageTitle(base + 'skippable');
-      }
-
-      if (args.args && args.args.source) {
-        if (this.gamedatas.gamestate.descriptionmyturn.search('{source}') === -1) {
-          if (args.args.sourceId) {
-            let card = { id: args.args.sourceId };
-            this.loadSaveCard(card);
-            let uid = this.registerCustomTooltip(this.tplZooCard(card, true));
-
-            $('pagemaintitletext').insertAdjacentHTML(
-              'beforeend',
-              ` (<span class="ark-log-card-name" id="${uid}">${_(args.args.source)}</span>)`
-            );
-            this.attachRegisteredTooltips();
-          } else {
-            $('pagemaintitletext').insertAdjacentHTML('beforeend', ` (${_(args.args.source)})`);
-          }
-        }
-      }
-
-      if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-
-      if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-        this.addSecondaryActionButton(
-          'btnPassAction',
-          _('Pass'),
-          () => this.takeAction('actPassOptionalAction'),
-          'restartAction'
-        );
-      }
-
-      // Undo last steps
-      if (args.args && args.args.previousSteps) {
-        args.args.previousSteps.forEach((stepId) => {
-          let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
-          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
-
-          logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
-          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
-        });
-      }
-
-      // Restart turn button
-      if (args.args && args.args.previousEngineChoices && args.args.previousEngineChoices >= 1 && !args.args.automaticAction) {
-        if (args.args && args.args.previousSteps) {
-          let lastStep = Math.max(...args.args.previousSteps);
-          if (lastStep > 0)
-            this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
-        }
-
-        // Restart whole turn
-        this.addDangerActionButton(
-          'btnRestartTurn',
-          _('Restart turn'),
-          () => {
-            this.stopActionTimer();
-            this.takeAction('actRestart');
-          },
-          'restartAction'
-        );
-      }
-
-      if (this.isCurrentPlayerActive() && args.args) {
-        // Anytime buttons
-        if (args.args.anytimeActions) {
-          args.args.anytimeActions.forEach((action, i) => {
-            let msg = action.desc;
-            msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
-            msg = this.formatString(msg);
-
-            this.addPrimaryActionButton(
-              'btnAnytimeAction' + i,
-              msg,
-              () => this.takeAction('actAnytimeAction', { id: i }, false),
-              'anytimeActions'
-            );
-          });
-        }
-      }
-
-      // Call appropriate method
-      var methodName = 'onEnteringState' + stateName.charAt(0).toUpperCase() + stateName.slice(1);
-      if (this[methodName] !== undefined) this[methodName](args.args);
-    },
- 
-    */

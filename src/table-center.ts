@@ -20,9 +20,8 @@ class TableCenter {
                 center: false,
             });
             this.technologyTilesStocks[number].onCardClick = tile => this.game.onTableTechnologyTileClick(tile);
-            const tiles = this.game.technologyTilesManager.getFullCards(gamedatas.techs.filter(tile => tile.location == `board_${number}`));
-            this.technologyTilesStocks[number].addCards(tiles);
         });
+        this.refreshTechnologyTiles(gamedatas.techs);
 
         const cardDeckDiv = document.getElementById(`builder-deck`);
         this.cardDeck = new Deck<BuilderCard>(game.builderCardsManager, cardDeckDiv, {
@@ -32,10 +31,17 @@ class TableCenter {
         });
     }
     
-    public setTechonologyTilesSelectable(selectable: boolean, selectableCards: TechnologyTile[] | null = null) {
+    public setTechnologyTilesSelectable(selectable: boolean, selectableCards: TechnologyTile[] | null = null) {
         [1, 2, 3].forEach(number => {
             this.technologyTilesStocks[number].setSelectionMode(selectable ? 'single' : 'none');
             this.technologyTilesStocks[number].setSelectableCards(selectableCards);
+        });
+    }
+    
+    public refreshTechnologyTiles(techs: TechnologyTile[]) {
+        [1, 2, 3].forEach(number => {
+            const tiles = this.game.technologyTilesManager.getFullCards(techs.filter(tile => tile.location == `board_${number}`));
+            this.technologyTilesStocks[number].addCards(tiles);
         });
     }
 

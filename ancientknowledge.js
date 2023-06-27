@@ -2272,9 +2272,8 @@ var TableCenter = /** @class */ (function () {
                 center: false,
             });
             _this.technologyTilesStocks[number].onCardClick = function (tile) { return _this.game.onTableTechnologyTileClick(tile); };
-            var tiles = _this.game.technologyTilesManager.getFullCards(gamedatas.techs.filter(function (tile) { return tile.location == "board_".concat(number); }));
-            _this.technologyTilesStocks[number].addCards(tiles);
         });
+        this.refreshTechnologyTiles(gamedatas.techs);
         var cardDeckDiv = document.getElementById("builder-deck");
         this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
         // TODO cardNumber: gamedatas.cardDeckCount,
@@ -2282,12 +2281,19 @@ var TableCenter = /** @class */ (function () {
         // TODO counter: { counterId: 'deck-counter', },
         });
     }
-    TableCenter.prototype.setTechonologyTilesSelectable = function (selectable, selectableCards) {
+    TableCenter.prototype.setTechnologyTilesSelectable = function (selectable, selectableCards) {
         var _this = this;
         if (selectableCards === void 0) { selectableCards = null; }
         [1, 2, 3].forEach(function (number) {
             _this.technologyTilesStocks[number].setSelectionMode(selectable ? 'single' : 'none');
             _this.technologyTilesStocks[number].setSelectableCards(selectableCards);
+        });
+    };
+    TableCenter.prototype.refreshTechnologyTiles = function (techs) {
+        var _this = this;
+        [1, 2, 3].forEach(function (number) {
+            var tiles = _this.game.technologyTilesManager.getFullCards(techs.filter(function (tile) { return tile.location == "board_".concat(number); }));
+            _this.technologyTilesStocks[number].addCards(tiles);
         });
     };
     return TableCenter;
@@ -2313,11 +2319,11 @@ var PlayerTable = /** @class */ (function () {
         dojo.place(html, document.getElementById('tables'));
         if (this.currentPlayer) {
             this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
-            // TODO sort: (a: BuilderCard, b: BuilderCard) => a.type == b.type ? a.number - b.number : a.type - b.type,
+                sort: function (a, b) { return a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0); },
             });
             this.hand.onCardClick = function (card) { return _this.game.onHandCardClick(card); };
             this.hand.onSelectionChange = function (selection) { return _this.game.onHandCardSelectionChange(selection); };
-            this.hand.addCards(this.game.builderCardsManager.getFullCards(player.hand));
+            this.refreshHand(player.hand);
         }
         var timelineSlotsIds = [];
         [1, 0].forEach(function (line) { return [1, 2, 3, 4, 5, 6].forEach(function (space) { return timelineSlotsIds.push("timeline-".concat(space, "-").concat(line)); }); });
@@ -2369,6 +2375,10 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.addTechnologyTile = function (card) {
         this.technologyTilesDecks[card.type].addCard(card);
     };
+    PlayerTable.prototype.refreshHand = function (hand) {
+        this.hand.removeAll();
+        return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
+    };
     return PlayerTable;
 }());
 var ANIMATION_MS = 500;
@@ -2381,6 +2391,8 @@ var AncientKnowledge = /** @class */ (function () {
         this.handCounters = [];
         this.lostKnowledgeCounters = [];
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
+        this._notif_uid_to_log_id = [];
+        this._notif_uid_to_mobile_log_id = [];
     }
     /*
         setup:
@@ -2400,13 +2412,15 @@ var AncientKnowledge = /** @class */ (function () {
         this.gamedatas = gamedatas;
         // TODO TEMP
         Object.values(gamedatas.players).forEach(function (player, index) {
-            var playerId = Number(player.id);
+            //const playerId = Number(player.id);
             //if (playerId == this.getPlayerId()) {
             //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
             //}
             //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
-            player.tiles = gamedatas.techs.filter(function (card) { return card.location == 'inPlay' && card.pId == playerId; });
         });
+        // Create a new div for buttons to avoid BGA auto clearing it
+        dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
+        dojo.place("<div id='restartAction' style='display:inline-block'></div>", $('customActions'), 'after');
         log('gamedatas', gamedatas);
         this.animationManager = new AnimationManager(this);
         this.builderCardsManager = new BuilderCardsManager(this);
@@ -2455,7 +2469,59 @@ var AncientKnowledge = /** @class */ (function () {
     //                  You can use this method to perform some user interface changes at this moment.
     //
     AncientKnowledge.prototype.onEnteringState = function (stateName, args) {
+        var _this = this;
+        var _a, _b, _c, _d;
         log('Entering state: ' + stateName, args.args);
+        if (args.args && args.args.descSuffix) {
+            this.changePageTitle(args.args.descSuffix);
+        }
+        if (args.args && args.args.optionalAction) {
+            var base = args.args.descSuffix ? args.args.descSuffix : '';
+            this.changePageTitle(base + 'skippable');
+        }
+        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
+        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+            this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
+        }
+        // Undo last steps
+        (_b = (_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps) === null || _b === void 0 ? void 0 : _b.forEach(function (stepId) {
+            var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+            if (logEntry) {
+                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+            }
+            logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+            if (logEntry) {
+                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+            }
+        });
+        // Restart turn button
+        if (((_c = args.args) === null || _c === void 0 ? void 0 : _c.previousEngineChoices) >= 1 && !args.args.automaticAction) {
+            if ((_d = args.args) === null || _d === void 0 ? void 0 : _d.previousSteps) {
+                var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
+                if (lastStep_1 > 0)
+                    this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
+            }
+            // Restart whole turn
+            this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
+                _this.stopActionTimer();
+                _this.takeAction('actRestart');
+            }, 'restartAction');
+        }
+        /* TODO? if (this.isCurrentPlayerActive() && args.args) {
+            // Anytime buttons
+            args.args.anytimeActions?.forEach((action, i) => {
+                let msg = action.desc;
+                msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
+                msg = this.formatString(msg);
+
+                this.addPrimaryActionButton(
+                'btnAnytimeAction' + i,
+                msg,
+                () => this.takeAction('actAnytimeAction', { id: i }, false),
+                'anytimeActions'
+                );
+            });
+        }*/
         switch (stateName) {
             case 'create':
                 this.onEnteringCreate(args.args);
@@ -2464,6 +2530,24 @@ var AncientKnowledge = /** @class */ (function () {
                 this.onEnteringLearn(args.args);
                 break;
         }
+    };
+    /*
+     * Add a blue/grey button if it doesn't already exists
+     */
+    AncientKnowledge.prototype.addPrimaryActionButton = function (id, text, callback, zone) {
+        if (zone === void 0) { zone = 'customActions'; }
+        if (!$(id))
+            this.addActionButton(id, text, callback, zone, false, 'blue');
+    };
+    AncientKnowledge.prototype.addSecondaryActionButton = function (id, text, callback, zone) {
+        if (zone === void 0) { zone = 'customActions'; }
+        if (!$(id))
+            this.addActionButton(id, text, callback, zone, false, 'gray');
+    };
+    AncientKnowledge.prototype.addDangerActionButton = function (id, text, callback, zone) {
+        if (zone === void 0) { zone = 'customActions'; }
+        if (!$(id))
+            this.addActionButton(id, text, callback, zone, false, 'red');
     };
     AncientKnowledge.prototype.changePageTitle = function (suffix, save) {
         if (suffix === void 0) { suffix = null; }
@@ -2495,11 +2579,14 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringLearn = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.tableCenter.setTechonologyTilesSelectable(true /*, args.techs*/);
+            this.tableCenter.setTechnologyTilesSelectable(true /*, args.techs*/);
         }
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
+        this.removeActionButtons();
+        document.getElementById('customActions').innerHTML = '';
+        document.getElementById('restartAction').innerHTML = '';
         switch (stateName) {
             case 'initialSelection':
                 this.onLeavingInitialSelection();
@@ -2521,7 +2608,7 @@ var AncientKnowledge = /** @class */ (function () {
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
     };
     AncientKnowledge.prototype.onLeavingLearn = function () {
-        this.tableCenter.setTechonologyTilesSelectable(false);
+        this.tableCenter.setTechnologyTilesSelectable(false);
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -2546,11 +2633,11 @@ var AncientKnowledge = /** @class */ (function () {
                     ].forEach(function (codeAndLabel) {
                         return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
-                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
+                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
-                    this.addActionButton("actRestart_button", _("Restart"), function () { return _this.actRestart(); }, null, null, 'gray');
+                //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
             }
         }
         else {
@@ -2803,6 +2890,9 @@ var AncientKnowledge = /** @class */ (function () {
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
             ['learnTech', undefined],
+            ['clearTurn', 1],
+            ['refreshUI', 1],
+            ['refreshHand', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -2862,6 +2952,32 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_clearTurn = function (args) {
         this.cancelLogs(args.notifIds);
     };
+    AncientKnowledge.prototype.notif_refreshUI = function (args) {
+        //  TODO refresh cards ?
+        //  TODO refresh players
+        this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+    };
+    AncientKnowledge.prototype.notif_refreshHand = function (args) {
+        return this.getPlayerTable(args.player_id).refreshHand(args.hand);
+    };
+    /*
+    * [Undocumented] Called by BGA framework on any notification message
+    * Handle cancelling log messages for restart turn
+    */
+    /* @Override */
+    AncientKnowledge.prototype.onPlaceLogOnChannel = function (msg) {
+        var currentLogId = this.notifqueue.next_log_id;
+        var currentMobileLogId = this.next_log_id;
+        var res = this.inherited(arguments);
+        this._notif_uid_to_log_id[msg.uid] = currentLogId;
+        this._notif_uid_to_mobile_log_id[msg.uid] = currentMobileLogId;
+        this._last_notif = {
+            logId: currentLogId,
+            mobileLogId: currentMobileLogId,
+            msg: msg,
+        };
+        return res;
+    };
     AncientKnowledge.prototype.cancelLogs = function (notifIds) {
         var _this = this;
         notifIds.forEach(function (uid) {
@@ -2880,6 +2996,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.addLogClass = function () {
+        var _a;
         if (this._last_notif == null) {
             return;
         }
@@ -2891,13 +3008,14 @@ var AncientKnowledge = /** @class */ (function () {
         if ($('log_' + notif.logId)) {
             dojo.addClass('log_' + notif.logId, 'notif_' + type);
             var methodName = 'onAdding' + type.charAt(0).toUpperCase() + type.slice(1) + 'ToLog';
-            if (this[methodName] !== undefined) {
-                this[methodName](notif);
-            }
+            (_a = this[methodName]) === null || _a === void 0 ? void 0 : _a.call(this, notif);
         }
         if ($('dockedlog_' + notif.mobileLogId)) {
             dojo.addClass('dockedlog_' + notif.mobileLogId, 'notif_' + type);
         }
+    };
+    AncientKnowledge.prototype.onClick = function (elem, callback) {
+        elem.addEventListener('click', callback);
     };
     AncientKnowledge.prototype.onAddingNewUndoableStepToLog = function (notif) {
         var _this = this;
@@ -2962,105 +3080,6 @@ var AncientKnowledge = /** @class */ (function () {
     };
     return AncientKnowledge;
 }());
-/*
-
-   onEnteringState(stateName, args) {
-      debug('Entering state: ' + stateName, args);
-      if (this.isFastMode() && !['draftPlayers'].includes(stateName)) return;
-
-      if (args.args && args.args.descSuffix) {
-        this.changePageTitle(args.args.descSuffix);
-      }
-
-      if (args.args && args.args.optionalAction) {
-        let base = args.args.descSuffix ? args.args.descSuffix : '';
-        this.changePageTitle(base + 'skippable');
-      }
-
-      if (args.args && args.args.source) {
-        if (this.gamedatas.gamestate.descriptionmyturn.search('{source}') === -1) {
-          if (args.args.sourceId) {
-            let card = { id: args.args.sourceId };
-            this.loadSaveCard(card);
-            let uid = this.registerCustomTooltip(this.tplZooCard(card, true));
-
-            $('pagemaintitletext').insertAdjacentHTML(
-              'beforeend',
-              ` (<span class="ark-log-card-name" id="${uid}">${_(args.args.source)}</span>)`
-            );
-            this.attachRegisteredTooltips();
-          } else {
-            $('pagemaintitletext').insertAdjacentHTML('beforeend', ` (${_(args.args.source)})`);
-          }
-        }
-      }
-
-      if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-
-      if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-        this.addSecondaryActionButton(
-          'btnPassAction',
-          _('Pass'),
-          () => this.takeAction('actPassOptionalAction'),
-          'restartAction'
-        );
-      }
-
-      // Undo last steps
-      if (args.args && args.args.previousSteps) {
-        args.args.previousSteps.forEach((stepId) => {
-          let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
-          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
-
-          logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
-          if (logEntry) this.onClick(logEntry, () => this.undoToStep(stepId));
-        });
-      }
-
-      // Restart turn button
-      if (args.args && args.args.previousEngineChoices && args.args.previousEngineChoices >= 1 && !args.args.automaticAction) {
-        if (args.args && args.args.previousSteps) {
-          let lastStep = Math.max(...args.args.previousSteps);
-          if (lastStep > 0)
-            this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
-        }
-
-        // Restart whole turn
-        this.addDangerActionButton(
-          'btnRestartTurn',
-          _('Restart turn'),
-          () => {
-            this.stopActionTimer();
-            this.takeAction('actRestart');
-          },
-          'restartAction'
-        );
-      }
-
-      if (this.isCurrentPlayerActive() && args.args) {
-        // Anytime buttons
-        if (args.args.anytimeActions) {
-          args.args.anytimeActions.forEach((action, i) => {
-            let msg = action.desc;
-            msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
-            msg = this.formatString(msg);
-
-            this.addPrimaryActionButton(
-              'btnAnytimeAction' + i,
-              msg,
-              () => this.takeAction('actAnytimeAction', { id: i }, false),
-              'anytimeActions'
-            );
-          });
-        }
-      }
-
-      // Call appropriate method
-      var methodName = 'onEnteringState' + stateName.charAt(0).toUpperCase() + stateName.slice(1);
-      if (this[methodName] !== undefined) this[methodName](args.args);
-    },
- 
-    */ 
 define([
     "dojo", "dojo/_base/declare",
     "ebg/core/gamegui",

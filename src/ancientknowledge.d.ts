@@ -122,3 +122,29 @@ interface NotifLearnTechArgs {
     player_id: number;
     card: TechnologyTile;
 }
+
+// learnTech
+interface NotifLearnTechArgs {
+    player_id: number;
+    card: TechnologyTile;
+}
+
+// clearTurn
+interface NotifClearTurnArgs {
+    notifIds: string[];
+}
+
+// refreshUI
+interface NotifRefreshUIArgs {
+    datas: {
+        cards;
+        players: { [playerId: number]: AncientKnowledgePlayer };
+        techs: TechnologyTile[];
+    };
+}
+
+// refreshHand
+interface NotifRefreshHandArgs {
+    player_id: number;
+    hand: BuilderCard[];
+}
