@@ -37,10 +37,11 @@ class Player extends \AK\Helpers\DB_Model
     $data = parent::getUiData();
     $current = $this->id == $currentPlayerId;
     $hand = $this->getHand();
-    $data['hand'] = $current ? $hand->ui() : [];
+    $data['hand'] = $current ? $hand->toArray() : [];
     $data['handCount'] = $hand->count();
-    $data['timeline'] = $this->getTimeline()->ui();
-    $data['past'] = $this->getPast()->ui();
+    $data['timeline'] = $this->getTimeline()->toArray();
+    $data['past'] = $this->getPast()->toArray();
+    $data['techs'] = $this->getTechTiles()->toArray();
     return $data;
   }
 
