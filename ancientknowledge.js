@@ -2317,7 +2317,7 @@ var PlayerTable = /** @class */ (function () {
             });
             this.hand.onCardClick = function (card) { return _this.game.onHandCardClick(card); };
             this.hand.onSelectionChange = function (selection) { return _this.game.onHandCardSelectionChange(selection); };
-            this.hand.addCards(player.hand);
+            this.hand.addCards(this.game.builderCardsManager.getFullCards(player.hand));
         }
         var timelineSlotsIds = [];
         [1, 0].forEach(function (line) { return [1, 2, 3, 4, 5, 6].forEach(function (space) { return timelineSlotsIds.push("timeline-".concat(space, "-").concat(line)); }); });
@@ -2342,7 +2342,8 @@ var PlayerTable = /** @class */ (function () {
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
-            _this.technologyTilesDecks[type].addCards(player.tiles.filter(function (tile) { return tile.type == type; }));
+            var tiles = _this.game.technologyTilesManager.getFullCards(player.techs).filter(function (tile) { return tile.type == type; });
+            _this.technologyTilesDecks[type].addCards(tiles);
         });
     }
     PlayerTable.prototype.setHandSelectable = function (selectable) {

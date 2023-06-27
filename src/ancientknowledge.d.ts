@@ -11,8 +11,7 @@ interface AncientKnowledgePlayer extends Player {
     timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
     //artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
     past: BuilderCard[];
-    //technologyTiles: { [type: number]: TechnologyTile[] }; // type 1..3*/
-    tiles: TechnologyTile[];
+    techs: TechnologyTile[];
 }
 
 interface AncientKnowledgeGamedatas {

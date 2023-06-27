@@ -53,7 +53,7 @@ class PlayerTable {
             });
             this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);   
             this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);           
-            this.hand.addCards(player.hand);
+            this.hand.addCards(this.game.builderCardsManager.getFullCards(player.hand));
         }
         
         const timelineSlotsIds = [];
@@ -84,7 +84,8 @@ class PlayerTable {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
             this.technologyTilesDecks[type] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
             });
-            this.technologyTilesDecks[type].addCards(player.tiles.filter(tile => tile.type == type));
+            const tiles = this.game.technologyTilesManager.getFullCards(player.techs).filter(tile => tile.type == type);
+            this.technologyTilesDecks[type].addCards(tiles);
         });
     }
 

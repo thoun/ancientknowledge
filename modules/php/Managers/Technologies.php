@@ -144,7 +144,7 @@ class Technologies extends \AK\Helpers\Pieces
    */
   public static function getOfPlayer($pId, $type = null)
   {
-    return self::getFilteredQuery($pId, 'inPlay-%')
+    return self::getFilteredQuery($pId, 'inPlay')
       ->get()
       ->filter(function ($card) use ($type) {
         return $type == null || $card->getType() == $type;
