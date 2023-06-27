@@ -4,7 +4,7 @@ use AK\Core\Stats;
 use AK\Core\Notifications;
 use AK\Core\Preferences;
 use AK\Managers\Actions;
-use AK\Managers\Meeples;
+use AK\Managers\Technologies;
 use AK\Managers\Cards;
 use AK\Core\Globals;
 use AK\Core\Engine;
@@ -88,6 +88,11 @@ class Player extends \AK\Helpers\DB_Model
   public function getCardOnTimelineSpace($space)
   {
     return Cards::getOnTimelineSpace($this->id, $space);
+  }
+
+  public function getTechTiles($type = null)
+  {
+    return Technologies::getOfPlayer($this->id, $type);
   }
 
   public function countKnowledgeOnTimeline()

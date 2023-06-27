@@ -33,7 +33,7 @@ class Technologies extends \AK\Helpers\Pieces
 
   public static function getUiData()
   {
-    return self::getInLocation('inPlay')->merge(self::getInLocation('board_%'));
+    return self::getInLocation('board_%')->toArray();
   }
 
   ///////////////////////////////////
@@ -130,4 +130,24 @@ class Technologies extends \AK\Helpers\Pieces
     }
   }
   */
+
+  ///////////////////////////////////////////////
+  //    ____                                 _
+  //   |  _ \ ___ _ __ ___  ___  _ __   __ _| |
+  //   | |_) / _ \ '__/ __|/ _ \| '_ \ / _` | |
+  //   |  __/  __/ |  \__ \ (_) | | | | (_| | |
+  //   |_|   \___|_|  |___/\___/|_| |_|\__,_|_|
+  ///////////////////////////////////////////////
+
+  /**
+   * Get all tech tiles played
+   */
+  public static function getOfPlayer($pId, $type = null)
+  {
+    return self::getFilteredQuery($pId, 'inPlay-%')
+      ->get()
+      ->filter(function ($card) use ($type) {
+        return $type == null || $card->getType() == $type;
+      });
+  }
 }
