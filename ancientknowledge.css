@@ -677,6 +677,10 @@ body > .card {
   right: 7px;
   height: 128px;
   background-size: 600% auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 .builder-card .front .background[data-type=A] {
   background-image: url("img/cards-background-artifact.jpg");
@@ -1377,6 +1381,19 @@ html, .mode_3d #game_play_area_background {
 }
 .artifact-tooltip > div:not(:last-child) {
   border-bottom: 1px solid gray;
+}
+
+.knowledge-token {
+  display: inline-block;
+  width: 25px;
+  height: 38px;
+  background-size: auto 100%;
+  vertical-align: middle;
+  background-image: url("img/knowledge-tokens.png");
+  background-position-x: 0%;
+}
+.knowledge-token.golden {
+  background-position-x: 100%;
 }
 
 #last-round {

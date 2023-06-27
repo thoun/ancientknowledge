@@ -2098,7 +2098,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         div.dataset.number = ''+card.number;*/
         var backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
         var backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
-        var html = "\n        <div class=\"background\" data-type=\"".concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
+        var html = "\n        <div id=\"".concat(card.id, "-tokens\" class=\"background\" data-type=\"").concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
         if (card.startingSpace) {
             html += "<div class=\"starting-space\">".concat(card.startingSpace, "</div>");
         }
@@ -2332,7 +2332,7 @@ var PlayerTable = /** @class */ (function () {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: function (card) { return card.location; },
         });
-        this.timeline.addCards(player.timeline);
+        player.timeline.forEach(function (card) { return _this.createTimelineCard(_this.game.builderCardsManager.getFullCard(card)); });
         var artifactsSlotsIds = [];
         [0, 1, 2, 3, 4].forEach(function (space) { return artifactsSlotsIds.push("artefact-".concat(space)); }); // TODO artifact ?
         var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
@@ -2369,8 +2369,12 @@ var PlayerTable = /** @class */ (function () {
             this.artifacts.addCard(card);
         }
         else {
-            this.timeline.addCard(card);
+            this.createTimelineCard(card);
         }
+    };
+    PlayerTable.prototype.createTimelineCard = function (card) {
+        this.timeline.addCard(card);
+        this.setCardKnowledge(card.id, card.knowledge);
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
         this.technologyTilesDecks[card.type].addCard(card);
@@ -2378,6 +2382,20 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.refreshHand = function (hand) {
         this.hand.removeAll();
         return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
+    };
+    PlayerTable.prototype.setCardKnowledge = function (cardId, knowledge) {
+        var golden = Math.floor(knowledge / 5);
+        var basic = knowledge % 5;
+        var stockDiv = document.getElementById("".concat(cardId, "-tokens"));
+        while (stockDiv.childElementCount > (golden + basic)) {
+            stockDiv.removeChild(stockDiv.lastChild);
+        }
+        while (stockDiv.childElementCount < (golden + basic)) {
+            stockDiv.insertAdjacentHTML('beforeend', "<div class=\"knowledge-token\"></div>");
+        }
+        for (var i = 0; i < (golden + basic); i++) {
+            stockDiv.children[i].classList.toggle('golden', i < golden);
+        }
     };
     return PlayerTable;
 }());

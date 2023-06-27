@@ -44,6 +44,11 @@
         right: 7px;
         height: 128px;
         background-size: 600% auto;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
         
         &[data-type="A"] {
             background-image: url('img/cards-background-artifact.jpg');

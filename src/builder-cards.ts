@@ -51,7 +51,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         const backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
         const backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
         let html = `
-        <div class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
+        <div id="${card.id}-tokens" class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
         <div class="type-box" data-type="${typeLetter}">
             <div class="type" data-type="${typeLetter}">
                 <div class="type-icon"></div>

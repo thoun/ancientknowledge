@@ -63,7 +63,7 @@ class PlayerTable {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
-        this.timeline.addCards(player.timeline);
+        player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
         
         const artifactsSlotsIds = [];
         [0,1,2,3,4].forEach(space => artifactsSlotsIds.push(`artefact-${space}`)); // TODO artifact ?
@@ -108,8 +108,13 @@ class PlayerTable {
         if (card.id[0] == 'A') {
             this.artifacts.addCard(card);
         } else {
-            this.timeline.addCard(card);
+            this.createTimelineCard(card);
         }
+    }
+    
+    private createTimelineCard(card: BuilderCard) {
+        this.timeline.addCard(card);
+        this.setCardKnowledge(card.id, card.knowledge);
     }
     
     public addTechnologyTile(card: TechnologyTile) {
@@ -120,4 +125,22 @@ class PlayerTable {
         this.hand.removeAll();
         return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
     }    
+
+    public setCardKnowledge(cardId: string, knowledge: number) {
+        const golden = Math.floor(knowledge / 5);
+        const basic = knowledge % 5;
+
+        const stockDiv = document.getElementById(`${cardId}-tokens`);
+
+        while (stockDiv.childElementCount > (golden + basic)) {
+            stockDiv.removeChild(stockDiv.lastChild);
+        }
+        while (stockDiv.childElementCount < (golden + basic)) {
+            stockDiv.insertAdjacentHTML('beforeend', `<div class="knowledge-token"></div>`);
+        }
+
+        for (let i = 0; i < (golden + basic); i++) {
+            stockDiv.children[i].classList.toggle('golden', i < golden);
+        }
+    }
 }
