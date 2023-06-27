@@ -145,7 +145,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onEnteringInitialSelection(args: EnteringInitialSelectionArgs) {
-        const cards = this.gamedatas.cards.filter(card => args._private.cards.includes(card.id));
+        const cards = this.builderCardsManager.getFullCardsByIds(args._private.cards);
         this.getCurrentPlayerTable().setInitialSelection(cards);
     }
 

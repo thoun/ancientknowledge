@@ -177,11 +177,22 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
             ...CARDS_DATA[card.id],
             id: card.id,
             location: card.location,
-            knowledge: card.knowledge
+            knowledge: card.knowledge,
         };
     }
 
     public getFullCards(cards: BuilderCard[]): BuilderCard[] {
         return cards.map(card => this.getFullCard(card));
+    }
+
+    public getFullCardById(id: string): BuilderCard {
+        return {
+            ...CARDS_DATA[id],
+            id,
+        };
+    }
+
+    public getFullCardsByIds(ids: string[]): BuilderCard[] {
+        return ids.map(id => this.getFullCardById(id));
     }
 }

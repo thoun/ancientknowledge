@@ -20,7 +20,7 @@ class T43_MayaScript extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return array_sum($player->countIcons(BUIDINGS)) >= 10;
+    return array_sum($player->countIcons(BUILDINGS)) >= 10;
   }
 
   public function getScore()

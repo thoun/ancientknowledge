@@ -20,7 +20,7 @@ class TableCenter {
                 center: false,
             });
             this.technologyTilesStocks[number].onCardClick = tile => this.game.onTableTechnologyTileClick(tile);
-            const tiles = gamedatas.techs.filter(tile => tile.location == `board_${number}`);
+            const tiles = this.game.technologyTilesManager.getFullCards(gamedatas.techs.filter(tile => tile.location == `board_${number}`));
             this.technologyTilesStocks[number].addCards(tiles);
         });
 
