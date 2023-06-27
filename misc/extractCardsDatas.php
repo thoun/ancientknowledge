@@ -71,7 +71,7 @@ foreach ($techIds as $techId) {
   $techs[$techId] = $tech->getStaticData();
 }
 
-$fp = fopen('./cardsData.js', 'w');
+$fp = fopen('../src/cardsData.ts', 'w');
 fwrite($fp, 'const CARDS_DATA = ' . json_encode($cards) . ';');
 fwrite($fp, 'const TECHS_DATA = ' . json_encode($techs) . ';');
 fclose($fp);

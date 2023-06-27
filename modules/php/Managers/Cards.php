@@ -42,7 +42,7 @@ class Cards extends \AK\Helpers\Pieces
 
   public static function getUiData()
   {
-    return self::getInLocation('timeline-%')->ui();
+    return self::getInLocation('timeline-%');
   }
 
   ///////////////////////////////////

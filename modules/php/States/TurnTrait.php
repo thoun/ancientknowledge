@@ -72,37 +72,10 @@ trait TurnTrait
    *******************************/
 
   /**
-   * End of turn : replenish and check break
+   * End of turn
    */
   function stEndOfTurn()
   {
-    die('TODO : end of turn');
-    $player = Players::getActive();
-
-    // Solo mode: move one cube to the right
-    if (Globals::isSolo()) {
-      $this->stEndOfSoloTurn();
-    }
-
-    // Replenish pool of cards
-    ZooCards::fillPool();
-    Players::checkEndOfGamePlayer($player);
-
-    if (Globals::isEndTriggered()) {
-      $remaining = Globals::getEndRemainingPlayers();
-      $remaining = array_diff($remaining, [$player->getId()]);
-      Globals::setEndRemainingPlayers($remaining);
-    }
-
-    if (Globals::isMustBreak()) {
-      Globals::setFirstPlayer(Players::getNextId(Players::getActiveId())); // for next start of order.
-      Globals::setBreakPlayer(Players::getActiveId());
-      Globals::setMustBreak(false);
-      $this->endCustomOrder('labor');
-    } elseif (Globals::isEndTriggered() && Globals::getEndRemainingPlayers() == []) {
-      $this->endOfGameInit();
-    } else {
-      $this->nextPlayerCustomOrder('labor');
-    }
+    $this->nextPlayerCustomOrder('turn');
   }
 }
