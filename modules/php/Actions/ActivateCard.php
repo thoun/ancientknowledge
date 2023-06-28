@@ -7,6 +7,7 @@ use AK\Core\Notifications;
 use AK\Core\Engine;
 use AK\Core\Globals;
 use AK\Helpers\Utils;
+use AK\Managers\Effects;
 
 class ActivateCard extends \AK\Models\Action
 {
@@ -22,15 +23,23 @@ class ActivateCard extends \AK\Models\Action
 
   public function getFlow($player)
   {
-    return $this->getCard()->isPlayed()
-      ? Effects::applyEffect(
-        $this->getCard(),
-        $player,
-        $this->getCtxArgs()['event']['method'],
-        $this->getCtxArgs()['event'],
-        true // Throw error if no such listener
-      )
-      : null;
+    $card = $this->getCard();
+    // if (!$card->isPlayed()) {
+    //   return null;
+    // }
+
+    $activation = $this->getCtxArg('activation');
+    if (!is_null($activation)) {
+      return Effects::getActivationEffect($card, $activation);
+    }
+
+    return Effects::applyEffect(
+      $card,
+      $player,
+      $this->getCtxArg('event')['method'],
+      $this->getCtxArg('event'),
+      true // Throw error if no such listener
+    );
   }
 
   public function getFlowTree($player)

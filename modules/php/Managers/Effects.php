@@ -128,6 +128,20 @@ class Effects
     return $result;
   }
 
+  public function getActivationEffect($card, $activation)
+  {
+    $card = self::get($card);
+    $methods = [
+      DECLINE => 'getDeclineEffect',
+      IMMEDIATE => 'getImmediateEffect',
+      TIMELINE => 'getTimelineEffect',
+      ENDGAME => 'getScore',
+    ];
+    $method = $methods[$activation];
+
+    return \method_exists($card, $method) ? $card->$method() : null;
+  }
+
   public function applyEffect($card, $player, $methodName, &$args, $throwErrorIfNone = false)
   {
     $card = self::get($card);

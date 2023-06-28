@@ -127,7 +127,10 @@ class Create extends \AK\Models\Action
 
     // Check immediate effect
     if ($card->getActivation() == \IMMEDIATE) {
-      die('TODO: immediate effect of created card');
+      $this->insertAsChild([
+        'action' => \ACTIVATE_CARD,
+        'args' => ['cardId' => $card->getId(), 'activation' => IMMEDIATE],
+      ]);
     }
 
     // Check listener

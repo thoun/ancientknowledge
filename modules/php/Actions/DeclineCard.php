@@ -24,7 +24,15 @@ class DeclineCard extends \AK\Models\Action
     $cardId = $this->getCtxArg('cardId');
     $card = Cards::getSingle($cardId);
 
-    // Effect and listeners
+    // TODO listeners
+
+    // Effect
+    if ($card->getActivation() == DECLINE) {
+      $this->insertAsChild([
+        'action' => \ACTIVATE_CARD,
+        'args' => ['cardId' => $card->getId(), 'activation' => DECLINE],
+      ]);
+    }
 
     // Move to past
     $this->insertAsChild([
