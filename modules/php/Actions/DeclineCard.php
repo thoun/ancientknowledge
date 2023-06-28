@@ -23,7 +23,28 @@ class DeclineCard extends \AK\Models\Action
     $player = Players::getActive();
     $cardId = $this->getCtxArg('cardId');
     $card = Cards::getSingle($cardId);
-    die('TODO: DeclineCard');
+
+    // Effect and listeners
+
+    // Move to past
+    $this->insertAsChild([
+      'action' => \DECLINE_CARD,
+      'args' => ['method' => 'stMoveToPast', 'cardId' => $cardId],
+    ]);
+    $this->resolveAction();
+  }
+
+  public function stMoveToPast()
+  {
+    $player = Players::getActive();
+    $cardId = $this->getCtxArg('cardId');
+    $card = Cards::getSingle($cardId);
+
+    $card->setLocation('past');
+    $knowledge = $card->getKnowledge();
+    $card->setKnowledge(0);
+    $player->incLostKnowledge($knowledge);
+    Notifications::declineCard($player, $card, $knowledge);
 
     $this->resolveAction();
   }

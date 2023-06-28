@@ -85,18 +85,6 @@ class Notifications
     );
   }
 
-  public static function declineSlideLeft($player, $n)
-  {
-    self::notifyAll(
-      'declineSlideLeft',
-      \clienttranslate('${player_name} slides their ${n} card(s) on their timeline one space to the left'),
-      [
-        'player' => $player,
-        'n' => $n,
-      ]
-    );
-  }
-
   //////////////////////////////
   //  _____         _
   // |_   _|__  ___| |__  ___
@@ -190,6 +178,31 @@ class Notifications
     self::notifyAll($player, 'rotateCards', clienttranslate('${player_name} rotates ${card_names} in their past'), [
       'player' => $player,
       'cards' => is_array($cards) ? $cards : $cards->toArray(),
+    ]);
+  }
+
+  public static function declineSlideLeft($player, $n)
+  {
+    self::notifyAll(
+      'declineSlideLeft',
+      \clienttranslate('${player_name} slides their ${n} card(s) on their timeline one space to the left'),
+      [
+        'player' => $player,
+        'n' => $n,
+      ]
+    );
+  }
+
+  public static function declineCard($player, $card, $knowledge)
+  {
+    $msg =
+      $knowledge > 0
+        ? clienttranslate('${player_name} moves ${card_name} to the past and gets ${n} <LOST_KNOWLEDGE> as a result')
+        : clienttranslate('${player_name} moves ${card_name} to the past');
+    self::notifyAll('createCard', $msg, [
+      'player' => $player,
+      'card' => $card,
+      'n' => $knowledge,
     ]);
   }
 

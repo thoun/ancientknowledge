@@ -25,7 +25,6 @@ class Actions
     TIMELINE_PHASE => 'TimelinePhase',
     DECLINE_PHASE => 'DeclinePhase',
     DECLINE_CARD => 'DeclineCard',
-    DECLINE_SLIDE_LEFT => 'DeclineSlideLeft',
   ];
 
   public static function get($actionId, $ctx = null)
@@ -116,7 +115,7 @@ class Actions
     }
 
     $action = self::get($actionId, $ctx);
-    $methodName = 'st' . $action->getClassName();
+    $methodName = $ctx->getArgs()['method'] ?? 'st' . $action->getClassName();
     if (\method_exists($action, $methodName)) {
       $action->$methodName();
     }

@@ -92,12 +92,6 @@ $machinestates = [
     'action' => 'stAtomicAction',
   ],
 
-  ST_DECLINE_SLIDE_LEFT => [
-    'name' => 'declineSlideLeft',
-    'type' => 'game',
-    'action' => 'stAtomicAction',
-  ],
-
   ////////////////////////////////////
   //  _____             _
   // | ____|_ __   __ _(_)_ __   ___

@@ -28,7 +28,7 @@ class DeclinePhase extends \AK\Models\Action
       $card = $player->getCardOnTimelineSpace($space);
       if (!is_null($card)) {
         $childs[] = [
-          'action' => DECLINE,
+          'action' => DECLINE_CARD,
           'args' => ['cardId' => $card->getId()],
         ];
       }
@@ -51,9 +51,27 @@ class DeclinePhase extends \AK\Models\Action
     }
 
     $this->insertAsChild([
-      'action' => DECLINE_SLIDE_LEFT,
+      'action' => \DECLINE_PHASE,
+      'args' => ['method' => 'stDeclineSlideLeft'],
     ]);
 
+    $this->resolveAction();
+  }
+
+  public function stDeclineSlideLeft()
+  {
+    $player = Players::getActive();
+    $n = 0;
+    foreach ($player->getTimeline() as $card) {
+      $n++;
+      $spot = $card->getTimelineSpace();
+      $spot[0]--;
+      $card->setLocation("timeline-$spot[0]-$spot[1]");
+    }
+
+    if ($n > 0) {
+      Notifications::declineSlideLeft($player, $n);
+    }
     $this->resolveAction();
   }
 }
