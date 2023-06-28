@@ -61,7 +61,7 @@ class Building extends \AK\Helpers\DB_Model
   public function getTimelineSpace()
   {
     $t = explode('-', $this->location);
-    if ($t != 'timeline') {
+    if ($t[0] != 'timeline') {
       return null;
     } else {
       return [$t[1], $t[2]];

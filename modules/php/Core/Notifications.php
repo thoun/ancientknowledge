@@ -85,6 +85,18 @@ class Notifications
     );
   }
 
+  public static function declineSlideLeft($player, $n)
+  {
+    self::notifyAll(
+      'declineSlideLeft',
+      \clienttranslate('${player_name} slides their ${n} card(s) on their timeline one space to the left'),
+      [
+        'player' => $player,
+        'n' => $n,
+      ]
+    );
+  }
+
   //////////////////////////////
   //  _____         _
   // |_   _|__  ___| |__  ___

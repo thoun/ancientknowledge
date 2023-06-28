@@ -165,6 +165,7 @@ class Cards extends \AK\Helpers\Pieces
   public static function getTimeline($pId, $type = null)
   {
     return self::getFilteredQuery($pId, 'timeline-%')
+      ->orderBy('card_location')
       ->get()
       ->filter(function ($card) use ($type) {
         return $type == null || $card->getType() == $type;

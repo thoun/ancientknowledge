@@ -109,9 +109,11 @@ class Create extends \AK\Models\Action
     }
 
     // Discard cards
-    $cards = Cards::getMany($cardIdsToDiscard);
-    Cards::discard($cardIdsToDiscard);
-    Notifications::discardCards($player, $cards);
+    if (count($cardIdsToDiscard) > 0) {
+      $cards = Cards::getMany($cardIdsToDiscard);
+      Cards::discard($cardIdsToDiscard);
+      Notifications::discardCards($player, $cards);
+    }
 
     // Move card
     $card = Cards::getSingle($cardId);
