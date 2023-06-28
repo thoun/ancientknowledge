@@ -31,6 +31,7 @@ class ChooseAction extends \AK\Models\Action
   {
     self::checkAction('actChooseAction');
     $actions = [
+      'archive' => ARCHIVE,
       'create' => CREATE,
       'learn' => LEARN,
       'search' => DRAW,

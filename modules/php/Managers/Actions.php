@@ -12,6 +12,7 @@ class Actions
   static $classes = [
     ACTIVATE_CARD => 'ActivateCard',
     CHOOSE_ACTION => 'ChooseAction',
+    ARCHIVE => 'Archive',
     CREATE => 'Create',
     DISCARD_LOST_KNOWLEDGE => 'DiscardLostKnowledge',
     DRAW => 'Draw',
