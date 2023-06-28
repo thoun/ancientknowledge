@@ -1,20 +1,3 @@
-.initial-selection {
-    .builder-card {  
-
-        &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
-            &:not(.bga-cards_selected-card) {
-                animation: unset;
-                box-shadow: 0 0 3px 3px red;
-            }
-        }    
-
-        &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
-            box-shadow: 0 0 5px 5px green;
-        }   
-
-    }
-}
-
 .builder-card {
     width: 163px;
     height: 228px;    

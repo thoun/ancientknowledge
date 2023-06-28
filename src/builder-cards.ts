@@ -8,10 +8,10 @@ interface BuilderCard {
     name: string;
     text: string[];
     country: string;
-    startingSpace: string;
+    startingSpace: number;
     initialKnowledge: string;
     victoryPoint: string;
-    discard: string;
+    discard: number;
     locked: boolean;
     activation: string;
     effect: string[];
@@ -25,6 +25,8 @@ const CARD_COLORS = {
   'M': '#4a82a3',
   'P': '#87a04f',
 };
+
+//console.log(Object.values(CARDS_DATA).map(card => card.startingSpace));
 
 class BuilderCardsManager extends CardManager<BuilderCard> {
     constructor (public game: AncientKnowledgeGame) {

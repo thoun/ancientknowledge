@@ -51,6 +51,11 @@ interface AncientKnowledgeGame extends Game {
     onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
+    changePageTitle(suffix?: string, save?: boolean): void;
+    addPrimaryActionButton(id, text, callback, zone?): void;
+    addSecondaryActionButton(id, text, callback, zone?): void
+    onCreateCardConfirm(data: CreateEngineData): void;
+    onTimelineSlotClick(slotId: string): void;
 }
 
 interface EnteringInitialSelectionArgs {
@@ -59,9 +64,11 @@ interface EnteringInitialSelectionArgs {
     }
 }
 
+type PossibleCardWithLocation = {[id: string]: {[slotId: string]: number}};
+
 interface EnteringCreateArgs {
     _private?: {
-        cards: { [id: string]: { [possiblePosition: string /*timeline-6-0 or artefact-0*/]: number } }[];
+        cards: PossibleCardWithLocation[];
     }
 }
 

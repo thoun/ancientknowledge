@@ -13,6 +13,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  
+  .builder-card {
+    &.created-card {
+      box-shadow: unset;
+      outline: 4px solid green;
+    }
+    &.discarded-card {
+      box-shadow: unset;
+      outline: 4px solid red;
+    }
+  }
 
   .name-wrapper {
     color: var(--player-color);
@@ -88,6 +99,39 @@
     border-radius: 10px;
     align-self: stretch;
     margin-bottom: 10px;
+
+    .hand {
+
+      &[data-state="initial-selection"] {
+        .builder-card {
+          &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
+              &:not(.bga-cards_selected-card) {
+                  animation: unset;
+                  box-shadow: 0 0 3px 3px red;
+              }
+          }  
+          &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
+              box-shadow: 0 0 5px 5px green;
+          }
+        }
+      }
+
+      &[data-state="create-init"] {
+        .builder-card {
+          &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
+            box-shadow: 0 0 5px 5px green;
+          }
+        }
+      }
+
+      &[data-state="create-discard"] {
+        .builder-card {
+          &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
+            box-shadow: 0 0 5px 5px red;
+          }
+        }
+      }
+    }
   }
 
   .timeline {
@@ -102,6 +146,15 @@
       border-radius: 8px;
       background: #FFFFFF66;
       outline: #FFFFFF99 1px solid;
+
+      &.selectable {
+        cursor: pointer;
+        animation: selectable-card-animation 1s alternate infinite ease-in-out;
+      }
+
+      &.selected {
+        outline: 4px solid green;
+      }
     }
   }
 }

@@ -29,6 +29,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private _notif_uid_to_mobile_log_id = [];
     private _last_notif;
 
+    private createEngine: CreateEngine;
+
     constructor() {
     }
     
@@ -203,19 +205,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
     /*
      * Add a blue/grey button if it doesn't already exists
      */
-    addPrimaryActionButton(id, text, callback, zone = 'customActions') {
+    public addPrimaryActionButton(id, text, callback, zone = 'customActions'): void {
       if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'blue');
     }
 
-    addSecondaryActionButton(id, text, callback, zone = 'customActions') {
+    public addSecondaryActionButton(id, text, callback, zone = 'customActions'): void {
       if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'gray');
     }
 
-    addDangerActionButton(id, text, callback, zone = 'customActions') {
+    public addDangerActionButton(id, text, callback, zone = 'customActions'): void {
       if (!$(id)) (this as any).addActionButton(id, text, callback, zone, false, 'red');
     }
     
-    private changePageTitle(suffix = null, save = false) {
+    public changePageTitle(suffix: string = null, save: boolean = false): void {
       if (suffix == null) {
         suffix = 'generic';
       }
@@ -242,7 +244,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onEnteringCreate(args: EnteringCreateArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.getCurrentPlayerTable()?.setHandSelectable(true);
+            this.createEngine = new CreateEngine(this, args._private.cards);
         }
     }
 
@@ -277,7 +279,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onLeavingCreate() {
-        this.getCurrentPlayerTable()?.setHandSelectable(false);
+        this.createEngine.leaveState();
+        this.createEngine = null;
     }
 
     private onLeavingLearn() {
@@ -495,13 +498,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.tableCenter.highlightPlayerTokens(playerId);
     }
 
-    private getColorAddHtml() {
-        return [1, 2, 3, 4, 5].map(number => `
-            <div class="color" data-color="${number}"></div>
-            <span class="label"> ${this.getColor(number)}</span>
-        `).join('');
-    }
-
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
@@ -558,18 +554,40 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public onHandCardClick(card: BuilderCard): void {
         if (this.gamedatas.gamestate.name == 'create') {
-            this.takeAtomicAction('actCreate', [
+            /*this.takeAtomicAction('actCreate', [
                 card.id,
                 card.id[0] == 'A' ? `artefact-0` : `timeline-${card.startingSpace}-0`, // TODO space to build
                 [], // TODO cards to discard
-            ]);
+            ]);*/
         }
     }
+
+    /*public updateCreatePageTitle() {
+        if (this.selectedCard) {
+            // TODO 
+        } else {
+            this.changePageTitle(null);
+        }
+    }*/
     
     public onHandCardSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'initialSelection') {
             document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
+        } else if (this.gamedatas.gamestate.name == 'create') {
+            this.createEngine?.cardSelectionChange(selection);
         }
+    }
+    
+    public onTimelineSlotClick(slotId: string): void {
+        this.createEngine.selectSlot(slotId);
+    }
+
+    public onCreateCardConfirm(data: CreateEngineData): void {
+        this.takeAtomicAction('actCreate', [
+            data.selectedCard.id,
+            data.selectedSlot,
+            data.discardCards.map(card => card.id),
+        ]);
     }
 
     public onTableCardClick(card: BuilderCard): void {

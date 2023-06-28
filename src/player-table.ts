@@ -1,5 +1,8 @@
 const isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 const log = isDebug ? console.log.bind(window.console) : function () { };
+        
+const timelineSlotsIds = [];
+[1, 0].forEach(line => [1,2,3,4,5,6].forEach(space => timelineSlotsIds.push(`timeline-${space}-${line}`)));
 
 class PlayerTable {
     public playerId: number;
@@ -55,15 +58,18 @@ class PlayerTable {
             this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);     
             this.refreshHand(player.hand);
         }
-        
-        const timelineSlotsIds = [];
-        [1, 0].forEach(line => [1,2,3,4,5,6].forEach(space => timelineSlotsIds.push(`timeline-${space}-${line}`)));
+
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);
         this.timeline = new SlotStock<BuilderCard>(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
         player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
+        timelineSlotsIds.map(slotId => timelineDiv.querySelector(`[data-slot-id="${slotId}"]`)).forEach((element: HTMLDivElement) => element.addEventListener('click', () => {
+            if (element.classList.contains('selectable')) {
+                this.game.onTimelineSlotClick(element.dataset.slotId);
+            }
+        }));
         
         const artifactsSlotsIds = [];
         [0,1,2,3,4].forEach(space => artifactsSlotsIds.push(`artefact-${space}`)); // TODO artifact ?
@@ -89,19 +95,21 @@ class PlayerTable {
         });
     }
 
-    public setHandSelectable(selectable: boolean) {
-        this.hand.setSelectionMode(selectable ? 'single' : 'none');
+    public setHandSelectable(selectionMode: CardSelectionMode, stockState: string = '', reinitSelection: boolean = false) {
+        this.hand.setSelectionMode(selectionMode);
+        document.getElementById(`player-table-${this.playerId}-hand`).dataset.state = stockState;
+        if (reinitSelection) {
+            this.hand.unselectAll();
+        }
     }
     
     public setInitialSelection(cards: BuilderCard[]) {
         this.hand.addCards(cards);
-        this.hand.setSelectionMode('multiple');
-        document.getElementById(`player-table-${this.playerId}-hand`).classList.add('initial-selection');
+        this.setHandSelectable('multiple', 'initial-selection');
     }
     
     public endInitialSelection() {
-        this.hand.setSelectionMode('none');
-        document.getElementById(`player-table-${this.playerId}-hand`).classList.remove('initial-selection');
+        this.setHandSelectable('none');
     }
     
     public createCard(card: BuilderCard) {
@@ -142,5 +150,11 @@ class PlayerTable {
         for (let i = 0; i < (golden + basic); i++) {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
+    }
+    
+    public setTimelineSelectable(selectable: boolean, slotIds: string[] = []) {
+        document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => 
+            slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId))
+        );
     }
 }

@@ -2070,6 +2070,7 @@ var CARD_COLORS = {
     'M': '#4a82a3',
     'P': '#87a04f',
 };
+//console.log(Object.values(CARDS_DATA).map(card => card.startingSpace));
 var BuilderCardsManager = /** @class */ (function (_super) {
     __extends(BuilderCardsManager, _super);
     function BuilderCardsManager(game) {
@@ -2300,6 +2301,8 @@ var TableCenter = /** @class */ (function () {
 }());
 var isDebug = window.location.host == 'studio.boardgamearena.com' || window.location.hash.indexOf('debug') > -1;
 var log = isDebug ? console.log.bind(window.console) : function () { };
+var timelineSlotsIds = [];
+[1, 0].forEach(function (line) { return [1, 2, 3, 4, 5, 6].forEach(function (space) { return timelineSlotsIds.push("timeline-".concat(space, "-").concat(line)); }); });
 var PlayerTable = /** @class */ (function () {
     function PlayerTable(game, player) {
         var _this = this;
@@ -2325,14 +2328,17 @@ var PlayerTable = /** @class */ (function () {
             this.hand.onSelectionChange = function (selection) { return _this.game.onHandCardSelectionChange(selection); };
             this.refreshHand(player.hand);
         }
-        var timelineSlotsIds = [];
-        [1, 0].forEach(function (line) { return [1, 2, 3, 4, 5, 6].forEach(function (space) { return timelineSlotsIds.push("timeline-".concat(space, "-").concat(line)); }); });
         var timelineDiv = document.getElementById("player-table-".concat(this.playerId, "-timeline"));
         this.timeline = new SlotStock(this.game.builderCardsManager, timelineDiv, {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: function (card) { return card.location; },
         });
         player.timeline.forEach(function (card) { return _this.createTimelineCard(_this.game.builderCardsManager.getFullCard(card)); });
+        timelineSlotsIds.map(function (slotId) { return timelineDiv.querySelector("[data-slot-id=\"".concat(slotId, "\"]")); }).forEach(function (element) { return element.addEventListener('click', function () {
+            if (element.classList.contains('selectable')) {
+                _this.game.onTimelineSlotClick(element.dataset.slotId);
+            }
+        }); });
         var artifactsSlotsIds = [];
         [0, 1, 2, 3, 4].forEach(function (space) { return artifactsSlotsIds.push("artefact-".concat(space)); }); // TODO artifact ?
         var artifactsDiv = document.getElementById("player-table-".concat(this.playerId, "-artifacts"));
@@ -2352,17 +2358,21 @@ var PlayerTable = /** @class */ (function () {
             _this.technologyTilesDecks[type].addCards(tiles);
         });
     }
-    PlayerTable.prototype.setHandSelectable = function (selectable) {
-        this.hand.setSelectionMode(selectable ? 'single' : 'none');
+    PlayerTable.prototype.setHandSelectable = function (selectionMode, stockState, reinitSelection) {
+        if (stockState === void 0) { stockState = ''; }
+        if (reinitSelection === void 0) { reinitSelection = false; }
+        this.hand.setSelectionMode(selectionMode);
+        document.getElementById("player-table-".concat(this.playerId, "-hand")).dataset.state = stockState;
+        if (reinitSelection) {
+            this.hand.unselectAll();
+        }
     };
     PlayerTable.prototype.setInitialSelection = function (cards) {
         this.hand.addCards(cards);
-        this.hand.setSelectionMode('multiple');
-        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.add('initial-selection');
+        this.setHandSelectable('multiple', 'initial-selection');
     };
     PlayerTable.prototype.endInitialSelection = function () {
-        this.hand.setSelectionMode('none');
-        document.getElementById("player-table-".concat(this.playerId, "-hand")).classList.remove('initial-selection');
+        this.setHandSelectable('none');
     };
     PlayerTable.prototype.createCard = function (card) {
         if (card.id[0] == 'A') {
@@ -2397,8 +2407,201 @@ var PlayerTable = /** @class */ (function () {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
     };
+    PlayerTable.prototype.setTimelineSelectable = function (selectable, slotIds) {
+        if (slotIds === void 0) { slotIds = []; }
+        document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".slot").forEach(function (slot) {
+            return slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId));
+        });
+    };
     return PlayerTable;
 }());
+var FrontState = /** @class */ (function () {
+    function FrontState(name, onEntering, onLeaving) {
+        if (onLeaving === void 0) { onLeaving = function () { }; }
+        this.name = name;
+        this.onEntering = onEntering;
+        this.onLeaving = onLeaving;
+    }
+    return FrontState;
+}());
+var FrontEngine = /** @class */ (function () {
+    function FrontEngine(game, states) {
+        this.game = game;
+        this.states = states;
+    }
+    FrontEngine.prototype.leaveState = function () {
+        var _this = this;
+        var _a;
+        (_a = this.states.find(function (state) { return state.name == _this.currentState; })) === null || _a === void 0 ? void 0 : _a.onLeaving(this);
+    };
+    FrontEngine.prototype.enterState = function (name) {
+        this.currentState = name;
+        this.states.find(function (state) { return state.name == name; }).onEntering(this);
+    };
+    FrontEngine.prototype.nextState = function (name) {
+        this.leaveState();
+        this.enterState(name);
+    };
+    return FrontEngine;
+}());
+var CreateEngineData = /** @class */ (function () {
+    function CreateEngineData(selectedCard, selectedSlot, discardCards) {
+        if (selectedCard === void 0) { selectedCard = null; }
+        if (selectedSlot === void 0) { selectedSlot = null; }
+        if (discardCards === void 0) { discardCards = []; }
+        this.selectedCard = selectedCard;
+        this.selectedSlot = selectedSlot;
+        this.discardCards = discardCards;
+    }
+    return CreateEngineData;
+}());
+var CreateEngine = /** @class */ (function (_super) {
+    __extends(CreateEngine, _super);
+    function CreateEngine(game, possibleCards) {
+        var _this = _super.call(this, game, [
+            new FrontState('init', function (engine) {
+                var _a;
+                _this.game.changePageTitle(null);
+                if (engine.data.selectedCard) {
+                    (_a = _this.game.builderCardsManager.getCardElement(engine.data.selectedCard)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
+                    _this.game.getCurrentPlayerTable().hand.addCard(engine.data.selectedCard);
+                }
+                engine.data.selectedCard = null;
+                engine.data.selectedSlot = null;
+                engine.data.discardCards = [];
+                _this.game.getCurrentPlayerTable().setHandSelectable('single', 'create-init', true);
+            }, function () {
+                _this.game.getCurrentPlayerTable().setHandSelectable('none');
+            }),
+            new FrontState('slot', function (engine) {
+                var card = engine.data.selectedCard;
+                if (card.id[0] == 'A' || card.locked) {
+                    _this.data.selectedSlot = Object.keys(_this.possibleCards[card.id])[0];
+                    var stock = card.id[0] == 'A' ?
+                        _this.game.getCurrentPlayerTable().artifacts :
+                        _this.game.getCurrentPlayerTable().timeline;
+                    stock.addCard(_this.data.selectedCard, undefined, {
+                        slot: _this.data.selectedSlot,
+                    });
+                    engine.nextState('discard');
+                    return;
+                }
+                _this.game.changePageTitle("SelectSlot", true);
+                engine.data.selectedSlot = null;
+                engine.data.discardCards = [];
+                _this.addCancel();
+                _this.game.getCurrentPlayerTable().setTimelineSelectable(true, Object.keys(_this.possibleCards[card.id]));
+            }, function () {
+                _this.game.getCurrentPlayerTable().setTimelineSelectable(false);
+                _this.removeCancel();
+            }),
+            new FrontState('discard', function (engine) {
+                var discardCount = _this.getDiscardCount();
+                if (!discardCount) {
+                    _this.nextState('confirm');
+                    return;
+                }
+                _this.game.gamedatas.gamestate.args.discard_number = discardCount;
+                _this.game.changePageTitle("SelectDiscard", true);
+                engine.data.discardCards = [];
+                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', 'create-discard', true);
+                _this.addConfirmDiscardSelection();
+                _this.addCancel();
+            }, function () {
+                _this.removeConfirmDiscardSelection();
+                _this.game.getCurrentPlayerTable().setHandSelectable('none');
+                _this.removeCancel();
+            }),
+            new FrontState('confirm', function (engine) {
+                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('discarded-card'); });
+                _this.game.changePageTitle("Confirm", true);
+                var card = engine.data.selectedCard;
+                var artifact = card.id[0] == 'A';
+                var discardedCardsCount = engine.data.discardCards.length;
+                var label = '';
+                if (artifact) {
+                    label = _('Confirm creation of Artifact ${card_name}');
+                }
+                else {
+                    label = discardedCardsCount ?
+                        _('Confirm creation of Monument ${card_name} with ${number} discarded cards').replace('${number}', discardedCardsCount) :
+                        _('Confirm creation of Monument ${card_name}');
+                }
+                label = label.replace('${card_name}', card.name);
+                _this.game.addPrimaryActionButton('confirmCreate_btn', label, function () { return _this.game.onCreateCardConfirm(engine.data); });
+                _this.addCancel();
+            }, function (engine) {
+                var _a;
+                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.remove('discarded-card'); });
+                _this.removeCancel();
+                (_a = document.getElementById('confirmCreate_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+            }),
+        ]) || this;
+        _this.game = game;
+        _this.possibleCards = possibleCards;
+        _this.data = new CreateEngineData();
+        _this.enterState('init');
+        return _this;
+    }
+    CreateEngine.prototype.cardSelectionChange = function (selection) {
+        if (this.currentState == 'init') {
+            if (selection.length == 1) {
+                this.selectCard(selection[0]);
+            }
+        }
+        else if (this.currentState == 'discard') {
+            this.data.discardCards = selection;
+            this.setConfirmDiscardSelectionState();
+        }
+    };
+    CreateEngine.prototype.selectCard = function (card) {
+        var _a;
+        this.data.selectedCard = card;
+        (_a = this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('created-card');
+        this.game.getCurrentPlayerTable().hand.unselectCard(card);
+        this.nextState('slot');
+    };
+    CreateEngine.prototype.selectSlot = function (slotId) {
+        this.data.selectedSlot = slotId;
+        this.game.getCurrentPlayerTable().timeline.addCard(this.data.selectedCard, undefined, {
+            slot: slotId,
+        });
+        this.nextState('discard');
+    };
+    CreateEngine.prototype.addCancel = function () {
+        var _this = this;
+        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), function () { return _this.nextState('init'); });
+    };
+    CreateEngine.prototype.removeCancel = function () {
+        var _a;
+        (_a = document.getElementById('restartCardCreation_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+    };
+    CreateEngine.prototype.addConfirmDiscardSelection = function () {
+        var _this = this;
+        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), function () { return _this.nextState('confirm'); });
+        this.setConfirmDiscardSelectionState();
+    };
+    CreateEngine.prototype.removeConfirmDiscardSelection = function () {
+        var _a;
+        (_a = document.getElementById('confirmDiscardSelection_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+    };
+    CreateEngine.prototype.setConfirmDiscardSelectionState = function () {
+        var _a;
+        var discardCount = this.getDiscardCount();
+        (_a = document.getElementById('confirmDiscardSelection_btn')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', discardCount != this.data.discardCards.length);
+    };
+    CreateEngine.prototype.getDiscardCount = function () {
+        var card = this.data.selectedCard;
+        if (!card) {
+            return null;
+        }
+        var slot = card.id[0] == 'A' || card.locked ?
+            Object.keys(this.possibleCards[card.id])[0] :
+            this.data.selectedSlot;
+        return this.possibleCards[card.id][slot];
+    };
+    return CreateEngine;
+}(FrontEngine));
 var ANIMATION_MS = 500;
 var ACTION_TIMER_DURATION = 5;
 var LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
@@ -2590,9 +2793,8 @@ var AncientKnowledge = /** @class */ (function () {
         this.getCurrentPlayerTable().setInitialSelection(cards);
     };
     AncientKnowledge.prototype.onEnteringCreate = function (args) {
-        var _a;
         if (this.isCurrentPlayerActive()) {
-            (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(true);
+            this.createEngine = new CreateEngine(this, args._private.cards);
         }
     };
     AncientKnowledge.prototype.onEnteringLearn = function (args) {
@@ -2622,8 +2824,8 @@ var AncientKnowledge = /** @class */ (function () {
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.endInitialSelection();
     };
     AncientKnowledge.prototype.onLeavingCreate = function () {
-        var _a;
-        (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable(false);
+        this.createEngine.leaveState();
+        this.createEngine = null;
     };
     AncientKnowledge.prototype.onLeavingLearn = function () {
         this.tableCenter.setTechnologyTilesSelectable(false);
@@ -2787,10 +2989,6 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.highlightPlayerTokens = function (playerId) {
         this.tableCenter.highlightPlayerTokens(playerId);
     };
-    AncientKnowledge.prototype.getColorAddHtml = function () {
-        var _this = this;
-        return [1, 2, 3, 4, 5].map(function (number) { return "\n            <div class=\"color\" data-color=\"".concat(number, "\"></div>\n            <span class=\"label\"> ").concat(_this.getColor(number), "</span>\n        "); }).join('');
-    };
     AncientKnowledge.prototype.getHelpHtml = function () {
         var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Assets"), "</h2>\n            <div class=\"help-section\">\n                <div class=\"icon vp\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon recruit\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon bracelet\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("They are used for Trading."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon reputation\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon take-card\"></div>\n                <div class=\"help-label\">").concat(_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player’s Crew Zone (without taking any assets)."), "</div>\n            </div>\n\n            <h1>").concat(_("Powers of the artifacts (variant option)"), "</h1>\n        ");
         for (var i = 1; i <= 7; i++) {
@@ -2813,17 +3011,38 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onHandCardClick = function (card) {
         if (this.gamedatas.gamestate.name == 'create') {
-            this.takeAtomicAction('actCreate', [
+            /*this.takeAtomicAction('actCreate', [
                 card.id,
-                card.id[0] == 'A' ? "artefact-0" : "timeline-".concat(card.startingSpace, "-0"),
+                card.id[0] == 'A' ? `artefact-0` : `timeline-${card.startingSpace}-0`, // TODO space to build
                 [], // TODO cards to discard
-            ]);
+            ]);*/
         }
     };
+    /*public updateCreatePageTitle() {
+        if (this.selectedCard) {
+            // TODO
+        } else {
+            this.changePageTitle(null);
+        }
+    }*/
     AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
+        var _a;
         if (this.gamedatas.gamestate.name == 'initialSelection') {
             document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
         }
+        else if (this.gamedatas.gamestate.name == 'create') {
+            (_a = this.createEngine) === null || _a === void 0 ? void 0 : _a.cardSelectionChange(selection);
+        }
+    };
+    AncientKnowledge.prototype.onTimelineSlotClick = function (slotId) {
+        this.createEngine.selectSlot(slotId);
+    };
+    AncientKnowledge.prototype.onCreateCardConfirm = function (data) {
+        this.takeAtomicAction('actCreate', [
+            data.selectedCard.id,
+            data.selectedSlot,
+            data.discardCards.map(function (card) { return card.id; }),
+        ]);
     };
     AncientKnowledge.prototype.onTableCardClick = function (card) {
         /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
