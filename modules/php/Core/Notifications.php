@@ -199,7 +199,7 @@ class Notifications
       $knowledge > 0
         ? clienttranslate('${player_name} moves ${card_name} to the past and gets ${n} <LOST_KNOWLEDGE> as a result')
         : clienttranslate('${player_name} moves ${card_name} to the past');
-    self::notifyAll('createCard', $msg, [
+    self::notifyAll('declineCard', $msg, [
       'player' => $player,
       'card' => $card,
       'n' => $knowledge,
