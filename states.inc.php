@@ -176,12 +176,6 @@ $machinestates = [
     'possibleactions' => ['actChooseAction', 'actRestart'],
   ],
 
-  // ST_GAIN => [
-  //   'name' => 'gainResources',
-  //   'type' => 'game',
-  //   'action' => 'stAtomicAction',
-  // ],
-
   ST_CREATE => [
     'name' => 'create',
     'type' => 'activeplayer',
@@ -245,6 +239,7 @@ $machinestates = [
     'description' => clienttranslate('${actplayer} must remove ${n} <KNOWLEDGE> on their timeline'),
     'descriptionmyturn' => clienttranslate('${you} must remove ${n} <KNOWLEDGE> on your timeline'),
     'args' => 'argsAtomicAction',
+    'action' => 'stAtomicAction',
     'possibleactions' => ['actRemoveKnowledge', 'actRestart'],
   ],
 

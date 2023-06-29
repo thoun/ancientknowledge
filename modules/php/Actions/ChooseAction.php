@@ -47,6 +47,7 @@ class ChooseAction extends \AK\Models\Action
       'action' => $actions[$actionName],
       'pId' => $player->getId(),
     ]);
+    Notifications::chooseAction($player, $actionName);
     $this->resolveAction(['actionName' => $actionName]);
   }
 }

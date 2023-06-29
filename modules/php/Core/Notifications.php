@@ -72,6 +72,23 @@ class Notifications
     ]);
   }
 
+  public static function chooseAction($player, $actionName)
+  {
+    $actions = [
+      'archive' => \clienttranslate('Archive'),
+      'create' => \clienttranslate('Create'),
+      'learn' => \clienttranslate('Learn'),
+      'search' => \clienttranslate('Search'),
+      'excavate' => \clienttranslate('Excavate'),
+    ];
+
+    self::notifyAll('chooseAction', \clienttranslate('${player_name} chooses the action: ${action_name}'), [
+      'player' => $player,
+      'i18n' => ['action_name'],
+      'action_name' => $actions[$actionName],
+    ]);
+  }
+
   public static function discardLostKnowledge($player, $knowledge)
   {
     self::notifyAll(
@@ -203,6 +220,15 @@ class Notifications
       'player' => $player,
       'card' => $card,
       'n' => $knowledge,
+    ]);
+  }
+
+  public static function removeKnowledge($player, $total, $cards)
+  {
+    self::notifyAll('removeKnowledge', \clienttranslate('${player_name} removes ${n} knowledge from ${card_names}'), [
+      'player' => $player,
+      'n' => $total,
+      'cards' => $cards,
     ]);
   }
 
