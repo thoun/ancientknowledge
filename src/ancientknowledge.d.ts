@@ -155,3 +155,9 @@ interface NotifRefreshHandArgs {
     player_id: number;
     hand: BuilderCard[];
 }
+
+// declineCard
+interface NotifDeclineCardArgs {
+    player_id: number;
+    card: BuilderCard;
+}

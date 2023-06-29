@@ -2376,18 +2376,20 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.createCard = function (card) {
         if (card.id[0] == 'A') {
-            this.artifacts.addCard(card);
+            return this.artifacts.addCard(card);
         }
         else {
-            this.createTimelineCard(card);
+            this.game.builderCardsManager.updateCardInformations(card); // in case card is already on timeline, to update location
+            return this.createTimelineCard(card);
         }
     };
     PlayerTable.prototype.createTimelineCard = function (card) {
-        this.timeline.addCard(card);
+        var promise = this.timeline.addCard(card);
         this.setCardKnowledge(card.id, card.knowledge);
+        return promise;
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
-        this.technologyTilesDecks[card.type].addCard(card);
+        return this.technologyTilesDecks[card.type].addCard(card);
     };
     PlayerTable.prototype.refreshHand = function (hand) {
         this.hand.removeAll();
@@ -2412,6 +2414,13 @@ var PlayerTable = /** @class */ (function () {
         document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".slot").forEach(function (slot) {
             return slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId));
         });
+    };
+    PlayerTable.prototype.declineCard = function (card) {
+        return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
+    };
+    PlayerTable.prototype.declineSlideLeft = function () {
+        var shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
+        return this.timeline.addCards(shiftedCards);
     };
     return PlayerTable;
 }());
@@ -3130,6 +3139,8 @@ var AncientKnowledge = /** @class */ (function () {
             ['clearTurn', 1],
             ['refreshUI', 1],
             ['refreshHand', 1],
+            ['declineCard', undefined],
+            ['declineSlideLeft', undefined],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -3197,6 +3208,20 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_refreshHand = function (args) {
         return this.getPlayerTable(args.player_id).refreshHand(args.hand);
     };
+    AncientKnowledge.prototype.notif_declineCard = function (args) {
+        return this.getPlayerTable(args.player_id).declineCard(args.card);
+    };
+    AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {
+        return this.getPlayerTable(args.player_id).declineSlideLeft();
+    };
+    /*
+pour REMOVE_KNOWLEDGE, il faudra gérer plusieurs comportements en fonction du champs 'type'
+je t'envoie une liste d'ids de carte, un entier n, et type qui est soit OR/XOR/SEQ
+SEQ ça veut dire qu'il faut enlever $n knowledge de chaque carte => c'est automatique donc rien à faire pour toi
+XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis celles des args
+OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
+et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]
+    */
     /*
     * [Undocumented] Called by BGA framework on any notification message
     * Handle cancelling log messages for restart turn

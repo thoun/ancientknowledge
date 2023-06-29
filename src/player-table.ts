@@ -112,21 +112,23 @@ class PlayerTable {
         this.setHandSelectable('none');
     }
     
-    public createCard(card: BuilderCard) {
+    public createCard(card: BuilderCard): Promise<any> {
         if (card.id[0] == 'A') {
-            this.artifacts.addCard(card);
+            return this.artifacts.addCard(card);
         } else {
-            this.createTimelineCard(card);
+            this.game.builderCardsManager.updateCardInformations(card); // in case card is already on timeline, to update location
+            return this.createTimelineCard(card);
         }
     }
     
-    private createTimelineCard(card: BuilderCard) {
-        this.timeline.addCard(card);
+    private createTimelineCard(card: BuilderCard): Promise<any> {
+        const promise = this.timeline.addCard(card);
         this.setCardKnowledge(card.id, card.knowledge);
+        return promise;
     }
     
-    public addTechnologyTile(card: TechnologyTile) {
-        this.technologyTilesDecks[card.type].addCard(card);
+    public addTechnologyTile(card: TechnologyTile): Promise<any> {
+        return this.technologyTilesDecks[card.type].addCard(card);
     }
     
     public refreshHand(hand: BuilderCard[]): Promise<any> {
@@ -156,5 +158,17 @@ class PlayerTable {
         document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => 
             slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId))
         );
+    }
+    
+    public declineCard(card: BuilderCard): Promise<any> {
+        return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
+    }
+    
+    public declineSlideLeft(): Promise<any> {
+        const shiftedCards = this.timeline.getCards().map(card => ({
+            ...card,
+            location: card.location.replace(/(\d)/, a => `${Number(a) - 1}`)
+        }));
+        return this.timeline.addCards(shiftedCards);
     }
 }

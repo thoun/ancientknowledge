@@ -690,6 +690,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['clearTurn', 1],
             ['refreshUI', 1],
             ['refreshHand', 1],
+            ['declineCard', undefined],
+            ['declineSlideLeft', undefined],
         ];
     
         notifs.forEach((notif) => {
@@ -768,7 +770,24 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     notif_refreshHand(args: NotifRefreshHandArgs) {
         return this.getPlayerTable(args.player_id).refreshHand(args.hand);
-    }    
+    }  
+
+    notif_declineCard(args: NotifDeclineCardArgs) {
+        return this.getPlayerTable(args.player_id).declineCard(args.card);
+    }  
+
+    notif_declineSlideLeft(args: NotifDeclineCardArgs) {
+        return this.getPlayerTable(args.player_id).declineSlideLeft();
+    }
+
+    /*
+pour REMOVE_KNOWLEDGE, il faudra gérer plusieurs comportements en fonction du champs 'type'
+je t'envoie une liste d'ids de carte, un entier n, et type qui est soit OR/XOR/SEQ
+SEQ ça veut dire qu'il faut enlever $n knowledge de chaque carte => c'est automatique donc rien à faire pour toi
+XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis celles des args
+OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
+et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]
+    */
     
     /*
     * [Undocumented] Called by BGA framework on any notification message
