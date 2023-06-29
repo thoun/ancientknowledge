@@ -22,7 +22,8 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     engine.data.selectedCard = null;
                     engine.data.selectedSlot = null;
                     engine.data.discardCards = [];
-                    this.game.getCurrentPlayerTable().setHandSelectable('single', 'create-init', true);
+                    const selectableCards = Object.keys(this.possibleCards).map(id => this.game.builderCardsManager.getFullCardById(id));
+                    this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
                 },
                 () => {
                     this.game.getCurrentPlayerTable().setHandSelectable('none');
@@ -71,7 +72,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     (this.game as any).gamedatas.gamestate.args.discard_number = discardCount;
                     this.game.changePageTitle(`SelectDiscard`, true);
                     engine.data.discardCards = [];
-                    this.game.getCurrentPlayerTable().setHandSelectable('multiple', 'create-discard', true);
+                    this.game.getCurrentPlayerTable().setHandSelectable('multiple', null, 'create-discard', true);
                     this.addConfirmDiscardSelection();
                     this.addCancel();
                 },

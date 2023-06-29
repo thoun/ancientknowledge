@@ -2314,11 +2314,11 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">                \n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
-        html += "\n            </div>\n            </div>\n            <div id=\"player-table-".concat(this.playerId, "-past\" class=\"past\"></div>\n            \n        </div>\n        ");
+        html += "\n            </div>\n            </div>\n        </div>\n        ";
         dojo.place(html, document.getElementById('tables'));
         if (this.currentPlayer) {
             this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
@@ -2350,7 +2350,7 @@ var PlayerTable = /** @class */ (function () {
         // TODO this.artifacts.addCards(player.artifacts);
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
         this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
-        this.past.addCards(player.past);
+        this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
@@ -2358,10 +2358,14 @@ var PlayerTable = /** @class */ (function () {
             _this.technologyTilesDecks[type].addCards(tiles);
         });
     }
-    PlayerTable.prototype.setHandSelectable = function (selectionMode, stockState, reinitSelection) {
+    PlayerTable.prototype.setHandSelectable = function (selectionMode, selectableCards, stockState, reinitSelection) {
+        if (selectableCards === void 0) { selectableCards = null; }
         if (stockState === void 0) { stockState = ''; }
         if (reinitSelection === void 0) { reinitSelection = false; }
         this.hand.setSelectionMode(selectionMode);
+        if (selectableCards) {
+            this.hand.setSelectableCards(selectableCards);
+        }
         document.getElementById("player-table-".concat(this.playerId, "-hand")).dataset.state = stockState;
         if (reinitSelection) {
             this.hand.unselectAll();
@@ -2369,7 +2373,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setInitialSelection = function (cards) {
         this.hand.addCards(cards);
-        this.setHandSelectable('multiple', 'initial-selection');
+        this.setHandSelectable('multiple', null, 'initial-selection');
     };
     PlayerTable.prototype.endInitialSelection = function () {
         this.setHandSelectable('none');
@@ -2478,7 +2482,8 @@ var CreateEngine = /** @class */ (function (_super) {
                 engine.data.selectedCard = null;
                 engine.data.selectedSlot = null;
                 engine.data.discardCards = [];
-                _this.game.getCurrentPlayerTable().setHandSelectable('single', 'create-init', true);
+                var selectableCards = Object.keys(_this.possibleCards).map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
+                _this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
             }, function () {
                 _this.game.getCurrentPlayerTable().setHandSelectable('none');
             }),
@@ -2513,7 +2518,7 @@ var CreateEngine = /** @class */ (function (_super) {
                 _this.game.gamedatas.gamestate.args.discard_number = discardCount;
                 _this.game.changePageTitle("SelectDiscard", true);
                 engine.data.discardCards = [];
-                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', 'create-discard', true);
+                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', null, 'create-discard', true);
                 _this.addConfirmDiscardSelection();
                 _this.addCancel();
             }, function () {
@@ -2953,7 +2958,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.createPlayerTable = function (gamedatas, playerId) {
-        var table = new PlayerTable(this, gamedatas.players[playerId], gamedatas.reservePossible);
+        var table = new PlayerTable(this, gamedatas.players[playerId]);
         this.playersTables.push(table);
     };
     AncientKnowledge.prototype.updateGains = function (playerId, gains) {
@@ -2994,9 +2999,6 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.setBracelets = function (playerId, count) {
         this.braceletCounters[playerId].toValue(count);
         this.getPlayerTable(playerId).updateCounter('bracelets', count);
-    };
-    AncientKnowledge.prototype.highlightPlayerTokens = function (playerId) {
-        this.tableCenter.highlightPlayerTokens(playerId);
     };
     AncientKnowledge.prototype.getHelpHtml = function () {
         var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Assets"), "</h2>\n            <div class=\"help-section\">\n                <div class=\"icon vp\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon recruit\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon bracelet\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("They are used for Trading."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon reputation\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon take-card\"></div>\n                <div class=\"help-label\">").concat(_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player’s Crew Zone (without taking any assets)."), "</div>\n            </div>\n\n            <h1>").concat(_("Powers of the artifacts (variant option)"), "</h1>\n        ");

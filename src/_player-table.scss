@@ -42,6 +42,7 @@
     height: 453px;
     padding: 0;
     margin: 0;
+    margin-left: 180px;
     margin-right: 180px;
 
     @each $playerColor in $playerColors {
@@ -49,6 +50,12 @@
         background: url('img/player-board-#{$playerColor}.jpg');
       }
     } 
+
+    .past {
+      position: absolute;
+      top: 198px;
+      left: -176px;
+    }
 
     .artifacts {
       position: absolute;

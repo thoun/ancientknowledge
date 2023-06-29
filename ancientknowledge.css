@@ -1165,6 +1165,7 @@ body > .card {
   height: 453px;
   padding: 0;
   margin: 0;
+  margin-left: 180px;
   margin-right: 180px;
 }
 .player-table .player-board[data-color="6f3766"] {
@@ -1178,6 +1179,11 @@ body > .card {
 }
 .player-table .player-board[data-color="929f40"] {
   background: url("img/player-board-929f40.jpg");
+}
+.player-table .player-board .past {
+  position: absolute;
+  top: 198px;
+  left: -176px;
 }
 .player-table .player-board .artifacts {
   position: absolute;

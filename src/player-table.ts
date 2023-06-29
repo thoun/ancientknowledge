@@ -32,7 +32,8 @@ class PlayerTable {
         }
         html += `
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
-            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">
+            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">                
+                <div id="player-table-${this.playerId}-past" class="past"></div>
                 <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
                 <div class="technology-tiles-decks">`;            
                 ['ancient', 'writing', 'secret'].forEach(type => {
@@ -43,8 +44,6 @@ class PlayerTable {
             html += `
             </div>
             </div>
-            <div id="player-table-${this.playerId}-past" class="past"></div>
-            
         </div>
         `;
 
@@ -84,7 +83,7 @@ class PlayerTable {
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
         this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {
         });
-        this.past.addCards(player.past);
+        this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
@@ -95,8 +94,11 @@ class PlayerTable {
         });
     }
 
-    public setHandSelectable(selectionMode: CardSelectionMode, stockState: string = '', reinitSelection: boolean = false) {
+    public setHandSelectable(selectionMode: CardSelectionMode, selectableCards: BuilderCard[] | null = null, stockState: string = '', reinitSelection: boolean = false) {
         this.hand.setSelectionMode(selectionMode);
+        if (selectableCards) {
+            this.hand.setSelectableCards(selectableCards);
+        }
         document.getElementById(`player-table-${this.playerId}-hand`).dataset.state = stockState;
         if (reinitSelection) {
             this.hand.unselectAll();
@@ -105,7 +107,7 @@ class PlayerTable {
     
     public setInitialSelection(cards: BuilderCard[]) {
         this.hand.addCards(cards);
-        this.setHandSelectable('multiple', 'initial-selection');
+        this.setHandSelectable('multiple', null, 'initial-selection');
     }
     
     public endInitialSelection() {

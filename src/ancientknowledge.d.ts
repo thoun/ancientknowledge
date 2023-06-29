@@ -45,7 +45,6 @@ interface AncientKnowledgeGame extends Game {
     getCurrentPlayerTable(): PlayerTable | null;
 
     setTooltip(id: string, html: string): void;
-    highlightPlayerTokens(playerId: number | null): void;
     onTableTechnologyTileClick(destination: TechnologyTile): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;

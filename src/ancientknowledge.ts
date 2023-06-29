@@ -446,7 +446,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private createPlayerTable(gamedatas: AncientKnowledgeGamedatas, playerId: number) {
-        const table = new PlayerTable(this, gamedatas.players[playerId], gamedatas.reservePossible);
+        const table = new PlayerTable(this, gamedatas.players[playerId]);
         this.playersTables.push(table);
     }
 
@@ -492,10 +492,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private setBracelets(playerId: number, count: number) {
         this.braceletCounters[playerId].toValue(count);
         this.getPlayerTable(playerId).updateCounter('bracelets', count);
-    }
-
-    public highlightPlayerTokens(playerId: number | null): void {
-        this.tableCenter.highlightPlayerTokens(playerId);
     }
 
     private getHelpHtml() {
