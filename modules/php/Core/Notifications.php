@@ -4,6 +4,7 @@ use AK\Managers\Players;
 use AK\Helpers\Utils;
 use AK\Helpers\Collection;
 use AK\Core\Globals;
+use AK\Managers\Effects;
 
 class Notifications
 {
@@ -182,12 +183,20 @@ class Notifications
     );
   }
 
-  public static function createCard($player, $card)
+  public static function createCard($player, $card, $sourceId)
   {
-    self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name}'), [
-      'player' => $player,
-      'card' => $card,
-    ]);
+    if (is_null($sourceId)) {
+      self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name}'), [
+        'player' => $player,
+        'card' => $card,
+      ]);
+    } else {
+      self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name} (${card2_name})'), [
+        'player' => $player,
+        'card' => $card,
+        'card2' => Effects::get($sourceId),
+      ]);
+    }
   }
 
   public static function rotateCards($player, $cards)
@@ -282,6 +291,13 @@ class Notifications
       $data['card_name'] = $data['card']->getName();
       $data['i18n'][] = 'card_name';
       $data['preserve'][] = 'card_id';
+    }
+
+    if (isset($data['card2'])) {
+      $data['card2_id'] = $data['card2']->getId();
+      $data['card2_name'] = $data['card2']->getName();
+      $data['i18n'][] = 'card2_name';
+      $data['preserve'][] = 'card2_id';
     }
 
     if (isset($data['cards'])) {

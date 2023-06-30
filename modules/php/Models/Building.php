@@ -27,6 +27,7 @@ class Building extends \AK\Helpers\DB_Model
   ];
 
   protected $staticAttributes = [
+    ['type', 'str'],
     ['number', 'int'],
     ['name', 'str'],
     ['text', 'obj'],

@@ -38,6 +38,11 @@ class Artefact extends \AK\Helpers\DB_Model
     ['implemented', 'bool'],
   ];
 
+  public function getType()
+  {
+    return ARTEFACT;
+  }
+
   public function isArtefact()
   {
     return true;

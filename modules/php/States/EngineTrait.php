@@ -7,6 +7,7 @@ use AK\Core\Notifications;
 use AK\Managers\Players;
 use AK\Managers\Meeples;
 use AK\Managers\Actions;
+use AK\Managers\Effects;
 use AK\Helpers\Log;
 
 trait EngineTrait
@@ -47,7 +48,7 @@ trait EngineTrait
     $sourceId = $node->getSourceId() ?? null;
     if (!isset($args['source']) && !is_null($sourceId)) {
       $args['sourceId'] = $sourceId;
-      $args['source'] = ZooCards::get($sourceId)->getName();
+      $args['source'] = Effects::get($sourceId)->getName();
     }
     $source = $node->getSource() ?? null;
     if (!isset($args['source']) && !is_null($source)) {
@@ -155,7 +156,7 @@ trait EngineTrait
     $sourceId = $node->getSourceId() ?? null;
     if (!isset($args['source']) && !is_null($sourceId)) {
       $args['sourceId'] = $sourceId;
-      $args['source'] = ZooCards::get($sourceId)->getName();
+      $args['source'] = Effects::get($sourceId)->getName();
     }
     $this->addArgsAnytimeAction($args, 'resolveChoice');
     return $args;

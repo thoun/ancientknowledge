@@ -123,7 +123,8 @@ class Create extends \AK\Models\Action
       $knowledge -= $card->getInitialKnowledgeDiscount();
       $card->setKnowledge($knowledge);
     }
-    Notifications::createCard($player, $card);
+    $sourceId = $this->ctx->getSourceId();
+    Notifications::createCard($player, $card, $sourceId);
 
     // Check immediate effect
     if ($card->getActivation() == \IMMEDIATE) {
