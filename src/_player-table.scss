@@ -131,7 +131,7 @@
         }
       }
 
-      &[data-state="create-discard"] {
+      &[data-state="create-discard"], &[data-state="archive-discard"] {
         .builder-card {
           &.bga-cards_selected-card:not(.bga-cards_disabled-card) {
             box-shadow: 0 0 5px 5px red;
@@ -148,6 +148,7 @@
     padding-left: 81px;
     
     .slot {
+      position: relative;
       width: 163px;
       height: 228px;  
       border-radius: 8px;
@@ -161,6 +162,31 @@
 
       &.selected {
         outline: 4px solid green;
+      }
+
+      &.discard-cost {
+        &::before {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          background-image: url('img/discard-icon.svg');
+          width: 36px;
+          height: 48px;
+          background-repeat: no-repeat;
+          background-position: center center;
+          background-size: contain;
+        }
+
+        &::after {
+          //content: var(--discard-cost);
+          content: attr(data-discard-cost);
+          position: absolute;
+          bottom: -7px;
+          right: 40px;
+          color: white;
+          font-size: 48px;
+        }
       }
     }
   }

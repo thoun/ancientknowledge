@@ -30,6 +30,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private _last_notif;
 
     private createEngine: CreateEngine;
+    private archiveEngine: ArchiveEngine;
 
     constructor() {
     }
@@ -196,6 +197,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'create':
                 this.onEnteringCreate(args.args);
                 break;
+            case 'archive':
+                this.onEnteringArchive(args.args);
+                break;
             case 'learn':
                 this.onEnteringLearn(args.args);
                 break;
@@ -248,6 +252,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
+    private onEnteringArchive(args: EnteringArchiveArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.archiveEngine = new ArchiveEngine(this, args._private.cardIds);
+        }
+    }
+
     private onEnteringLearn(args: EnteringLearnArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.tableCenter.setTechnologyTilesSelectable(true/*, args.techs*/);
@@ -268,6 +278,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'create':
                 this.onLeavingCreate();
                 break;
+            case 'archive':
+                this.onLeavingArchive();
+                break;
             case 'learn':
                 this.onLeavingLearn();
                 break;
@@ -281,6 +294,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingCreate() {
         this.createEngine.leaveState();
         this.createEngine = null;
+    }
+
+    private onLeavingArchive() {
+        this.archiveEngine.leaveState();
+        this.archiveEngine = null;
     }
 
     private onLeavingLearn() {
@@ -571,6 +589,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
         } else if (this.gamedatas.gamestate.name == 'create') {
             this.createEngine?.cardSelectionChange(selection);
+        } else if (this.gamedatas.gamestate.name == 'archive') {
+            this.archiveEngine?.cardSelectionChange(selection);
         }
     }
     
@@ -698,6 +718,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
                 // tell the UI notification ends, if the function returned a promise
                 promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
+
+                let msg = /*this.formatString(*/this.format_string_recursive(notifDetails.log, notifDetails.args)/*)*/;
+                if (msg != '') {
+                    $('gameaction_status').innerHTML = msg;
+                    $('pagemaintitletext').innerHTML = msg;
+                }
             });
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
@@ -906,6 +932,8 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                         args[property] = `<strong>${_(args[property])}</strong>`;
                     }*/
                 }
+
+                log = formatTextIcons(_(log));
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);

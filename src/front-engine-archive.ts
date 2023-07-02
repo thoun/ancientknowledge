@@ -1,74 +1,34 @@
-class CreateEngineData {
+class ArchiveEngineData {
     constructor(
-        public selectedCard: BuilderCard = null,
-        public selectedSlot: string = null,
         public discardCards: BuilderCard[] = [],
     ) {}
 }
 
-class CreateEngine extends FrontEngine<CreateEngineData> {
-    public data: CreateEngineData = new CreateEngineData();
+class ArchiveEngine extends FrontEngine<ArchiveEngineData> {
+    public data: ArchiveEngineData = new ArchiveEngineData();
 
-    constructor (public game: AncientKnowledgeGame, public possibleCardsLocations: {[id: string]: PossibleCardLocations}) {
+    constructor (public game: AncientKnowledgeGame, public possibleCards: string[]) {
         super(game, [
-            new FrontState<CreateEngineData>(
-                'init',
+            new FrontState<ArchiveEngineData>(
+                'discard',
                 engine => {
-                    this.game.changePageTitle(null);
-                    if (engine.data.selectedCard) {
-                        this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
-                        this.game.getCurrentPlayerTable().hand.addCard(engine.data.selectedCard);
-                    }
-                    engine.data.selectedCard = null;
-                    engine.data.selectedSlot = null;
+                    //this.game.changePageTitle(`SelectDiscard`, true);
                     engine.data.discardCards = [];
-                    const selectableCards = Object.keys(this.possibleCardsLocations).map(id => this.game.builderCardsManager.getFullCardById(id));
-                    this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
-                },
-                () => {
-                    this.game.getCurrentPlayerTable().setHandSelectable('none');
-                }
-            ),
-            new FrontState<CreateEngineData>(
-                'slot',
-                engine => {
-                    const card = engine.data.selectedCard;
-
-                    if (card.id[0] == 'A' || card.locked) {
-                        this.data.selectedSlot = Object.keys(this.possibleCardsLocations[card.id])[0];
-
-                        const stock = card.id[0] == 'A' ?
-                            this.game.getCurrentPlayerTable().artifacts :
-                            this.game.getCurrentPlayerTable().timeline;
-
-                        stock.addCard(this.data.selectedCard, undefined, {
-                            slot: this.data.selectedSlot,
-                        });
-
-                        engine.nextState('discard');
-                        return;
-                    }
-
-                    this.game.changePageTitle(`SelectSlot`, true);
-                    engine.data.selectedSlot = null;
-                    engine.data.discardCards = [];
+                    const cards = this.game.getCurrentPlayerTable().hand.getCards().filter(card => possibleCards.includes(card.id));
+                    this.game.getCurrentPlayerTable().setHandSelectable('multiple', cards, 'archive-discard', true);
+                    this.addConfirmDiscardSelection();
                     this.addCancel();
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(true, this.possibleCardsLocations[card.id]);
                 },
                 () => {
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(false);
+                    this.removeConfirmDiscardSelection();
+                    this.game.getCurrentPlayerTable().setHandSelectable('none');
                     this.removeCancel();
                 }
             ),
-            new FrontState<CreateEngineData>(
-                'discard',
+            new FrontState<ArchiveEngineData>(
+                'discardTokens',
                 engine => {
-                    const discardCount = this.getDiscardCount();
-                    if (!discardCount) {
-                        this.nextState('confirm');
-                        return;
-                    } 
-
+                    const discardCount = this.data.discardCards.length;
                     (this.game as any).gamedatas.gamestate.args.discard_number = discardCount;
                     this.game.changePageTitle(`SelectDiscard`, true);
                     engine.data.discardCards = [];
@@ -82,7 +42,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     this.removeCancel();
                 }
             ),
-            new FrontState<CreateEngineData>(
+            new FrontState<ArchiveEngineData>(
                 'confirm',
                 engine => {
                     engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('discarded-card'));
@@ -114,15 +74,11 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
             ),
         ]);
 
-        this.enterState('init');
+        this.enterState('discard');
     }
     
     public cardSelectionChange(selection: BuilderCard[]) {
-        if (this.currentState == 'init') {
-            if (selection.length == 1) {
-                this.selectCard(selection[0]);
-            }
-        } else if (this.currentState == 'discard') {
+        if (this.currentState == 'discard') {
             this.data.discardCards = selection;
             this.setConfirmDiscardSelectionState();
         }
@@ -153,7 +109,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
     }
 
     private addConfirmDiscardSelection() {    
-        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), () => this.nextState('confirm'));
+        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), () => this.nextState('discardTokens'));
         this.setConfirmDiscardSelectionState();
     }
 
@@ -162,21 +118,8 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
     }
 
     private setConfirmDiscardSelectionState() { 
-        const discardCount = this.getDiscardCount();
-        document.getElementById('confirmDiscardSelection_btn')?.classList.toggle('disabled', discardCount != this.data.discardCards.length)
-    }
-
-    private getDiscardCount(): number {
-        const card = this.data.selectedCard;
-        if (!card) {
-            return null;
-        }
-
-        const slot = card.id[0] == 'A' || card.locked ?
-            Object.keys(this.possibleCardsLocations[card.id])[0] :
-            this.data.selectedSlot;
-
-        return this.possibleCardsLocations[card.id][slot];
+        const discardCount = this.data.discardCards.length;
+        document.getElementById('confirmDiscardSelection_btn')?.classList.toggle('disabled', discardCount == 0);
     }
     
 }
