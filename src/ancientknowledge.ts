@@ -132,48 +132,48 @@ class AncientKnowledge implements AncientKnowledgeGame {
           this.changePageTitle(base + 'skippable');
         }
 
-        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-  
-        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-          this.addSecondaryActionButton(
-            'btnPassAction',
-            _('Pass'),
-            () => this.takeAction('actPassOptionalAction'),
-            'restartAction'
-          );
-        }
-
-        // Undo last steps
-        args.args?.previousSteps?.forEach((stepId: number) => {
-            let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
-            if (logEntry) {
-                this.onClick(logEntry, () => this.undoToStep(stepId));
+        if (/* TODO? this._activeStates.includes(stateName) ||*/ (this as any).isCurrentPlayerActive()) {  
+            if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+            this.addSecondaryActionButton(
+                'btnPassAction',
+                _('Pass'),
+                () => this.takeAction('actPassOptionalAction'),
+                'restartAction'
+            );
             }
 
-            logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
-            if (logEntry) {
-                this.onClick(logEntry, () => this.undoToStep(stepId));
-            }
-        });
+            // Undo last steps
+            args.args?.previousSteps?.forEach((stepId: number) => {
+                let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
+                if (logEntry) {
+                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                }
 
-        // Restart turn button
-        if (args.args?.previousEngineChoices >= 1 && !args.args.automaticAction) {
-          if (args.args?.previousSteps) {
-            let lastStep = Math.max(...args.args.previousSteps);
-            if (lastStep > 0)
-              this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
-          }
-  
-          // Restart whole turn
-          this.addDangerActionButton(
-            'btnRestartTurn',
-            _('Restart turn'),
-            () => {
-              this.stopActionTimer();
-              this.takeAction('actRestart');
-            },
-            'restartAction'
-          );
+                logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
+                if (logEntry) {
+                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                }
+            });
+
+            // Restart turn button
+            if (args.args?.previousEngineChoices >= 1 && !args.args.automaticAction) {
+            if (args.args?.previousSteps) {
+                let lastStep = Math.max(...args.args.previousSteps);
+                if (lastStep > 0)
+                this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
+            }
+    
+            // Restart whole turn
+            this.addDangerActionButton(
+                'btnRestartTurn',
+                _('Restart turn'),
+                () => {
+                this.stopActionTimer();
+                this.takeAction('actRestart');
+                },
+                'restartAction'
+            );
+            }
         }
   
         /* TODO? if (this.isCurrentPlayerActive() && args.args) {

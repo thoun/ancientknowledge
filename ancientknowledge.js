@@ -2714,33 +2714,34 @@ var AncientKnowledge = /** @class */ (function () {
             var base = args.args.descSuffix ? args.args.descSuffix : '';
             this.changePageTitle(base + 'skippable');
         }
-        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-            this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
-        }
-        // Undo last steps
-        (_b = (_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps) === null || _b === void 0 ? void 0 : _b.forEach(function (stepId) {
-            var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-            if (logEntry) {
-                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+        if ( /* TODO? this._activeStates.includes(stateName) ||*/this.isCurrentPlayerActive()) {
+            if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+                this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
             }
-            logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-            if (logEntry) {
-                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+            // Undo last steps
+            (_b = (_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps) === null || _b === void 0 ? void 0 : _b.forEach(function (stepId) {
+                var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+                if (logEntry) {
+                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                }
+                logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+                if (logEntry) {
+                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                }
+            });
+            // Restart turn button
+            if (((_c = args.args) === null || _c === void 0 ? void 0 : _c.previousEngineChoices) >= 1 && !args.args.automaticAction) {
+                if ((_d = args.args) === null || _d === void 0 ? void 0 : _d.previousSteps) {
+                    var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
+                    if (lastStep_1 > 0)
+                        this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
+                }
+                // Restart whole turn
+                this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
+                    _this.stopActionTimer();
+                    _this.takeAction('actRestart');
+                }, 'restartAction');
             }
-        });
-        // Restart turn button
-        if (((_c = args.args) === null || _c === void 0 ? void 0 : _c.previousEngineChoices) >= 1 && !args.args.automaticAction) {
-            if ((_d = args.args) === null || _d === void 0 ? void 0 : _d.previousSteps) {
-                var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
-                if (lastStep_1 > 0)
-                    this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
-            }
-            // Restart whole turn
-            this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
-                _this.stopActionTimer();
-                _this.takeAction('actRestart');
-            }, 'restartAction');
         }
         /* TODO? if (this.isCurrentPlayerActive() && args.args) {
             // Anytime buttons
