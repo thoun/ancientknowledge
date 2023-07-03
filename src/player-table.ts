@@ -156,10 +156,18 @@ class PlayerTable {
         }
     }
     
-    public setTimelineSelectable(selectable: boolean, slotIds: string[] = []) {
-        document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => 
-            slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId))
-        );
+    public setTimelineSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
+        const slotIds = selectable ? Object.keys(possibleCardLocations) : [];
+        document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => {
+            const slotId = slot.dataset.slotId;
+            const slotSelectable = selectable && slotIds.includes(slotId);
+            const discardCost = slotSelectable ? possibleCardLocations[slotId] : null;
+
+            slot.classList.toggle('selectable', slotSelectable);
+            //slot.style.setProperty('--discard-cost', `${discardCost > 0 ? discardCost : ''}`);
+            slot.dataset.discardCost = `${discardCost > 0 ? discardCost : ''}`;
+            slot.classList.toggle('discard-cost', slotSelectable && discardCost > 0);
+        });
     }
     
     public declineCard(card: BuilderCard): Promise<any> {

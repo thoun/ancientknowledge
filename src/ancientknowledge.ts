@@ -30,6 +30,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private _last_notif;
 
     private createEngine: CreateEngine;
+    private archiveEngine: ArchiveEngine;
 
     constructor() {
     }
@@ -132,48 +133,48 @@ class AncientKnowledge implements AncientKnowledgeGame {
           this.changePageTitle(base + 'skippable');
         }
 
-        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-  
-        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-          this.addSecondaryActionButton(
-            'btnPassAction',
-            _('Pass'),
-            () => this.takeAction('actPassOptionalAction'),
-            'restartAction'
-          );
-        }
-
-        // Undo last steps
-        args.args?.previousSteps?.forEach((stepId: number) => {
-            let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
-            if (logEntry) {
-                this.onClick(logEntry, () => this.undoToStep(stepId));
+        if (/* TODO? this._activeStates.includes(stateName) ||*/ (this as any).isCurrentPlayerActive()) {  
+            if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+            this.addSecondaryActionButton(
+                'btnPassAction',
+                _('Pass'),
+                () => this.takeAction('actPassOptionalAction'),
+                'restartAction'
+            );
             }
 
-            logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
-            if (logEntry) {
-                this.onClick(logEntry, () => this.undoToStep(stepId));
-            }
-        });
+            // Undo last steps
+            args.args?.previousSteps?.forEach((stepId: number) => {
+                let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
+                if (logEntry) {
+                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                }
 
-        // Restart turn button
-        if (args.args?.previousEngineChoices >= 1 && !args.args.automaticAction) {
-          if (args.args?.previousSteps) {
-            let lastStep = Math.max(...args.args.previousSteps);
-            if (lastStep > 0)
-              this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
-          }
-  
-          // Restart whole turn
-          this.addDangerActionButton(
-            'btnRestartTurn',
-            _('Restart turn'),
-            () => {
-              this.stopActionTimer();
-              this.takeAction('actRestart');
-            },
-            'restartAction'
-          );
+                logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
+                if (logEntry) {
+                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                }
+            });
+
+            // Restart turn button
+            if (args.args?.previousEngineChoices >= 1 && !args.args.automaticAction) {
+            if (args.args?.previousSteps) {
+                let lastStep = Math.max(...args.args.previousSteps);
+                if (lastStep > 0)
+                this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
+            }
+    
+            // Restart whole turn
+            this.addDangerActionButton(
+                'btnRestartTurn',
+                _('Restart turn'),
+                () => {
+                this.stopActionTimer();
+                this.takeAction('actRestart');
+                },
+                'restartAction'
+            );
+            }
         }
   
         /* TODO? if (this.isCurrentPlayerActive() && args.args) {
@@ -195,6 +196,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         switch (stateName) {
             case 'create':
                 this.onEnteringCreate(args.args);
+                break;
+            case 'archive':
+                this.onEnteringArchive(args.args);
                 break;
             case 'learn':
                 this.onEnteringLearn(args.args);
@@ -248,6 +252,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
+    private onEnteringArchive(args: EnteringArchiveArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.archiveEngine = new ArchiveEngine(this, args._private.cardIds);
+        }
+    }
+
     private onEnteringLearn(args: EnteringLearnArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.tableCenter.setTechnologyTilesSelectable(true/*, args.techs*/);
@@ -268,6 +278,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'create':
                 this.onLeavingCreate();
                 break;
+            case 'archive':
+                this.onLeavingArchive();
+                break;
             case 'learn':
                 this.onLeavingLearn();
                 break;
@@ -281,6 +294,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingCreate() {
         this.createEngine.leaveState();
         this.createEngine = null;
+    }
+
+    private onLeavingArchive() {
+        this.archiveEngine.leaveState();
+        this.archiveEngine = null;
     }
 
     private onLeavingLearn() {
@@ -571,6 +589,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
         } else if (this.gamedatas.gamestate.name == 'create') {
             this.createEngine?.cardSelectionChange(selection);
+        } else if (this.gamedatas.gamestate.name == 'archive') {
+            this.archiveEngine?.cardSelectionChange(selection);
         }
     }
     
@@ -698,6 +718,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
                 // tell the UI notification ends, if the function returned a promise
                 promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
+
+                let msg = /*this.formatString(*/this.format_string_recursive(notifDetails.log, notifDetails.args)/*)*/;
+                if (msg != '') {
+                    $('gameaction_status').innerHTML = msg;
+                    $('pagemaintitletext').innerHTML = msg;
+                }
             });
             (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
         });
@@ -906,6 +932,8 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                         args[property] = `<strong>${_(args[property])}</strong>`;
                     }*/
                 }
+
+                log = formatTextIcons(_(log));
             }
         } catch (e) {
             console.error(log,args,"Exception thrown", e.stack);

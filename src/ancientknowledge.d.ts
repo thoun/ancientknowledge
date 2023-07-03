@@ -63,11 +63,17 @@ interface EnteringInitialSelectionArgs {
     }
 }
 
-type PossibleCardWithLocation = {[id: string]: {[slotId: string]: number}};
+type PossibleCardLocations = {[slotId: string]: number};
 
 interface EnteringCreateArgs {
     _private?: {
-        cards: PossibleCardWithLocation[];
+        cards: {[id: string]: PossibleCardLocations};
+    }
+}
+
+interface EnteringArchiveArgs {
+    _private?: {
+        cardIds: string[];
     }
 }
 

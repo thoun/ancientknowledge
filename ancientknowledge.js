@@ -2413,10 +2413,17 @@ var PlayerTable = /** @class */ (function () {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
     };
-    PlayerTable.prototype.setTimelineSelectable = function (selectable, slotIds) {
-        if (slotIds === void 0) { slotIds = []; }
+    PlayerTable.prototype.setTimelineSelectable = function (selectable, possibleCardLocations) {
+        if (possibleCardLocations === void 0) { possibleCardLocations = null; }
+        var slotIds = selectable ? Object.keys(possibleCardLocations) : [];
         document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".slot").forEach(function (slot) {
-            return slot.classList.toggle('selectable', selectable && slotIds.includes(slot.dataset.slotId));
+            var slotId = slot.dataset.slotId;
+            var slotSelectable = selectable && slotIds.includes(slotId);
+            var discardCost = slotSelectable ? possibleCardLocations[slotId] : null;
+            slot.classList.toggle('selectable', slotSelectable);
+            //slot.style.setProperty('--discard-cost', `${discardCost > 0 ? discardCost : ''}`);
+            slot.dataset.discardCost = "".concat(discardCost > 0 ? discardCost : '');
+            slot.classList.toggle('discard-cost', slotSelectable && discardCost > 0);
         });
     };
     PlayerTable.prototype.declineCard = function (card) {
@@ -2470,7 +2477,7 @@ var CreateEngineData = /** @class */ (function () {
 }());
 var CreateEngine = /** @class */ (function (_super) {
     __extends(CreateEngine, _super);
-    function CreateEngine(game, possibleCards) {
+    function CreateEngine(game, possibleCardsLocations) {
         var _this = _super.call(this, game, [
             new FrontState('init', function (engine) {
                 var _a;
@@ -2482,7 +2489,7 @@ var CreateEngine = /** @class */ (function (_super) {
                 engine.data.selectedCard = null;
                 engine.data.selectedSlot = null;
                 engine.data.discardCards = [];
-                var selectableCards = Object.keys(_this.possibleCards).map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
+                var selectableCards = Object.keys(_this.possibleCardsLocations).map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
                 _this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
             }, function () {
                 _this.game.getCurrentPlayerTable().setHandSelectable('none');
@@ -2490,7 +2497,7 @@ var CreateEngine = /** @class */ (function (_super) {
             new FrontState('slot', function (engine) {
                 var card = engine.data.selectedCard;
                 if (card.id[0] == 'A' || card.locked) {
-                    _this.data.selectedSlot = Object.keys(_this.possibleCards[card.id])[0];
+                    _this.data.selectedSlot = Object.keys(_this.possibleCardsLocations[card.id])[0];
                     var stock = card.id[0] == 'A' ?
                         _this.game.getCurrentPlayerTable().artifacts :
                         _this.game.getCurrentPlayerTable().timeline;
@@ -2504,7 +2511,7 @@ var CreateEngine = /** @class */ (function (_super) {
                 engine.data.selectedSlot = null;
                 engine.data.discardCards = [];
                 _this.addCancel();
-                _this.game.getCurrentPlayerTable().setTimelineSelectable(true, Object.keys(_this.possibleCards[card.id]));
+                _this.game.getCurrentPlayerTable().setTimelineSelectable(true, _this.possibleCardsLocations[card.id]);
             }, function () {
                 _this.game.getCurrentPlayerTable().setTimelineSelectable(false);
                 _this.removeCancel();
@@ -2552,7 +2559,7 @@ var CreateEngine = /** @class */ (function (_super) {
             }),
         ]) || this;
         _this.game = game;
-        _this.possibleCards = possibleCards;
+        _this.possibleCardsLocations = possibleCardsLocations;
         _this.data = new CreateEngineData();
         _this.enterState('init');
         return _this;
@@ -2610,11 +2617,122 @@ var CreateEngine = /** @class */ (function (_super) {
             return null;
         }
         var slot = card.id[0] == 'A' || card.locked ?
-            Object.keys(this.possibleCards[card.id])[0] :
+            Object.keys(this.possibleCardsLocations[card.id])[0] :
             this.data.selectedSlot;
-        return this.possibleCards[card.id][slot];
+        return this.possibleCardsLocations[card.id][slot];
     };
     return CreateEngine;
+}(FrontEngine));
+var ArchiveEngineData = /** @class */ (function () {
+    function ArchiveEngineData(discardCards) {
+        if (discardCards === void 0) { discardCards = []; }
+        this.discardCards = discardCards;
+    }
+    return ArchiveEngineData;
+}());
+var ArchiveEngine = /** @class */ (function (_super) {
+    __extends(ArchiveEngine, _super);
+    function ArchiveEngine(game, possibleCards) {
+        var _this = _super.call(this, game, [
+            new FrontState('discard', function (engine) {
+                //this.game.changePageTitle(`SelectDiscard`, true);
+                engine.data.discardCards = [];
+                var cards = _this.game.getCurrentPlayerTable().hand.getCards().filter(function (card) { return possibleCards.includes(card.id); });
+                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', cards, 'archive-discard', true);
+                _this.addConfirmDiscardSelection();
+                _this.addCancel();
+            }, function () {
+                _this.removeConfirmDiscardSelection();
+                _this.game.getCurrentPlayerTable().setHandSelectable('none');
+                _this.removeCancel();
+            }),
+            new FrontState('discardTokens', function (engine) {
+                var discardCount = _this.data.discardCards.length;
+                _this.game.gamedatas.gamestate.args.discard_number = discardCount;
+                _this.game.changePageTitle("SelectDiscard", true);
+                engine.data.discardCards = [];
+                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', null, 'create-discard', true);
+                _this.addConfirmDiscardSelection();
+                _this.addCancel();
+            }, function () {
+                _this.removeConfirmDiscardSelection();
+                _this.game.getCurrentPlayerTable().setHandSelectable('none');
+                _this.removeCancel();
+            }),
+            new FrontState('confirm', function (engine) {
+                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('discarded-card'); });
+                _this.game.changePageTitle("Confirm", true);
+                var card = engine.data.selectedCard;
+                var artifact = card.id[0] == 'A';
+                var discardedCardsCount = engine.data.discardCards.length;
+                var label = '';
+                if (artifact) {
+                    label = _('Confirm creation of Artifact ${card_name}');
+                }
+                else {
+                    label = discardedCardsCount ?
+                        _('Confirm creation of Monument ${card_name} with ${number} discarded cards').replace('${number}', discardedCardsCount) :
+                        _('Confirm creation of Monument ${card_name}');
+                }
+                label = label.replace('${card_name}', card.name);
+                _this.game.addPrimaryActionButton('confirmCreate_btn', label, function () { return _this.game.onCreateCardConfirm(engine.data); });
+                _this.addCancel();
+            }, function (engine) {
+                var _a;
+                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.remove('discarded-card'); });
+                _this.removeCancel();
+                (_a = document.getElementById('confirmCreate_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+            }),
+        ]) || this;
+        _this.game = game;
+        _this.possibleCards = possibleCards;
+        _this.data = new ArchiveEngineData();
+        _this.enterState('discard');
+        return _this;
+    }
+    ArchiveEngine.prototype.cardSelectionChange = function (selection) {
+        if (this.currentState == 'discard') {
+            this.data.discardCards = selection;
+            this.setConfirmDiscardSelectionState();
+        }
+    };
+    ArchiveEngine.prototype.selectCard = function (card) {
+        var _a;
+        this.data.selectedCard = card;
+        (_a = this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('created-card');
+        this.game.getCurrentPlayerTable().hand.unselectCard(card);
+        this.nextState('slot');
+    };
+    ArchiveEngine.prototype.selectSlot = function (slotId) {
+        this.data.selectedSlot = slotId;
+        this.game.getCurrentPlayerTable().timeline.addCard(this.data.selectedCard, undefined, {
+            slot: slotId,
+        });
+        this.nextState('discard');
+    };
+    ArchiveEngine.prototype.addCancel = function () {
+        var _this = this;
+        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), function () { return _this.nextState('init'); });
+    };
+    ArchiveEngine.prototype.removeCancel = function () {
+        var _a;
+        (_a = document.getElementById('restartCardCreation_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+    };
+    ArchiveEngine.prototype.addConfirmDiscardSelection = function () {
+        var _this = this;
+        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), function () { return _this.nextState('discardTokens'); });
+        this.setConfirmDiscardSelectionState();
+    };
+    ArchiveEngine.prototype.removeConfirmDiscardSelection = function () {
+        var _a;
+        (_a = document.getElementById('confirmDiscardSelection_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+    };
+    ArchiveEngine.prototype.setConfirmDiscardSelectionState = function () {
+        var _a;
+        var discardCount = this.data.discardCards.length;
+        (_a = document.getElementById('confirmDiscardSelection_btn')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', discardCount == 0);
+    };
+    return ArchiveEngine;
 }(FrontEngine));
 var ANIMATION_MS = 500;
 var ACTION_TIMER_DURATION = 5;
@@ -2714,33 +2832,34 @@ var AncientKnowledge = /** @class */ (function () {
             var base = args.args.descSuffix ? args.args.descSuffix : '';
             this.changePageTitle(base + 'skippable');
         }
-        // TODO? if (this._activeStates.includes(stateName) && !this.isCurrentPlayerActive()) return;
-        if (args.args && args.args.optionalAction && !args.args.automaticAction) {
-            this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
-        }
-        // Undo last steps
-        (_b = (_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps) === null || _b === void 0 ? void 0 : _b.forEach(function (stepId) {
-            var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-            if (logEntry) {
-                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+        if ( /* TODO? this._activeStates.includes(stateName) ||*/this.isCurrentPlayerActive()) {
+            if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+                this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
             }
-            logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
-            if (logEntry) {
-                _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+            // Undo last steps
+            (_b = (_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps) === null || _b === void 0 ? void 0 : _b.forEach(function (stepId) {
+                var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+                if (logEntry) {
+                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                }
+                logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
+                if (logEntry) {
+                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                }
+            });
+            // Restart turn button
+            if (((_c = args.args) === null || _c === void 0 ? void 0 : _c.previousEngineChoices) >= 1 && !args.args.automaticAction) {
+                if ((_d = args.args) === null || _d === void 0 ? void 0 : _d.previousSteps) {
+                    var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
+                    if (lastStep_1 > 0)
+                        this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
+                }
+                // Restart whole turn
+                this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
+                    _this.stopActionTimer();
+                    _this.takeAction('actRestart');
+                }, 'restartAction');
             }
-        });
-        // Restart turn button
-        if (((_c = args.args) === null || _c === void 0 ? void 0 : _c.previousEngineChoices) >= 1 && !args.args.automaticAction) {
-            if ((_d = args.args) === null || _d === void 0 ? void 0 : _d.previousSteps) {
-                var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
-                if (lastStep_1 > 0)
-                    this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
-            }
-            // Restart whole turn
-            this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
-                _this.stopActionTimer();
-                _this.takeAction('actRestart');
-            }, 'restartAction');
         }
         /* TODO? if (this.isCurrentPlayerActive() && args.args) {
             // Anytime buttons
@@ -2760,6 +2879,9 @@ var AncientKnowledge = /** @class */ (function () {
         switch (stateName) {
             case 'create':
                 this.onEnteringCreate(args.args);
+                break;
+            case 'archive':
+                this.onEnteringArchive(args.args);
                 break;
             case 'learn':
                 this.onEnteringLearn(args.args);
@@ -2811,6 +2933,11 @@ var AncientKnowledge = /** @class */ (function () {
             this.createEngine = new CreateEngine(this, args._private.cards);
         }
     };
+    AncientKnowledge.prototype.onEnteringArchive = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.archiveEngine = new ArchiveEngine(this, args._private.cardIds);
+        }
+    };
     AncientKnowledge.prototype.onEnteringLearn = function (args) {
         if (this.isCurrentPlayerActive()) {
             this.tableCenter.setTechnologyTilesSelectable(true /*, args.techs*/);
@@ -2828,6 +2955,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'create':
                 this.onLeavingCreate();
                 break;
+            case 'archive':
+                this.onLeavingArchive();
+                break;
             case 'learn':
                 this.onLeavingLearn();
                 break;
@@ -2840,6 +2970,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingCreate = function () {
         this.createEngine.leaveState();
         this.createEngine = null;
+    };
+    AncientKnowledge.prototype.onLeavingArchive = function () {
+        this.archiveEngine.leaveState();
+        this.archiveEngine = null;
     };
     AncientKnowledge.prototype.onLeavingLearn = function () {
         this.tableCenter.setTechnologyTilesSelectable(false);
@@ -3037,12 +3171,15 @@ var AncientKnowledge = /** @class */ (function () {
         }
     }*/
     AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
-        var _a;
+        var _a, _b;
         if (this.gamedatas.gamestate.name == 'initialSelection') {
             document.getElementById('actSelectCardsToDiscard_button').classList.toggle('disabled', selection.length != 6);
         }
         else if (this.gamedatas.gamestate.name == 'create') {
             (_a = this.createEngine) === null || _a === void 0 ? void 0 : _a.cardSelectionChange(selection);
+        }
+        else if (this.gamedatas.gamestate.name == 'archive') {
+            (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
     };
     AncientKnowledge.prototype.onTimelineSlotClick = function (slotId) {
@@ -3150,6 +3287,11 @@ var AncientKnowledge = /** @class */ (function () {
                 var promise = _this["notif_".concat(notif[0])](notifDetails.args);
                 // tell the UI notification ends, if the function returned a promise
                 promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
+                var msg = /*this.formatString(*/ _this.format_string_recursive(notifDetails.log, notifDetails.args) /*)*/;
+                if (msg != '') {
+                    $('gameaction_status').innerHTML = msg;
+                    $('pagemaintitletext').innerHTML = msg;
+                }
             });
             _this.notifqueue.setSynchronous(notif[0], notif[1]);
         });
@@ -3335,6 +3477,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                         args[property] = `<strong>${_(args[property])}</strong>`;
                     }*/
                 }
+                log = formatTextIcons(_(log));
             }
         }
         catch (e) {

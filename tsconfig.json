@@ -39,6 +39,7 @@
         "src/player-table.ts",
         "src/front-engine.ts",
         "src/front-engine-create.ts",
+        "src/front-engine-archive.ts",
         "src/ancientknowledge.ts",
         "src/define.ts"
     ]
