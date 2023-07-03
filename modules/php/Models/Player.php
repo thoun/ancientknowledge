@@ -215,4 +215,17 @@ class Player extends \AK\Helpers\DB_Model
 
     return $icons;
   }
+
+  public function countIconInTimeline($icon)
+  {
+    $icons = $this->countIconsInTimeline();
+    return $icons[$icon] ?? 0;
+  }
+
+  public function countIconsInTimeline($toKeep = null)
+  {
+    // TODO
+    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0];
+    return $icons;
+  }
 }

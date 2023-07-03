@@ -16,5 +16,27 @@ class T14_LanguageOfTheBirds extends \AK\Models\Technology
     $this->effect = [
       clienttranslate('Choose 1 monument in your Timeline with at least 5 <KNOWLEDGE>. Discard 3 <KNOWLEDGE> from it.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    $cardIds = $this->getPlayer()
+      ->getTimeline()
+      ->filter(function ($card) {
+        return $card->getKnowledge() >= 5;
+      })
+      ->getIds();
+
+    return empty($cardIds)
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 3,
+          'cardIds' => $cardIds,
+          'type' => NODE_XOR,
+        ],
+      ];
   }
 }
