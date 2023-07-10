@@ -13,17 +13,32 @@ class DeclineCard extends \AK\Models\Action
     return ST_DECLINE_CARD;
   }
 
+  public function getDescription()
+  {
+    $card = $this->getCard();
+    return [
+      'log' => clienttranslate('Decline ${card_name}'),
+      'args' => [
+        'card_name' => $card->getName(),
+      ],
+    ];
+  }
+
   public function isAutomatic($player = null)
   {
     return true;
   }
 
+  public function getCard()
+  {
+    $cardId = $this->getCtxArg('cardId');
+    return Cards::getSingle($cardId);
+  }
+
   public function stDeclineCard()
   {
     $player = Players::getActive();
-    $cardId = $this->getCtxArg('cardId');
-    $card = Cards::getSingle($cardId);
-
+    $card = $this->getCard();
     // TODO listeners
 
     // Effect

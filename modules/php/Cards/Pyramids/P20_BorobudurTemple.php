@@ -19,7 +19,7 @@ class P20_BorobudurTemple extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = ANYTIME;
     $this->effect = [
-      clienttranslate('Each time you CREATE 1 <ARTEFACT> , you may LEARN 1 Technology if you fulfill its requirements.'),
+      clienttranslate('Each time you CREATE 1 <ARTIFACT> , you may LEARN 1 Technology if you fulfill its requirements.'),
     ];
   }
 }

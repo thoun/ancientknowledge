@@ -21,6 +21,6 @@ class P8_PyramidOfUserkaf extends \AK\Models\Building
     $this->initialKnowledge = 3;
     $this->startingSpace = 3;
     $this->activation = DECLINE;
-    $this->effect = [clienttranslate('Each of your opponents must discard 1 <ARTEFACT> from their board.')];
+    $this->effect = [clienttranslate('Each of your opponents must discard 1 <ARTIFACT> from their board.')];
   }
 }

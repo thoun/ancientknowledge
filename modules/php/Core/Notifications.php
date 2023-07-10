@@ -123,6 +123,7 @@ class Notifications
     self::notifyAll('createCard', clienttranslate('${player_name} learns ${card_name}'), [
       'player' => $player,
       'card' => $tech,
+      'icons' => $player->getIcons(),
     ]);
   }
 
@@ -189,12 +190,14 @@ class Notifications
       self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name}'), [
         'player' => $player,
         'card' => $card,
+        'icons' => $player->getIcons(),
       ]);
     } else {
       self::notifyAll('createCard', clienttranslate('${player_name} creates ${card_name} (${card2_name})'), [
         'player' => $player,
         'card' => $card,
         'card2' => Effects::get($sourceId),
+        'icons' => $player->getIcons(),
       ]);
     }
   }
@@ -229,6 +232,7 @@ class Notifications
       'player' => $player,
       'card' => $card,
       'n' => $knowledge,
+      'icons' => $player->getIcons(),
     ]);
   }
 

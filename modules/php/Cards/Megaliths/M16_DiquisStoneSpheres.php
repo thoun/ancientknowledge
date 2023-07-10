@@ -22,7 +22,7 @@ class M16_DiquisStoneSpheres extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->startingHand = 2;
-    $this->effect = [clienttranslate('You may CREATE 1 <ARTEFACT>.')];
+    $this->effect = [clienttranslate('You may CREATE 1 <ARTIFACT>.')];
     $this->implemented = true;
   }
 

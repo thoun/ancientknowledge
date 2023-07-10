@@ -63,9 +63,12 @@ class Learn extends \AK\Models\Action
     Notifications::learnTech($player, $tech);
 
     // Check immediate effect
-    // if ($tech->getActivation() == \IMMEDIATE) {
-    //   die('TODO: immediate effect of created card');
-    // }
+    if ($tech->getActivation() == \IMMEDIATE) {
+      $this->insertAsChild([
+        'action' => \ACTIVATE_CARD,
+        'args' => ['cardId' => $tech->getId(), 'activation' => IMMEDIATE],
+      ]);
+    }
 
     // Check listener
     // TODO

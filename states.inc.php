@@ -170,8 +170,8 @@ $machinestates = [
   ST_CHOOSE_ACTION => [
     'name' => 'chooseAction',
     'type' => 'activeplayer',
-    'description' => clienttranslate('${actplayer} must choose an action'),
-    'descriptionmyturn' => clienttranslate('${you} must choose an action'),
+    'description' => clienttranslate('${actplayer} must choose an action (${n}/2)'),
+    'descriptionmyturn' => clienttranslate('${you} must choose an action (${n}/2)'),
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actChooseAction', 'actRestart'],
   ],
@@ -181,11 +181,13 @@ $machinestates = [
     'type' => 'activeplayer',
     'description' => clienttranslate('${actplayer} must choose a monument or an artifact to create'),
     'descriptionmyturn' => clienttranslate('${you} must choose a monument or an artifact to create'),
+    'descriptionskippable' => clienttranslate('${actplayer} may choose a monument or an artifact to create'),
+    'descriptionmyturnskippable' => clienttranslate('${you} may choose a monument or an artifact to create'),
     'descriptionmyturnSelectSlot' => clienttranslate('${you} must choose a place for the selected monument'),
     'descriptionmyturnSelectDiscard' => clienttranslate('${you} must choose ${discard_number} card(s) to discard'),
     'descriptionmyturnConfirm' => clienttranslate('${you} must confirm creation'),
     'args' => 'argsAtomicAction',
-    'possibleactions' => ['actCreate', 'actRestart'],
+    'possibleactions' => ['actCreate', 'actRestart', 'actPassOptionalAction'],
   ],
 
   ST_LEARN => [

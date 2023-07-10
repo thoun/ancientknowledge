@@ -11,7 +11,7 @@ class T1_Anaximenes extends \AK\Models\Technology
     $this->number = 1;
     $this->level = 1;
     $this->name = clienttranslate('Anaximenes');
-    $this->requirement = [clienttranslate('3 <ARTEFACT> on your board.')];
+    $this->requirement = [clienttranslate('3 <ARTIFACT> on your board.')];
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];

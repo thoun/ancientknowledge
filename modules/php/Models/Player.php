@@ -42,6 +42,7 @@ class Player extends \AK\Helpers\DB_Model
     $data['timeline'] = $this->getTimeline()->toArray();
     $data['past'] = $this->getPast()->toArray();
     $data['techs'] = $this->getTechTiles()->toArray();
+    $data['icons'] = $this->getIcons();
     return $data;
   }
 
@@ -145,6 +146,16 @@ class Player extends \AK\Helpers\DB_Model
     return null;
   }
 
+  public function getIcons()
+  {
+    $pastIcons = $this->countIcons();
+    $timelineIcons = $this->countIconsInTimeline();
+    $pastIcons['city-timeline'] = $timelineIcons[CITY];
+    $pastIcons['pyramid-timeline'] = $timelineIcons[PYRAMID];
+    $pastIcons['megalith-timeline'] = $timelineIcons[MEGALITH];
+    return $pastIcons;
+  }
+
   public function countIcon($icon)
   {
     $icons = $this->countIcons();
@@ -153,49 +164,17 @@ class Player extends \AK\Helpers\DB_Model
 
   public function countIcons($toKeep = null)
   {
-    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0];
-    // TODO
-
-    // foreach (ALL_PREREQUISITES as $type) {
-    //   $icons[$type] = 0;
-    // }
-
-    // $cards = $this->getPlayedCards();
-    // foreach ($cards as $aId => $card) {
-    //   foreach ($card->getIcons() as $type => $n) {
-    //     $icons[$type] += $n;
-    //   }
-    // }
-
-    // if ($this->hasUniversity(UNIVERSITY_SCIENCE_REP)) {
-    //   $icons[SCIENCE]++;
-    // }
-
-    // if ($this->hasUniversity(UNIVERSITY_SCIENCE_SCIENCE)) {
-    //   $icons[SCIENCE] += 2;
-    // }
-
-    // foreach ($this->getPartnerZoos() as $mId => $partner) {
-    //   $continent = explode('-', $partner['type'])[1];
-    //   $icons[$continent]++;
-    // }
-    // // TODO : manage map specific
-
-    // if (!is_null($toKeep)) {
-    //   foreach (array_keys($icons) as $type) {
-    //     if (!in_array($type, $toKeep)) {
-    //       unset($icons[$type]);
-    //     }
-    //   }
-    // }
-
-    // if ($onlyNonZero) {
-    //   foreach (array_keys($icons) as $type) {
-    //     if ($icons[$type] == 0) {
-    //       unset($icons[$type]);
-    //     }
-    //   }
-    // }
+    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0, ARTEFACT => 0];
+    foreach ($this->getPast() as $card) {
+      $icons[$card->getType()]++;
+    }
+    if (!is_null($toKeep)) {
+      foreach (array_keys($icons) as $type) {
+        if (!in_array($type, $toKeep)) {
+          unset($icons[$type]);
+        }
+      }
+    }
 
     // // Update stats
     // if (!$onlyNonZero && is_null($toKeep)) {
@@ -224,8 +203,19 @@ class Player extends \AK\Helpers\DB_Model
 
   public function countIconsInTimeline($toKeep = null)
   {
-    // TODO
     $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0];
+    foreach ($this->getTimeline() as $card) {
+      $icons[$card->getType()]++;
+    }
+
+    if (!is_null($toKeep)) {
+      foreach (array_keys($icons) as $type) {
+        if (!in_array($type, $toKeep)) {
+          unset($icons[$type]);
+        }
+      }
+    }
+
     return $icons;
   }
 }

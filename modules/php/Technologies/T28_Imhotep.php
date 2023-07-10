@@ -11,7 +11,7 @@ class T28_Imhotep extends \AK\Models\Technology
     $this->number = 28;
     $this->level = 2;
     $this->name = clienttranslate('Imhotep');
-    $this->requirement = [clienttranslate('4 <ARTEFACT> on your board.')];
+    $this->requirement = [clienttranslate('4 <ARTIFACT> on your board.')];
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('3 <VP>')];

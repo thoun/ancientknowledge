@@ -18,7 +18,7 @@ class Effects
       return $cardId;
     } else {
       $t = explode('_', $cardId);
-      if ($t[0] == 'T') {
+      if ($t[0][0] == 'T') {
         return Technologies::get($cardId);
       } else {
         return Cards::get($cardId);

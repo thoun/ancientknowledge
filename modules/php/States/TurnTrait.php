@@ -44,10 +44,12 @@ trait TurnTrait
         [
           'action' => CHOOSE_ACTION,
           'pId' => $player->getId(),
+          'args' => ['n' => 1],
         ],
         [
           'action' => CHOOSE_ACTION,
           'pId' => $player->getId(),
+          'args' => ['n' => 2],
         ],
         [
           'action' => TIMELINE_PHASE,

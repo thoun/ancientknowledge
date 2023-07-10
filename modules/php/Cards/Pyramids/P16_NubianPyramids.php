@@ -22,7 +22,7 @@ class P16_NubianPyramids extends \AK\Models\Building
     $this->initialKnowledge = 3;
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
-    $this->effect = [clienttranslate('You may CREATE 1 <ARTEFACT>.')];
+    $this->effect = [clienttranslate('You may CREATE 1 <ARTIFACT>.')];
     $this->implemented = true;
   }
 
@@ -31,6 +31,7 @@ class P16_NubianPyramids extends \AK\Models\Building
     return [
       'action' => CREATE,
       'args' => ['constraint' => [ARTEFACT]],
+      'optional' => true,
     ];
   }
 }
