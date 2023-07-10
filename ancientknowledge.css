@@ -1208,6 +1208,17 @@ body > .card {
 .player-table .player-board .technology-tiles-decks .technology-tiles-deck[data-type=secret] {
   top: 312px;
 }
+.player-table .player-board .lost-knowledge-space {
+  position: absolute;
+  left: 8px;
+  top: 236px;
+  width: 128px;
+  height: 208px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
 .player-table .block-with-text {
   display: flex;
 }

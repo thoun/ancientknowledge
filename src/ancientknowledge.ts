@@ -207,6 +207,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'removeKnowledge':
                 this.onEnteringRemoveKnowledge(args.args);
                 break;
+            case 'resolveChoice':
+                this.onEnteringResolveChoice(args.args);
+                break;
         }
     }
 
@@ -273,6 +276,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.type);
         }
     }
+  
+    private onEnteringResolveChoice(args: EnteringResolveChoiceArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            Object.values(args.choices).forEach((choice) => this.addActionChoiceBtn(choice, false));
+            Object.values(args.allChoices).forEach((choice) => this.addActionChoiceBtn(choice, true));
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
@@ -331,7 +341,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
-                    //const initialSelectionArgs = args as EnteringInitialSelectionArgs;
                     this.onEnteringInitialSelection(args);
                     (this as any).addActionButton(`actSelectCardsToDiscard_button`, _('Keep selected cards'), () => this.actSelectCardsToDiscard());
                     document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
@@ -351,6 +360,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
                     //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    break;
             }
         } else {
             switch (stateName) {
@@ -360,6 +370,44 @@ class AncientKnowledge implements AncientKnowledgeGame {
             }
         }
     }
+
+    private addActionChoiceBtn(choice: ResolveChoice, disabled = false) {
+        if ($('btnChoice' + choice.id)) return;
+  
+        let desc = formatTextIcons(this.translate(choice.description));
+  
+        // Add source if any
+        let source = _(choice.source ?? '');
+        if (choice.sourceId) {
+          let card = this.builderCardsManager.getFullCardById(choice.sourceId);
+          source = this.format_string_recursive('${card_name}', { i18n: ['card_name'], card_name: _(card.name), card_id: card.id });
+        }
+  
+        if (source != '') {
+          desc += ` (${source})`;
+        }
+  
+        this.addSecondaryActionButton(
+          'btnChoice' + choice.id,
+          desc,
+          disabled
+            ? () => {}
+            : () => {
+                this.askConfirmation(choice.irreversibleAction, () => this.takeAction('actChooseAction', { id: choice.id }));
+              }
+        );
+        if (disabled) {
+          $(`btnChoice${choice.id}`).classList.add('disabled');
+        }
+      }
+
+      private translate(t: any | string) {
+        if (typeof t === 'object') {
+          return this.format_string_recursive(t.log, t.args);
+        } else {
+          return _(t);
+        }
+      }
 
     ///////////////////////////////////////////////////
     //// Utility methods
@@ -697,12 +745,36 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAction('actRestart');
     }
 
+    private askConfirmation(warning: boolean | string, callback: Function) {
+        if (warning === false /*|| this.prefs[104].value == 0*/) {
+          callback();
+        } else {
+          //        let msg = warning === true ? _('drawing card(s) from the deck or the discard') : warning;
+          let msg =
+            warning === true
+              ? _(
+                  "If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice"
+                )
+              : warning;
+            (this as any).confirmationDialog(
+            msg,
+            // this.fsr(
+            //   _("If you take this action, you won't be able to undo past this step because of the following reason: ${msg}"),
+            //   { msg }
+            // ),
+            () => {
+              callback();
+            }
+          );
+        }
+    }
+
     private takeAtomicAction(action: string, args: any = {}, warning = false) {
         if (!(this as any).checkAction(action)) return false;
   
-        //(this as any).askConfirmation(warning, () =>
+        this.askConfirmation(warning, () =>
           this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) }/*, false*/)
-        //);
+        );
     }
 
     public takeAction(action: string, data?: any) {
@@ -837,7 +909,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }  
 
     notif_declineCard(args: NotifDeclineCardArgs) {
-        return this.getPlayerTable(args.player_id).declineCard(args.card);
+        return this.getPlayerTable(args.player_id).declineCard(args.card, args.n);
     }  
 
     notif_declineSlideLeft(args: NotifDeclineCardArgs) {

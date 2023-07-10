@@ -107,6 +107,25 @@ interface EnteringTradeArgs {
     gainsByBracelets: { [bracelets: number]: number };
 }
 
+interface ResolveChoice {
+    automaticAction: boolean;
+    description: string;
+    id: number;
+    independentAction: boolean;
+    irreversibleAction: boolean;
+    optionalAction: boolean;
+    source?: string;
+    sourceId?: string;
+    args: {
+        cardId: string;
+    };
+}
+
+interface EnteringResolveChoiceArgs {
+    allChoices: ResolveChoice[];
+    choices: ResolveChoice[];
+}
+
 // pDrawCards
 interface NotifPDrawCardsArgs {
     player_id: number;
@@ -180,6 +199,7 @@ interface NotifDeclineCardArgs {
 interface NotifDeclineCardArgs {
     player_id: number;
     card: BuilderCard;
+    n: number;
 }
 
 // removeKnowledge

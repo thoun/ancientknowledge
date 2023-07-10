@@ -2314,7 +2314,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">                \n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
@@ -2357,6 +2357,7 @@ var PlayerTable = /** @class */ (function () {
             var tiles = _this.game.technologyTilesManager.getFullCards(player.techs).filter(function (tile) { return tile.type == type; });
             _this.technologyTilesDecks[type].addCards(tiles);
         });
+        this.setLostKnowledge(player.lostKnowledge);
     }
     PlayerTable.prototype.setHandSelectable = function (selectionMode, selectableCards, stockState, reinitSelection) {
         if (selectableCards === void 0) { selectableCards = null; }
@@ -2428,6 +2429,39 @@ var PlayerTable = /** @class */ (function () {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
     };
+    PlayerTable.prototype.incLostKnowledge = function (inc) {
+        this.setLostKnowledge(this.lostKnowledge + inc);
+    };
+    PlayerTable.prototype.setLostKnowledge = function (knowledge) {
+        var _this = this;
+        this.lostKnowledge = knowledge;
+        var golden = Math.floor(knowledge / 5);
+        var basic = knowledge % 5;
+        //const golden = 0;
+        //const basic = knowledge;
+        var stockDiv = document.getElementById("player-table-".concat(this.playerId, "-lost-knowledge"));
+        while (stockDiv.childElementCount > (golden + basic)) {
+            stockDiv.removeChild(stockDiv.lastChild);
+        }
+        var _loop_4 = function () {
+            var div = document.createElement('div');
+            div.classList.add('knowledge-token');
+            stockDiv.appendChild(div);
+            div.addEventListener('click', function () {
+                if (div.classList.contains('selectable')) {
+                    div.classList.toggle('selected');
+                    var card = div.closest('.builder-card');
+                    _this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
+                }
+            });
+        };
+        while (stockDiv.childElementCount < (golden + basic)) {
+            _loop_4();
+        }
+        for (var i = 0; i < (golden + basic); i++) {
+            stockDiv.children[i].classList.toggle('golden', i < golden);
+        }
+    };
     PlayerTable.prototype.setTimelineSelectable = function (selectable, possibleCardLocations) {
         if (possibleCardLocations === void 0) { possibleCardLocations = null; }
         var slotIds = selectable ? Object.keys(possibleCardLocations) : [];
@@ -2448,7 +2482,9 @@ var PlayerTable = /** @class */ (function () {
             token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
         });
     };
-    PlayerTable.prototype.declineCard = function (card) {
+    PlayerTable.prototype.declineCard = function (card, lostKnowledge) {
+        this.incLostKnowledge(lostKnowledge);
+        this.setCardKnowledge(card.id, 0);
         return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
     };
     PlayerTable.prototype.declineSlideLeft = function () {
@@ -2968,6 +3004,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'removeKnowledge':
                 this.onEnteringRemoveKnowledge(args.args);
                 break;
+            case 'resolveChoice':
+                this.onEnteringResolveChoice(args.args);
+                break;
         }
     };
     /*
@@ -3030,6 +3069,13 @@ var AncientKnowledge = /** @class */ (function () {
             this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.type);
         }
     };
+    AncientKnowledge.prototype.onEnteringResolveChoice = function (args) {
+        var _this = this;
+        if (this.isCurrentPlayerActive()) {
+            Object.values(args.choices).forEach(function (choice) { return _this.addActionChoiceBtn(choice, false); });
+            Object.values(args.allChoices).forEach(function (choice) { return _this.addActionChoiceBtn(choice, true); });
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
@@ -3080,7 +3126,6 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
-                    //const initialSelectionArgs = args as EnteringInitialSelectionArgs;
                     this.onEnteringInitialSelection(args);
                     this.addActionButton("actSelectCardsToDiscard_button", _('Keep selected cards'), function () { return _this.actSelectCardsToDiscard(); });
                     document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
@@ -3099,7 +3144,8 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
-                //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    break;
             }
         }
         else {
@@ -3108,6 +3154,39 @@ var AncientKnowledge = /** @class */ (function () {
                     this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
                     break;
             }
+        }
+    };
+    AncientKnowledge.prototype.addActionChoiceBtn = function (choice, disabled) {
+        var _this = this;
+        var _a;
+        if (disabled === void 0) { disabled = false; }
+        if ($('btnChoice' + choice.id))
+            return;
+        var desc = formatTextIcons(this.translate(choice.description));
+        // Add source if any
+        var source = _((_a = choice.source) !== null && _a !== void 0 ? _a : '');
+        if (choice.sourceId) {
+            var card = this.builderCardsManager.getFullCardById(choice.sourceId);
+            source = this.format_string_recursive('${card_name}', { i18n: ['card_name'], card_name: _(card.name), card_id: card.id });
+        }
+        if (source != '') {
+            desc += " (".concat(source, ")");
+        }
+        this.addSecondaryActionButton('btnChoice' + choice.id, desc, disabled
+            ? function () { }
+            : function () {
+                _this.askConfirmation(choice.irreversibleAction, function () { return _this.takeAction('actChooseAction', { id: choice.id }); });
+            });
+        if (disabled) {
+            $("btnChoice".concat(choice.id)).classList.add('disabled');
+        }
+    };
+    AncientKnowledge.prototype.translate = function (t) {
+        if (typeof t === 'object') {
+            return this.format_string_recursive(t.log, t.args);
+        }
+        else {
+            return _(t);
         }
     };
     ///////////////////////////////////////////////////
@@ -3345,14 +3424,34 @@ var AncientKnowledge = /** @class */ (function () {
         }
         this.takeAction('actRestart');
     };
+    AncientKnowledge.prototype.askConfirmation = function (warning, callback) {
+        if (warning === false /*|| this.prefs[104].value == 0*/) {
+            callback();
+        }
+        else {
+            //        let msg = warning === true ? _('drawing card(s) from the deck or the discard') : warning;
+            var msg = warning === true
+                ? _("If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice")
+                : warning;
+            this.confirmationDialog(msg, 
+            // this.fsr(
+            //   _("If you take this action, you won't be able to undo past this step because of the following reason: ${msg}"),
+            //   { msg }
+            // ),
+            function () {
+                callback();
+            });
+        }
+    };
     AncientKnowledge.prototype.takeAtomicAction = function (action, args, warning) {
+        var _this = this;
         if (args === void 0) { args = {}; }
         if (warning === void 0) { warning = false; }
         if (!this.checkAction(action))
             return false;
-        //(this as any).askConfirmation(warning, () =>
-        this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) } /*, false*/);
-        //);
+        this.askConfirmation(warning, function () {
+            return _this.takeAction('actTakeAtomicAction', { actionName: action, actionArgs: JSON.stringify(args) } /*, false*/);
+        });
     };
     AncientKnowledge.prototype.takeAction = function (action, data) {
         data = data || {};
@@ -3467,7 +3566,7 @@ var AncientKnowledge = /** @class */ (function () {
         return this.getPlayerTable(args.player_id).refreshHand(args.hand);
     };
     AncientKnowledge.prototype.notif_declineCard = function (args) {
-        return this.getPlayerTable(args.player_id).declineCard(args.card);
+        return this.getPlayerTable(args.player_id).declineCard(args.card, args.n);
     };
     AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {
         return this.getPlayerTable(args.player_id).declineSlideLeft();

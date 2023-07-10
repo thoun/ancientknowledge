@@ -79,6 +79,19 @@
         &[data-type="secret"] { top: 312px; }
       }
     }
+
+    .lost-knowledge-space {
+      position: absolute;
+      left: 8px;
+      top: 236px;
+      width: 128px;
+      height: 208px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+    }
   }
   
   .block-with-text {

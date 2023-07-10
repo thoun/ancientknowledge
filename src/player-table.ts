@@ -13,6 +13,8 @@ class PlayerTable {
     public artifacts: SlotStock<BuilderCard>;
     public technologyTilesDecks: AllVisibleDeck<TechnologyTile>[] = [];
 
+    private lostKnowledge: number;
+
     private currentPlayer: boolean;
 
     constructor(private game: AncientKnowledgeGame, player: AncientKnowledgePlayer) {
@@ -32,7 +34,8 @@ class PlayerTable {
         }
         html += `
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
-            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">                
+            <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">
+                <div id="player-table-${this.playerId}-lost-knowledge" class="lost-knowledge-space"></div>
                 <div id="player-table-${this.playerId}-past" class="past"></div>
                 <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
                 <div class="technology-tiles-decks">`;            
@@ -92,6 +95,8 @@ class PlayerTable {
             const tiles = this.game.technologyTilesManager.getFullCards(player.techs).filter(tile => tile.type == type);
             this.technologyTilesDecks[type].addCards(tiles);
         });
+
+        this.setLostKnowledge(player.lostKnowledge);
     }
 
     public setHandSelectable(selectionMode: CardSelectionMode, selectableCards: BuilderCard[] | null = null, stockState: string = '', reinitSelection: boolean = false) {
@@ -165,6 +170,41 @@ class PlayerTable {
         for (let i = 0; i < (golden + basic); i++) {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
+    } 
+
+    public incLostKnowledge(inc: number) {
+        this.setLostKnowledge(this.lostKnowledge + inc);
+    }
+
+    public setLostKnowledge(knowledge: number) {
+        this.lostKnowledge = knowledge;
+
+        const golden = Math.floor(knowledge / 5);
+        const basic = knowledge % 5;
+        //const golden = 0;
+        //const basic = knowledge;
+
+        const stockDiv = document.getElementById(`player-table-${this.playerId}-lost-knowledge`);
+
+        while (stockDiv.childElementCount > (golden + basic)) {
+            stockDiv.removeChild(stockDiv.lastChild);
+        }
+        while (stockDiv.childElementCount < (golden + basic)) {
+            const div = document.createElement('div');
+            div.classList.add('knowledge-token');
+            stockDiv.appendChild(div);
+            div.addEventListener('click', () => {
+                if (div.classList.contains('selectable')) {
+                    div.classList.toggle('selected');
+                    const card: HTMLDivElement = div.closest('.builder-card');
+                    this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
+                }
+            });
+        }
+
+        for (let i = 0; i < (golden + basic); i++) {
+            stockDiv.children[i].classList.toggle('golden', i < golden);
+        }
     }
     
     public setTimelineSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
@@ -188,7 +228,9 @@ class PlayerTable {
         });
     }
     
-    public declineCard(card: BuilderCard): Promise<any> {
+    public declineCard(card: BuilderCard, lostKnowledge: number): Promise<any> {
+        this.incLostKnowledge(lostKnowledge);
+        this.setCardKnowledge(card.id, 0);
         return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
     }
     
