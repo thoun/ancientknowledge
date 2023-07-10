@@ -81,7 +81,7 @@ interface EnteringArchiveArgs {
 }
 
 interface EnteringLearnArgs {
-    techs: any[]; // TODO
+    techs: string[];
 }
 
 interface EnteringRemoveKnowledgeArgs {

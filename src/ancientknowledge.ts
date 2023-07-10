@@ -267,7 +267,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onEnteringLearn(args: EnteringLearnArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.tableCenter.setTechnologyTilesSelectable(true/*, args.techs*/);
+            this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args.techs));
         }
     }
 

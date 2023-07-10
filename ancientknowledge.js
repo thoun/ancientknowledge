@@ -3061,7 +3061,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringLearn = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.tableCenter.setTechnologyTilesSelectable(true /*, args.techs*/);
+            this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args.techs));
         }
     };
     AncientKnowledge.prototype.onEnteringRemoveKnowledge = function (args) {
