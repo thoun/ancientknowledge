@@ -1216,7 +1216,7 @@ var CardStock = /** @class */ (function () {
         if (silent === void 0) { silent = false; }
         var element = this.getCardElement(card);
         var selectedCardsClass = this.getSelectedCardClass();
-        element.classList.remove(selectedCardsClass);
+        element === null || element === void 0 ? void 0 : element.classList.remove(selectedCardsClass);
         var index = this.selectedCards.findIndex(function (c) { return _this.manager.getId(c) == _this.manager.getId(card); });
         if (index !== -1) {
             this.selectedCards.splice(index, 1);
@@ -2400,14 +2400,29 @@ var PlayerTable = /** @class */ (function () {
         return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
     };
     PlayerTable.prototype.setCardKnowledge = function (cardId, knowledge) {
-        var golden = Math.floor(knowledge / 5);
-        var basic = knowledge % 5;
+        var _this = this;
+        //const golden = Math.floor(knowledge / 5);
+        //const basic = knowledge % 5;
+        var golden = 0;
+        var basic = knowledge;
         var stockDiv = document.getElementById("".concat(cardId, "-tokens"));
         while (stockDiv.childElementCount > (golden + basic)) {
             stockDiv.removeChild(stockDiv.lastChild);
         }
+        var _loop_3 = function () {
+            var div = document.createElement('div');
+            div.classList.add('knowledge-token');
+            stockDiv.appendChild(div);
+            div.addEventListener('click', function () {
+                if (div.classList.contains('selectable')) {
+                    div.classList.toggle('selected');
+                    var card = div.closest('.builder-card');
+                    _this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
+                }
+            });
+        };
         while (stockDiv.childElementCount < (golden + basic)) {
-            stockDiv.insertAdjacentHTML('beforeend', "<div class=\"knowledge-token\"></div>");
+            _loop_3();
         }
         for (var i = 0; i < (golden + basic); i++) {
             stockDiv.children[i].classList.toggle('golden', i < golden);
@@ -2424,6 +2439,13 @@ var PlayerTable = /** @class */ (function () {
             //slot.style.setProperty('--discard-cost', `${discardCost > 0 ? discardCost : ''}`);
             slot.dataset.discardCost = "".concat(discardCost > 0 ? discardCost : '');
             slot.classList.toggle('discard-cost', slotSelectable && discardCost > 0);
+        });
+    };
+    PlayerTable.prototype.setTimelineTokensSelectable = function (selectionMode, cardsIds) {
+        if (cardsIds === void 0) { cardsIds = []; }
+        document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".knowledge-token").forEach(function (token) {
+            var card = token.closest('.builder-card');
+            token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
         });
     };
     PlayerTable.prototype.declineCard = function (card) {
@@ -2635,54 +2657,34 @@ var ArchiveEngine = /** @class */ (function (_super) {
     function ArchiveEngine(game, possibleCards) {
         var _this = _super.call(this, game, [
             new FrontState('discard', function (engine) {
-                //this.game.changePageTitle(`SelectDiscard`, true);
                 engine.data.discardCards = [];
                 var cards = _this.game.getCurrentPlayerTable().hand.getCards().filter(function (card) { return possibleCards.includes(card.id); });
                 _this.game.getCurrentPlayerTable().setHandSelectable('multiple', cards, 'archive-discard', true);
                 _this.addConfirmDiscardSelection();
-                _this.addCancel();
+                //this.addCancel();
             }, function () {
                 _this.removeConfirmDiscardSelection();
                 _this.game.getCurrentPlayerTable().setHandSelectable('none');
-                _this.removeCancel();
-            }),
-            new FrontState('discardTokens', function (engine) {
-                var discardCount = _this.data.discardCards.length;
-                _this.game.gamedatas.gamestate.args.discard_number = discardCount;
-                _this.game.changePageTitle("SelectDiscard", true);
-                engine.data.discardCards = [];
-                _this.game.getCurrentPlayerTable().setHandSelectable('multiple', null, 'create-discard', true);
-                _this.addConfirmDiscardSelection();
-                _this.addCancel();
-            }, function () {
-                _this.removeConfirmDiscardSelection();
-                _this.game.getCurrentPlayerTable().setHandSelectable('none');
-                _this.removeCancel();
-            }),
-            new FrontState('confirm', function (engine) {
-                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('discarded-card'); });
-                _this.game.changePageTitle("Confirm", true);
-                var card = engine.data.selectedCard;
-                var artifact = card.id[0] == 'A';
-                var discardedCardsCount = engine.data.discardCards.length;
-                var label = '';
-                if (artifact) {
-                    label = _('Confirm creation of Artifact ${card_name}');
+                //this.removeCancel();
+            }) /*,
+            new FrontState<ArchiveEngineData>(
+                'confirm',
+                engine => {
+                    const discardCount = this.data.discardCards.length;
+                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('discarded-card'));
+                    this.game.changePageTitle(`Confirm`, true);
+
+                    const label = formatTextIcons(_('Confirm discard of ${number} cards to remove ${number} <KNOWLEDGE>')).replace(/\${number}/g, ''+discardCount);
+
+                    this.game.addPrimaryActionButton('confirmArchive_btn', label, () => this.game.onArchiveCardConfirm(engine.data));
+                    this.addCancel();
+                },
+                engine => {
+                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.remove('discarded-card'));
+                    this.removeCancel();
+                    document.getElementById('confirmArchive_btn')?.remove();
                 }
-                else {
-                    label = discardedCardsCount ?
-                        _('Confirm creation of Monument ${card_name} with ${number} discarded cards').replace('${number}', discardedCardsCount) :
-                        _('Confirm creation of Monument ${card_name}');
-                }
-                label = label.replace('${card_name}', card.name);
-                _this.game.addPrimaryActionButton('confirmCreate_btn', label, function () { return _this.game.onCreateCardConfirm(engine.data); });
-                _this.addCancel();
-            }, function (engine) {
-                var _a;
-                engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.remove('discarded-card'); });
-                _this.removeCancel();
-                (_a = document.getElementById('confirmCreate_btn')) === null || _a === void 0 ? void 0 : _a.remove();
-            }),
+            ),*/
         ]) || this;
         _this.game = game;
         _this.possibleCards = possibleCards;
@@ -2696,31 +2698,17 @@ var ArchiveEngine = /** @class */ (function (_super) {
             this.setConfirmDiscardSelectionState();
         }
     };
-    ArchiveEngine.prototype.selectCard = function (card) {
-        var _a;
-        this.data.selectedCard = card;
-        (_a = this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('created-card');
-        this.game.getCurrentPlayerTable().hand.unselectCard(card);
-        this.nextState('slot');
-    };
-    ArchiveEngine.prototype.selectSlot = function (slotId) {
-        this.data.selectedSlot = slotId;
-        this.game.getCurrentPlayerTable().timeline.addCard(this.data.selectedCard, undefined, {
-            slot: slotId,
-        });
-        this.nextState('discard');
-    };
-    ArchiveEngine.prototype.addCancel = function () {
-        var _this = this;
-        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), function () { return _this.nextState('init'); });
-    };
-    ArchiveEngine.prototype.removeCancel = function () {
-        var _a;
-        (_a = document.getElementById('restartCardCreation_btn')) === null || _a === void 0 ? void 0 : _a.remove();
-    };
+    /*private addCancel() {
+        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), () => this.nextState('init'));
+    }
+
+    private removeCancel() {
+        document.getElementById('restartCardCreation_btn')?.remove();
+    }*/
     ArchiveEngine.prototype.addConfirmDiscardSelection = function () {
         var _this = this;
-        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), function () { return _this.nextState('discardTokens'); });
+        //this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), () => this.nextState('discardTokens'));
+        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), function () { return _this.game.onArchiveCardConfirm(_this.data); });
         this.setConfirmDiscardSelectionState();
     };
     ArchiveEngine.prototype.removeConfirmDiscardSelection = function () {
@@ -2733,6 +2721,97 @@ var ArchiveEngine = /** @class */ (function (_super) {
         (_a = document.getElementById('confirmDiscardSelection_btn')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', discardCount == 0);
     };
     return ArchiveEngine;
+}(FrontEngine));
+var RemoveKnowledgeEngineData = /** @class */ (function () {
+    function RemoveKnowledgeEngineData(discardTokens) {
+        if (discardTokens === void 0) { discardTokens = {}; }
+        this.discardTokens = discardTokens;
+    }
+    return RemoveKnowledgeEngineData;
+}());
+var RemoveKnowledgeEngine = /** @class */ (function (_super) {
+    __extends(RemoveKnowledgeEngine, _super);
+    /*pour REMOVE_KNOWLEDGE, il faudra gérer plusieurs comportements en fonction du champs 'type'
+    je t'envoie une liste d'ids de carte, un entier n, et type qui est soit OR/XOR
+    XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis celles des args
+    OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
+    et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]*/
+    function RemoveKnowledgeEngine(game, cardIds, n, type) {
+        var _this = _super.call(this, game, [
+            new FrontState('discardTokens', function (engine) {
+                engine.data.discardTokens = {};
+                _this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', _this.cardIds);
+                _this.addConfirmDiscardTokenSelection();
+                _this.setConfirmDiscardTokenSelectionState();
+                //this.addCancel();
+            }, function () {
+                _this.removeConfirmDiscardTokenSelection();
+                _this.game.getCurrentPlayerTable().setTimelineTokensSelectable('none');
+                //this.removeCancel();
+            }),
+            /*new FrontState<RemoveKnowledgeEngineData>(
+                'confirm',
+                engine => {
+                    const discardCount = this.data.discardCards.length;
+                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('discarded-card'));
+                    this.game.changePageTitle(`Confirm`, true);
+
+                    const label = formatTextIcons(_('Confirm discard of ${number} cards to remove ${number} <KNOWLEDGE>')).replace(/\${number}/g, ''+discardCount);
+
+                    this.game.addPrimaryActionButton('confirmArchive_btn', label, () => this.game.onArchiveCardConfirm(engine.data));
+                    this.addCancel();
+                },
+                engine => {
+                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.remove('discarded-card'));
+                    this.removeCancel();
+                    document.getElementById('confirmArchive_btn')?.remove();
+                }
+            ),*/
+        ]) || this;
+        _this.game = game;
+        _this.cardIds = cardIds;
+        _this.n = n;
+        _this.type = type;
+        _this.data = new RemoveKnowledgeEngineData();
+        _this.enterState('discardTokens');
+        return _this;
+    }
+    RemoveKnowledgeEngine.prototype.cardTokenSelectionChange = function (cardId, knowledge) {
+        if (this.currentState == 'discardTokens') {
+            this.data.discardTokens[cardId] = knowledge;
+            if (this.type === 'xor') {
+                var selectableCardsIds = knowledge > 0 ? [cardId] : this.cardIds;
+                this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', selectableCardsIds);
+            }
+            this.setConfirmDiscardTokenSelectionState();
+        }
+    };
+    /*private addCancel() {
+        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), () => this.nextState('init'));
+    }
+
+    private removeCancel() {
+        document.getElementById('restartCardCreation_btn')?.remove();
+    }*/
+    RemoveKnowledgeEngine.prototype.addConfirmDiscardTokenSelection = function () {
+        var _this = this;
+        this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', _('Confirm discarded tokens'), function () { return _this.game.onRemoveKnowledgeConfirm(_this.data.discardTokens); });
+        this.setConfirmDiscardTokenSelectionState();
+    };
+    RemoveKnowledgeEngine.prototype.removeConfirmDiscardTokenSelection = function () {
+        var _a;
+        (_a = document.getElementById('confirmDiscardTokenSelection_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+    };
+    RemoveKnowledgeEngine.prototype.setConfirmDiscardTokenSelectionState = function () {
+        var _this = this;
+        var _a;
+        var discardCount = Object.values(this.data.discardTokens).reduce(function (a, b) { return a + b; }, 0);
+        //console.log(discardCount, this.n, Object.keys(this.data.discardTokens), this.cardIds);
+        (_a = document.getElementById('confirmDiscardTokenSelection_btn')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', discardCount != this.n ||
+            (this.type === 'xor' && Object.keys(this.data.discardTokens).length > 1) ||
+            Object.keys(this.data.discardTokens).some(function (cardId) { return !_this.cardIds.includes(cardId); }));
+    };
+    return RemoveKnowledgeEngine;
 }(FrontEngine));
 var ANIMATION_MS = 500;
 var ACTION_TIMER_DURATION = 5;
@@ -2886,6 +2965,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'learn':
                 this.onEnteringLearn(args.args);
                 break;
+            case 'removeKnowledge':
+                this.onEnteringRemoveKnowledge(args.args);
+                break;
         }
     };
     /*
@@ -2943,6 +3025,11 @@ var AncientKnowledge = /** @class */ (function () {
             this.tableCenter.setTechnologyTilesSelectable(true /*, args.techs*/);
         }
     };
+    AncientKnowledge.prototype.onEnteringRemoveKnowledge = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.type);
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
@@ -2961,6 +3048,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'learn':
                 this.onLeavingLearn();
                 break;
+            case 'removeKnowledge':
+                this.onLeavingRemoveKnowledgeEngine();
+                break;
         }
     };
     AncientKnowledge.prototype.onLeavingInitialSelection = function () {
@@ -2974,6 +3064,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingArchive = function () {
         this.archiveEngine.leaveState();
         this.archiveEngine = null;
+    };
+    AncientKnowledge.prototype.onLeavingRemoveKnowledgeEngine = function () {
+        this.removeKnowledgeEngine.leaveState();
+        this.removeKnowledgeEngine = null;
     };
     AncientKnowledge.prototype.onLeavingLearn = function () {
         this.tableCenter.setTechnologyTilesSelectable(false);
@@ -3182,6 +3276,12 @@ var AncientKnowledge = /** @class */ (function () {
             (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
     };
+    AncientKnowledge.prototype.onTimelineKnowledgeClick = function (id, selectionLength) {
+        var _a;
+        if (this.gamedatas.gamestate.name == 'removeKnowledge') {
+            (_a = this.removeKnowledgeEngine) === null || _a === void 0 ? void 0 : _a.cardTokenSelectionChange(id, selectionLength);
+        }
+    };
     AncientKnowledge.prototype.onTimelineSlotClick = function (slotId) {
         this.createEngine.selectSlot(slotId);
     };
@@ -3189,8 +3289,16 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAtomicAction('actCreate', [
             data.selectedCard.id,
             data.selectedSlot,
-            data.discardCards.map(function (card) { return card.id; }),
+            data.discardCards.map(function (card) { return card.id; }).sort(),
         ]);
+    };
+    AncientKnowledge.prototype.onArchiveCardConfirm = function (data) {
+        this.takeAtomicAction('actArchive', [
+            data.discardCards.map(function (card) { return card.id; }).sort(),
+        ]);
+    };
+    AncientKnowledge.prototype.onRemoveKnowledgeConfirm = function (discardTokens) {
+        this.takeAtomicAction('actRemoveKnowledge', [discardTokens]);
     };
     AncientKnowledge.prototype.onTableCardClick = function (card) {
         /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
@@ -3270,6 +3378,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
         var notifs = [
             ['pDrawCards', undefined],
+            ['discardCards', ANIMATION_MS],
             ['pDiscardCards', undefined],
             ['createCard', undefined],
             ['fillPool', undefined],
@@ -3280,6 +3389,7 @@ var AncientKnowledge = /** @class */ (function () {
             ['refreshHand', 1],
             ['declineCard', undefined],
             ['declineSlideLeft', undefined],
+            ['removeKnowledge', ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -3307,7 +3417,11 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
         }
+        this.notifqueue.setIgnoreNotificationCheck('discardCards', function (notif) {
+            return notif.args.player_id == _this.getPlayerId();
+        });
     };
+    AncientKnowledge.prototype.notif_discardCards = function () { };
     AncientKnowledge.prototype.notif_pDrawCards = function (args) {
         return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     };
@@ -3358,14 +3472,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {
         return this.getPlayerTable(args.player_id).declineSlideLeft();
     };
-    /*
-pour REMOVE_KNOWLEDGE, il faudra gérer plusieurs comportements en fonction du champs 'type'
-je t'envoie une liste d'ids de carte, un entier n, et type qui est soit OR/XOR/SEQ
-SEQ ça veut dire qu'il faut enlever $n knowledge de chaque carte => c'est automatique donc rien à faire pour toi
-XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis celles des args
-OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
-et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]
-    */
+    AncientKnowledge.prototype.notif_removeKnowledge = function (args) {
+        var table = this.getPlayerTable(args.player_id);
+        Object.values(args.cards).forEach(function (card) { return table.setCardKnowledge(card.id, card.knowledge); });
+    };
     /*
     * [Undocumented] Called by BGA framework on any notification message
     * Handle cancelling log messages for restart turn

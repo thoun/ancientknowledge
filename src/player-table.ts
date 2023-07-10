@@ -139,8 +139,10 @@ class PlayerTable {
     }    
 
     public setCardKnowledge(cardId: string, knowledge: number) {
-        const golden = Math.floor(knowledge / 5);
-        const basic = knowledge % 5;
+        //const golden = Math.floor(knowledge / 5);
+        //const basic = knowledge % 5;
+        const golden = 0;
+        const basic = knowledge;
 
         const stockDiv = document.getElementById(`${cardId}-tokens`);
 
@@ -148,7 +150,16 @@ class PlayerTable {
             stockDiv.removeChild(stockDiv.lastChild);
         }
         while (stockDiv.childElementCount < (golden + basic)) {
-            stockDiv.insertAdjacentHTML('beforeend', `<div class="knowledge-token"></div>`);
+            const div = document.createElement('div');
+            div.classList.add('knowledge-token');
+            stockDiv.appendChild(div);
+            div.addEventListener('click', () => {
+                if (div.classList.contains('selectable')) {
+                    div.classList.toggle('selected');
+                    const card: HTMLDivElement = div.closest('.builder-card');
+                    this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
+                }
+            });
         }
 
         for (let i = 0; i < (golden + basic); i++) {
@@ -167,6 +178,13 @@ class PlayerTable {
             //slot.style.setProperty('--discard-cost', `${discardCost > 0 ? discardCost : ''}`);
             slot.dataset.discardCost = `${discardCost > 0 ? discardCost : ''}`;
             slot.classList.toggle('discard-cost', slotSelectable && discardCost > 0);
+        });
+    }
+    
+    public setTimelineTokensSelectable(selectionMode: CardSelectionMode, cardsIds: string[] = []) {
+        document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.knowledge-token`).forEach((token: HTMLDivElement) => {
+            const card: HTMLDivElement = token.closest('.builder-card');
+            token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
         });
     }
     

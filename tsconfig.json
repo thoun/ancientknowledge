@@ -40,6 +40,7 @@
         "src/front-engine.ts",
         "src/front-engine-create.ts",
         "src/front-engine-archive.ts",
+        "src/front-engine-remove-knowledge.ts",
         "src/ancientknowledge.ts",
         "src/define.ts"
     ]

@@ -211,7 +211,6 @@ $machinestates = [
     'type' => 'activeplayer',
     'description' => clienttranslate('${actplayer} must choose cards to discard before removing <KNOWLEDGE> on their timeline'),
     'descriptionmyturn' => clienttranslate('${you} must choose cards to discard before removing <KNOWLEDGE> on your timeline'),
-    'descriptionmyturnSelectDiscard' => clienttranslate('${you} must choose ${discard_number} <KNOWLEDGE> to discard'),
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actArchive', 'actRestart'],
   ],

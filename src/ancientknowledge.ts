@@ -31,6 +31,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private createEngine: CreateEngine;
     private archiveEngine: ArchiveEngine;
+    private removeKnowledgeEngine: RemoveKnowledgeEngine;
 
     constructor() {
     }
@@ -203,6 +204,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'learn':
                 this.onEnteringLearn(args.args);
                 break;
+            case 'removeKnowledge':
+                this.onEnteringRemoveKnowledge(args.args);
+                break;
         }
     }
 
@@ -264,6 +268,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
+    private onEnteringRemoveKnowledge(args: EnteringRemoveKnowledgeArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.type);
+        }
+    }
+
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
@@ -284,6 +294,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'learn':
                 this.onLeavingLearn();
                 break;
+            case 'removeKnowledge':
+                this.onLeavingRemoveKnowledgeEngine();
+                break;
         }
     }
 
@@ -299,6 +312,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingArchive() {
         this.archiveEngine.leaveState();
         this.archiveEngine = null;
+    }
+
+    private onLeavingRemoveKnowledgeEngine() {
+        this.removeKnowledgeEngine.leaveState();
+        this.removeKnowledgeEngine = null;
     }
 
     private onLeavingLearn() {
@@ -593,6 +611,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.archiveEngine?.cardSelectionChange(selection);
         }
     }
+
+    public onTimelineKnowledgeClick(id: string, selectionLength: number): void {
+        if (this.gamedatas.gamestate.name == 'removeKnowledge') {
+            this.removeKnowledgeEngine?.cardTokenSelectionChange(id, selectionLength);
+        }
+    }
     
     public onTimelineSlotClick(slotId: string): void {
         this.createEngine.selectSlot(slotId);
@@ -602,8 +626,18 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actCreate', [
             data.selectedCard.id,
             data.selectedSlot,
-            data.discardCards.map(card => card.id),
+            data.discardCards.map(card => card.id).sort(),
         ]);
+    }
+
+    public onArchiveCardConfirm(data: ArchiveEngineData): void {
+        this.takeAtomicAction('actArchive', [
+            data.discardCards.map(card => card.id).sort(),
+        ]);
+    }
+    
+    public onRemoveKnowledgeConfirm(discardTokens: { [cardId: string]: number; }): void {
+        this.takeAtomicAction('actRemoveKnowledge', [discardTokens]);
     }
 
     public onTableCardClick(card: BuilderCard): void {
@@ -698,6 +732,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         const notifs = [
             ['pDrawCards', undefined],
+            ['discardCards', ANIMATION_MS],
             ['pDiscardCards', undefined],
             ['createCard', undefined],
             ['fillPool', undefined],
@@ -708,6 +743,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['refreshHand', 1],
             ['declineCard', undefined],
             ['declineSlideLeft', undefined],
+            ['removeKnowledge', ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -741,7 +777,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 }
             });
         }
+
+        (this as any).notifqueue.setIgnoreNotificationCheck('discardCards', (notif: Notif<any>) => 
+            notif.args.player_id == this.getPlayerId()
+        );
     }
+
+    notif_discardCards() {}
 
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
         return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
@@ -801,15 +843,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_declineSlideLeft(args: NotifDeclineCardArgs) {
         return this.getPlayerTable(args.player_id).declineSlideLeft();
     }
-
-    /*
-pour REMOVE_KNOWLEDGE, il faudra gérer plusieurs comportements en fonction du champs 'type'
-je t'envoie une liste d'ids de carte, un entier n, et type qui est soit OR/XOR/SEQ
-SEQ ça veut dire qu'il faut enlever $n knowledge de chaque carte => c'est automatique donc rien à faire pour toi
-XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis celles des args
-OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
-et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]
-    */
+    
+    notif_removeKnowledge(args: NotifRemoveKnowledgeArgs) {
+        const table = this.getPlayerTable(args.player_id);
+        Object.values(args.cards).forEach(card => table.setCardKnowledge(card.id, card.knowledge));
+    }
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

@@ -1442,6 +1442,16 @@ html, .mode_3d #game_play_area_background {
 .knowledge-token.golden {
   background-position-x: 100%;
 }
+.knowledge-token.selectable {
+  cursor: pointer;
+  pointer-events: all;
+}
+.knowledge-token.selectable:not(.selected) {
+  box-shadow: 0 0 5px 5px white;
+}
+.knowledge-token.selected {
+  box-shadow: 0 0 5px 5px red;
+}
 
 #last-round {
   margin: 5px -5px -5px;

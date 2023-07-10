@@ -177,6 +177,18 @@ html, .mode_3d #game_play_area_background {
   &.golden {
     background-position-x: 100%;
   }
+
+  &.selectable {
+    &:not(.selected) {
+      box-shadow: 0 0 5px 5px white;
+    }
+    cursor: pointer;
+    pointer-events: all;
+  }
+
+  &.selected {
+    box-shadow: 0 0 5px 5px red;
+  }
 }
 
 #last-round {

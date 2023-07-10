@@ -48,12 +48,15 @@ interface AncientKnowledgeGame extends Game {
     onTableTechnologyTileClick(destination: TechnologyTile): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
+    onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
     changePageTitle(suffix?: string, save?: boolean): void;
     addPrimaryActionButton(id, text, callback, zone?): void;
     addSecondaryActionButton(id, text, callback, zone?): void
     onCreateCardConfirm(data: CreateEngineData): void;
+    onArchiveCardConfirm(data: ArchiveEngineData): void;
+    onRemoveKnowledgeConfirm(discardTokens: { [cardId: string]: number; }): void;
     onTimelineSlotClick(slotId: string): void;
 }
 
@@ -79,6 +82,12 @@ interface EnteringArchiveArgs {
 
 interface EnteringLearnArgs {
     techs: any[]; // TODO
+}
+
+interface EnteringRemoveKnowledgeArgs {
+    n: number;
+    cardIds: string[];
+    type: 'or' | 'xor';
 }
 
 interface EnteringChooseNewCardArgs {
@@ -165,4 +174,16 @@ interface NotifRefreshHandArgs {
 interface NotifDeclineCardArgs {
     player_id: number;
     card: BuilderCard;
+}
+
+// declineCard
+interface NotifDeclineCardArgs {
+    player_id: number;
+    card: BuilderCard;
+}
+
+// removeKnowledge
+interface NotifRemoveKnowledgeArgs {
+    player_id: number;
+    cards: { [cardId: string]: BuilderCard };
 }
