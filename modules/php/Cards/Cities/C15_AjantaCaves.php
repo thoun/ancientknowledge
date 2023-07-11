@@ -20,5 +20,13 @@ class C15_AjantaCaves extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Move another monument to an available space in your Timeline.')];
+    $this->implemented = true;
+  }
+
+  public function getDeclineEffect()
+  {
+    return [
+      'action' => MOVE_BUILDING,
+    ];
   }
 }

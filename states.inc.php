@@ -254,6 +254,32 @@ $machinestates = [
     'possibleactions' => ['actDiscard', 'actRestart'],
   ],
 
+  ST_SWAP => [
+    'name' => 'swap',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must swap two monuments in their timeline'),
+    'descriptionmyturn' => clienttranslate('${you} must swap two monuments in your timeline'),
+    'descriptionfixed' => clienttranslate('${actplayer} must swap ${card_name} with another monument in their timeline'),
+    'descriptionmyturnfixed' => clienttranslate('${you} must swap ${card_name} with another building in your timeline'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actSwap', 'actRestart'],
+  ],
+
+  ST_MOVE_BUILDING => [
+    'name' => 'moveBuilding',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must move a monument to an available space in their timeline'),
+    'descriptionmyturn' => clienttranslate('${you} must move a monument to an available space in your timeline'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actMoveBuilding', 'actRestart'],
+  ],
+
+  ST_DESTROY => [
+    'name' => 'destroy',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___

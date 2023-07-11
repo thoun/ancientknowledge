@@ -14,5 +14,13 @@ class T10_PlanetaryGrid extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Move 1 monument in your Timeline to any other available space.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => MOVE_BUILDING,
+    ];
   }
 }

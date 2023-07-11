@@ -18,5 +18,14 @@ class C14_Bagan extends \AK\Models\Building
     $this->startingSpace = 5;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Swap this monument with another monument of your Timeline.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => SWAP,
+      'args' => ['cardId' => $this->id],
+    ];
   }
 }

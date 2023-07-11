@@ -20,5 +20,23 @@ class A31_SaqqaraVases extends \AK\Models\Artefact
     $this->effect = [
       clienttranslate('You may discard this card from your board. If you do, move one monument to another available space.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    return [
+      'type' => NODE_SEQ,
+      'optional' => true,
+      'childs' => [
+        [
+          'action' => DESTROY,
+          'args' => ['cardId' => $this->id],
+        ],
+        [
+          'action' => MOVE_BUILDING,
+        ],
+      ],
+    ];
   }
 }
