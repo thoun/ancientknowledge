@@ -14,7 +14,22 @@ class T21_AncientHebrew extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [
-      clienttranslate('Choose 1 monument in each of your opponents’ Timelines and add 1 <KNOWLEDGE> to each. Draw 1 card.'),
+      clienttranslate('Choose 1 monument in each of your opponents\' Timelines and add 1 <KNOWLEDGE> to each. Draw 1 card.'),
+    ];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      [
+        'action' => ADD_KNOWLEDGE,
+        'args' => ['n' => 1],
+      ],
+      [
+        'action' => DRAW,
+        'args' => ['n' => 1],
+      ],
     ];
   }
 }

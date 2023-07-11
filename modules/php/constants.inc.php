@@ -47,6 +47,7 @@ const ST_DISCARD = 24;
 const ST_SWAP = 25;
 const ST_MOVE_BUILDING = 26;
 const ST_DESTROY = 27;
+const ST_ADD_KNOWLEDGE = 28;
 
 // ENGINE
 const ST_RESOLVE_STACK = 90;
@@ -92,6 +93,7 @@ const DISCARD = 'DISCARD';
 const DESTROY = 'DESTROY';
 const SWAP = 'SWAP';
 const MOVE_BUILDING = 'MOVE_BUILDING';
+const ADD_KNOWLEDGE = 'ADD_KNOWLEDGE';
 
 const CREATE = 'CREATE';
 const LEARN = 'LEARN';
