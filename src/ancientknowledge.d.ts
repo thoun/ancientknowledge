@@ -2,14 +2,24 @@
  * Your game interfaces
  */
 
+interface PlayerIcons {
+    artefact: number;
+    city: number;
+    //city-timeline: number;
+    megalith: number;
+    //megalith-timeline: number;
+    pyramid: number;
+    //pyramid-timeline: number;
+}
+
 interface AncientKnowledgePlayer extends Player {
     playerNo: number;
     lostKnowledge: number;
 
     hand?: BuilderCard[]; // only set for currentPlayer
     handCount: number;
-    timeline: BuilderCard[]; // locationArg is slot id. 10 * row + col, or 1 to 12
-    //artifacts: BuilderCard[]; // locationArg is slot id. 1 to 5
+    timeline: BuilderCard[];
+    artefacts: BuilderCard[];
     past: BuilderCard[];
     techs: TechnologyTile[];
 }
@@ -177,7 +187,6 @@ interface NotifClearTurnArgs {
 // refreshUI
 interface NotifRefreshUIArgs {
     datas: {
-        cards;
         players: { [playerId: number]: AncientKnowledgePlayer };
         techs: TechnologyTile[];
     };

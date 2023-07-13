@@ -28,6 +28,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private _notif_uid_to_log_id = [];
     private _notif_uid_to_mobile_log_id = [];
     private _last_notif;
+    private _last_tooltip_id = 0;
 
     private createEngine: CreateEngine;
     private archiveEngine: ArchiveEngine;
@@ -125,17 +126,42 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public onEnteringState(stateName: string, args: any) {
         log('Entering state: ' + stateName, args.args);
 
-        if (args.args && args.args.descSuffix) {
+        if (args.args?.descSuffix) {
           this.changePageTitle(args.args.descSuffix);
         }
   
-        if (args.args && args.args.optionalAction) {
-          let base = args.args.descSuffix ? args.args.descSuffix : '';
+        if (args.args?.optionalAction) {
+          let base = args.args.descSuffix ?? '';
           this.changePageTitle(base + 'skippable');
+        }
+        
+        if (args.args?.source) {
+            if (this.gamedatas.gamestate.descriptionmyturn.search('{source}') === -1) {
+              if (args.args.sourceId) {
+                let card = this.builderCardsManager.getFullCardById(args.args.sourceId);
+                /* TODO let uid = this.registerCustomTooltip(this.tplZooCard(card, true));
+    
+                $('pagemaintitletext').insertAdjacentHTML(
+                  'beforeend',
+                  ` (<span class="ark-log-card-name" id="${uid}">${_(args.args.source)}</span>)`
+                );
+                this.attachRegisteredTooltips();*/
+
+                $('pagemaintitletext').insertAdjacentHTML(
+                    'beforeend',
+                    ` (<span class="title-log-card-name" id="tooltip-${this._last_tooltip_id}">${_(args.args.source)}</span>)`
+                );
+                this.setTooltip(`tooltip-${this._last_tooltip_id}`, card.name);
+                this._last_tooltip_id++;
+                
+              } else {
+                $('pagemaintitletext').insertAdjacentHTML('beforeend', ` (${_(args.args.source)})`);
+              }
+            }
         }
 
         if (/* TODO? this._activeStates.includes(stateName) ||*/ (this as any).isCurrentPlayerActive()) {  
-            if (args.args && args.args.optionalAction && !args.args.automaticAction) {
+            if (args.args?.optionalAction && !args.args.automaticAction) {
             this.addSecondaryActionButton(
                 'btnPassAction',
                 _('Pass'),
@@ -178,21 +204,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
             }
         }
   
-        /* TODO? if (this.isCurrentPlayerActive() && args.args) {
+        if ((this as any).isCurrentPlayerActive() && args.args) {
             // Anytime buttons
             args.args.anytimeActions?.forEach((action, i) => {
                 let msg = action.desc;
-                msg = msg.log ? this.fsr(msg.log, msg.args) : _(msg);
-                msg = this.formatString(msg);
+                msg = msg.log ? this.format_string_recursive(msg.log, msg.args) : _(msg);
+                msg = formatTextIcons(msg);
 
                 this.addPrimaryActionButton(
                 'btnAnytimeAction' + i,
                 msg,
-                () => this.takeAction('actAnytimeAction', { id: i }, false),
+                () => this.takeAction('actAnytimeAction', { id: i }/*, false*/),
                 'anytimeActions'
                 );
             });
-        }*/
+        }
 
         switch (stateName) {
             case 'create':
@@ -375,11 +401,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ($('btnChoice' + choice.id)) return;
   
         let desc = formatTextIcons(this.translate(choice.description));
+        if (desc == '' && choice.args.cardId) {
+            const card = this.builderCardsManager.getFullCardById(choice.args.cardId);
+            desc = card.name;
+        }
   
         // Add source if any
         let source = _(choice.source ?? '');
         if (choice.sourceId) {
-          let card = this.builderCardsManager.getFullCardById(choice.sourceId);
+          const card = this.builderCardsManager.getFullCardById(choice.sourceId);
           source = this.format_string_recursive('${card_name}', { i18n: ['card_name'], card_name: _(card.name), card_id: card.id });
         }
   
@@ -899,8 +929,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     notif_refreshUI(args: NotifRefreshUIArgs) {
-        //  TODO refresh cards ?
-        //  TODO refresh players
+        Object.entries(args.datas.players).forEach(entry => {
+            const playerId = Number(entry[0]);
+            const player = entry[1];
+            this.getPlayerTable(playerId).refreshUI(player);
+            this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
+        });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
     }
     
@@ -909,7 +943,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }  
 
     notif_declineCard(args: NotifDeclineCardArgs) {
-        return this.getPlayerTable(args.player_id).declineCard(args.card, args.n);
+        const { player_id, card, n } = args;
+        this.lostKnowledgeCounters[player_id].incValue(n);
+        return this.getPlayerTable(player_id).declineCard(card, n);
     }  
 
     notif_declineSlideLeft(args: NotifDeclineCardArgs) {
