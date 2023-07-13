@@ -3139,15 +3139,18 @@ var AncientKnowledge = /** @class */ (function () {
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.endInitialSelection();
     };
     AncientKnowledge.prototype.onLeavingCreate = function () {
-        this.createEngine.leaveState();
+        var _a;
+        (_a = this.createEngine) === null || _a === void 0 ? void 0 : _a.leaveState();
         this.createEngine = null;
     };
     AncientKnowledge.prototype.onLeavingArchive = function () {
-        this.archiveEngine.leaveState();
+        var _a;
+        (_a = this.archiveEngine) === null || _a === void 0 ? void 0 : _a.leaveState();
         this.archiveEngine = null;
     };
     AncientKnowledge.prototype.onLeavingRemoveKnowledgeEngine = function () {
-        this.removeKnowledgeEngine.leaveState();
+        var _a;
+        (_a = this.removeKnowledgeEngine) === null || _a === void 0 ? void 0 : _a.leaveState();
         this.removeKnowledgeEngine = null;
     };
     AncientKnowledge.prototype.onLeavingLearn = function () {
@@ -3532,6 +3535,7 @@ var AncientKnowledge = /** @class */ (function () {
             _this.addLogClass();
         });
         var notifs = [
+            ['drawCards', ANIMATION_MS],
             ['pDrawCards', undefined],
             ['discardCards', ANIMATION_MS],
             ['pDiscardCards', undefined],
@@ -3575,26 +3579,42 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
         }
+        this.notifqueue.setIgnoreNotificationCheck('drawCards', function (notif) {
+            return notif.args.player_id == _this.getPlayerId();
+        });
         this.notifqueue.setIgnoreNotificationCheck('discardCards', function (notif) {
             return notif.args.player_id == _this.getPlayerId();
         });
     };
-    AncientKnowledge.prototype.notif_discardCards = function () { };
+    AncientKnowledge.prototype.notif_drawCards = function (args) {
+        var player_id = args.player_id, n = args.n;
+        this.handCounters[player_id].incValue(Number(n));
+    };
     AncientKnowledge.prototype.notif_pDrawCards = function (args) {
+        var player_id = args.player_id, cards = args.cards;
+        this.handCounters[player_id].incValue(cards.length);
         return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     };
+    AncientKnowledge.prototype.notif_discardCards = function (args) {
+        var player_id = args.player_id, n = args.n;
+        this.handCounters[player_id].incValue(-Number(n));
+    };
     AncientKnowledge.prototype.notif_pDiscardCards = function (args) {
-        this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
+        var player_id = args.player_id, cards = args.cards;
+        this.handCounters[player_id].incValue(-cards.length);
+        this.getPlayerTable(player_id).hand.removeCards(cards);
         return Promise.resolve(true);
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
-        if (args.card.id[0] == 'T') {
-            var tile = this.technologyTilesManager.getFullCard(args.card);
-            return this.getPlayerTable(args.player_id).addTechnologyTile(tile);
+        var player_id = args.player_id, card = args.card;
+        if (card.id[0] == 'T') {
+            var tile = this.technologyTilesManager.getFullCard(card);
+            return this.getPlayerTable(player_id).addTechnologyTile(tile);
         }
         else {
-            var card = this.builderCardsManager.getFullCard(args.card);
-            return this.getPlayerTable(args.player_id).createCard(card);
+            this.handCounters[player_id].incValue(-1);
+            var fullCard = this.builderCardsManager.getFullCard(card);
+            return this.getPlayerTable(player_id).createCard(fullCard);
         }
     };
     AncientKnowledge.prototype.notif_fillPool = function (args) {
@@ -3622,13 +3642,16 @@ var AncientKnowledge = /** @class */ (function () {
             var playerId = Number(entry[0]);
             var player = entry[1];
             _this.getPlayerTable(playerId).refreshUI(player);
+            _this.handCounters[playerId].setValue(player.handCount);
             _this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
     };
     AncientKnowledge.prototype.notif_refreshHand = function (args) {
-        return this.getPlayerTable(args.player_id).refreshHand(args.hand);
+        var player_id = args.player_id, hand = args.hand;
+        this.handCounters[player_id].setValue(hand.length);
+        return this.getPlayerTable(player_id).refreshHand(hand);
     };
     AncientKnowledge.prototype.notif_declineCard = function (args) {
         var player_id = args.player_id, card = args.card, n = args.n;

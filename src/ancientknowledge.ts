@@ -351,17 +351,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onLeavingCreate() {
-        this.createEngine.leaveState();
+        this.createEngine?.leaveState();
         this.createEngine = null;
     }
 
     private onLeavingArchive() {
-        this.archiveEngine.leaveState();
+        this.archiveEngine?.leaveState();
         this.archiveEngine = null;
     }
 
     private onLeavingRemoveKnowledgeEngine() {
-        this.removeKnowledgeEngine.leaveState();
+        this.removeKnowledgeEngine?.leaveState();
         this.removeKnowledgeEngine = null;
     }
 
@@ -855,6 +855,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         });
 
         const notifs = [
+            ['drawCards', ANIMATION_MS],
             ['pDrawCards', undefined],
             ['discardCards', ANIMATION_MS],
             ['pDiscardCards', undefined],
@@ -906,29 +907,46 @@ class AncientKnowledge implements AncientKnowledgeGame {
             });
         }
 
+        (this as any).notifqueue.setIgnoreNotificationCheck('drawCards', (notif: Notif<any>) => 
+            notif.args.player_id == this.getPlayerId()
+        );
         (this as any).notifqueue.setIgnoreNotificationCheck('discardCards', (notif: Notif<any>) => 
             notif.args.player_id == this.getPlayerId()
         );
     }
 
-    notif_discardCards() {}
+    notif_drawCards(args: NotifPDrawCardsArgs) {
+        const { player_id, n } = args;    
+        this.handCounters[player_id].incValue(Number(n));  
+    }
 
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
+        const { player_id, cards } = args;        
+        this.handCounters[player_id].incValue(cards.length);
         return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     }
 
+    notif_discardCards(args: NotifPDrawCardsArgs) {
+        const { player_id, n } = args;    
+        this.handCounters[player_id].incValue(-Number(n));  
+    }
+
     notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
-        this.getPlayerTable(args.player_id).hand.removeCards(args.cards);
+        const { player_id, cards } = args;    
+        this.handCounters[player_id].incValue(-cards.length);    
+        this.getPlayerTable(player_id).hand.removeCards(cards);
         return Promise.resolve(true);
     }
 
     notif_createCard(args: NotifCreateCardsArgs) {
-        if (args.card.id[0] == 'T') {
-            const tile = this.technologyTilesManager.getFullCard(args.card as TechnologyTile);
-            return this.getPlayerTable(args.player_id).addTechnologyTile(tile);
+        const { player_id, card } = args;    
+        if (card.id[0] == 'T') {
+            const tile = this.technologyTilesManager.getFullCard(card as TechnologyTile);
+            return this.getPlayerTable(player_id).addTechnologyTile(tile);
         } else {
-            const card = this.builderCardsManager.getFullCard(args.card as BuilderCard);
-            return this.getPlayerTable(args.player_id).createCard(card);
+            this.handCounters[player_id].incValue(-1);   
+            const fullCard = this.builderCardsManager.getFullCard(card as BuilderCard);
+            return this.getPlayerTable(player_id).createCard(fullCard);
         }
     }
 
@@ -959,6 +977,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             const playerId = Number(entry[0]);
             const player = entry[1];
             this.getPlayerTable(playerId).refreshUI(player);
+            this.handCounters[playerId].setValue(player.handCount);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
             this.updateIcons(playerId, player.icons);
         });
@@ -966,7 +985,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     notif_refreshHand(args: NotifRefreshHandArgs) {
-        return this.getPlayerTable(args.player_id).refreshHand(args.hand);
+        const { player_id, hand } = args;
+        this.handCounters[player_id].setValue(hand.length);
+        return this.getPlayerTable(player_id).refreshHand(hand);
     }  
 
     notif_declineCard(args: NotifDeclineCardArgs) {

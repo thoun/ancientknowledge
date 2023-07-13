@@ -139,6 +139,7 @@ interface EnteringResolveChoiceArgs {
 
 // pDrawCards
 interface NotifPDrawCardsArgs {
+    n: number;
     player_id: number;
     cards: BuilderCard[];
 }
