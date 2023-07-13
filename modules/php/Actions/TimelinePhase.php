@@ -20,7 +20,25 @@ class TimelinePhase extends \AK\Models\Action
 
   public function stTimelinePhase()
   {
-    // TODO
+    $player = Players::getActive();
+    $childs = [];
+    $cards = $player->getTimeline()->merge($player->getArtefacts());
+    foreach ($cards as $card) {
+      if ($card->getActivation() == TIMELINE && method_exists($card, 'getTimelineEffect')) {
+        $childs[] = [
+          'action' => \ACTIVATE_CARD,
+          'args' => ['cardId' => $card->getId(), 'activation' => TIMELINE],
+        ];
+      }
+    }
+
+    if (!empty($childs)) {
+      $this->insertAsChild([
+        'type' => \NODE_PARALLEL,
+        'childs' => $childs,
+      ]);
+    }
+
     $this->resolveAction();
   }
 }

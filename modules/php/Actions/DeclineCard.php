@@ -52,7 +52,7 @@ class DeclineCard extends \AK\Models\Action
     // Move to past
     $this->insertAsChild([
       'action' => \DECLINE_CARD,
-      'args' => ['method' => 'stMoveToPast', 'cardId' => $cardId],
+      'args' => ['method' => 'stMoveToPast', 'cardId' => $card->getId()],
     ]);
     $this->resolveAction();
   }

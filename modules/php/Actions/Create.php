@@ -127,7 +127,7 @@ class Create extends \AK\Models\Action
     Notifications::createCard($player, $card, $sourceId);
 
     // Check immediate effect
-    if ($card->getActivation() == \IMMEDIATE) {
+    if ($card->getActivation() == \IMMEDIATE && method_exists($card, 'getImmediateEffect')) {
       $this->insertAsChild([
         'action' => \ACTIVATE_CARD,
         'args' => ['cardId' => $card->getId(), 'activation' => IMMEDIATE],

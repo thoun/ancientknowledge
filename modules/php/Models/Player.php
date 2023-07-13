@@ -40,6 +40,7 @@ class Player extends \AK\Helpers\DB_Model
     $data['hand'] = $current ? $hand->toArray() : [];
     $data['handCount'] = $hand->count();
     $data['timeline'] = $this->getTimeline()->toArray();
+    $data['artefacts'] = $this->getArtefacts()->toArray();
     $data['past'] = $this->getPast()->toArray();
     $data['techs'] = $this->getTechTiles()->toArray();
     $data['icons'] = $this->getIcons();

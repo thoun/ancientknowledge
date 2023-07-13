@@ -21,9 +21,8 @@ class ChooseAction extends \AK\Models\Action
     return clienttranslate('Choose an action');
   }
 
-  public function argsChooseActionCard()
+  public function argsChooseAction()
   {
-    $player = Players::getActive();
     return ['n' => $this->getCtxArg('n')];
   }
 

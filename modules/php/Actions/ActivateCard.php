@@ -74,6 +74,12 @@ class ActivateCard extends \AK\Models\Action
     return is_null($flowTree) ? false : $flowTree->isIndependent($player);
   }
 
+  public function isIrreversible($player = null)
+  {
+    $flowTree = $this->getFlowTree($player);
+    return is_null($flowTree) ? false : $flowTree->isIrreversible($player);
+  }
+
   public function getDescription($ignoreResources = false)
   {
     $flowTree = $this->getFlowTree($this->getPlayer());
