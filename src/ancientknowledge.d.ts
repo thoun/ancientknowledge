@@ -15,6 +15,7 @@ interface PlayerIcons {
 interface AncientKnowledgePlayer extends Player {
     playerNo: number;
     lostKnowledge: number;
+    icons: PlayerIcons;
 
     hand?: BuilderCard[]; // only set for currentPlayer
     handCount: number;

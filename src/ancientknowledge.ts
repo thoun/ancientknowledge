@@ -11,6 +11,8 @@ const ACTION_TIMER_DURATION = 5;
 const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 const LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 
+const ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
+
 class AncientKnowledge implements AncientKnowledgeGame {
     public animationManager: AnimationManager;
     public builderCardsManager: BuilderCardsManager;
@@ -22,6 +24,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private playersTables: PlayerTable[] = [];
     private handCounters: Counter[] = [];
     private lostKnowledgeCounters: Counter[] = [];
+
+    private artifactCounters: Counter[] = [];
+    private cityCounters: Counter[] = [];
+    private cityTimelineCounters: Counter[] = [];
+    private megalithCounters: Counter[] = [];
+    private megalithTimelineCounters: Counter[] = [];
+    private pyramidCounters: Counter[] = [];
+    private pyramidTimelineCounters: Counter[] = [];
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
@@ -509,31 +519,28 @@ class AncientKnowledge implements AncientKnowledgeGame {
             document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<div class="vp icon"></div>`);
             document.getElementById(`icon_point_${player.id}`).remove();
 
-            /**/
             let html = `<div class="counters">
-                <div id="playerhand-counter-wrapper-${player.id}" class="playerhand-counter">
+                <div id="playerhand-counter-wrapper-${player.id}">
                     <div class="player-hand-card"></div> 
                     <span id="playerhand-counter-${player.id}"></span>
                 </div>
             
-                <div id="lost-knowledge-counter-wrapper-${player.id}" class="lost-knowledge-counter">
+                <div id="lost-knowledge-counter-wrapper-${player.id}">
                     <div class="lost-knowledge icon"></div>
                     <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
-            </div><div class="counters">
-            
-                <div id="recruit-counter-wrapper-${player.id}" class="recruit-counter">
-                    <div class="recruit icon"></div>
-                    <span id="recruit-counter-${player.id}"></span>
-                </div>
-            
-                <div id="bracelet-counter-wrapper-${player.id}" class="bracelet-counter">
-                    <div class="bracelet icon"></div>
-                    <span id="bracelet-counter-${player.id}"></span>
-                </div>
-                
             </div>
+            <div class="icons counters">`;
+            
+            html += ICONS_COUNTERS_TYPES.map(type => `
+                <div id="${type}-counter-wrapper-${player.id}">
+                    <div class="${type} icon"></div>
+                    <span id="${type}-counter-${player.id}"></span>
+                    ${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
+                </div>
+            `).join('');
+            html += `</div>
             <div>${playerId == gamedatas.firstPlayerId ? `<div id="first-player">${_('First player')}</div>` : ''}</div>`;
 
             dojo.place(html, `player_board_${player.id}`);
@@ -542,13 +549,40 @@ class AncientKnowledge implements AncientKnowledgeGame {
             handCounter.create(`playerhand-counter-${playerId}`);
             handCounter.setValue(player.handCount);
             this.handCounters[playerId] = handCounter;
+            this.setTooltip(`playerhand-counter-wrapper-${player.id}`, _('Cards in hand'));
 
             this.lostKnowledgeCounters[playerId] = new ebg.counter();
             this.lostKnowledgeCounters[playerId].create(`lost-knowledge-counter-${playerId}`);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
+            this.setTooltip(`lost-knowledge-counter-wrapper-${player.id}`, _('Lost knowledge'));
+
+            ICONS_COUNTERS_TYPES.forEach(type => {
+                const artifact = type == 'artifact';
+
+                this[`${type}Counters`][playerId] = new ebg.counter();
+                this[`${type}Counters`][playerId].create(`${type}-counter-${playerId}`);
+                this[`${type}Counters`][playerId].setValue(player.icons[artifact ? 'artefact' : type]);
+
+                if (artifact) {
+                    this.setTooltip(`${type}-counter-wrapper-${player.id}`, _('Artifact cards'));
+                } else {
+                    this[`${type}TimelineCounters`][playerId] = new ebg.counter();
+                    this[`${type}TimelineCounters`][playerId].create(`${type}-timeline-counter-${playerId}`);
+                    this[`${type}TimelineCounters`][playerId].setValue(player.icons[`${type}-timeline`]);
+
+                    let typeName = '';
+                    switch (type) {
+                        case 'city': typeName = _('City'); break;
+                        case 'megalith': typeName = _('Megalith'); break;
+                        case 'pyramid': typeName = _('Pyramid'); break;
+                    }
+
+                    this.setTooltip(`${type}-counter-wrapper-${player.id}`, _('${type} cards in the past (${type} cards in the timeline)').replace(/\${type}/g, typeName));
+                }
+            });
         });
 
-        this.setTooltipToClass('lost-knowledge-counter', _('Lost knowledge'));
+        
     }
 
     private createPlayerTables(gamedatas: AncientKnowledgeGamedatas) {
@@ -564,26 +598,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.playersTables.push(table);
     }
 
-    private updateGains(playerId: number, gains: { [type: number]: number }) {
-        Object.entries(gains).forEach(entry => {
-            const type = Number(entry[0]);
-            const amount = entry[1];
-
-            if (amount != 0) {
-                switch (type) {
-                    /*case VP:
-                        this.setScore(playerId, (this as any).scoreCtrl[playerId].getValue() + amount);
-                        break;
-                    case BRACELET:
-                        this.setBracelets(playerId, this.braceletCounters[playerId].getValue() + amount);
-                        break;
-                    case RECRUIT:
-                        this.setRecruits(playerId, this.recruitCounters[playerId].getValue() + amount);
-                        break;
-                    case REPUTATION:
-                        this.setReputation(playerId, this.tableCenter.getReputation(playerId) + amount);
-                        break;*/
-                }
+    private updateIcons(playerId: number, icons: PlayerIcons) {
+        ICONS_COUNTERS_TYPES.forEach(type => {
+            const artifact = type == 'artifact';
+    
+            this[`${type}Counters`][playerId].toValue(icons[artifact ? 'artefact' : type]);
+    
+            if (!artifact) {
+                this[`${type}TimelineCounters`][playerId].toValue(icons[`${type}-timeline`]);
             }
         });
     }
@@ -854,6 +876,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
                 const promise = this[`notif_${notif[0]}`](notifDetails.args);
 
+                if (notifDetails.args.player_id && notifDetails.args.icons) {
+                    this.updateIcons(notifDetails.args.player_id, notifDetails.args.icons);
+                }
+
                 // tell the UI notification ends, if the function returned a promise
                 promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
 
@@ -934,6 +960,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             const player = entry[1];
             this.getPlayerTable(playerId).refreshUI(player);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
+            this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
     }
