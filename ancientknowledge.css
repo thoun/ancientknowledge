@@ -1079,10 +1079,6 @@ body > .card {
 .player-board .icon {
   margin-right: 5px;
 }
-.player-board .icon.vp {
-  width: 24px;
-  height: 24px;
-}
 .player-board .counters {
   display: flex;
   align-items: center;
@@ -1091,8 +1087,18 @@ body > .card {
 .player-board .counters > div {
   flex: 1;
 }
-.player-board .counters > div:last-child {
-  flex: 2;
+.player-board .counters.icons > div {
+  display: flex;
+  align-items: center;
+}
+.player-board .counters.icons .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 3px;
+}
+.player-board .counters .timeline-counter {
+  margin-left: 2px;
+  font-size: 75%;
 }
 .player-board .player-hand-card {
   display: inline-block;
@@ -1333,7 +1339,7 @@ html, .mode_3d #game_play_area_background {
   display: inline-block;
   width: 32px;
   height: 32px;
-  background-size: auto 100%;
+  background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;

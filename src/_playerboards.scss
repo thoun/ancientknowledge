@@ -10,11 +10,6 @@
 
   .icon {
     margin-right: 5px;
-
-    &.vp {
-      width: 24px;
-      height: 24px;
-    }
   }
 
   .counters {
@@ -24,10 +19,27 @@
 
     >div {
       flex: 1;
+    }
+    
 
-      &:last-child {
-        flex: 2;
+    &.icons {
+
+      >div {
+        display: flex;
+        align-items: center;
       }
+
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 3px;
+      }
+    }
+
+    .timeline-counter {
+      margin-left: 2px;
+      font-size: 75%;
     }
   }
 

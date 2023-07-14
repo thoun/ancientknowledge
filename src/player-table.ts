@@ -57,8 +57,7 @@ class PlayerTable {
                 sort: (a: BuilderCard, b: BuilderCard) => a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0),
             });
             this.hand.onCardClick = (card: BuilderCard) => this.game.onHandCardClick(card);   
-            this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);     
-            this.refreshHand(player.hand);
+            this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);
         }
 
         const timelineDiv = document.getElementById(`player-table-${this.playerId}-timeline`);
@@ -66,7 +65,7 @@ class PlayerTable {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
-        player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
+        
         timelineSlotsIds.map(slotId => timelineDiv.querySelector(`[data-slot-id="${slotId}"]`)).forEach((element: HTMLDivElement) => element.addEventListener('click', () => {
             if (element.classList.contains('selectable')) {
                 this.game.onTimelineSlotClick(element.dataset.slotId);
@@ -81,17 +80,36 @@ class PlayerTable {
             mapCardToSlot: card => card.location,
             gap: '36px',
         });
-        // TODO this.artifacts.addCards(player.artifacts);
 
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
         this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {
         });
-        this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
             this.technologyTilesDecks[type] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
             });
+        });
+
+        this.refreshUI(player);
+    }
+    
+    public refreshUI(player: AncientKnowledgePlayer): void {
+        if (this.currentPlayer) { 
+            this.refreshHand(player.hand);
+        }
+
+        this.timeline.removeAll();
+        player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
+
+        this.artifacts.removeAll();
+        this.artifacts.addCards(this.game.builderCardsManager.getFullCards(player.artefacts));
+
+        this.past.removeAll();
+        this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
+        
+        ['ancient', 'writing', 'secret'].forEach(type => {
+            this.technologyTilesDecks[type].removeAll();
             const tiles = this.game.technologyTilesManager.getFullCards(player.techs).filter(tile => tile.type == type);
             this.technologyTilesDecks[type].addCards(tiles);
         });
