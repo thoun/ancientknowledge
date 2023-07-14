@@ -142,25 +142,30 @@ class Notifications
     ]);
   }
 
-  public static function drawCards($player, $cards, $privateMsg = null, $publicMsg = null, $args = [])
+  public static function drawCards($player, $cards, $sourceId)
   {
-    self::notifyAll(
-      'drawCards',
-      $publicMsg ?? clienttranslate('${player_name} draws ${n} card(s) from the deck'),
-      $args + [
+    if (is_null($sourceId)) {
+      self::notifyAll('drawCards', clienttranslate('${player_name} draws ${n} card(s) from the deck'), [
         'player' => $player,
         'n' => count($cards),
-      ]
-    );
-    self::notify(
-      $player,
-      'pDrawCards',
-      $privateMsg ?? clienttranslate('You draw ${card_names} from the deck'),
-      $args + [
+      ]);
+      self::notify($player, 'pDrawCards', clienttranslate('You draw ${card_names} from the deck'), [
         'player' => $player,
         'cards' => is_array($cards) ? $cards : $cards->toArray(),
-      ]
-    );
+      ]);
+    } else {
+      $source = Effects::get($sourceId);
+      self::notifyAll('drawCards', clienttranslate('${player_name} draws ${n} card(s) from the deck (${card_name})'), [
+        'player' => $player,
+        'n' => count($cards),
+        'card' => $source,
+      ]);
+      self::notify($player, 'pDrawCards', clienttranslate('You draw ${card_names} from the deck (${card_name})'), [
+        'player' => $player,
+        'cards' => is_array($cards) ? $cards : $cards->toArray(),
+        'card' => $source,
+      ]);
+    }
   }
 
   public static function discardCards($player, $cards, $privateMsg = null, $publicMsg = null, $args = [], $privateArgs = null)

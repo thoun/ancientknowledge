@@ -233,6 +233,7 @@ $machinestates = [
     'name' => 'activateCard',
     'type' => 'game',
     'action' => 'stAtomicAction',
+    'possibleactions' => ['actPassOptionalAction'],
   ],
 
   ST_REMOVE_KNOWLEDGE => [

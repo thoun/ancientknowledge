@@ -1,0 +1,13 @@
+Backend:
+ - refill tech tiles
+ - detect mid game
+ - detect end of game
+ - add irreversibility
+
+Frontend:
+ - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
+ - after selecting knownledge to remove, some stay red and card stay selected
+ - flew wrap on card for big number of knowledge on them
+ - bug when changing turns : During notification gameStateChange
+this.createEngine is undefined
+AncientKnowledge.prototype.onLeavingCreate@https://studio.boardgamearena.com:8084/data/themereleases/current/games/ancientknowledge/999999-9999

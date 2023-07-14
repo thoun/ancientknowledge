@@ -52,7 +52,8 @@ class Draw extends \AK\Models\Action
       // Draw cards and notify
       $cards = Cards::draw($player, $m);
       // Stats::incCardsDrawn($player, $nInDeck);
-      Notifications::drawCards($player, $cards); // TODO : add source
+      $sourceId = $this->ctx->getSourceId();
+      Notifications::drawCards($player, $cards, $sourceId);
     }
 
     $this->resolveAction();
