@@ -672,6 +672,7 @@ body > .card {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 5px;
 }
 .builder-card .front .background[data-type=A] {
@@ -1455,6 +1456,7 @@ html, .mode_3d #game_play_area_background {
   vertical-align: middle;
   background-image: url("img/knowledge-tokens.png");
   background-position-x: 0%;
+  flex-shrink: 0;
 }
 .knowledge-token.golden {
   background-position-x: 100%;

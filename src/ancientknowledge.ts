@@ -719,7 +719,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     public onTimelineSlotClick(slotId: string): void {
-        this.createEngine.selectSlot(slotId);
+        this.createEngine?.selectSlot(slotId);
     }
 
     public onCreateCardConfirm(data: CreateEngineData): void {

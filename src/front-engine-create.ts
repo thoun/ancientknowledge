@@ -108,6 +108,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                 },
                 engine => {
                     engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.remove('discarded-card'));
+                    this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
                     this.removeCancel();
                     document.getElementById('confirmCreate_btn')?.remove();
                 }

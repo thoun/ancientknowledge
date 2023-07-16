@@ -2492,6 +2492,9 @@ var PlayerTable = /** @class */ (function () {
         document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".knowledge-token").forEach(function (token) {
             var card = token.closest('.builder-card');
             token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
+            if (selectionMode == 'none') {
+                token.classList.remove('selected');
+            }
         });
     };
     PlayerTable.prototype.declineCard = function (card, lostKnowledge) {
@@ -2622,10 +2625,11 @@ var CreateEngine = /** @class */ (function (_super) {
                 _this.game.addPrimaryActionButton('confirmCreate_btn', label, function () { return _this.game.onCreateCardConfirm(engine.data); });
                 _this.addCancel();
             }, function (engine) {
-                var _a;
+                var _a, _b;
                 engine.data.discardCards.forEach(function (card) { var _a; return (_a = _this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.remove('discarded-card'); });
+                (_a = _this.game.builderCardsManager.getCardElement(engine.data.selectedCard)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
                 _this.removeCancel();
-                (_a = document.getElementById('confirmCreate_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+                (_b = document.getElementById('confirmCreate_btn')) === null || _b === void 0 ? void 0 : _b.remove();
             }),
         ]) || this;
         _this.game = game;
@@ -3421,7 +3425,8 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onTimelineSlotClick = function (slotId) {
-        this.createEngine.selectSlot(slotId);
+        var _a;
+        (_a = this.createEngine) === null || _a === void 0 ? void 0 : _a.selectSlot(slotId);
     };
     AncientKnowledge.prototype.onCreateCardConfirm = function (data) {
         this.takeAtomicAction('actCreate', [

@@ -243,6 +243,9 @@ class PlayerTable {
         document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.knowledge-token`).forEach((token: HTMLDivElement) => {
             const card: HTMLDivElement = token.closest('.builder-card');
             token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
+            if (selectionMode == 'none') {
+                token.classList.remove('selected');
+            }
         });
     }
     
