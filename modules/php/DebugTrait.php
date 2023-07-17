@@ -15,7 +15,7 @@ trait DebugTrait
 {
   function tp()
   {
-    Cards::setupNewGame([], []);
+    $this->actTakeAtomicAction('actSwap', ['P23_PyramidsOfXian', 'C4_Byblos']);
   }
 
   function engDisplay()

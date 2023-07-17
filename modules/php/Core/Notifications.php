@@ -280,6 +280,20 @@ class Notifications
     ]);
   }
 
+  public static function swapCards($player, $card1, $card2, $source)
+  {
+    self::notifyAll(
+      'swapCards',
+      \clienttranslate('${player_name} swaps ${card_name} with ${card2_name} on their timeline (${card3_name})'),
+      [
+        'player' => $player,
+        'card' => $card1,
+        'card2' => $card2,
+        'card3' => $source,
+      ]
+    );
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___
@@ -337,6 +351,13 @@ class Notifications
       $data['card2_name'] = $data['card2']->getName();
       $data['i18n'][] = 'card2_name';
       $data['preserve'][] = 'card2_id';
+    }
+
+    if (isset($data['card3'])) {
+      $data['card3_id'] = $data['card3']->getId();
+      $data['card3_name'] = $data['card3']->getName();
+      $data['i18n'][] = 'card3_name';
+      $data['preserve'][] = 'card3_id';
     }
 
     if (isset($data['cards'])) {

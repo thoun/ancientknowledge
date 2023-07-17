@@ -4,7 +4,7 @@ use AK\Core\Engine;
 use AK\Core\Game;
 use AK\Core\Globals;
 use AK\Core\Notifications;
-use AK\Managers\ZooCards;
+use AK\Managers\Effects;
 use AK\Managers\Players;
 use AK\Helpers\Log;
 use AK\Helpers\FlowConvertor;
@@ -79,24 +79,11 @@ class Action
   {
     return $this->getCtxArgs()[$v] ?? null;
   }
-  // Useful for the 5 actions corresponding to action cards
-  public function getStrength()
-  {
-    return $this->getCtxArg('strength');
-  }
-  public function getLevel()
-  {
-    return $this->getCtxArg('lvl');
-  }
-  public function isUpgraded()
-  {
-    return $this->getLevel() == 2;
-  }
 
-  // Useful for the animals effects
-  public function getN()
+  public function getSource()
   {
-    return $this->getCtxArg('n');
+    $sourceId = $this->ctx->getSourceId();
+    return is_null($sourceId) ? null : Effects::get($sourceId);
   }
 
   public function resolveAction($args = [], $checkpoint = false)

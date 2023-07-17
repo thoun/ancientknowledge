@@ -12,3 +12,11 @@ Frontend:
    - fillingUpTechBoard notif
    - display deck / discard of level 1/2 tech tiles with number of cards left in deck ?
 
+ - player board : display number of cards in the past
+
+ - Swap action : can be tried with 'P23_PyramidsOfXian'
+    - receive cardIds in timeline
+    - card_id is either null if player can swap any two cards, or is the id of a card he must swap with another one (preselect this one)
+    - actSwap(cardId1, cardId2) => cardId1 should always be the one of the "forced" card if any
+    - notification
+
