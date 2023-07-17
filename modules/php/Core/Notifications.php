@@ -127,6 +127,36 @@ class Notifications
     ]);
   }
 
+  public static function clearTechBoard($board, $left)
+  {
+    self::notifyAll('clearTechBoard', \clienttranslate('Clearing up technology tile n°${board} by discarding ${card_names}'), [
+      'board' => $board,
+      'cards' => $left->toArray(),
+    ]);
+  }
+
+  public static function fillUpTechBoard($board, $cards)
+  {
+    self::notifyAll('fillUpTechBoard', \clienttranslate('Filling up technology tile n°${board} with ${card_names}'), [
+      'board' => $board,
+      'cards' => $cards->toArray(),
+    ]);
+  }
+
+  public static function reformTechDeck($deck)
+  {
+    $level = $deck == 'deck_1' ? 1 : 2;
+    self::notifyAll(
+      'reformTechDeck',
+      $level == 1
+        ? \clienttranslate('Reforming deck of level 1 technology cards')
+        : \clienttranslate('Reforming deck of level 2 technology cards'),
+      [
+        'level' => $level,
+      ]
+    );
+  }
+
   ///////////////////////////
   //    ____              _
   //   / ___|__ _ _ __ __| |___

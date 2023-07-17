@@ -24,7 +24,9 @@ class Learn extends \AK\Models\Action
     $pool = Technologies::getPool();
     $techs = [];
     $check = $this->getCtxArg('checkRequirements') ?? true;
+    $boards = [1 => [], 2 => [], 3 => []];
     foreach ($pool as $tId => $tech) {
+      $boards[$tech->getBoard()][] = $tId;
       if ($check && !$tech->canBePlayed($player)) {
         continue;
       }
@@ -35,14 +37,24 @@ class Learn extends \AK\Models\Action
       $techs[] = $tId;
     }
 
-    return $isDoable ? false : $techs;
+    // Compute the cards that triggers a refill
+    $irreversibleIds = [];
+    foreach ($boards as $i => $ids) {
+      if (count($ids) == 2 && Technologies::canRefillBoard($i, 2)) {
+        $irreversibleIds = array_merge($irreversibleIds, $ids);
+      }
+    }
+
+    return $isDoable ? false : [$techs, $irreversibleIds];
   }
 
   public function argsLearn()
   {
     $player = Players::getActive();
+    list($techs, $irreversibleIds) = $this->getPlayableTechs($player);
     return [
-      'techs' => $this->getPlayableTechs($player),
+      'techs' => $techs,
+      'irreversibleIds' => $irreversibleIds,
     ];
   }
 
@@ -51,16 +63,37 @@ class Learn extends \AK\Models\Action
     // Sanity checks
     self::checkAction('actLearn');
     $player = Players::getActive();
-    $techs = $this->argsLearn()['techs'];
+    $args = $this->argsLearn();
+    $techs = $args['techs'];
     if (!in_array($techId, $techs)) {
       throw new \BgaVisibleSystemException('Invalid tech to learn. Should not happen');
     }
 
     // Move Tech
     $tech = Technologies::getSingle($techId);
+    $board = $tech->getBoard();
     $tech->setLocation('inPlay');
     $tech->setPId($player->getId());
     Notifications::learnTech($player, $tech);
+
+    // Check if a row is almost empty
+    $left = Technologies::getBoard($board);
+    if ($left->count() == 1) {
+      // Clear board
+      $deckId = Technologies::getCorrespondingDeckId($board);
+      Technologies::move($left->getIds(), "discard_$deckId");
+      Notifications::clearTechBoard($board, $left);
+
+      // Try to fill it up
+      if (Technologies::canRefillBoard($board)) {
+        $cards = Technologies::pickForLocation(3, "deck_$deckId", "board_$board");
+        Notifications::fillUpTechBoard($board, $cards);
+      } else {
+        Notifications::message(clienttranslate('Not enough cards in deck to fill up technology tile n°${board}'), [
+          'board' => $board,
+        ]);
+      }
+    }
 
     // Check immediate effect
     if ($tech->getActivation() == \IMMEDIATE) {
@@ -73,6 +106,7 @@ class Learn extends \AK\Models\Action
     // Check listener
     // TODO
 
-    $this->resolveAction(['techId' => $techId]);
+    $irreversible = in_array($techId, $args['irreversibleIds']);
+    $this->resolveAction(['techId' => $techId], $irreversible);
   }
 }

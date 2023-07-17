@@ -4,6 +4,8 @@ use AK\Core\Game;
 use AK\Core\Globals;
 use AK\Core\Notifications;
 use AK\Managers\Players;
+use AK\Managers\Technologies;
+use AK\Managers\Cards;
 
 /**
  * Class that allows to log DB change: useful for undo feature
@@ -194,6 +196,9 @@ class Log extends \APP_DbObject
 
     // Force to clear cached informations
     Globals::fetch();
+    Technologies::invalidate();
+    Cards::invalidate();
+    Players::invalidate();
 
     // Notify
     $datas = Game::get()->getAllDatas();

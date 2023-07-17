@@ -42,6 +42,12 @@ class Technology extends \AK\Helpers\DB_Model
     return true;
   }
 
+  public function getBoard()
+  {
+    $t = explode('_', $this->location);
+    return $t[0] == 'board' ? ((int) $t[1]) : null;
+  }
+
   /**
    * Event modifiers template
    **/

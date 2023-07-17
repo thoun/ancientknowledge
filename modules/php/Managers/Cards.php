@@ -10,8 +10,9 @@ use AK\Helpers\Collection;
 
 /* Class to manage all the cards for Ancient Knowledge */
 
-class Cards extends \AK\Helpers\Pieces
+class Cards extends \AK\Helpers\CachedPieces
 {
+  protected static $datas = null;
   protected static $table = 'cards';
   protected static $prefix = 'card_';
   protected static $customFields = ['player_id', 'knowledge'];
@@ -151,9 +152,8 @@ class Cards extends \AK\Helpers\Pieces
    */
   public static function getHand($pId, $type = null)
   {
-    return self::getFilteredQuery($pId, 'hand')
-      ->orderBy(['card_state', 'ASC'])
-      ->get()
+    return self::getFiltered($pId, 'hand')
+      ->orderBy('state', 'ASC')
       ->filter(function ($card) use ($type) {
         return $type == null || $card->getType() == $type;
       });
@@ -164,9 +164,8 @@ class Cards extends \AK\Helpers\Pieces
    */
   public static function getTimeline($pId, $type = null)
   {
-    return self::getFilteredQuery($pId, 'timeline-%')
-      ->orderBy('card_location')
-      ->get()
+    return self::getFiltered($pId, 'timeline-%')
+      ->orderBy('location')
       ->filter(function ($card) use ($type) {
         return $type == null || $card->getType() == $type;
       });
@@ -174,9 +173,7 @@ class Cards extends \AK\Helpers\Pieces
 
   public static function getOnTimelineSpace($pId, $space)
   {
-    return self::getFilteredQuery($pId, "timeline-$space[0]-$space[1]")
-      ->get()
-      ->first();
+    return self::getFiltered($pId, "timeline-$space[0]-$space[1]")->first();
   }
 
   /**
@@ -184,7 +181,7 @@ class Cards extends \AK\Helpers\Pieces
    */
   public static function getArtefacts($pId)
   {
-    return self::getFilteredQuery($pId, 'artefact-%')->get();
+    return self::getFiltered($pId, 'artefact-%');
   }
 
   /**
@@ -201,10 +198,8 @@ class Cards extends \AK\Helpers\Pieces
    */
   public static function getPast($pId, $type = null)
   {
-    return self::getFilteredQuery($pId, 'past')
-      ->get()
-      ->filter(function ($card) use ($type) {
-        return $type == null || $card->getType() == $type;
-      });
+    return self::getFiltered($pId, 'past')->filter(function ($card) use ($type) {
+      return $type == null || $card->getType() == $type;
+    });
   }
 }

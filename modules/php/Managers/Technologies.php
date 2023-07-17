@@ -10,15 +10,17 @@ use AK\Helpers\Collection;
 
 /* Class to manage all the tech cards for Ancient Knowledge */
 
-class Technologies extends \AK\Helpers\Pieces
+class Technologies extends \AK\Helpers\CachedPieces
 {
+  protected static $datas = null;
   protected static $table = 'technologies';
   protected static $prefix = 'technology_';
   protected static $customFields = ['player_id'];
   protected static $autoIncrement = false;
   protected static $autoremovePrefix = false;
   protected static $autoreshuffle = true;
-  protected static $autoreshuffleCustom = ['deck' => 'discard'];
+  protected static $autoreshuffleCustom = ['deck_1' => 'discard_1', 'deck_2' => 'discard_2'];
+  protected static $autoreshuffleListener = ['obj' => 'Technologies', 'method' => 'onReformDeck'];
 
   protected static function cast($card)
   {
@@ -92,9 +94,28 @@ class Technologies extends \AK\Helpers\Pieces
    */
   public static function getPool($type = null)
   {
-    return self::getInLocation('board_%')->filter(function ($card) use ($type) {
-      return is_null($type) || $card->getType() == $type;
-    });
+    return self::getInLocation('board_%')->where('type', $type);
+  }
+
+  public function getBoard($board)
+  {
+    return self::getInLocation("board_$board");
+  }
+
+  public static function getCorrespondingDeckId($board)
+  {
+    return $board == 1 || ($board == 2 && Globals::isFirstHalf()) ? 1 : 2;
+  }
+
+  public static function canRefillBoard($board, $n = 3)
+  {
+    $deckId = self::getCorrespondingDeckId($board);
+    return self::countInLocation("deck_$deckId") + self::countInLocation("discard_$deckId") >= $n;
+  }
+
+  public function onReformDeck($deck)
+  {
+    Notifications::reformTechDeck($deck);
   }
 
   /**
@@ -144,10 +165,6 @@ class Technologies extends \AK\Helpers\Pieces
    */
   public static function getOfPlayer($pId, $type = null)
   {
-    return self::getFilteredQuery($pId, 'inPlay')
-      ->get()
-      ->filter(function ($card) use ($type) {
-        return $type == null || $card->getType() == $type;
-      });
+    return self::getFiltered($pId, 'inPlay')->where('type', $type);
   }
 }

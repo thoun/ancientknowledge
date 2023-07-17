@@ -10,8 +10,9 @@ use AK\Core\Notifications;
  * Players manager : allows to easily access players ...
  *  a player is an instance of Player class
  */
-class Players extends \AK\Helpers\DB_Manager
+class Players extends \AK\Helpers\CachedDB_Manager
 {
+  protected static $datas = null;
   protected static $table = 'player';
   protected static $primary = 'player_id';
   protected static function cast($row)
@@ -46,20 +47,13 @@ class Players extends \AK\Helpers\DB_Manager
     return (int) Game::get()->getCurrentPId();
   }
 
-  public function getAll()
-  {
-    return self::DB()->get(false);
-  }
-
   /*
    * get : returns the Player object for the given player ID
    */
   public function get($pId = null)
   {
     $pId = $pId ?: self::getActiveId();
-    return self::DB()
-      ->where($pId)
-      ->getSingle();
+    return parent::get($pId);
   }
 
   public function getActive()
@@ -96,7 +90,7 @@ class Players extends \AK\Helpers\DB_Manager
    */
   public function count()
   {
-    return self::DB()->count();
+    return self::getAll()->count();
   }
 
   /*
