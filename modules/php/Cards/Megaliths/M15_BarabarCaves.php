@@ -23,7 +23,7 @@ class M15_BarabarCaves extends \AK\Models\Building
     $this->activation = DECLINE;
     $this->effect = [
       clienttranslate(
-        'Choose 1 monument in one of your opponents’ Timelines and place up to 3 <LOST_KNOWLEDGE> from your board onto it.'
+        'Choose 1 monument in one of your opponents\' Timelines and place up to 3 <LOST_KNOWLEDGE> from your board onto it.'
       ),
     ];
   }

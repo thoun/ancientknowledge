@@ -9,7 +9,7 @@ class M24_TlalocsStatue extends \AK\Models\Building
     $this->id = 'M24_TlalocsStatue';
     $this->type = MEGALITH;
     $this->number = 24;
-    $this->name = clienttranslate('Tlaloc’s Statue');
+    $this->name = clienttranslate('Tlaloc\'s Statue');
     $this->country = clienttranslate('Mexico');
     $this->text = [
       clienttranslate('Representing the god of water, this monolith measures about 7 meters and weighs around 165 tons.'),

@@ -206,7 +206,7 @@ trait EngineTrait
   {
     // Check user preference to bypass if DISABLED is picked
     $pref = Players::getActive()->getPref(OPTION_CONFIRM);
-    if ($pref == OPTION_CONFIRM_DISABLED && !Players::getActive()->canUseMap(4)) {
+    if ($pref == OPTION_CONFIRM_DISABLED) {
       $this->actConfirmTurn();
     }
   }

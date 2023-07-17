@@ -9,7 +9,7 @@ class M33_MerchantsTable extends \AK\Models\Building
     $this->id = 'M33_MerchantsTable';
     $this->type = MEGALITH;
     $this->number = 33;
-    $this->name = clienttranslate('Merchants’ Table');
+    $this->name = clienttranslate('Merchants\' Table');
     $this->country = clienttranslate('France');
     $this->text = [
       clienttranslate(

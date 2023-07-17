@@ -100,7 +100,7 @@ class Engine
     $node = self::$tree->getNextUnresolved();
     // Are we done ?
     if ($node == null) {
-      if (Globals::getEngineChoices() == 0 && !Players::getActive()->canUseMap(4)) {
+      if (Globals::getEngineChoices() == 0) {
         self::confirm(); // No choices were made => auto confirm
       } else {
         // Confirm/restart

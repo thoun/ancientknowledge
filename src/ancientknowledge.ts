@@ -652,7 +652,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             </div>
             <div class="help-section">
                 <div class="icon take-card"></div>
-                <div class="help-label">${_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player’s Crew Zone (without taking any assets).")}</div>
+                <div class="help-label">${_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player\'s Crew Zone (without taking any assets).")}</div>
             </div>
 
             <h1>${_("Powers of the artifacts (variant option)")}</h1>

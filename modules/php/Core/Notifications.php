@@ -157,6 +157,20 @@ class Notifications
     );
   }
 
+  public static function midGameReached($player, $discarded)
+  {
+    self::notifyAll(
+      'midGameReached',
+      \clienttranslate(
+        '${player_name} has 7 buildings in their past, triggering the middle of the game. The technology tile n°2 is cleared by discarding ${card_names}'
+      ),
+      [
+        'player' => $player,
+        'cards' => $discarded->toArray(),
+      ]
+    );
+  }
+
   ///////////////////////////
   //    ____              _
   //   / ___|__ _ _ __ __| |___
@@ -239,9 +253,9 @@ class Notifications
 
   public static function rotateCards($player, $cards)
   {
-    self::notifyAll($player, 'rotateCards', clienttranslate('${player_name} rotates ${card_names} in their past'), [
+    self::notifyAll('rotateCards', clienttranslate('${player_name} rotates ${card_names} in their past'), [
       'player' => $player,
-      'cards' => is_array($cards) ? $cards : $cards->toArray(),
+      'cards' => $cards->toArray(),
     ]);
   }
 

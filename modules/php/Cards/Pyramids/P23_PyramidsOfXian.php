@@ -9,7 +9,7 @@ class P23_PyramidsOfXian extends \AK\Models\Building
     $this->id = 'P23_PyramidsOfXian';
     $this->type = PYRAMID;
     $this->number = 23;
-    $this->name = clienttranslate('Pyramids Of Xi’an');
+    $this->name = clienttranslate('Pyramids Of Xi\'an');
     $this->country = clienttranslate('China');
     $this->text = [clienttranslate('Made of only clay and earth, they measure between 25 and 100 meters high.')];
 

@@ -15,7 +15,7 @@ trait DebugTrait
 {
   function tp()
   {
-    $this->actTakeAtomicAction('actSwap', ['P23_PyramidsOfXian', 'C4_Byblos']);
+    $this->actTakeAtomicAction('actExcavate', [['M12_StatuesOfRamesses', 'P23_PyramidsOfXian']]);
   }
 
   function engDisplay()

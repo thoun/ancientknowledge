@@ -2,8 +2,10 @@
 namespace AK\Actions;
 use AK\Managers\Cards;
 use AK\Managers\Players;
+use AK\Managers\Technologies;
 use AK\Core\Notifications;
 use AK\Core\Stats;
+use AK\Core\Globals;
 use AK\Helpers\Utils;
 
 class DeclineCard extends \AK\Models\Action
@@ -27,6 +29,12 @@ class DeclineCard extends \AK\Models\Action
   public function isAutomatic($player = null)
   {
     return true;
+  }
+
+  public function isIrreversible($player = null)
+  {
+    $player = $player ?? Players::getActive();
+    return Globals::isFirstHalf() && $this->getCtxArg('method') == 'stMoveToPast' && $player->getPast()->count() == 6;
   }
 
   public function getCard()
@@ -62,13 +70,35 @@ class DeclineCard extends \AK\Models\Action
     $player = Players::getActive();
     $cardId = $this->getCtxArg('cardId');
     $card = Cards::getSingle($cardId);
+    // Some card destroy themselves if knowledge still on them
+    if ($card->getLocation() != 'discard') {
+      $card->setLocation('past');
+      $knowledge = $card->getKnowledge();
+      $card->setKnowledge(0);
+      $player->incLostKnowledge($knowledge);
+      Notifications::declineCard($player, $card, $knowledge);
+    }
 
-    $card->setLocation('past');
-    $knowledge = $card->getKnowledge();
-    $card->setKnowledge(0);
-    $player->incLostKnowledge($knowledge);
-    Notifications::declineCard($player, $card, $knowledge);
+    // Check if mid game is reached
+    $irreversible = false;
+    if (Globals::isFirstHalf() && $player->getPast()->count() == 7) {
+      $irreversible = true;
+      $board = 2;
+      // Empty board 2 and fill it with lvl 2 cards
+      $discarded = Technologies::getBoard($board);
+      Technologies::move($discarded->getIds(), 'discard_1');
+      Notifications::midGameReached($player, $discarded);
+      Globals::setFirstHalf(false);
 
-    $this->resolveAction();
+      // Try to fill it up
+      if (Technologies::canRefillBoard($board)) {
+        $cards = Technologies::pickForLocation(3, 'deck_2', "board_$board");
+        Notifications::fillUpTechBoard($board, $cards);
+      }
+    }
+
+    // TODO : end of game detection
+
+    $this->resolveAction([], $irreversible);
   }
 }

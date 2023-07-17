@@ -9,7 +9,7 @@ class A34_OronceFinEsMap extends \AK\Models\Artefact
     $this->id = 'A34_OronceFinEsMap';
     $this->type = ARTEFACT;
     $this->number = 34;
-    $this->name = clienttranslate('Oronce FinÉ’s Map');
+    $this->name = clienttranslate('Oronce FinÉ\'s Map');
     $this->country = clienttranslate('France');
     $this->text = [
       clienttranslate(

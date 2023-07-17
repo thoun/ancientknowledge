@@ -9,7 +9,7 @@ class M32_GiantsTomb extends \AK\Models\Building
     $this->id = 'M32_GiantsTomb';
     $this->type = MEGALITH;
     $this->number = 32;
-    $this->name = clienttranslate('Giants’ Tomb');
+    $this->name = clienttranslate('Giants\' Tomb');
     $this->country = clienttranslate('Italy');
     $this->text = [
       clienttranslate('Funeral monument made up of collective burials belonging to the Nuragic culture present in Sardinia.'),

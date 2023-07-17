@@ -9,7 +9,7 @@ class P22_SneferusPyramid extends \AK\Models\Building
     $this->id = 'P22_SneferusPyramid';
     $this->type = PYRAMID;
     $this->number = 22;
-    $this->name = clienttranslate('Sneferu’s Pyramid');
+    $this->name = clienttranslate('Sneferu\'s Pyramid');
     $this->country = clienttranslate('Egypt');
     $this->text = [
       clienttranslate(

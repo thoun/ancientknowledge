@@ -9,7 +9,7 @@ class A9_Tzolkin extends \AK\Models\Artefact
     $this->id = 'A9_Tzolkin';
     $this->type = ARTEFACT;
     $this->number = 9;
-    $this->name = clienttranslate('Tzolk’in');
+    $this->name = clienttranslate('Tzolk\'in');
     $this->country = clienttranslate('Mexique');
     $this->text = [
       clienttranslate('This ritual calendar of 260 days is shared by all the pre-Columbian civilizations of Mesoamerica.'),

@@ -9,7 +9,7 @@ class M10_TheFairiesRock extends \AK\Models\Building
     $this->id = 'M10_TheFairiesRock';
     $this->type = MEGALITH;
     $this->number = 10;
-    $this->name = clienttranslate('The Fairies’ Rock');
+    $this->name = clienttranslate('The Fairies\' Rock');
     $this->country = clienttranslate('France');
     $this->text = [
       clienttranslate(

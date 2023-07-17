@@ -121,6 +121,9 @@ class Create extends \AK\Models\Action
     if (!$card->isArtefact()) {
       $knowledge = $card->getInitialKnowledge();
       $knowledge -= $card->getInitialKnowledgeDiscount();
+      foreach ($player->getTimeline()->merge($player->getArtefacts()) as $card2) {
+        $knowledge -= $card2->getKnowledgeReduction($card);
+      }
       $card->setKnowledge($knowledge);
     }
     $sourceId = $this->ctx->getSourceId();

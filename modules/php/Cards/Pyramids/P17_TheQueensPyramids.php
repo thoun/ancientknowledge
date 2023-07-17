@@ -9,7 +9,7 @@ class P17_TheQueensPyramids extends \AK\Models\Building
     $this->id = 'P17_TheQueensPyramids';
     $this->type = PYRAMID;
     $this->number = 17;
-    $this->name = clienttranslate('The Queen’s Pyramids');
+    $this->name = clienttranslate('The Queen\'s Pyramids');
     $this->country = clienttranslate('Egypt');
     $this->text = [clienttranslate('The pyramid built for Queen Meritites measures 31 meters high.')];
 

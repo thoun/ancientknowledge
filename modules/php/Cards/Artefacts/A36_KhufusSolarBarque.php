@@ -9,7 +9,7 @@ class A36_KhufusSolarBarque extends \AK\Models\Artefact
     $this->id = 'A36_KhufusSolarBarque';
     $this->type = ARTEFACT;
     $this->number = 36;
-    $this->name = clienttranslate('Khufu’s Solar Barque');
+    $this->name = clienttranslate('Khufu\'s Solar Barque');
     $this->country = clienttranslate('Egypt');
     $this->text = [
       clienttranslate(

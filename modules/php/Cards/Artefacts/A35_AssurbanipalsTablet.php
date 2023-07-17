@@ -9,7 +9,7 @@ class A35_AssurbanipalsTablet extends \AK\Models\Artefact
     $this->id = 'A35_AssurbanipalsTablet';
     $this->type = ARTEFACT;
     $this->number = 35;
-    $this->name = clienttranslate('Assurbanipal’s Tablet');
+    $this->name = clienttranslate('Assurbanipal\'s Tablet');
     $this->country = clienttranslate('Iraq');
     $this->text = [
       clienttranslate(

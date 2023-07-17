@@ -36,13 +36,12 @@ class Excavate extends \AK\Models\Action
     // Sanity checks
     self::checkAction('actExcavate');
     $player = Players::getActive();
-    $cards = $this->argsExcavate()['cards'];
-    if (!empty(array_diff($cardIds, $cards))) {
+    if (!empty(array_diff($cardIds, $this->argsExcavate()['cardIds']))) {
       throw new \BgaVisibleSystemException('Invalid cards to rotate. Should not happen');
     }
 
     // Rotate cards
-    $cards = Cards::get($cardIds);
+    $cards = Cards::getMany($cardIds);
     Cards::rotate($cardIds);
     Notifications::rotateCards($player, $cards);
 
