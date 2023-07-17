@@ -16,10 +16,24 @@ class A15_LudditeFlute extends \AK\Models\Artefact
     $this->effect = [
       clienttranslate('You may discard this card from your board. If you do, straighten up to 4 monuments from your Past.'),
     ];
+    $this->implemented = true;
   }
 
   public function getTimelineEffect()
   {
-    return null;
+    return [
+      'type' => NODE_SEQ,
+      'optional' => true,
+      'childs' => [
+        [
+          'action' => DESTROY,
+          'args' => ['cardId' => $this->id],
+        ],
+        [
+          'action' => STRAIGHTEN,
+          'args' => ['n' => 4],
+        ],
+      ],
+    ];
   }
 }

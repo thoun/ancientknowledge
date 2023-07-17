@@ -6,6 +6,10 @@ Backend:
 
 Frontend:
  - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
+ - error : Uncaught (in promise) Error: Impossible to add card to slot "timeline-0-0" : slot "timeline-0-0" doesn't exists.
+ 
+ - resolve choices : grayed out button contains only the source, not the description of what could have been granted if requirements were met
+
  - Learn :
    - irreversibleIds => askConfirmation
    - clearTechBoard notif
@@ -20,3 +24,10 @@ Frontend:
     - actSwap(cardId1, cardId2) => cardId1 should always be the one of the "forced" card if any
     - notification
 
+ - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
+    => works when you refresh
+
+ - destroy action: notif destroyCard => similar to discardCards but always from the timeline and always a SINGLE card
+ - straighten action: notif straightenCard => set rotated back to 0
+    => I changed something here : cards now have an extra field "rotated" that is either 0 or 1 instead of relying on state
+    that way cards in the past can be ordered by entry date (or anything else) without messing with rotated status

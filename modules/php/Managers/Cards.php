@@ -15,7 +15,7 @@ class Cards extends \AK\Helpers\CachedPieces
   protected static $datas = null;
   protected static $table = 'cards';
   protected static $prefix = 'card_';
-  protected static $customFields = ['player_id', 'knowledge'];
+  protected static $customFields = ['player_id', 'knowledge', 'rotated'];
   protected static $autoIncrement = false;
   protected static $autoremovePrefix = false;
   protected static $autoreshuffle = true;
@@ -123,7 +123,11 @@ class Cards extends \AK\Helpers\CachedPieces
 
   public static function rotate($cardIds)
   {
-    return self::setState($cardIds, 1);
+    $cards = self::getMany($cardIds);
+    foreach ($cards as $card) {
+      $card->rotate();
+    }
+    return $cards;
   }
 
   ///////////////////////////////////////////////

@@ -281,6 +281,12 @@ $machinestates = [
     'action' => 'stAtomicAction',
   ],
 
+  ST_STRAIGHTEN => [
+    'name' => 'straighten',
+    'type' => 'game',
+    'action' => 'stAtomicAction',
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___

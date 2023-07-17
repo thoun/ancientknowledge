@@ -103,7 +103,7 @@ class ActivateCard extends \AK\Models\Action
     $player = $this->getPlayer();
     $node = $this->ctx;
     $flow = $this->getFlow($player);
-    if ($node->isMandatory()) {
+    if ($node->isOptional()) {
       $flow['optional'] = false; // Remove optional to avoid double confirmation UX
     }
     // Add tag about that card

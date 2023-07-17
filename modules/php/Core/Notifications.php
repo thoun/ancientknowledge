@@ -294,6 +294,22 @@ class Notifications
     );
   }
 
+  public static function destroyCard($player, $card)
+  {
+    self::notifyAll('destroyCard', clienttranslate('${player_name} discards ${card_name}'), [
+      'player' => $player,
+      'card' => $card,
+    ]);
+  }
+
+  public static function straighten($player, $cards)
+  {
+    self::notifyAll('straightenCards', \clienttranslate('${player_name} straightens ${card_names} in their past'), [
+      'player' => $player,
+      'cards' => $cards,
+    ]);
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___

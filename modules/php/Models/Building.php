@@ -25,6 +25,7 @@ class Building extends \AK\Helpers\DB_Model
     'state' => ['card_state', 'int'],
     'pId' => ['player_id', 'int'],
     'knowledge' => ['knowledge', 'int'],
+    'rotated' => ['rotated', 'int'],
   ];
 
   protected $staticAttributes = [
@@ -57,7 +58,17 @@ class Building extends \AK\Helpers\DB_Model
 
   public function isRotated()
   {
-    return $this->state == 1;
+    return $this->rotated == 1;
+  }
+
+  public function rotate()
+  {
+    $this->setRotated(1);
+  }
+
+  public function straighten()
+  {
+    $this->setRotated(0);
   }
 
   public function getTimelineSpace()

@@ -26,6 +26,8 @@ class Actions
     DECLINE_PHASE => 'DeclinePhase',
     DECLINE_CARD => 'DeclineCard',
     SWAP => 'Swap',
+    DESTROY => 'Destroy',
+    STRAIGHTEN => 'Straighten',
   ];
 
   public static function get($actionId, $ctx = null)

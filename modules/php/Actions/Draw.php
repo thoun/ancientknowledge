@@ -56,6 +56,6 @@ class Draw extends \AK\Models\Action
       Notifications::drawCards($player, $cards, $sourceId);
     }
 
-    $this->resolveAction();
+    $this->resolveAction([], true);
   }
 }
