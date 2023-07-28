@@ -83,6 +83,12 @@ class PlayerTable {
 
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
         this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {
+            verticalShift: '0px',
+            horizontalShift: '5px',
+            direction: 'horizontal',
+            counter: {
+                hideWhenEmpty: true,
+            },
         });
         
         ['ancient', 'writing', 'secret'].forEach(type => {

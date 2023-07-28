@@ -1154,10 +1154,10 @@ var CardStock = /** @class */ (function () {
         var selectableCardsClass = this.getSelectableCardClass();
         var unselectableCardsClass = this.getUnselectableCardClass();
         if (selectableCardsClass) {
-            element.classList.toggle(selectableCardsClass, selectable);
+            element === null || element === void 0 ? void 0 : element.classList.toggle(selectableCardsClass, selectable);
         }
         if (unselectableCardsClass) {
-            element.classList.toggle(unselectableCardsClass, !selectable);
+            element === null || element === void 0 ? void 0 : element.classList.toggle(unselectableCardsClass, !selectable);
         }
         if (!selectable && this.isSelected(card)) {
             this.unselectCard(card, true);
@@ -1192,7 +1192,7 @@ var CardStock = /** @class */ (function () {
         }
         var element = this.getCardElement(card);
         var selectableCardsClass = this.getSelectableCardClass();
-        if (!element.classList.contains(selectableCardsClass)) {
+        if (!element || !element.classList.contains(selectableCardsClass)) {
             return;
         }
         if (this.selectionMode === 'single') {
@@ -1363,7 +1363,7 @@ var CardStock = /** @class */ (function () {
         var selectableCardsClass = this.getSelectableCardClass();
         var unselectableCardsClass = this.getUnselectableCardClass();
         var selectedCardsClass = this.getSelectedCardClass();
-        cardElement.classList.remove(selectableCardsClass, unselectableCardsClass, selectedCardsClass);
+        cardElement === null || cardElement === void 0 ? void 0 : cardElement.classList.remove(selectableCardsClass, unselectableCardsClass, selectedCardsClass);
     };
     return CardStock;
 }());
@@ -1645,6 +1645,23 @@ var SlotStock = /** @class */ (function (_super) {
             _this.createSlot(slotId);
         });
     };
+    /**
+     * Add new slots ids. Will not change nor empty the existing ones.
+     *
+     * @param slotsIds the new slotsIds. Will be merged with the old ones.
+     */
+    SlotStock.prototype.addSlotsIds = function (newSlotsIds) {
+        var _a;
+        var _this = this;
+        if (newSlotsIds.length == 0) {
+            // no change
+            return;
+        }
+        (_a = this.slotsIds).push.apply(_a, newSlotsIds);
+        newSlotsIds.forEach(function (slotId) {
+            _this.createSlot(slotId);
+        });
+    };
     SlotStock.prototype.canAddCard = function (card, settings) {
         var _a, _b;
         if (!this.contains(card)) {
@@ -1756,11 +1773,11 @@ var AllVisibleDeck = /** @class */ (function (_super) {
     __extends(AllVisibleDeck, _super);
     function AllVisibleDeck(manager, element, settings) {
         var _this = this;
-        var _a;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         _this = _super.call(this, manager, element, settings) || this;
         _this.manager = manager;
         _this.element = element;
-        element.classList.add('all-visible-deck');
+        element.classList.add('all-visible-deck', (_a = settings.direction) !== null && _a !== void 0 ? _a : 'vertical');
         var cardWidth = _this.manager.getCardWidth();
         var cardHeight = _this.manager.getCardHeight();
         if (cardWidth && cardHeight) {
@@ -1770,7 +1787,14 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         else {
             throw new Error("You need to set cardWidth and cardHeight in the card manager to use Deck.");
         }
-        element.style.setProperty('--shift', (_a = settings.shift) !== null && _a !== void 0 ? _a : '3px');
+        element.style.setProperty('--vertical-shift', (_c = (_b = settings.verticalShift) !== null && _b !== void 0 ? _b : settings.shift) !== null && _c !== void 0 ? _c : '3px');
+        element.style.setProperty('--horizontal-shift', (_e = (_d = settings.horizontalShift) !== null && _d !== void 0 ? _d : settings.shift) !== null && _e !== void 0 ? _e : '3px');
+        if (settings.counter && ((_f = settings.counter.show) !== null && _f !== void 0 ? _f : true)) {
+            _this.createCounter((_g = settings.counter.position) !== null && _g !== void 0 ? _g : 'bottom', (_h = settings.counter.extraClasses) !== null && _h !== void 0 ? _h : 'round', settings.counter.counterId);
+            if ((_j = settings.counter) === null || _j === void 0 ? void 0 : _j.hideWhenEmpty) {
+                _this.element.querySelector('.bga-cards_deck-counter').classList.add('hide-when-empty');
+            }
+        }
         return _this;
     }
     AllVisibleDeck.prototype.addCard = function (card, animation, settings) {
@@ -1780,7 +1804,7 @@ var AllVisibleDeck = /** @class */ (function (_super) {
         var cardId = this.manager.getId(card);
         var cardDiv = document.getElementById(cardId);
         cardDiv.style.setProperty('--order', '' + order);
-        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+        this.cardNumberUpdated();
         return promise;
     };
     /**
@@ -1799,7 +1823,26 @@ var AllVisibleDeck = /** @class */ (function (_super) {
             var cardDiv = document.getElementById(cardId);
             cardDiv.style.setProperty('--order', '' + index);
         });
-        this.element.style.setProperty('--tile-count', '' + this.cards.length);
+        this.cardNumberUpdated();
+    };
+    AllVisibleDeck.prototype.createCounter = function (counterPosition, extraClasses, counterId) {
+        var left = counterPosition.includes('right') ? 100 : (counterPosition.includes('left') ? 0 : 50);
+        var top = counterPosition.includes('bottom') ? 100 : (counterPosition.includes('top') ? 0 : 50);
+        this.element.style.setProperty('--bga-cards-deck-left', "".concat(left, "%"));
+        this.element.style.setProperty('--bga-cards-deck-top', "".concat(top, "%"));
+        this.element.insertAdjacentHTML('beforeend', "\n            <div ".concat(counterId ? "id=\"".concat(counterId, "\"") : '', " class=\"bga-cards_deck-counter ").concat(extraClasses, "\"></div>\n        "));
+    };
+    /**
+     * Updates the cards number, if the counter is visible.
+     */
+    AllVisibleDeck.prototype.cardNumberUpdated = function () {
+        var cardNumber = this.cards.length;
+        this.element.style.setProperty('--tile-count', '' + cardNumber);
+        this.element.dataset.empty = (cardNumber == 0).toString();
+        var counterDiv = this.element.querySelector('.bga-cards_deck-counter');
+        if (counterDiv) {
+            counterDiv.innerHTML = "".concat(cardNumber);
+        }
     };
     return AllVisibleDeck;
 }(CardStock));
@@ -2362,7 +2405,14 @@ var PlayerTable = /** @class */ (function () {
             gap: '36px',
         });
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
-        this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {});
+        this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {
+            verticalShift: '0px',
+            horizontalShift: '5px',
+            direction: 'horizontal',
+            counter: {
+                hideWhenEmpty: true,
+            },
+        });
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
