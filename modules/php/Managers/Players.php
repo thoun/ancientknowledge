@@ -35,6 +35,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
     $query->values($values);
     Game::get()->reattributeColorsBasedOnPreferences($players, $gameInfos['player_colors']);
     Game::get()->reloadPlayersBasicInfos();
+    self::invalidate();
   }
 
   public function getActiveId()

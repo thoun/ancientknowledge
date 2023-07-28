@@ -186,7 +186,7 @@ class Notifications
     ]);
   }
 
-  public static function drawCards($player, $cards, $sourceId)
+  public static function drawCards($player, $cards, $sourceId = null)
   {
     if (is_null($sourceId)) {
       self::notifyAll('drawCards', clienttranslate('${player_name} draws ${n} card(s) from the deck'), [
