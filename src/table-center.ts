@@ -5,6 +5,10 @@ class TableCenter {
     public cardDeck: Deck<BuilderCard>;
         
     constructor(private game: AncientKnowledgeGame, gamedatas: AncientKnowledgeGamedatas) {
+        if (!gamedatas.firstHalf) {
+            this.midGameReached();
+        }
+
         [1, 2].forEach(level => {
             this.technologyTilesDecks[level] = new Deck<TechnologyTile>(game.technologyTilesManager, document.getElementById(`technology-deck-${level}`), {
                 // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
@@ -43,6 +47,24 @@ class TableCenter {
             const tiles = this.game.technologyTilesManager.getFullCards(techs.filter(tile => tile.location == `board_${number}`));
             this.technologyTilesStocks[number].addCards(tiles);
         });
+    }
+
+    public clearTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }): Promise<any> {
+        const tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
+        this.technologyTilesStocks[board].removeCards(tiles);
+
+        return Promise.resolve(true);
+    }
+
+    public fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }): Promise<any> {
+        const tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
+        this.technologyTilesStocks[board].addCards(tiles);
+        
+        return Promise.resolve(true);
+    }
+    
+    public midGameReached(): void {
+        document.getElementById(`table-technology-tiles-2`).dataset.level = '2';
     }
 
 }

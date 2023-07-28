@@ -676,11 +676,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
     
-    public onTableTechnologyTileClick(tile: TechnologyTile): void {
+    public onTableTechnologyTileClick(tile: TechnologyTile, showWarning: boolean = true): void {
         if (this.gamedatas.gamestate.name == 'learn') {
-            this.takeAtomicAction('actLearn', [
-                tile.id,
-            ]);
+            const warning = showWarning && (this.gamedatas.gamestate.args as EnteringLearnArgs).irreversibleIds.includes(tile.id);
+            if (warning) {
+                this.askConfirmation(_("the technology tiles will be refilled with new tiles"), () => this.onTableTechnologyTileClick(tile, false));
+            } else {
+                this.takeAtomicAction('actLearn', [
+                    tile.id,
+                ]);
+            }
         }
     }
 
@@ -801,23 +806,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (warning === false /*|| this.prefs[104].value == 0*/) {
           callback();
         } else {
-          //        let msg = warning === true ? _('drawing card(s) from the deck or the discard') : warning;
-          let msg =
-            warning === true
-              ? _(
-                  "If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice"
-                )
-              : warning;
+            let msg = warning === true ?
+                _("If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice") :
+                warning;
+
             (this as any).confirmationDialog(
-            msg,
-            // this.fsr(
-            //   _("If you take this action, you won't be able to undo past this step because of the following reason: ${msg}"),
-            //   { msg }
-            // ),
-            () => {
-              callback();
-            }
-          );
+                this.format_string_recursive(_("If you take this action, you won't be able to undo past this step because of the following reason: ${msg}"), { msg }),
+                () => callback()
+            );
         }
     }
 
@@ -869,6 +865,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['declineCard', undefined],
             ['declineSlideLeft', undefined],
             ['removeKnowledge', ANIMATION_MS],
+            ['clearTechBoard', ANIMATION_MS],
+            ['midGameReached', ANIMATION_MS],
+            ['fillUpTechBoard', ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -1004,6 +1003,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const table = this.getPlayerTable(args.player_id);
         Object.values(args.cards).forEach(card => table.setCardKnowledge(card.id, card.knowledge));
     }
+    
+    notif_clearTechBoard(args: NotifTechBoardArgs) {
+        return this.tableCenter.clearTechBoard(args.board, args.cards);
+    }
+
+    notif_midGameReached(args: NotifTechBoardArgs) {
+        return this.notif_clearTechBoard(args).then(() => this.tableCenter.midGameReached());
+    }
+    
+    notif_fillUpTechBoard(args: NotifTechBoardArgs) {
+        return this.tableCenter.fillUpTechBoard(args.board, args.cards);
+    }
+    
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

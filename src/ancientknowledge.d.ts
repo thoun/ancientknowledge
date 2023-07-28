@@ -37,8 +37,9 @@ interface AncientKnowledgeGamedatas {
     players: { [playerId: number]: AncientKnowledgePlayer };
     tablespeed: string;
 
-    techs: TechnologyTile[];
     // Add here variables you set up in getAllDatas
+    techs: TechnologyTile[];
+    firstHalf: boolean;
     /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
     firstPlayerId: number;
     // TODO deck counters ? discard counters ?*/
@@ -93,6 +94,7 @@ interface EnteringArchiveArgs {
 
 interface EnteringLearnArgs {
     techs: string[];
+    irreversibleIds: string[];
 }
 
 interface EnteringRemoveKnowledgeArgs {
@@ -217,4 +219,10 @@ interface NotifDeclineCardArgs {
 interface NotifRemoveKnowledgeArgs {
     player_id: number;
     cards: { [cardId: string]: BuilderCard };
+}
+
+// clearTechBoard, fillUpTechBoard
+interface NotifTechBoardArgs {
+    board: number;
+    cards: { [cardId: string]: TechnologyTile };
 }

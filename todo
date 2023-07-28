@@ -9,12 +9,7 @@ Frontend:
  - resolve choices : grayed out button contains only the source, not the description of what could have been granted if requirements were met
 
  - Learn :
-   - irreversibleIds => askConfirmation
-   - clearTechBoard notif
-   - fillingUpTechBoard notif
    - display deck / discard of level 1/2 tech tiles with number of cards left in deck ?
- - notif : midGameReached => similar to clearTechBoard notif
-  => new thing sent in getAllDatas : "firstHalf" bool
 
  - player board : display number of cards in the past
 
