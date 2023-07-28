@@ -42,6 +42,16 @@ class Technology extends \AK\Helpers\DB_Model
     return true;
   }
 
+  public function getPlayer()
+  {
+    return Players::get($this->pId);
+  }
+
+  public function countIcon($icon)
+  {
+    return $this->getPlayer()->countIcon($icon);
+  }
+
   public function getBoard()
   {
     $t = explode('_', $this->location);
