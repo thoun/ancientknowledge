@@ -33,11 +33,12 @@ class ActivateCard extends \AK\Models\Action
       return Effects::getActivationEffect($card, $activation);
     }
 
+    $args = $this->getCtxArg('event');
     return Effects::applyEffect(
       $card,
       $player,
       $this->getCtxArg('event')['method'],
-      $this->getCtxArg('event'),
+      $args,
       true // Throw error if no such listener
     );
   }

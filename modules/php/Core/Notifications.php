@@ -285,12 +285,13 @@ class Notifications
     ]);
   }
 
-  public static function removeKnowledge($player, $total, $cards)
+  public static function removeKnowledge($player, $total, $cards, $sourceId)
   {
-    self::notifyAll('removeKnowledge', \clienttranslate('${player_name} removes ${n} knowledge from ${card_names}'), [
+    self::notifyAll('removeKnowledge', \clienttranslate('${player_name} removes ${n} knowledge from ${card_names}${source}'), [
       'player' => $player,
       'n' => $total,
       'cards' => $cards,
+      'sourceId' => $sourceId,
     ]);
   }
 
@@ -411,6 +412,23 @@ class Notifications
         'args' => $args,
       ];
       $data['i18n'][] = 'card_names';
+    }
+
+    if (array_key_exists('sourceId', $data)) {
+      if (is_null($data['sourceId'])) {
+        $data['source'] = '';
+        unset($data['sourceId']);
+      } else {
+        $source = Effects::get($data['sourceId']);
+        $data['source'] = [
+          'log' => ' (${card_name})',
+          'args' => [
+            'card_name' => $source->getName(),
+            'card_id' => $source->getId(),
+          ],
+        ];
+        $data['i18n'][] = 'source';
+      }
     }
   }
 }

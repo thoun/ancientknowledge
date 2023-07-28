@@ -63,6 +63,16 @@ class Artefact extends \AK\Helpers\DB_Model
     return $this->getPlayer()->countIcon($icon);
   }
 
+  protected function isActionEvent($event, $action, $playerConstraint = 'player')
+  {
+    return $event['type'] == 'action' &&
+      $event['action'] == $action &&
+      (is_null($playerConstraint) ||
+        ($playerConstraint == 'player' && $this->pId == $event['pId']) ||
+        ($playerConstraint == 'opponent' && $this->pId != $event['pId'])) &&
+      $event['method'] == 'After' . $action;
+  }
+
   /**
    * Event modifiers template
    **/

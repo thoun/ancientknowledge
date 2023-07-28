@@ -79,7 +79,7 @@ class RemoveKnowledge extends \AK\Models\Action
     // Only 1 targetable card => auto select it
     elseif (count($cardIds) == 1) {
       $choices = [$cardIds[0] => $n];
-      $this->actRemoveKnowledge($choices);
+      $this->actRemoveKnowledge($choices, true);
     }
     // Node seq => auto remove on all cards
     elseif ($type == \NODE_SEQ) {
@@ -87,14 +87,14 @@ class RemoveKnowledge extends \AK\Models\Action
       foreach ($cardIds as $cardId) {
         $choices[$cardId] = $n;
       }
-      $this->actRemoveKnowledge($choices);
+      $this->actRemoveKnowledge($choices, true);
     }
   }
 
-  public function actRemoveKnowledge($choices)
+  public function actRemoveKnowledge($choices, $auto = false)
   {
     // Sanity checks
-    self::checkAction('actRemoveKnowledge');
+    self::checkAction('actRemoveKnowledge', $auto);
     $player = Players::getActive();
     $args = $this->argsRemoveKnowledge();
     $cardIds = array_keys($choices);
@@ -115,7 +115,8 @@ class RemoveKnowledge extends \AK\Models\Action
     }
 
     if ($total > 0) {
-      Notifications::removeKnowledge($player, $total, $cards);
+      $sourceId = $this->ctx->getSourceId();
+      Notifications::removeKnowledge($player, $total, $cards, $sourceId);
     }
     $this->resolveAction();
   }

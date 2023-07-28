@@ -19,5 +19,21 @@ class A24_GeneticDisk extends \AK\Models\Artefact
         'Each time you play a monument on space [n°5] or [n°6], you may discard up to 2 <KNOWLEDGE> from one or several of your monuments.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Create') &&
+      !$event['card']->isArtefact() &&
+      in_array($event['card']->getTimelineSpace()[0], [5, 6]);
+  }
+
+  public function onPlayerAfterCreate($event)
+  {
+    return [
+      'action' => \REMOVE_KNOWLEDGE,
+      'args' => ['n' => 2],
+    ];
   }
 }

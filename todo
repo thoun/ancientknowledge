@@ -27,6 +27,8 @@ Frontend:
 
  - excavate action : dont forgot the askConfirmation since it's chained with draw
 
+ - "space X" icon: text is not centered in the circle  (eg Genetic Disk)
+
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?
 

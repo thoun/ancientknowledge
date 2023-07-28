@@ -133,6 +133,21 @@ class Building extends \AK\Helpers\DB_Model
     return $this->getPlayer()->countIcon($icon);
   }
 
+  protected function isPlayerEvent($event)
+  {
+    return $this->pId == $event['pId'];
+  }
+
+  protected function isActionEvent($event, $action, $playerConstraint = 'player')
+  {
+    return $event['type'] == 'action' &&
+      $event['action'] == $action &&
+      (is_null($playerConstraint) ||
+        ($playerConstraint == 'player' && $this->pId == $event['pId']) ||
+        ($playerConstraint == 'opponent' && $this->pId != $event['pId'])) &&
+      $event['method'] == 'After' . $action;
+  }
+
   public function getReward($n = 1, $mapBonuses = null)
   {
     if (in_array($n, ICONS)) {

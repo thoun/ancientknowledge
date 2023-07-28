@@ -131,14 +131,14 @@ class Create extends \AK\Models\Action
 
     // Check immediate effect
     if ($card->getActivation() == \IMMEDIATE && method_exists($card, 'getImmediateEffect')) {
-      $this->insertAsChild([
+      $this->pushParallelChild([
         'action' => \ACTIVATE_CARD,
         'args' => ['cardId' => $card->getId(), 'activation' => IMMEDIATE],
       ]);
     }
 
     // Check listener
-    // TODO
+    $this->checkAfterListeners($player, ['card' => $card, 'slot' => $slot]);
 
     $this->resolveAction(['cardId' => $cardId, 'slot' => $slot]);
   }

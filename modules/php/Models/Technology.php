@@ -47,6 +47,21 @@ class Technology extends \AK\Helpers\DB_Model
     return Players::get($this->pId);
   }
 
+  protected function isPlayerEvent($event)
+  {
+    return $this->pId == $event['pId'];
+  }
+
+  protected function isActionEvent($event, $action, $playerConstraint = 'player')
+  {
+    return $event['type'] == 'action' &&
+      $event['action'] == $action &&
+      (is_null($playerConstraint) ||
+        ($playerConstraint == 'player' && $this->pId == $event['pId']) ||
+        ($playerConstraint == 'opponent' && $this->pId != $event['pId'])) &&
+      $event['method'] == 'After' . $action;
+  }
+
   public function countIcon($icon)
   {
     return $this->getPlayer()->countIcon($icon);

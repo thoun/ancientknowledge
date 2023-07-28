@@ -70,11 +70,7 @@ class Effects
       return null;
     }
 
-    return [
-      'type' => NODE_PARALLEL,
-      'pId' => $event['pId'],
-      'childs' => $childs,
-    ];
+    return $childs;
   }
 
   /**
@@ -158,9 +154,6 @@ class Effects
     } elseif (\method_exists($card, 'on' . $methodName)) {
       $n = 'on' . $methodName;
       $res = $card->$n($player, $args);
-      $listened = true;
-    } elseif ($card->isAnytime($args) && \method_exists($card, 'atAnytime')) {
-      $res = $card->atAnytime($player, $args);
       $listened = true;
     }
 

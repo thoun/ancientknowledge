@@ -160,30 +160,29 @@ class Action
     return $classname;
   }
 
-  // protected function checkListeners($method, $player, $args = [])
-  // {
-  //   $event = array_merge(
-  //     [
-  //       'pId' => $player->getId(),
-  //       'type' => 'action',
-  //       'action' => $this->getClassName(),
-  //       'method' => $method,
-  //     ],
-  //     $args
-  //   );
+  protected function checkListeners($method, $player, $args = [])
+  {
+    $event = array_merge(
+      [
+        'pId' => $player->getId(),
+        'type' => 'action',
+        'action' => $this->getClassName(),
+        'method' => $method,
+      ],
+      $args
+    );
 
-  //   $reaction = ZooCards::getReaction($event);
-  //   $this->pushParallelChilds($reaction);
-  // }
+    $reaction = Effects::getReaction($event);
+    $this->pushParallelChilds($reaction);
+  }
 
-  // public function checkAfterListeners($player, $args = [], $duringActionListener = true)
-  // {
-  //   if ($duringActionListener) {
-  //     $this->checkListeners($this->getClassName(), $player, $args);
-  //   }
-  //   $this->checkListeners('ImmediatelyAfter' . $this->getClassName(), $player, $args);
-  //   $this->checkListeners('After' . $this->getClassName(), $player, $args);
-  // }
+  public function checkAfterListeners($player, $args = [], $duringActionListener = true)
+  {
+    if ($duringActionListener) {
+      $this->checkListeners($this->getClassName(), $player, $args);
+    }
+    $this->checkListeners('After' . $this->getClassName(), $player, $args);
+  }
 
   // public function checkModifiers($method, &$data, $name, $player, $args = [])
   // {
