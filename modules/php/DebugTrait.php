@@ -15,7 +15,18 @@ trait DebugTrait
 {
   function tp()
   {
-    $this->actTakeAtomicAction('actExcavate', [['M12_StatuesOfRamesses', 'P23_PyramidsOfXian']]);
+    $this->actTakeAtomicAction('actDiscardMulti', [['P10_Teotihuacan', 'P14_TikalTempleI']]);
+  }
+
+  function addHand($cardId)
+  {
+    $player = Players::getCurrent();
+    $pId = $player->getId();
+    $card = Cards::get($cardId);
+    Cards::insertOnTop($cardId, 'hand');
+    $card->setPId($player->getId());
+    Notifications::drawCards($player, [$card], null);
+    Engine::proceed();
   }
 
   function engDisplay()

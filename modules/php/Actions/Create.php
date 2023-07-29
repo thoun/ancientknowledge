@@ -137,6 +137,11 @@ class Create extends \AK\Models\Action
       ]);
     }
 
+    // PotalaPalace => flag global to skip Decline
+    if ($card->getId() == 'C30_PotalaPalace') {
+      Globals::setSkipDecline(true);
+    }
+
     // Check listener
     $this->checkAfterListeners($player, ['card' => $card, 'slot' => $slot]);
 

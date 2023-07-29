@@ -113,9 +113,10 @@ class Engine
     $pId = $node->getPId();
 
     // Multi active node
-    if ($pId == 'all') {
+    if ($pId == 'opponents') {
+      $pIds = array_diff(Players::getAll()->getIds(), [$node->getArgs()['current']]);
       Game::get()->gamestate->jumpToState(ST_RESOLVE_STACK);
-      Game::get()->gamestate->setAllPlayersMultiactive();
+      Game::get()->gamestate->setPlayersMultiactive($pIds, '', true);
 
       // Ensure no undo
       Log::checkpoint();

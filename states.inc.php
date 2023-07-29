@@ -255,6 +255,17 @@ $machinestates = [
     'possibleactions' => ['actDiscard', 'actRestart'],
   ],
 
+  ST_DISCARD_MULTI => [
+    'name' => 'discardMulti',
+    'type' => 'multipleactiveplayer',
+    'description' => clienttranslate('Waiting for other players to discard ${n} card(s)'),
+    'descriptionmyturn' => clienttranslate('${you} must discard ${n} card(s)'),
+    'args' => 'argsAtomicAction',
+    'action' => 'stAtomicAction',
+    'possibleactions' => ['actDiscardMulti'],
+    'transitions' => ['next' => ST_RESOLVE_STACK],
+  ],
+
   ST_SWAP => [
     'name' => 'swap',
     'type' => 'activeplayer',

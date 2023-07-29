@@ -14,5 +14,15 @@ class T26_CretanHieroglyphs extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Each of your opponents discards 1 card from their hand.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => DISCARD_MULTI,
+      'args' => ['current' => $this->pId, 'n' => 1],
+      'pId' => 'opponents',
+    ];
   }
 }

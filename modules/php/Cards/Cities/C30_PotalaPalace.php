@@ -22,5 +22,6 @@ class C30_PotalaPalace extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Skip your DECLINE PHASE this turn.')];
+    $this->implemented = true;
   }
 }

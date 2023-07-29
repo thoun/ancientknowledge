@@ -25,6 +25,9 @@ class Globals extends \AK\Helpers\DB_Manager
     'firstPlayer' => 'int',
     'skippedPlayers' => 'obj',
 
+    // Card effects
+    'skipDecline' => 'bool',
+
     // Game options
     'startingHands' => 'bool',
   ];

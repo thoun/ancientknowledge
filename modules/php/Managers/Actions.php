@@ -28,6 +28,7 @@ class Actions
     SWAP => 'Swap',
     DESTROY => 'Destroy',
     STRAIGHTEN => 'Straighten',
+    DISCARD_MULTI => 'DiscardMulti',
   ];
 
   public static function get($actionId, $ctx = null)

@@ -263,7 +263,7 @@ class Notifications
   {
     self::notifyAll(
       'declineSlideLeft',
-      \clienttranslate('${player_name} slides their ${n} card(s) on their timeline one space to the left'),
+      \clienttranslate('${player_name} slides the ${n} card(s) on their timeline one space to the left'),
       [
         'player' => $player,
         'n' => $n,

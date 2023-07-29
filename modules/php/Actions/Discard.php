@@ -17,7 +17,9 @@ class Discard extends \AK\Models\Action
   {
     return [
       'log' => clienttranslate('Discard ${n} card(s)'),
-      'n' => $this->getN(),
+      'args' => [
+        'n' => $this->getN(),
+      ],
     ];
   }
 

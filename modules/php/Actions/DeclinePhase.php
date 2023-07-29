@@ -3,6 +3,7 @@ namespace AK\Actions;
 use AK\Managers\Players;
 use AK\Core\Notifications;
 use AK\Core\Stats;
+use AK\Core\Globals;
 use AK\Helpers\Utils;
 
 class DeclinePhase extends \AK\Models\Action
@@ -20,6 +21,13 @@ class DeclinePhase extends \AK\Models\Action
   public function stDeclinePhase()
   {
     $player = Players::getActive();
+
+    // PotatoPalace: skip decline
+    if (Globals::isSkipDecline()) {
+      Globals::setSkipDecline(false);
+      $this->resolveAction();
+      return;
+    }
 
     // The two first slot of the timeline
     $spaces = [[1, 0], [1, 1]];
