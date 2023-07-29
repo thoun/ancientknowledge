@@ -15,6 +15,13 @@ class Create extends \AK\Models\Action
 
   public function getDescription()
   {
+    $constraint = $this->getCtxArg('constraint');
+    if ($constraint == BUILDINGS) {
+      return clienttranslate('Create a monument');
+    } elseif ($constraint == [ARTEFACT]) {
+      return clienttranslate('Create an artifact');
+    }
+
     return clienttranslate('Create');
   }
 
@@ -143,7 +150,7 @@ class Create extends \AK\Models\Action
     }
 
     // Check listener
-    $this->checkAfterListeners($player, ['card' => $card, 'slot' => $slot]);
+    $this->checkAfterListeners($player, ['card' => $card, 'slot' => $slot, 'sourceId' => $this->getSourceId()]);
 
     $this->resolveAction(['cardId' => $cardId, 'slot' => $slot]);
   }

@@ -22,5 +22,26 @@ class M36_PoulnabroneDolmen extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 11 cards in your Past when you CREATE a monument, you may CREATE 2 instead.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Create') &&
+    !$event['card']->isArtefact() &&
+    $event['sourceId'] != $this->id && // Avoid multiple loops
+      $this->getPlayer()
+        ->getPast()
+        ->count() >= 11;
+  }
+
+  public function onPlayerAfterCreate($event)
+  {
+    return [
+      'action' => CREATE,
+      'optional' => true,
+      'sourceId' => 'M36_PoulnabroneDolmen',
+      'args' => ['constraint' => BUILDINGS],
+    ];
   }
 }

@@ -80,6 +80,11 @@ class Action
     return $this->getCtxArgs()[$v] ?? null;
   }
 
+  public function getSourceId()
+  {
+    return $this->ctx->getSourceId();
+  }
+
   public function getSource()
   {
     $sourceId = $this->ctx->getSourceId();
@@ -120,14 +125,17 @@ class Action
    * @param array $args : the keys/values that needs to get updated
    * Warning: resolve action must be call on the side
    */
-  public function duplicateAction($args = [], $checkpoint = false)
+  public function duplicateAction($args = [], $checkpoint = false, $sourceId = null)
   {
     // Duplicate the node and update the args
     $node = $this->ctx->toArray();
     $node['type'] = \NODE_LEAF;
     $node['childs'] = [];
-    $node['args'] = array_merge($node['args'], $args);
+    $node['args'] = array_merge($node['args'] ?? [], $args);
     $node['duplicate'] = true;
+    if (!is_null($sourceId)) {
+      $node['sourceId'] = $sourceId;
+    }
     unset($node['mandatory']); // Weird edge case
     $node = Engine::buildTree($node);
     // Insert it as a brother of current node and proceed

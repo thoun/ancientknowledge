@@ -98,6 +98,17 @@ class Player extends \AK\Helpers\DB_Model
     return Technologies::getOfPlayer($this->id, $type);
   }
 
+  public function hasEffect($cardId)
+  {
+    return !is_null(
+      self::getTimeline()
+        ->merge(self::getTechTiles())
+        ->merge(self::getArtefacts())
+        ->where('id', $cardId)
+        ->first()
+    );
+  }
+
   public function countKnowledgeOnTimeline()
   {
     $knowledge = 0;
