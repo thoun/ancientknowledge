@@ -2225,8 +2225,8 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
             isCardVisible: function (card) { return Boolean(card.type); },
-            cardWidth: 221,
-            cardHeight: 120,
+            cardWidth: 163,
+            cardHeight: 114,
             animationManager: game.animationManager,
         }) || this;
         _this.game = game;
@@ -2307,9 +2307,9 @@ var TableCenter = /** @class */ (function () {
         }
         [1, 2].forEach(function (level) {
             _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
-            // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
-            // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
-            // TODO counter: {},
+                // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+                topCard: { id: "deck-tile-".concat(level), level: level },
+                // TODO counter: {},
             });
         });
         [1, 2, 3].forEach(function (number) {
@@ -2349,8 +2349,9 @@ var TableCenter = /** @class */ (function () {
         return Promise.resolve(true);
     };
     TableCenter.prototype.fillUpTechBoard = function (board, cards) {
+        var _a;
         var tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
-        this.technologyTilesStocks[board].addCards(tiles);
+        this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[(_a = tiles[0]) === null || _a === void 0 ? void 0 : _a.level] : undefined });
         return Promise.resolve(true);
     };
     TableCenter.prototype.midGameReached = function () {

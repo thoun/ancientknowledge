@@ -4,24 +4,38 @@
 }
 
 #table-center {
-  #table-technology-tiles {
+  #table-technology {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 10px;
+    align-items: stretch;
 
-    .table-technology-tiles {
-      width: 730px;
-      height: 139px;
-      padding: 13px 73px;
-      box-sizing: border-box;
-      gap: 27px;
+    #technology-decks {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: center;
+    }
 
-      &[data-level="1"] {
-        background-image: url('img/obelisk1.png');
-      }
-      &[data-level="2"] {
-        background-image: url('img/obelisk2.png');
+    #table-technology-tiles {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .table-technology-tiles {
+        width: 730px;
+        height: 139px;
+        padding: 13px 73px;
+        box-sizing: border-box;
+        gap: 27px;
+
+        &[data-level="1"] {
+          background-image: url('img/obelisk1.png');
+        }
+        &[data-level="2"] {
+          background-image: url('img/obelisk2.png');
+        }
       }
     }
-  }
+}
 }

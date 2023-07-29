@@ -29,8 +29,8 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
             },
             setupFrontDiv: (card: TechnologyTile, div: HTMLElement) => this.setupFrontDiv(card, div),
             isCardVisible: card => Boolean(card.type),
-            cardWidth: 221,
-            cardHeight: 120,
+            cardWidth: 163,
+            cardHeight: 114,
             animationManager: game.animationManager,
         });
     }    
