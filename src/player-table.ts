@@ -65,6 +65,7 @@ class PlayerTable {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
+        this.timeline.onSelectionChange = (selection: BuilderCard[]) => this.game.onTimelineCardSelectionChange(selection);
         
         timelineSlotsIds.map(slotId => timelineDiv.querySelector(`[data-slot-id="${slotId}"]`)).forEach((element: HTMLDivElement) => element.addEventListener('click', () => {
             if (element.classList.contains('selectable')) {
@@ -267,5 +268,24 @@ class PlayerTable {
             location: card.location.replace(/(\d)/, a => `${Number(a) - 1}`)
         }));
         return this.timeline.addCards(shiftedCards);
+    }
+    
+    public enterSwap(cardIds: string[], fixedCardId: string) {
+        console.log(cardIds, fixedCardId);
+        this.timeline.setSelectionMode('multiple', this.game.builderCardsManager.getFullCardsByIds(cardIds.filter(id => id != fixedCardId)));
+        if (fixedCardId) {
+            const fixedCard = this.game.builderCardsManager.getFullCardById(fixedCardId);
+            this.game.builderCardsManager.getCardElement(fixedCard)?.classList.add('swapped-card');
+        }
+    }
+    
+    public leaveSwap() {
+        this.timeline.setSelectionMode('none');
+        Array.from(document.getElementsByClassName('swapped-card')).forEach(elem => elem.classList.remove('swapped-card'));
+    }
+    
+    public swapCards(cards: BuilderCard[]) {
+        this.timeline.swapCards(cards);
+        cards.forEach(card => this.setCardKnowledge(card.id, card.knowledge));
     }
 }

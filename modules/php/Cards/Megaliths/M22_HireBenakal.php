@@ -28,7 +28,7 @@ class M22_HireBenakal extends \AK\Models\Building
 
   public function isListeningTo($event)
   {
-    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == WRITTING;
+    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == WRITING;
   }
 
   public function onPlayerAfterLearn($event)

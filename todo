@@ -1,6 +1,8 @@
 Backend:
  - detect end of game
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
+ - end implementation of cards
+ - T16_SatorSquare : asks to swap, with no card on timeline
 
 Frontend:
  - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
@@ -10,12 +12,6 @@ Frontend:
 
  - Learn :
    - display deck / discard of level 1/2 tech tiles with number of cards left in deck ?
-
- - Swap action : can be tried with 'P23_PyramidsOfXian'
-    - receive cardIds in timeline
-    - card_id is either null if player can swap any two cards, or is the id of a card he must swap with another one (preselect this one)
-    - actSwap(cardId1, cardId2) => cardId1 should always be the one of the "forced" card if any
-    - notification
 
  - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
     => works when you refresh
