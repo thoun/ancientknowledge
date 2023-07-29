@@ -23,7 +23,7 @@ class A17_GlozelArtifacts extends \AK\Models\Artefact
 
   public function isListeningTo($event)
   {
-    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == WRITTING;
+    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == WRITING;
   }
 
   public function onPlayerAfterLearn($event)

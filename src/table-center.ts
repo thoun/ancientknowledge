@@ -12,7 +12,7 @@ class TableCenter {
         [1, 2].forEach(level => {
             this.technologyTilesDecks[level] = new Deck<TechnologyTile>(game.technologyTilesManager, document.getElementById(`technology-deck-${level}`), {
                 // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
-                // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
+                topCard: { id: `deck-tile-${level}`, level } as TechnologyTile,
                 // TODO counter: {},
             });
         });
@@ -58,7 +58,7 @@ class TableCenter {
 
     public fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }): Promise<any> {
         const tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
-        this.technologyTilesStocks[board].addCards(tiles);
+        this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[tiles[0]?.level] : undefined });
         
         return Promise.resolve(true);
     }

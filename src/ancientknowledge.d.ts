@@ -13,7 +13,7 @@ interface PlayerIcons {
 }
 
 interface AncientKnowledgePlayer extends Player {
-    playerNo: number;
+    no: number;
     lostKnowledge: number;
     icons: PlayerIcons;
 
@@ -60,6 +60,7 @@ interface AncientKnowledgeGame extends Game {
     onTableTechnologyTileClick(destination: TechnologyTile): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
+    onTimelineCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
@@ -103,21 +104,9 @@ interface EnteringRemoveKnowledgeArgs {
     type: 'or' | 'xor';
 }
 
-interface EnteringChooseNewCardArgs {
-    centerCards: BuilderCard[];
-    freeColor: number;
-    recruits: number;
-    allFree: boolean;
-}
-
-interface EnteringPayDestinationArgs {
-    selectedDestination: TechnologyTile;
-    recruits: number;
-}
-
-interface EnteringTradeArgs {
-    bracelets: number;
-    gainsByBracelets: { [bracelets: number]: number };
+interface EnteringSwapArgs {
+    cardIds: string[];
+    card_id: string | null;
 }
 
 interface ResolveChoice {
@@ -151,6 +140,12 @@ interface NotifPDiscardCardsArgs {
     n: number;
     player_id: number;
     cards: BuilderCard[];
+}
+
+// destroyCard
+interface NotifDestroyCardArgs {
+    player_id: number;
+    card: BuilderCard;
 }
 
 // createCard
@@ -225,4 +220,11 @@ interface NotifRemoveKnowledgeArgs {
 interface NotifTechBoardArgs {
     board: number;
     cards: { [cardId: string]: TechnologyTile };
+}
+
+// swapCards
+interface NotifSwapCardsArgs {
+    player_id: number;
+    card: BuilderCard;
+    card2: BuilderCard;
 }

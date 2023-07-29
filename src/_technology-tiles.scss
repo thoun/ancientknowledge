@@ -5,6 +5,17 @@
     height: 114px;
     border-radius: 8px;
 
+    .back {
+        background-size: auto 100%;
+        background-image: url('img/technology-tile-backs.png');  
+    }
+
+    @for $level from 1 through 2 {
+        &[data-level="#{$level}"] .back {
+          background-position-x: #{($level - 1) * 100%};
+        }
+    }
+
     .front {
         .background {
           top: 24px;

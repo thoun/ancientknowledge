@@ -81,6 +81,11 @@ html, .mode_3d #game_play_area_background {
   }
   &.starting-space {
     background-image: url('img/starting-space-icon.svg');
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
   }
 }
 

@@ -2225,8 +2225,8 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
             isCardVisible: function (card) { return Boolean(card.type); },
-            cardWidth: 221,
-            cardHeight: 120,
+            cardWidth: 163,
+            cardHeight: 114,
             animationManager: game.animationManager,
         }) || this;
         _this.game = game;
@@ -2307,9 +2307,9 @@ var TableCenter = /** @class */ (function () {
         }
         [1, 2].forEach(function (level) {
             _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
-            // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
-            // TODO topCard: gamedatas.centerDestinationsDeckTop[level],
-            // TODO counter: {},
+                // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+                topCard: { id: "deck-tile-".concat(level), level: level },
+                // TODO counter: {},
             });
         });
         [1, 2, 3].forEach(function (number) {
@@ -2349,8 +2349,9 @@ var TableCenter = /** @class */ (function () {
         return Promise.resolve(true);
     };
     TableCenter.prototype.fillUpTechBoard = function (board, cards) {
+        var _a;
         var tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
-        this.technologyTilesStocks[board].addCards(tiles);
+        this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[(_a = tiles[0]) === null || _a === void 0 ? void 0 : _a.level] : undefined });
         return Promise.resolve(true);
     };
     TableCenter.prototype.midGameReached = function () {
@@ -2391,6 +2392,7 @@ var PlayerTable = /** @class */ (function () {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: function (card) { return card.location; },
         });
+        this.timeline.onSelectionChange = function (selection) { return _this.game.onTimelineCardSelectionChange(selection); };
         timelineSlotsIds.map(function (slotId) { return timelineDiv.querySelector("[data-slot-id=\"".concat(slotId, "\"]")); }).forEach(function (element) { return element.addEventListener('click', function () {
             if (element.classList.contains('selectable')) {
                 _this.game.onTimelineSlotClick(element.dataset.slotId);
@@ -2571,6 +2573,24 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.declineSlideLeft = function () {
         var shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
         return this.timeline.addCards(shiftedCards);
+    };
+    PlayerTable.prototype.enterSwap = function (cardIds, fixedCardId) {
+        var _a;
+        console.log(cardIds, fixedCardId);
+        this.timeline.setSelectionMode('multiple', this.game.builderCardsManager.getFullCardsByIds(cardIds.filter(function (id) { return id != fixedCardId; })));
+        if (fixedCardId) {
+            var fixedCard = this.game.builderCardsManager.getFullCardById(fixedCardId);
+            (_a = this.game.builderCardsManager.getCardElement(fixedCard)) === null || _a === void 0 ? void 0 : _a.classList.add('swapped-card');
+        }
+    };
+    PlayerTable.prototype.leaveSwap = function () {
+        this.timeline.setSelectionMode('none');
+        Array.from(document.getElementsByClassName('swapped-card')).forEach(function (elem) { return elem.classList.remove('swapped-card'); });
+    };
+    PlayerTable.prototype.swapCards = function (cards) {
+        var _this = this;
+        this.timeline.swapCards(cards);
+        cards.forEach(function (card) { return _this.setCardKnowledge(card.id, card.knowledge); });
     };
     return PlayerTable;
 }());
@@ -3112,6 +3132,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'resolveChoice':
                 this.onEnteringResolveChoice(args.args);
                 break;
+            case 'swap':
+                this.onEnteringSwap(args.args);
+                break;
         }
     };
     /*
@@ -3181,6 +3204,11 @@ var AncientKnowledge = /** @class */ (function () {
             Object.values(args.allChoices).forEach(function (choice) { return _this.addActionChoiceBtn(choice, true); });
         }
     };
+    AncientKnowledge.prototype.onEnteringSwap = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable().enterSwap(args.cardIds, args.card_id);
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
@@ -3201,6 +3229,9 @@ var AncientKnowledge = /** @class */ (function () {
                 break;
             case 'removeKnowledge':
                 this.onLeavingRemoveKnowledgeEngine();
+                break;
+            case 'swap':
+                this.onLeavingSwap();
                 break;
         }
     };
@@ -3226,6 +3257,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingLearn = function () {
         this.tableCenter.setTechnologyTilesSelectable(false);
     };
+    AncientKnowledge.prototype.onLeavingSwap = function () {
+        var _a;
+        (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.leaveSwap();
+    };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
     //
@@ -3248,11 +3283,13 @@ var AncientKnowledge = /** @class */ (function () {
                     ].forEach(function (codeAndLabel) {
                         return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
-                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    break;
+                case 'swap':
+                    this.addActionButton("actSwap_button", _("Swap selected cards"), function () { return _this.actSwap(); });
+                    document.getElementById('actSwap_button').classList.add('disabled');
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
-                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
             }
         }
@@ -3345,7 +3382,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.getOrderedPlayers = function (gamedatas) {
         var _this = this;
-        var players = Object.values(gamedatas.players).sort(function (a, b) { return a.playerNo - b.playerNo; });
+        var players = Object.values(gamedatas.players).sort(function (a, b) { return a.no - b.no; });
         var playerIndex = players.findIndex(function (player) { return Number(player.id) === Number(_this.player_id); });
         var orderedPlayers = playerIndex > 0 ? __spreadArray(__spreadArray([], players.slice(playerIndex), true), players.slice(0, playerIndex), true) : players;
         return orderedPlayers;
@@ -3356,9 +3393,9 @@ var AncientKnowledge = /** @class */ (function () {
             var playerId = Number(player.id);
             document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div class=\"vp icon\"></div>");
             document.getElementById("icon_point_".concat(player.id)).remove();
-            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n            </div>\n            <div class=\"icons counters\">");
+            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div>").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
             html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"").concat(type, " icon\"></div>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                    ").concat(type == 'artifact' ? '' : "<span class=\"timeline-counter\">(<span id=\"".concat(type, "-timeline-counter-").concat(player.id, "\"></span>)</span>"), "\n                </div>\n            "); }).join('');
-            html += "</div>\n            <div>".concat(playerId == gamedatas.firstPlayerId ? "<div id=\"first-player\">".concat(_('First player'), "</div>") : '', "</div>");
+            html += "</div>";
             dojo.place(html, "player_board_".concat(player.id));
             var handCounter = new ebg.counter();
             handCounter.create("playerhand-counter-".concat(playerId));
@@ -3397,6 +3434,7 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
         });
+        this.setTooltip("first-player", _('First player'));
     };
     AncientKnowledge.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
@@ -3419,34 +3457,17 @@ var AncientKnowledge = /** @class */ (function () {
             }
         });
     };
-    AncientKnowledge.prototype.setScore = function (playerId, score) {
-        var _a;
-        (_a = this.scoreCtrl[playerId]) === null || _a === void 0 ? void 0 : _a.toValue(score);
-        this.tableCenter.setScore(playerId, score);
-    };
-    AncientKnowledge.prototype.setReputation = function (playerId, count) {
-        this.lostKnowledgeCounters[playerId].toValue(count);
-        this.tableCenter.setReputation(playerId, count);
-    };
-    AncientKnowledge.prototype.setRecruits = function (playerId, count) {
-        this.recruitCounters[playerId].toValue(count);
-        this.getPlayerTable(playerId).updateCounter('recruits', count);
-    };
-    AncientKnowledge.prototype.setBracelets = function (playerId, count) {
-        this.braceletCounters[playerId].toValue(count);
-        this.getPlayerTable(playerId).updateCounter('bracelets', count);
-    };
     AncientKnowledge.prototype.getHelpHtml = function () {
         var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Assets"), "</h2>\n            <div class=\"help-section\">\n                <div class=\"icon vp\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon recruit\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon bracelet\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship."), " ").concat(_("It is not possible to have more than 3."), " ").concat(_("They are used for Trading."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon reputation\"></div>\n                <div class=\"help-label\">").concat(_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track."), "</div>\n            </div>\n            <div class=\"help-section\">\n                <div class=\"icon take-card\"></div>\n                <div class=\"help-label\">").concat(_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player\'s Crew Zone (without taking any assets)."), "</div>\n            </div>\n\n            <h1>").concat(_("Powers of the artifacts (variant option)"), "</h1>\n        ");
         for (var i = 1; i <= 7; i++) {
-            html += "\n            <div class=\"help-section\">\n                <div id=\"help-artifact-".concat(i, "\"></div>\n                <div>").concat(this.technologyTilesManager.getTooltip(i), "</div>\n            </div> ");
+            html += "\n            <div class=\"help-section\">\n                <div id=\"help-artifact-".concat(i, "\"></div>\n                <div>").concat(/*this.technologyTilesManager.getTooltip(i as any)*/ '', "</div>\n            </div> ");
         }
         html += "</div>";
         return html;
     };
     AncientKnowledge.prototype.populateHelp = function () {
         for (var i = 1; i <= 7; i++) {
-            this.technologyTilesManager.setForHelp(i, "help-artifact-".concat(i));
+            //this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
         }
     };
     AncientKnowledge.prototype.onTableTechnologyTileClick = function (tile, showWarning) {
@@ -3492,6 +3513,12 @@ var AncientKnowledge = /** @class */ (function () {
             (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
     };
+    AncientKnowledge.prototype.onTimelineCardSelectionChange = function (selection) {
+        if (this.gamedatas.gamestate.name == 'swap') {
+            var length_1 = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
+            document.getElementById('actSwap_button').classList.toggle('disabled', length_1 != 2);
+        }
+    };
     AncientKnowledge.prototype.onTimelineKnowledgeClick = function (id, selectionLength) {
         var _a;
         if (this.gamedatas.gamestate.name == 'removeKnowledge') {
@@ -3531,14 +3558,24 @@ var AncientKnowledge = /** @class */ (function () {
             this.setPayDestinationLabelAndState();
         }*/
     };
+    AncientKnowledge.prototype.actSwap = function () {
+        var selectedCards = this.getCurrentPlayerTable().timeline.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        var forcedCardId = this.gamedatas.gamestate.args.card_id;
+        if (forcedCardId) {
+            cardsIds.unshift(forcedCardId);
+        }
+        this.takeAtomicAction('actSwap', cardsIds);
+    };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {
             return;
         }
         var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         var discardCards = this.getCurrentPlayerTable().hand.getCards().filter(function (card) { return !selectedCards.some(function (sc) { return sc.id == card.id; }); });
+        var cardsIds = discardCards.map(function (card) { return card.id; }).sort();
         this.takeAction('actSelectCardsToDiscard', {
-            cardIds: JSON.stringify(discardCards.map(function (card) { return card.id; })),
+            cardIds: JSON.stringify(cardsIds),
         });
     };
     AncientKnowledge.prototype.actCancelSelection = function () {
@@ -3607,9 +3644,10 @@ var AncientKnowledge = /** @class */ (function () {
         });
         var notifs = [
             ['drawCards', ANIMATION_MS],
-            ['pDrawCards', undefined],
+            ['pDrawCards', ANIMATION_MS],
             ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', undefined],
+            ['pDiscardCards', ANIMATION_MS],
+            ['destroyCard', ANIMATION_MS],
             ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
@@ -3623,6 +3661,7 @@ var AncientKnowledge = /** @class */ (function () {
             ['clearTechBoard', ANIMATION_MS],
             ['midGameReached', ANIMATION_MS],
             ['fillUpTechBoard', ANIMATION_MS],
+            ['swapCards', ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -3677,6 +3716,11 @@ var AncientKnowledge = /** @class */ (function () {
         var player_id = args.player_id, cards = args.cards;
         this.handCounters[player_id].incValue(-cards.length);
         this.getPlayerTable(player_id).hand.removeCards(cards);
+        return Promise.resolve(true);
+    };
+    AncientKnowledge.prototype.notif_destroyCard = function (args) {
+        var player_id = args.player_id, card = args.card;
+        this.getPlayerTable(player_id).timeline.removeCard(card);
         return Promise.resolve(true);
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
@@ -3748,6 +3792,9 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_fillUpTechBoard = function (args) {
         return this.tableCenter.fillUpTechBoard(args.board, args.cards);
+    };
+    AncientKnowledge.prototype.notif_swapCards = function (args) {
+        return this.getPlayerTable(args.player_id).swapCards(this.builderCardsManager.getFullCards([args.card, args.card2]));
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

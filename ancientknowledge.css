@@ -662,12 +662,6 @@ body > .card {
   width: 16px;
   height: 16px;
 }
-.card .icon.starting-space {
-  display: inline-flex;
-  justify-content: center;
-  font-size: 12px;
-  line-height: 14px;
-}
 
 .builder-card {
   width: 163px;
@@ -898,6 +892,16 @@ body > .card {
   height: 114px;
   border-radius: 8px;
 }
+.technology-tile .back {
+  background-size: auto 100%;
+  background-image: url("img/technology-tile-backs.png");
+}
+.technology-tile[data-level="1"] .back {
+  background-position-x: 0%;
+}
+.technology-tile[data-level="2"] .back {
+  background-position-x: 100%;
+}
 .technology-tile .front .background {
   top: 24px;
   left: 8px;
@@ -1071,22 +1075,34 @@ body > .card {
   justify-content: center;
 }
 
-#table-center #table-technology-tiles {
+#table-center #table-technology {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: stretch;
+}
+#table-center #table-technology #technology-decks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+#table-center #table-technology #table-technology-tiles {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-#table-center #table-technology-tiles .table-technology-tiles {
+#table-center #table-technology #table-technology-tiles .table-technology-tiles {
   width: 730px;
   height: 139px;
   padding: 13px 73px;
   box-sizing: border-box;
   gap: 27px;
 }
-#table-center #table-technology-tiles .table-technology-tiles[data-level="1"] {
+#table-center #table-technology #table-technology-tiles .table-technology-tiles[data-level="1"] {
   background-image: url("img/obelisk1.png");
 }
-#table-center #table-technology-tiles .table-technology-tiles[data-level="2"] {
+#table-center #table-technology #table-technology-tiles .table-technology-tiles[data-level="2"] {
   background-image: url("img/obelisk2.png");
 }
 
@@ -1109,6 +1125,9 @@ body > .card {
 }
 .player-board .counters > div {
   flex: 1;
+}
+.player-board .counters.first-line {
+  height: 48px;
 }
 .player-board .counters.icons > div {
   display: flex;
@@ -1144,16 +1163,9 @@ body > .card {
 }
 
 #first-player {
-  background: #6199b0;
-  color: white;
-  height: 20px;
-  font-size: 14px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  user-select: none;
-  padding: 0 10px;
+  background: url("img/first-player.png");
+  width: 48px;
+  height: 48px;
 }
 
 .player-table {
@@ -1170,7 +1182,7 @@ body > .card {
   flex-direction: column;
   align-items: center;
 }
-.player-table .builder-card.created-card {
+.player-table .builder-card.created-card, .player-table .builder-card.swapped-card {
   box-shadow: unset;
   outline: 4px solid green;
 }
@@ -1399,6 +1411,10 @@ html, .mode_3d #game_play_area_background {
 }
 .icon.starting-space {
   background-image: url("img/starting-space-icon.svg");
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 .action-icon {

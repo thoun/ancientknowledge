@@ -246,6 +246,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'resolveChoice':
                 this.onEnteringResolveChoice(args.args);
                 break;
+            case 'swap':
+                this.onEnteringSwap(args.args);
+                break;
         }
     }
 
@@ -319,6 +322,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             Object.values(args.allChoices).forEach((choice) => this.addActionChoiceBtn(choice, true));
         }
     }
+  
+    private onEnteringSwap(args: EnteringSwapArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable().enterSwap(args.cardIds, args.card_id);
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
@@ -342,6 +351,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;
             case 'removeKnowledge':
                 this.onLeavingRemoveKnowledgeEngine();
+                break;
+            case 'swap':
+                this.onLeavingSwap();
                 break;
         }
     }
@@ -368,6 +380,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingLearn() {
         this.tableCenter.setTechnologyTilesSelectable(false);
     }
+  
+    private onLeavingSwap() {
+        this.getCurrentPlayerTable()?.leaveSwap();
+    }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -391,11 +407,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
                     );
-                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
+                    break;
+                case 'swap':
+                    (this as any).addActionButton(`actSwap_button`, _("Swap selected cards"), () => this.actSwap());
+                    document.getElementById('actSwap_button').classList.add('disabled');
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
-                    //(this as any).addActionButton(`actRestart_button`, _("Restart"), () => this.actRestart(), null, null, 'gray');
                     break;
             }
         } else {
@@ -505,7 +523,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private getOrderedPlayers(gamedatas: AncientKnowledgeGamedatas) {
-        const players = Object.values(gamedatas.players).sort((a, b) => a.playerNo - b.playerNo);
+        const players = Object.values(gamedatas.players).sort((a, b) => a.no - b.no);
         const playerIndex = players.findIndex(player => Number(player.id) === Number((this as any).player_id));
         const orderedPlayers = playerIndex > 0 ? [...players.slice(playerIndex), ...players.slice(0, playerIndex)] : players;
         return orderedPlayers;
@@ -530,6 +548,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
+                <div>${player.no == 1 ? `<div id="first-player"></div>` : ''}</div>
             </div>
             <div class="icons counters">`;
             
@@ -540,8 +559,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
                 </div>
             `).join('');
-            html += `</div>
-            <div>${playerId == gamedatas.firstPlayerId ? `<div id="first-player">${_('First player')}</div>` : ''}</div>`;
+            html += `</div>`;
 
             dojo.place(html, `player_board_${player.id}`);
 
@@ -581,8 +599,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 }
             });
         });
-
         
+        this.setTooltip(`first-player`, _('First player'));
     }
 
     private createPlayerTables(gamedatas: AncientKnowledgeGamedatas) {
@@ -608,26 +626,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this[`${type}TimelineCounters`][playerId].toValue(icons[`${type}-timeline`]);
             }
         });
-    }
-
-    private setScore(playerId: number, score: number) {
-        (this as any).scoreCtrl[playerId]?.toValue(score);
-        this.tableCenter.setScore(playerId, score);
-    }
-
-    private setReputation(playerId: number, count: number) {
-        this.lostKnowledgeCounters[playerId].toValue(count);
-        this.tableCenter.setReputation(playerId, count);
-    }
-
-    private setRecruits(playerId: number, count: number) {
-        this.recruitCounters[playerId].toValue(count);
-        this.getPlayerTable(playerId).updateCounter('recruits', count);
-    }
-
-    private setBracelets(playerId: number, count: number) {
-        this.braceletCounters[playerId].toValue(count);
-        this.getPlayerTable(playerId).updateCounter('bracelets', count);
     }
 
     private getHelpHtml() {
@@ -662,7 +660,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             html += `
             <div class="help-section">
                 <div id="help-artifact-${i}"></div>
-                <div>${this.technologyTilesManager.getTooltip(i as any)}</div>
+                <div>${/*this.technologyTilesManager.getTooltip(i as any)*/''}</div>
             </div> `;
         }
         html += `</div>`;
@@ -672,7 +670,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private populateHelp() {
         for (let i = 1; i <=7; i++) {
-            this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
+            //this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
         }
     }
     
@@ -714,6 +712,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.createEngine?.cardSelectionChange(selection);
         } else if (this.gamedatas.gamestate.name == 'archive') {
             this.archiveEngine?.cardSelectionChange(selection);
+        }
+    }
+
+    public  onTimelineCardSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'swap') {
+            const length = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
+            document.getElementById('actSwap_button').classList.toggle('disabled', length != 2);
         }
     }
 
@@ -761,6 +766,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }*/
     }
   	
+    public actSwap() {
+        const selectedCards = this.getCurrentPlayerTable().timeline.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+        const forcedCardId = (this.gamedatas.gamestate.args as EnteringSwapArgs).card_id;
+        if (forcedCardId) {
+            cardsIds.unshift(forcedCardId);
+        }
+
+        this.takeAtomicAction('actSwap', cardsIds);
+    }
+  	
     public actSelectCardsToDiscard() {
         if(!(this as any).checkAction('actSelectCardsToDiscard')) {
             return;
@@ -768,9 +784,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         const discardCards = this.getCurrentPlayerTable().hand.getCards().filter(card => !selectedCards.some(sc => sc.id == card.id));
+        const cardsIds = discardCards.map(card => card.id).sort();
 
         this.takeAction('actSelectCardsToDiscard', {
-            cardIds: JSON.stringify(discardCards.map(card => card.id)),
+            cardIds: JSON.stringify(cardsIds),
         });
     }
   	
@@ -852,9 +869,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         const notifs = [
             ['drawCards', ANIMATION_MS],
-            ['pDrawCards', undefined],
+            ['pDrawCards', ANIMATION_MS],
             ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', undefined],
+            ['pDiscardCards', ANIMATION_MS],
+            ['destroyCard', ANIMATION_MS],
             ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
@@ -868,6 +886,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['clearTechBoard', ANIMATION_MS],
             ['midGameReached', ANIMATION_MS],
             ['fillUpTechBoard', ANIMATION_MS],
+            ['swapCards', ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -934,6 +953,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const { player_id, cards } = args;    
         this.handCounters[player_id].incValue(-cards.length);    
         this.getPlayerTable(player_id).hand.removeCards(cards);
+        return Promise.resolve(true);
+    }
+
+    notif_destroyCard(args: NotifDestroyCardArgs) {
+        const { player_id, card } = args;      
+        this.getPlayerTable(player_id).timeline.removeCard(card);
         return Promise.resolve(true);
     }
 
@@ -1014,6 +1039,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     notif_fillUpTechBoard(args: NotifTechBoardArgs) {
         return this.tableCenter.fillUpTechBoard(args.board, args.cards);
+    }
+    
+    notif_swapCards(args: NotifSwapCardsArgs) {
+        return this.getPlayerTable(args.player_id).swapCards(this.builderCardsManager.getFullCards([args.card, args.card2]));
     }
     
     
