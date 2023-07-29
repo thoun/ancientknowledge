@@ -23,5 +23,28 @@ class C11_Warangal extends \AK\Models\Building
       clienttranslate('• discard 1 <KNOWLEDGE> from any of your monuments;'),
       clienttranslate('• and draw 1 card.'),
     ];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == SECRET;
+  }
+
+  public function onPlayerAfterLearn($event)
+  {
+    return [
+      'type' => NODE_SEQ,
+      'childs' => [
+        [
+          'action' => REMOVE_KNOWLEDGE,
+          'args' => ['n' => 1],
+        ],
+        [
+          'action' => DRAW,
+          'args' => ['n' => 1],
+        ],
+      ],
+    ];
   }
 }

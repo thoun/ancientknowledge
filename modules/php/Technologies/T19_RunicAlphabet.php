@@ -14,5 +14,14 @@ class T19_RunicAlphabet extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Straighten 2 rotated monuments in your Past.')];
+    $this->implemented = true;
+  }
+
+  public function getImmediateEffect()
+  {
+    return [
+      'action' => STRAIGHTEN,
+      'args' => ['n' => 2],
+    ];
   }
 }

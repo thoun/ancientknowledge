@@ -104,7 +104,7 @@ class Learn extends \AK\Models\Action
     }
 
     // Check listener
-    // TODO
+    $this->checkAfterListeners($player, ['tech' => $tech]);
 
     $irreversible = in_array($techId, $args['irreversibleIds']);
     $this->resolveAction(['techId' => $techId], $irreversible);

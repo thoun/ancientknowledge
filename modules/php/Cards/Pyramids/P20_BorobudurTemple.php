@@ -19,7 +19,20 @@ class P20_BorobudurTemple extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = ANYTIME;
     $this->effect = [
-      clienttranslate('Each time you CREATE 1 <ARTIFACT> , you may LEARN 1 Technology if you fulfill its requirements.'),
+      clienttranslate('Each time you CREATE 1 <ARTIFACT>, you may LEARN 1 Technology if you fulfill its requirements.'),
+    ];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Create') && $event['card']->isArtefact();
+  }
+
+  public function onPlayerAfterCreate($event)
+  {
+    return [
+      'action' => LEARN,
     ];
   }
 }

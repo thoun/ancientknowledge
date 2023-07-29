@@ -50,6 +50,9 @@ class Excavate extends \AK\Models\Action
       'args' => ['n' => 2 * count($cardIds)],
     ]);
 
+    // Check listener
+    $this->checkAfterListeners($player, ['n' => count($cardIds)]);
+
     $this->resolveAction(['cardIds' => $cardIds]);
   }
 }

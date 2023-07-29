@@ -18,5 +18,19 @@ class A18_DogonMythology extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Each time you LEARN 1 <ANCIENT>, draw 2 cards.')];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == ANCIENT;
+  }
+
+  public function onPlayerAfterLearn($event)
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 2],
+    ];
   }
 }

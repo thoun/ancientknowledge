@@ -18,5 +18,19 @@ class A17_GlozelArtifacts extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Each time you LEARN 1 <WRITING>, draw 2 cards.')];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Learn') && $event['tech']->getType() == WRITTING;
+  }
+
+  public function onPlayerAfterLearn($event)
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 2],
+    ];
   }
 }

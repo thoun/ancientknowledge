@@ -15,5 +15,19 @@ class A23_OlmecHeads extends \AK\Models\Artefact
     $this->activation = ANYTIME;
     $this->startingHand = 4;
     $this->effect = [clienttranslate('Each time you CREATE 1 <MEGALITH>, draw 1 card.')];
+    $this->implemented = true;
+  }
+
+  public function isListeningTo($event)
+  {
+    return $this->isActionEvent($event, 'Create') && $event['card']->getType() == MEGALITH;
+  }
+
+  public function onPlayerAfterCreate($event)
+  {
+    return [
+      'action' => DRAW,
+      'args' => ['n' => 1],
+    ];
   }
 }
