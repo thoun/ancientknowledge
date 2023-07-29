@@ -13,7 +13,7 @@ interface PlayerIcons {
 }
 
 interface AncientKnowledgePlayer extends Player {
-    playerNo: number;
+    no: number;
     lostKnowledge: number;
     icons: PlayerIcons;
 
@@ -151,6 +151,12 @@ interface NotifPDiscardCardsArgs {
     n: number;
     player_id: number;
     cards: BuilderCard[];
+}
+
+// destroyCard
+interface NotifDestroyCardArgs {
+    player_id: number;
+    card: BuilderCard;
 }
 
 // createCard

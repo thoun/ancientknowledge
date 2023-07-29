@@ -662,12 +662,6 @@ body > .card {
   width: 16px;
   height: 16px;
 }
-.card .icon.starting-space {
-  display: inline-flex;
-  justify-content: center;
-  font-size: 12px;
-  line-height: 14px;
-}
 
 .builder-card {
   width: 163px;
@@ -1110,6 +1104,9 @@ body > .card {
 .player-board .counters > div {
   flex: 1;
 }
+.player-board .counters.first-line {
+  height: 48px;
+}
 .player-board .counters.icons > div {
   display: flex;
   align-items: center;
@@ -1144,16 +1141,9 @@ body > .card {
 }
 
 #first-player {
-  background: #6199b0;
-  color: white;
-  height: 20px;
-  font-size: 14px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  user-select: none;
-  padding: 0 10px;
+  background: url("img/first-player.png");
+  width: 48px;
+  height: 48px;
 }
 
 .player-table {
@@ -1399,6 +1389,10 @@ html, .mode_3d #game_play_area_background {
 }
 .icon.starting-space {
   background-image: url("img/starting-space-icon.svg");
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
 }
 
 .action-icon {

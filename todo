@@ -20,14 +20,11 @@ Frontend:
  - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
     => works when you refresh
 
- - destroy action: notif destroyCard => similar to discardCards but always from the timeline and always a SINGLE card
  - straighten action: notif straightenCard => set rotated back to 0
     => I changed something here : cards now have an extra field "rotated" that is either 0 or 1 instead of relying on state
     that way cards in the past can be ordered by entry date (or anything else) without messing with rotated status
 
  - excavate action : dont forgot the askConfirmation since it's chained with draw
-
- - "space X" icon: text is not centered in the circle  (eg Genetic Disk)
 
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?

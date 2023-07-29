@@ -505,7 +505,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private getOrderedPlayers(gamedatas: AncientKnowledgeGamedatas) {
-        const players = Object.values(gamedatas.players).sort((a, b) => a.playerNo - b.playerNo);
+        const players = Object.values(gamedatas.players).sort((a, b) => a.no - b.no);
         const playerIndex = players.findIndex(player => Number(player.id) === Number((this as any).player_id));
         const orderedPlayers = playerIndex > 0 ? [...players.slice(playerIndex), ...players.slice(0, playerIndex)] : players;
         return orderedPlayers;
@@ -530,6 +530,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
+                <div>${player.no == 1 ? `<div id="first-player"></div>` : ''}</div>
             </div>
             <div class="icons counters">`;
             
@@ -540,8 +541,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
                 </div>
             `).join('');
-            html += `</div>
-            <div>${playerId == gamedatas.firstPlayerId ? `<div id="first-player">${_('First player')}</div>` : ''}</div>`;
+            html += `</div>`;
 
             dojo.place(html, `player_board_${player.id}`);
 
@@ -581,8 +581,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 }
             });
         });
-
         
+        this.setTooltip(`first-player`, _('First player'));
     }
 
     private createPlayerTables(gamedatas: AncientKnowledgeGamedatas) {
@@ -852,9 +852,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         const notifs = [
             ['drawCards', ANIMATION_MS],
-            ['pDrawCards', undefined],
+            ['pDrawCards', ANIMATION_MS],
             ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', undefined],
+            ['pDiscardCards', ANIMATION_MS],
+            ['destroyCard', ANIMATION_MS],
             ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
@@ -934,6 +935,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const { player_id, cards } = args;    
         this.handCounters[player_id].incValue(-cards.length);    
         this.getPlayerTable(player_id).hand.removeCards(cards);
+        return Promise.resolve(true);
+    }
+
+    notif_destroyCard(args: NotifDestroyCardArgs) {
+        const { player_id, card } = args;      
+        this.getPlayerTable(player_id).timeline.removeCard(card);
         return Promise.resolve(true);
     }
 

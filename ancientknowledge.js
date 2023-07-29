@@ -3345,7 +3345,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.getOrderedPlayers = function (gamedatas) {
         var _this = this;
-        var players = Object.values(gamedatas.players).sort(function (a, b) { return a.playerNo - b.playerNo; });
+        var players = Object.values(gamedatas.players).sort(function (a, b) { return a.no - b.no; });
         var playerIndex = players.findIndex(function (player) { return Number(player.id) === Number(_this.player_id); });
         var orderedPlayers = playerIndex > 0 ? __spreadArray(__spreadArray([], players.slice(playerIndex), true), players.slice(0, playerIndex), true) : players;
         return orderedPlayers;
@@ -3356,9 +3356,9 @@ var AncientKnowledge = /** @class */ (function () {
             var playerId = Number(player.id);
             document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div class=\"vp icon\"></div>");
             document.getElementById("icon_point_".concat(player.id)).remove();
-            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n            </div>\n            <div class=\"icons counters\">");
+            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div>").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
             html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"").concat(type, " icon\"></div>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                    ").concat(type == 'artifact' ? '' : "<span class=\"timeline-counter\">(<span id=\"".concat(type, "-timeline-counter-").concat(player.id, "\"></span>)</span>"), "\n                </div>\n            "); }).join('');
-            html += "</div>\n            <div>".concat(playerId == gamedatas.firstPlayerId ? "<div id=\"first-player\">".concat(_('First player'), "</div>") : '', "</div>");
+            html += "</div>";
             dojo.place(html, "player_board_".concat(player.id));
             var handCounter = new ebg.counter();
             handCounter.create("playerhand-counter-".concat(playerId));
@@ -3397,6 +3397,7 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
         });
+        this.setTooltip("first-player", _('First player'));
     };
     AncientKnowledge.prototype.createPlayerTables = function (gamedatas) {
         var _this = this;
@@ -3607,9 +3608,10 @@ var AncientKnowledge = /** @class */ (function () {
         });
         var notifs = [
             ['drawCards', ANIMATION_MS],
-            ['pDrawCards', undefined],
+            ['pDrawCards', ANIMATION_MS],
             ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', undefined],
+            ['pDiscardCards', ANIMATION_MS],
+            ['destroyCard', ANIMATION_MS],
             ['createCard', undefined],
             ['fillPool', undefined],
             ['discardLostKnowledge', 1],
@@ -3677,6 +3679,11 @@ var AncientKnowledge = /** @class */ (function () {
         var player_id = args.player_id, cards = args.cards;
         this.handCounters[player_id].incValue(-cards.length);
         this.getPlayerTable(player_id).hand.removeCards(cards);
+        return Promise.resolve(true);
+    };
+    AncientKnowledge.prototype.notif_destroyCard = function (args) {
+        var player_id = args.player_id, card = args.card;
+        this.getPlayerTable(player_id).timeline.removeCard(card);
         return Promise.resolve(true);
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
