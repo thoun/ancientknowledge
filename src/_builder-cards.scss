@@ -4,7 +4,7 @@
 
     &[data-rotated="1"] .card-sides {
         transform-origin: bottom right;
-        transform: rotate(-90deg);
+        transform: translateY(-163px) rotate(-90deg);
     }
 
     &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {

@@ -70,16 +70,21 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         // TODO TEMP
         html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
 
-        if (card.discard) {
+        if (card.discard || card.locked) {
             html += `
-            <div class="discard">
-                <div class="discard-text">${card.discard}</div>
-                <div class="discard-icon"></div>
-            </div>`;
-        } else if (card.locked) {
+            <div class="discard">`;
+            if (card.discard) {
+                html += `
+                    <div class="discard-text">${card.discard}</div>
+                    <div class="discard-icon"></div>`;
+            }
+            if (card.locked) {
+                html += `
+                <div class="discard">
+                    <div class="lock-icon"></div>
+                </div>`;
+            }
             html += `
-            <div class="discard">
-                <div class="lock-icon"></div>
             </div>`;
         }
 
@@ -182,6 +187,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
             id: card.id,
             location: card.location,
             knowledge: card.knowledge,
+            rotated: card.rotated,
         };
     }
 

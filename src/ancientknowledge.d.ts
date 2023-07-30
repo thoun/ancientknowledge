@@ -61,6 +61,7 @@ interface AncientKnowledgeGame extends Game {
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineCardSelectionChange(selection: BuilderCard[]): void;
+    onPastCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
@@ -227,4 +228,10 @@ interface NotifSwapCardsArgs {
     player_id: number;
     card: BuilderCard;
     card2: BuilderCard;
+}
+
+// rotateCards
+interface NotifRotateCardsArgs {
+    player_id: number;
+    cards: BuilderCard[];
 }
