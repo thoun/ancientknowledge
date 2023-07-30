@@ -1056,6 +1056,12 @@ body > .card {
 .technology-tile .front[data-requirement=false] .effect {
   top: 15px;
 }
+.technology-tile[data-level="2"] .front .effect {
+  top: unset;
+  right: unset;
+  left: 92px;
+  bottom: 8px;
+}
 .technology-tile.bga-cards_selectable-card:not(.bga-cards_disabled-card):not(.bga-cards_selected-card) {
   animation: selectable-tile-animation 1s alternate infinite ease-in-out;
 }

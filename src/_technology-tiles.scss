@@ -205,6 +205,15 @@
       }
     }
 
+    &[data-level="2"] {
+        .front .effect {
+            top: unset;
+            right: unset;
+            left: 92px;
+            bottom: 8px;
+        }
+    }
+
     &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
         &:not(.bga-cards_selected-card) {
             animation: selectable-tile-animation 1s alternate infinite ease-in-out;
