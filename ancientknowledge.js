@@ -2459,9 +2459,6 @@ var PlayerTable = /** @class */ (function () {
     }
     PlayerTable.prototype.refreshUI = function (player) {
         var _this = this;
-        if (this.currentPlayer) {
-            this.refreshHand(player.hand);
-        }
         this.timeline.removeAll();
         player.timeline.forEach(function (card) { return _this.createTimelineCard(_this.game.builderCardsManager.getFullCard(card)); });
         this.artifacts.removeAll();

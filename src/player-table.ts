@@ -103,10 +103,6 @@ class PlayerTable {
     }
     
     public refreshUI(player: AncientKnowledgePlayer): void {
-        if (this.currentPlayer) { 
-            this.refreshHand(player.hand);
-        }
-
         this.timeline.removeAll();
         player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
 
