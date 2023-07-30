@@ -3,6 +3,7 @@ Backend:
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
  - T16_SatorSquare : asks to swap, with no card on timeline
+ - add a log like "{player_name} Timeline phase is skipped (no Timeline phase effect)" ?
 
 Frontend:
  - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
@@ -10,19 +11,9 @@ Frontend:
  
  - resolve choices : grayed out button contains only the source, not the description of what could have been granted if requirements were met
 
- - Learn :
-   - display deck / discard of level 1/2 tech tiles with number of cards left in deck ?
-
  - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
     => works when you refresh
  - undo : multiple trigger when clicking on one "undo here"
-
- 
- - straighten action: notif straightenCard => set rotated back to 0
-    => I changed something here : cards now have an extra field "rotated" that is either 0 or 1 instead of relying on state
-    that way cards in the past can be ordered by entry date (or anything else) without messing with rotated status
-
- - excavate action : dont forgot the askConfirmation since it's chained with draw
 
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?
@@ -33,9 +24,13 @@ Frontend:
    - a "select all knowledge on this card" button on each card ?
    - player can always choose to not remove all of them : "discard up to X..."
 
- - sometimes hand are getting empty, maybe an issue with undo ?
-
  - knowledge on card : too hard to see => either add a white contour or (better IMO) put a counter instead inside a white (opacity 0.8 or sthg) rounded square with 1/3 the size of the background image in the top right corner
   -> them problem with a counter is how do they select the knowledge to remove?
 
- - discard multi state : very similar to discard state
+ - past cards : see how to display straight cards mixed with rotated cards 
+
+ - declineSlideLeft removes knowledge tokens
+
+To check with Quentin :
+- Is it useful to show counters for tech deck & discard with counter ?
+- Same question for Builder cards deck/discard

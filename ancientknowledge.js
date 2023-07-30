@@ -1084,10 +1084,15 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeCard = function (card, settings) {
+        var promise;
         if (this.contains(card) && this.element.contains(this.getCardElement(card))) {
-            this.manager.removeCard(card, settings);
+            promise = this.manager.removeCard(card, settings);
+        }
+        else {
+            promise = Promise.resolve(false);
         }
         this.cardRemoved(card, settings);
+        return promise;
     };
     /**
      * Notify the stock that a card is removed.
@@ -1112,8 +1117,20 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeCards = function (cards, settings) {
-        var _this = this;
-        cards.forEach(function (card) { return _this.removeCard(card, settings); });
+        return __awaiter(this, void 0, void 0, function () {
+            var promises, results;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        promises = cards.map(function (card) { return _this.removeCard(card, settings); });
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        results = _a.sent();
+                        return [2 /*return*/, results.some(function (result) { return result; })];
+                }
+            });
+        });
     };
     /**
      * Remove all cards from the stock.
@@ -1460,9 +1477,7 @@ var Deck = /** @class */ (function (_super) {
     Deck.prototype.setCardNumber = function (cardNumber, topCard) {
         var _this = this;
         if (topCard === void 0) { topCard = null; }
-        if (topCard) {
-            this.addCard(topCard);
-        }
+        var promise = topCard ? this.addCard(topCard) : Promise.resolve(true);
         this.cardNumber = cardNumber;
         this.element.dataset.empty = (this.cardNumber == 0).toString();
         var thickness = 0;
@@ -1476,6 +1491,7 @@ var Deck = /** @class */ (function (_super) {
         if (counterDiv) {
             counterDiv.innerHTML = "".concat(cardNumber);
         }
+        return promise;
     };
     Deck.prototype.addCard = function (card, animation, settings) {
         var _this = this;
@@ -1756,9 +1772,8 @@ var VoidStock = /** @class */ (function (_super) {
             promise = Promise.resolve(false);
         }
         if ((_a = settings === null || settings === void 0 ? void 0 : settings.remove) !== null && _a !== void 0 ? _a : true) {
-            return promise.then(function (result) {
-                _this.removeCard(card);
-                return result;
+            return promise.then(function () {
+                return _this.removeCard(card);
             });
         }
         else {
@@ -1793,6 +1808,7 @@ var AllVisibleDeck = /** @class */ (function (_super) {
             _this.createCounter((_g = settings.counter.position) !== null && _g !== void 0 ? _g : 'bottom', (_h = settings.counter.extraClasses) !== null && _h !== void 0 ? _h : 'round', settings.counter.counterId);
             if ((_j = settings.counter) === null || _j === void 0 ? void 0 : _j.hideWhenEmpty) {
                 _this.element.querySelector('.bga-cards_deck-counter').classList.add('hide-when-empty');
+                _this.element.dataset.empty = 'true';
             }
         }
         return _this;
@@ -1889,6 +1905,7 @@ var CardManager = /** @class */ (function () {
         this.game = game;
         this.settings = settings;
         this.stocks = [];
+        this.updateMainTimeoutId = [];
         this.updateFrontTimeoutId = [];
         this.updateBackTimeoutId = [];
         this.animationManager = (_a = settings.animationManager) !== null && _a !== void 0 ? _a : new AnimationManager(game);
@@ -1950,13 +1967,13 @@ var CardManager = /** @class */ (function () {
         var id = this.getId(card);
         var div = document.getElementById(id);
         if (!div) {
-            return false;
+            return Promise.resolve(false);
         }
         div.id = "deleted".concat(id);
         div.remove();
         // if the card is in a stock, notify the stock about removal
         (_a = this.getCardStock(card)) === null || _a === void 0 ? void 0 : _a.cardRemoved(card, settings);
-        return true;
+        return Promise.resolve(true);
     };
     /**
      * Returns the stock containing the card.
@@ -1987,7 +2004,7 @@ var CardManager = /** @class */ (function () {
      */
     CardManager.prototype.setCardVisible = function (card, visible, settings) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
         var element = this.getCardElement(card);
         if (!element) {
             return;
@@ -1995,33 +2012,46 @@ var CardManager = /** @class */ (function () {
         var isVisible = visible !== null && visible !== void 0 ? visible : this.isCardVisible(card);
         element.dataset.side = isVisible ? 'front' : 'back';
         var stringId = JSON.stringify(this.getId(card));
-        if ((_a = settings === null || settings === void 0 ? void 0 : settings.updateFront) !== null && _a !== void 0 ? _a : true) {
+        if ((_a = settings === null || settings === void 0 ? void 0 : settings.updateMain) !== null && _a !== void 0 ? _a : false) {
+            if (this.updateMainTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
+                clearTimeout(this.updateMainTimeoutId[stringId]);
+                delete this.updateMainTimeoutId[stringId];
+            }
+            var updateMainDelay = (_b = settings === null || settings === void 0 ? void 0 : settings.updateMainDelay) !== null && _b !== void 0 ? _b : 0;
+            if (isVisible && updateMainDelay > 0 && this.animationsActive()) {
+                this.updateMainTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element); }, updateMainDelay);
+            }
+            else {
+                (_d = (_c = this.settings).setupDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element);
+            }
+        }
+        if ((_e = settings === null || settings === void 0 ? void 0 : settings.updateFront) !== null && _e !== void 0 ? _e : true) {
             if (this.updateFrontTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
                 clearTimeout(this.updateFrontTimeoutId[stringId]);
                 delete this.updateFrontTimeoutId[stringId];
             }
-            var updateFrontDelay = (_b = settings === null || settings === void 0 ? void 0 : settings.updateFrontDelay) !== null && _b !== void 0 ? _b : 500;
+            var updateFrontDelay = (_f = settings === null || settings === void 0 ? void 0 : settings.updateFrontDelay) !== null && _f !== void 0 ? _f : 500;
             if (!isVisible && updateFrontDelay > 0 && this.animationsActive()) {
                 this.updateFrontTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupFrontDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element.getElementsByClassName('front')[0]); }, updateFrontDelay);
             }
             else {
-                (_d = (_c = this.settings).setupFrontDiv) === null || _d === void 0 ? void 0 : _d.call(_c, card, element.getElementsByClassName('front')[0]);
+                (_h = (_g = this.settings).setupFrontDiv) === null || _h === void 0 ? void 0 : _h.call(_g, card, element.getElementsByClassName('front')[0]);
             }
         }
-        if ((_e = settings === null || settings === void 0 ? void 0 : settings.updateBack) !== null && _e !== void 0 ? _e : false) {
+        if ((_j = settings === null || settings === void 0 ? void 0 : settings.updateBack) !== null && _j !== void 0 ? _j : false) {
             if (this.updateBackTimeoutId[stringId]) { // make sure there is not a delayed animation that will overwrite the last flip request
                 clearTimeout(this.updateBackTimeoutId[stringId]);
                 delete this.updateBackTimeoutId[stringId];
             }
-            var updateBackDelay = (_f = settings === null || settings === void 0 ? void 0 : settings.updateBackDelay) !== null && _f !== void 0 ? _f : 0;
+            var updateBackDelay = (_k = settings === null || settings === void 0 ? void 0 : settings.updateBackDelay) !== null && _k !== void 0 ? _k : 0;
             if (isVisible && updateBackDelay > 0 && this.animationsActive()) {
                 this.updateBackTimeoutId[stringId] = setTimeout(function () { var _a, _b; return (_b = (_a = _this.settings).setupBackDiv) === null || _b === void 0 ? void 0 : _b.call(_a, card, element.getElementsByClassName('back')[0]); }, updateBackDelay);
             }
             else {
-                (_h = (_g = this.settings).setupBackDiv) === null || _h === void 0 ? void 0 : _h.call(_g, card, element.getElementsByClassName('back')[0]);
+                (_m = (_l = this.settings).setupBackDiv) === null || _m === void 0 ? void 0 : _m.call(_l, card, element.getElementsByClassName('back')[0]);
             }
         }
-        if ((_j = settings === null || settings === void 0 ? void 0 : settings.updateData) !== null && _j !== void 0 ? _j : true) {
+        if ((_o = settings === null || settings === void 0 ? void 0 : settings.updateData) !== null && _o !== void 0 ? _o : true) {
             // card data has changed
             var stock = this.getCardStock(card);
             var cards = stock.getCards();
@@ -2122,6 +2152,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
             setupDiv: function (card, div) {
                 div.classList.add('builder-card');
                 div.dataset.cardId = '' + card.id;
+                div.dataset.rotated = '' + card.rotated;
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
             isCardVisible: function (card) { return Boolean(card.number); },
@@ -2149,11 +2180,15 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         html += "</div>";
         // TODO TEMP
         html += "<div class=\"implemented\" data-implemented=\"".concat((_b = (_a = card.implemented) === null || _a === void 0 ? void 0 : _a.toString()) !== null && _b !== void 0 ? _b : 'false', "\"></div>");
-        if (card.discard) {
-            html += "\n            <div class=\"discard\">\n                <div class=\"discard-text\">".concat(card.discard, "</div>\n                <div class=\"discard-icon\"></div>\n            </div>");
-        }
-        else if (card.locked) {
-            html += "\n            <div class=\"discard\">\n                <div class=\"lock-icon\"></div>\n            </div>";
+        if (card.discard || card.locked) {
+            html += "\n            <div class=\"discard\">";
+            if (card.discard) {
+                html += "\n                    <div class=\"discard-text\">".concat(card.discard, "</div>\n                    <div class=\"discard-icon\"></div>");
+            }
+            if (card.locked) {
+                html += "\n                <div class=\"discard\">\n                    <div class=\"lock-icon\"></div>\n                </div>";
+            }
+            html += "\n            </div>";
         }
         html += "\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line bottom\"></div>\n            <div class=\"line top\"></div>\n            <div class=\"line middle\"></div>";
         if (typeLetter != 'A') {
@@ -2194,7 +2229,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return message;
     };
     BuilderCardsManager.prototype.getFullCard = function (card) {
-        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id, location: card.location, knowledge: card.knowledge });
+        return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id, location: card.location, knowledge: card.knowledge, rotated: card.rotated });
     };
     BuilderCardsManager.prototype.getFullCards = function (cards) {
         var _this = this;
@@ -2323,9 +2358,9 @@ var TableCenter = /** @class */ (function () {
         this.refreshTechnologyTiles(gamedatas.techs);
         var cardDeckDiv = document.getElementById("builder-deck");
         this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
-        // TODO cardNumber: gamedatas.cardDeckCount,
-        // TODO topCard: gamedatas.cardDeckTop,
-        // TODO counter: { counterId: 'deck-counter', },
+            // TODO cardNumber: gamedatas.cardDeckCount,
+            topCard: { id: "deck-card" },
+            // TODO counter: { counterId: 'deck-counter', },
         });
     }
     TableCenter.prototype.setTechnologyTilesSelectable = function (selectable, selectableCards) {
@@ -2415,17 +2450,18 @@ var PlayerTable = /** @class */ (function () {
                 hideWhenEmpty: true,
             },
         });
+        this.past.onSelectionChange = function (selection) { return _this.game.onPastCardSelectionChange(selection); };
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
         });
         this.refreshUI(player);
-    }
-    PlayerTable.prototype.refreshUI = function (player) {
-        var _this = this;
         if (this.currentPlayer) {
             this.refreshHand(player.hand);
         }
+    }
+    PlayerTable.prototype.refreshUI = function (player) {
+        var _this = this;
         this.timeline.removeAll();
         player.timeline.forEach(function (card) { return _this.createTimelineCard(_this.game.builderCardsManager.getFullCard(card)); });
         this.artifacts.removeAll();
@@ -2591,6 +2627,13 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         this.timeline.swapCards(cards);
         cards.forEach(function (card) { return _this.setCardKnowledge(card.id, card.knowledge); });
+    };
+    PlayerTable.prototype.hasKnowledgeOnTimeline = function () {
+        return document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll('.knowledge').length > 0;
+    };
+    PlayerTable.prototype.rotateCards = function (cards) {
+        var _this = this;
+        cards.forEach(function (card) { return _this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }); });
     };
     return PlayerTable;
 }());
@@ -3135,6 +3178,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'swap':
                 this.onEnteringSwap(args.args);
                 break;
+            case 'excavate':
+                this.onEnteringExcavate(args.args);
+                break;
         }
     };
     /*
@@ -3209,7 +3255,13 @@ var AncientKnowledge = /** @class */ (function () {
             this.getCurrentPlayerTable().enterSwap(args.cardIds, args.card_id);
         }
     };
+    AncientKnowledge.prototype.onEnteringExcavate = function (args) {
+        if (this.isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable().past.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
+        var _a, _b;
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
         document.getElementById('customActions').innerHTML = '';
@@ -3232,6 +3284,12 @@ var AncientKnowledge = /** @class */ (function () {
                 break;
             case 'swap':
                 this.onLeavingSwap();
+                break;
+            case 'excavate':
+                (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.past.setSelectionMode('none');
+                break;
+            case 'discardMulti':
+                (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable('none');
                 break;
         }
     };
@@ -3283,10 +3341,29 @@ var AncientKnowledge = /** @class */ (function () {
                     ].forEach(function (codeAndLabel) {
                         return _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
                     });
+                    var table = this.getCurrentPlayerTable();
+                    if (!table.hand.getCards().length) {
+                        document.getElementById('actChooseAction_create_button').classList.add('disabled');
+                    }
+                    if (!table.past.getCards().filter(function (card) { return !card.rotated; }).length) {
+                        document.getElementById('actChooseAction_excavate_button').classList.add('disabled');
+                    }
+                    if (!table.hasKnowledgeOnTimeline()) {
+                        document.getElementById('actChooseAction_archive_button').classList.add('disabled');
+                    }
                     break;
                 case 'swap':
                     this.addActionButton("actSwap_button", _("Swap selected cards"), function () { return _this.actSwap(); });
                     document.getElementById('actSwap_button').classList.add('disabled');
+                    break;
+                case 'excavate':
+                    this.addActionButton("actExcavate_button", _("Excavate selected cards"), function () { return _this.actExcavate(); });
+                    document.getElementById('actExcavate_button').classList.add('disabled');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    this.addActionButton("actDiscardMulti_button", _("Discard selected cards"), function () { return _this.actDiscardMulti(); });
+                    document.getElementById('actDiscardMulti_button').classList.add('disabled');
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
@@ -3297,6 +3374,9 @@ var AncientKnowledge = /** @class */ (function () {
             switch (stateName) {
                 case 'initialSelection':
                     this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('none');
                     break;
             }
         }
@@ -3327,7 +3407,7 @@ var AncientKnowledge = /** @class */ (function () {
                 _this.askConfirmation(choice.irreversibleAction, function () { return _this.takeAction('actChooseAction', { id: choice.id }); });
             });
         if (disabled) {
-            $("btnChoice".concat(choice.id)).classList.add('disabled');
+            document.getElementById("btnChoice".concat(choice.id)).classList.add('disabled');
         }
     };
     AncientKnowledge.prototype.translate = function (t) {
@@ -3512,11 +3592,20 @@ var AncientKnowledge = /** @class */ (function () {
         else if (this.gamedatas.gamestate.name == 'archive') {
             (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
+        if (this.gamedatas.gamestate.name == 'discardMulti') {
+            var n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
+            document.getElementById('actDiscardMulti_button').classList.toggle('disabled', selection.length != n);
+        }
     };
     AncientKnowledge.prototype.onTimelineCardSelectionChange = function (selection) {
         if (this.gamedatas.gamestate.name == 'swap') {
             var length_1 = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
             document.getElementById('actSwap_button').classList.toggle('disabled', length_1 != 2);
+        }
+    };
+    AncientKnowledge.prototype.onPastCardSelectionChange = function (selection) {
+        if (this.gamedatas.gamestate.name == 'excavate') {
+            document.getElementById('actExcavate_button').classList.toggle('disabled', !selection.length);
         }
     };
     AncientKnowledge.prototype.onTimelineKnowledgeClick = function (id, selectionLength) {
@@ -3567,6 +3656,16 @@ var AncientKnowledge = /** @class */ (function () {
         }
         this.takeAtomicAction('actSwap', cardsIds);
     };
+    AncientKnowledge.prototype.actExcavate = function () {
+        var selectedCards = this.getCurrentPlayerTable().past.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actExcavate', [cardsIds], true);
+    };
+    AncientKnowledge.prototype.actDiscardMulti = function () {
+        var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actDiscardMulti', [cardsIds]);
+    };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {
             return;
@@ -3605,7 +3704,7 @@ var AncientKnowledge = /** @class */ (function () {
         }
         else {
             var msg = warning === true ?
-                _("If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice") :
+                _("you will either draw card(s) from the deck or the discard, or someone else is going to make a choice") :
                 warning;
             this.confirmationDialog(this.format_string_recursive(_("If you take this action, you won't be able to undo past this step because of the following reason: ${msg}"), { msg: msg }), function () { return callback(); });
         }
@@ -3662,6 +3761,8 @@ var AncientKnowledge = /** @class */ (function () {
             ['midGameReached', ANIMATION_MS],
             ['fillUpTechBoard', ANIMATION_MS],
             ['swapCards', ANIMATION_MS],
+            ['rotateCards', ANIMATION_MS],
+            ['straightenCards', ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -3795,6 +3896,12 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_swapCards = function (args) {
         return this.getPlayerTable(args.player_id).swapCards(this.builderCardsManager.getFullCards([args.card, args.card2]));
+    };
+    AncientKnowledge.prototype.notif_rotateCards = function (args) {
+        return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
+    };
+    AncientKnowledge.prototype.notif_straightenCards = function (args) {
+        return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

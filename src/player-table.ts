@@ -91,6 +91,7 @@ class PlayerTable {
                 hideWhenEmpty: true,
             },
         });
+        this.past.onSelectionChange = (selection: BuilderCard[]) => this.game.onPastCardSelectionChange(selection);
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
@@ -99,13 +100,12 @@ class PlayerTable {
         });
 
         this.refreshUI(player);
+        if (this.currentPlayer) {
+            this.refreshHand(player.hand);
+        }
     }
     
     public refreshUI(player: AncientKnowledgePlayer): void {
-        if (this.currentPlayer) { 
-            this.refreshHand(player.hand);
-        }
-
         this.timeline.removeAll();
         player.timeline.forEach(card => this.createTimelineCard(this.game.builderCardsManager.getFullCard(card)));
 
@@ -287,5 +287,13 @@ class PlayerTable {
     public swapCards(cards: BuilderCard[]) {
         this.timeline.swapCards(cards);
         cards.forEach(card => this.setCardKnowledge(card.id, card.knowledge));
+    }
+
+    public hasKnowledgeOnTimeline() {
+        return document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll('.knowledge').length > 0;
+    }
+    
+    public rotateCards(cards: BuilderCard[]) {
+        cards.forEach(card => this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }));
     }
 }

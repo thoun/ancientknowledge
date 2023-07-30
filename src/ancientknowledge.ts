@@ -249,6 +249,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'swap':
                 this.onEnteringSwap(args.args);
                 break;
+            case 'excavate':
+                this.onEnteringExcavate(args.args);
+                break;
         }
     }
 
@@ -328,13 +331,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.getCurrentPlayerTable().enterSwap(args.cardIds, args.card_id);
         }
     }
+  
+    private onEnteringExcavate(args: EnteringSwapArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable().past.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
 
-      (this as any).removeActionButtons();
-      document.getElementById('customActions').innerHTML = '';
-      document.getElementById('restartAction').innerHTML = '';
+        (this as any).removeActionButtons();
+        document.getElementById('customActions').innerHTML = '';
+        document.getElementById('restartAction').innerHTML = '';
 
         switch (stateName) {
             case 'initialSelection':
@@ -354,6 +363,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;
             case 'swap':
                 this.onLeavingSwap();
+                break;
+            case 'excavate':
+                this.getCurrentPlayerTable()?.past.setSelectionMode('none');
+                break;
+            case 'discardMulti':
+                this.getCurrentPlayerTable()?.setHandSelectable('none');
                 break;
         }
     }
@@ -407,10 +422,29 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     ].forEach(codeAndLabel => 
                         (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
                     );
+                    const table = this.getCurrentPlayerTable();
+                    if (!table.hand.getCards().length) {
+                        document.getElementById('actChooseAction_create_button').classList.add('disabled');
+                    }
+                    if (!table.past.getCards().filter(card => !card.rotated).length) {
+                        document.getElementById('actChooseAction_excavate_button').classList.add('disabled');
+                    }
+                    if (!table.hasKnowledgeOnTimeline()) {
+                        document.getElementById('actChooseAction_archive_button').classList.add('disabled');
+                    }
                     break;
                 case 'swap':
                     (this as any).addActionButton(`actSwap_button`, _("Swap selected cards"), () => this.actSwap());
                     document.getElementById('actSwap_button').classList.add('disabled');
+                    break;
+                case 'excavate':
+                    (this as any).addActionButton(`actExcavate_button`, _("Excavate selected cards"), () => this.actExcavate());
+                    document.getElementById('actExcavate_button').classList.add('disabled');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    (this as any).addActionButton(`actDiscardMulti_button`, _("Discard selected cards"), () => this.actDiscardMulti());
+                    document.getElementById('actDiscardMulti_button').classList.add('disabled');
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
@@ -420,6 +454,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             switch (stateName) {
                 case 'initialSelection':
                     (this as any).addActionButton(`actCancelSelection_button`, _('Cancel'), () => this.actCancelSelection(), null, null, 'gray');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('none');
                     break;
             }
         }
@@ -455,7 +492,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
               }
         );
         if (disabled) {
-          $(`btnChoice${choice.id}`).classList.add('disabled');
+          document.getElementById(`btnChoice${choice.id}`).classList.add('disabled');
         }
       }
 
@@ -712,13 +749,22 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.createEngine?.cardSelectionChange(selection);
         } else if (this.gamedatas.gamestate.name == 'archive') {
             this.archiveEngine?.cardSelectionChange(selection);
+        }if (this.gamedatas.gamestate.name == 'discardMulti') {
+            const n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
+            document.getElementById('actDiscardMulti_button').classList.toggle('disabled', selection.length != n);
         }
     }
 
-    public  onTimelineCardSelectionChange(selection: BuilderCard[]): void {
+    public onTimelineCardSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'swap') {
             const length = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
             document.getElementById('actSwap_button').classList.toggle('disabled', length != 2);
+        }
+    }
+
+    public onPastCardSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'excavate') {
+            document.getElementById('actExcavate_button').classList.toggle('disabled', !selection.length);
         }
     }
 
@@ -777,6 +823,20 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actSwap', cardsIds);
     }
   	
+    public actExcavate() {
+        const selectedCards = this.getCurrentPlayerTable().past.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actExcavate', [cardsIds], true);
+    }
+  	
+    public actDiscardMulti() {
+        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actDiscardMulti', [cardsIds]);
+    }
+  	
     public actSelectCardsToDiscard() {
         if(!(this as any).checkAction('actSelectCardsToDiscard')) {
             return;
@@ -824,7 +884,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
           callback();
         } else {
             let msg = warning === true ?
-                _("If you take this action, you won't be able to undo past this step because you will either draw card(s) from the deck or the discard, or someone else is going to make a choice") :
+                _("you will either draw card(s) from the deck or the discard, or someone else is going to make a choice") :
                 warning;
 
             (this as any).confirmationDialog(
@@ -834,7 +894,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    private takeAtomicAction(action: string, args: any = {}, warning = false) {
+    private takeAtomicAction(action: string, args: any = {}, warning: boolean | string = false) {
         if (!(this as any).checkAction(action)) return false;
   
         this.askConfirmation(warning, () =>
@@ -887,6 +947,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['midGameReached', ANIMATION_MS],
             ['fillUpTechBoard', ANIMATION_MS],
             ['swapCards', ANIMATION_MS],
+            ['rotateCards', ANIMATION_MS],
+            ['straightenCards', ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -1045,6 +1107,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.getPlayerTable(args.player_id).swapCards(this.builderCardsManager.getFullCards([args.card, args.card2]));
     }
     
+    notif_rotateCards(args: NotifRotateCardsArgs) {
+        return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
+    } 
+    
+    notif_straightenCards(args: NotifRotateCardsArgs) {
+        return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
+    }
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

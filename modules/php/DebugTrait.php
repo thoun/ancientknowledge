@@ -21,11 +21,22 @@ trait DebugTrait
   function addHand($cardId)
   {
     $player = Players::getCurrent();
-    $pId = $player->getId();
     $card = Cards::get($cardId);
     Cards::insertOnTop($cardId, 'hand');
     $card->setPId($player->getId());
     Notifications::drawCards($player, [$card], null);
+    Engine::proceed();
+  }
+
+  // addPast(P10_Teotihuacan)
+  function addPast($cardId)
+  {
+    $player = Players::getCurrent();
+    $pId = $player->getId();
+    $card = Cards::get($cardId);
+    Cards::insertOnTop($cardId, 'past');
+    $card->setPId($player->getId());
+    Notifications::declineCard($player, $card, 0);
     Engine::proceed();
   }
 
