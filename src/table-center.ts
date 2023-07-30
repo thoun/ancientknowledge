@@ -30,7 +30,7 @@ class TableCenter {
         const cardDeckDiv = document.getElementById(`builder-deck`);
         this.cardDeck = new Deck<BuilderCard>(game.builderCardsManager, cardDeckDiv, {
             // TODO cardNumber: gamedatas.cardDeckCount,
-            // TODO topCard: gamedatas.cardDeckTop,
+            topCard: { id: `deck-card` } as BuilderCard,
             // TODO counter: { counterId: 'deck-counter', },
         });
     }

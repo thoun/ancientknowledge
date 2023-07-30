@@ -2324,9 +2324,9 @@ var TableCenter = /** @class */ (function () {
         this.refreshTechnologyTiles(gamedatas.techs);
         var cardDeckDiv = document.getElementById("builder-deck");
         this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
-        // TODO cardNumber: gamedatas.cardDeckCount,
-        // TODO topCard: gamedatas.cardDeckTop,
-        // TODO counter: { counterId: 'deck-counter', },
+            // TODO cardNumber: gamedatas.cardDeckCount,
+            topCard: { id: "deck-card" },
+            // TODO counter: { counterId: 'deck-counter', },
         });
     }
     TableCenter.prototype.setTechnologyTilesSelectable = function (selectable, selectableCards) {

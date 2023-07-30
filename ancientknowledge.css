@@ -683,6 +683,9 @@ body > .card {
 .builder-card.bga-cards_selected-card:not(.bga-cards_disabled-card) .card-side {
   box-shadow: unset;
 }
+.builder-card .back {
+  background-image: url("img/card-back.jpg");
+}
 .builder-card .front .background {
   top: 8px;
   left: 8px;
@@ -1108,6 +1111,12 @@ body > .card {
 }
 #table-center #table-technology #table-technology-tiles .table-technology-tiles[data-level="2"] {
   background-image: url("img/obelisk2.png");
+}
+#table-center #builder-decks {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .player-board {
