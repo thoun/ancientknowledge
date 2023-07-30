@@ -2456,6 +2456,9 @@ var PlayerTable = /** @class */ (function () {
             _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
         });
         this.refreshUI(player);
+        if (this.currentPlayer) {
+            this.refreshHand(player.hand);
+        }
     }
     PlayerTable.prototype.refreshUI = function (player) {
         var _this = this;

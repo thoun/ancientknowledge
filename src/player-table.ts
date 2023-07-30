@@ -100,6 +100,9 @@ class PlayerTable {
         });
 
         this.refreshUI(player);
+        if (this.currentPlayer) {
+            this.refreshHand(player.hand);
+        }
     }
     
     public refreshUI(player: AncientKnowledgePlayer): void {
