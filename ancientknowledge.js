@@ -2122,6 +2122,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
             setupDiv: function (card, div) {
                 div.classList.add('builder-card');
                 div.dataset.cardId = '' + card.id;
+                div.dataset.rotated = '' + card.rotated;
             },
             setupFrontDiv: function (card, div) { return _this.setupFrontDiv(card, div); },
             isCardVisible: function (card) { return Boolean(card.number); },
@@ -3210,6 +3211,7 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
+        var _a;
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
         document.getElementById('customActions').innerHTML = '';
@@ -3232,6 +3234,9 @@ var AncientKnowledge = /** @class */ (function () {
                 break;
             case 'swap':
                 this.onLeavingSwap();
+                break;
+            case 'discardMulti':
+                (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.setHandSelectable('none');
                 break;
         }
     };
@@ -3288,6 +3293,11 @@ var AncientKnowledge = /** @class */ (function () {
                     this.addActionButton("actSwap_button", _("Swap selected cards"), function () { return _this.actSwap(); });
                     document.getElementById('actSwap_button').classList.add('disabled');
                     break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    this.addActionButton("actDiscardMulti_button", _("Discard selected cards"), function () { return _this.actDiscardMulti(); });
+                    document.getElementById('actDiscardMulti_button').classList.add('disabled');
+                    break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
                     break;
@@ -3297,6 +3307,9 @@ var AncientKnowledge = /** @class */ (function () {
             switch (stateName) {
                 case 'initialSelection':
                     this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('none');
                     break;
             }
         }
@@ -3327,7 +3340,7 @@ var AncientKnowledge = /** @class */ (function () {
                 _this.askConfirmation(choice.irreversibleAction, function () { return _this.takeAction('actChooseAction', { id: choice.id }); });
             });
         if (disabled) {
-            $("btnChoice".concat(choice.id)).classList.add('disabled');
+            document.getElementById("btnChoice".concat(choice.id)).classList.add('disabled');
         }
     };
     AncientKnowledge.prototype.translate = function (t) {
@@ -3512,6 +3525,10 @@ var AncientKnowledge = /** @class */ (function () {
         else if (this.gamedatas.gamestate.name == 'archive') {
             (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
+        if (this.gamedatas.gamestate.name == 'discardMulti') {
+            var n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
+            document.getElementById('actDiscardMulti_button').classList.toggle('disabled', selection.length != n);
+        }
     };
     AncientKnowledge.prototype.onTimelineCardSelectionChange = function (selection) {
         if (this.gamedatas.gamestate.name == 'swap') {
@@ -3566,6 +3583,11 @@ var AncientKnowledge = /** @class */ (function () {
             cardsIds.unshift(forcedCardId);
         }
         this.takeAtomicAction('actSwap', cardsIds);
+    };
+    AncientKnowledge.prototype.actDiscardMulti = function () {
+        var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actDiscardMulti', [cardsIds]);
     };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {

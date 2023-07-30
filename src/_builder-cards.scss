@@ -2,6 +2,11 @@
     width: 163px;
     height: 228px;    
 
+    &[data-rotated="1"] .card-sides {
+        transform-origin: bottom right;
+        transform: rotate(-90deg);
+    }
+
     &.bga-cards_selectable-card:not(.bga-cards_disabled-card) {
         &:not(.bga-cards_selected-card) {
             animation: selectable-card-animation 1s alternate infinite ease-in-out;

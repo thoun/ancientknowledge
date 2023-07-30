@@ -10,8 +10,7 @@ Frontend:
  
  - resolve choices : grayed out button contains only the source, not the description of what could have been granted if requirements were met
 
- - Learn :
-   - display deck / discard of level 1/2 tech tiles with number of cards left in deck ?
+ - Learn : decks displayed. Is it useful to show counters & discard for those decks ? Maybe ask Quentin. Same question for Builder cards deck/discard
 
  - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
     => works when you refresh
@@ -37,5 +36,3 @@ Frontend:
 
  - knowledge on card : too hard to see => either add a white contour or (better IMO) put a counter instead inside a white (opacity 0.8 or sthg) rounded square with 1/3 the size of the background image in the top right corner
   -> them problem with a counter is how do they select the knowledge to remove?
-
- - discard multi state : very similar to discard state

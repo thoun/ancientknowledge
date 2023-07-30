@@ -355,6 +355,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'swap':
                 this.onLeavingSwap();
                 break;
+            case 'discardMulti':
+                this.getCurrentPlayerTable()?.setHandSelectable('none');
+                break;
         }
     }
 
@@ -412,6 +415,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     (this as any).addActionButton(`actSwap_button`, _("Swap selected cards"), () => this.actSwap());
                     document.getElementById('actSwap_button').classList.add('disabled');
                     break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    (this as any).addActionButton(`actDiscardMulti_button`, _("Discard selected cards"), () => this.actDiscardMulti());
+                    document.getElementById('actDiscardMulti_button').classList.add('disabled');
+                    break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
                     break;
@@ -420,6 +428,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             switch (stateName) {
                 case 'initialSelection':
                     (this as any).addActionButton(`actCancelSelection_button`, _('Cancel'), () => this.actCancelSelection(), null, null, 'gray');
+                    break;
+                case 'discardMulti':
+                    this.getCurrentPlayerTable().setHandSelectable('none');
                     break;
             }
         }
@@ -455,7 +466,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
               }
         );
         if (disabled) {
-          $(`btnChoice${choice.id}`).classList.add('disabled');
+          document.getElementById(`btnChoice${choice.id}`).classList.add('disabled');
         }
       }
 
@@ -712,6 +723,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.createEngine?.cardSelectionChange(selection);
         } else if (this.gamedatas.gamestate.name == 'archive') {
             this.archiveEngine?.cardSelectionChange(selection);
+        }if (this.gamedatas.gamestate.name == 'discardMulti') {
+            const n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
+            document.getElementById('actDiscardMulti_button').classList.toggle('disabled', selection.length != n);
         }
     }
 
@@ -775,6 +789,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
 
         this.takeAtomicAction('actSwap', cardsIds);
+    }
+  	
+    public actDiscardMulti() {
+        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actDiscardMulti', [cardsIds]);
     }
   	
     public actSelectCardsToDiscard() {

@@ -17,6 +17,7 @@ interface BuilderCard {
     effect: string[];
 
     knowledge?: number;
+    rotated?: number;
 }
 
 const CARD_COLORS = {
@@ -35,6 +36,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
             setupDiv: (card: BuilderCard, div: HTMLElement) => {
                 div.classList.add('builder-card');
                 div.dataset.cardId = ''+card.id;
+                div.dataset.rotated = ''+card.rotated;
             },
             setupFrontDiv: (card: BuilderCard, div: HTMLElement) => this.setupFrontDiv(card, div),
             isCardVisible: card => Boolean(card.number),
