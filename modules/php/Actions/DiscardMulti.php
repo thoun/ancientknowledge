@@ -60,7 +60,7 @@ class DiscardMulti extends \AK\Models\Action
     }
 
     // Discard cards
-    $cards = Cards::get($cardIds);
+    $cards = Cards::getMany($cardIds);
     Cards::discard($cardIds);
     Notifications::discardCards($player, $cards);
 

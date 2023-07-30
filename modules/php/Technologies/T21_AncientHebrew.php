@@ -22,13 +22,16 @@ class T21_AncientHebrew extends \AK\Models\Technology
   public function getImmediateEffect()
   {
     return [
-      [
-        'action' => ADD_KNOWLEDGE,
-        'args' => ['n' => 1],
-      ],
-      [
-        'action' => DRAW,
-        'args' => ['n' => 1],
+      'type' => NODE_SEQ,
+      'childs' => [
+        [
+          'action' => ADD_KNOWLEDGE,
+          'args' => ['n' => 1],
+        ],
+        [
+          'action' => DRAW,
+          'args' => ['n' => 1],
+        ],
       ],
     ];
   }

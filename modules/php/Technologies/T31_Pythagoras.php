@@ -18,6 +18,14 @@ class T31_Pythagoras extends \AK\Models\Technology
     $this->implemented = true;
   }
 
+  public function canBePlayed($player)
+  {
+    return $player
+      ->getPast()
+      ->where('activation', ENDGAME)
+      ->count() >= 3;
+  }
+
   public function getScore()
   {
     return 3;
