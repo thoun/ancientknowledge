@@ -29,7 +29,7 @@ Frontend:
 
  - past cards : see how to display straight cards mixed with rotated cards 
 
- - declineSlideLeft removes knowledge tokens
+ - cards : make text fit in boxes
 
 To check with Quentin :
 - Is it useful to show counters for tech deck & discard with counter ?

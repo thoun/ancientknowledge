@@ -47,6 +47,10 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
     }
 
     private setupFrontDiv(card: BuilderCard, div: HTMLElement, ignoreTooltip: boolean = false) { 
+        if (div.style.getPropertyValue('--card-color')) {
+            return;
+        }
+        
         const typeLetter = card.id.substring(0, 1);
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
         /*

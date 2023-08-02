@@ -2166,6 +2166,9 @@ var BuilderCardsManager = /** @class */ (function (_super) {
     BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
+        if (div.style.getPropertyValue('--card-color')) {
+            return;
+        }
         var typeLetter = card.id.substring(0, 1);
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
         /*
