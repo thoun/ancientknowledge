@@ -171,16 +171,26 @@ html, .mode_3d #game_play_area_background {
 }
 
 .knowledge-token {
+  position: relative;
   display: inline-block;
   width: 25px;
   height: 38px;
-  background-size: auto 100%;
-  vertical-align: middle;
-  background-image: url('img/knowledge-tokens.png');
-  background-position-x: 0%;
   flex-shrink: 0;
+  vertical-align: middle;
 
-  &.golden {
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-size: auto 100%;
+    background-image: url('img/knowledge-tokens.png');
+    background-position-x: 0%;
+  }
+
+  &.golden::after {
     background-position-x: 100%;
   }
 

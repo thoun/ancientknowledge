@@ -41,7 +41,7 @@
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
-        gap: 5px;
+        gap: 8px;
         
         &[data-type="A"] {
             background-image: url('img/cards-background-artifact.jpg');
@@ -55,6 +55,23 @@
         }
         &[data-type="P"] {
             background-image: url('img/cards-background-pyramid.jpg');
+        }
+
+        .knowledge-token {
+            z-index: 1;
+        }
+
+        .knowledge-token::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            right: -7px;
+            top: -7px;
+            bottom: -7px;
+            display: inline-block;
+            //width: 38px;
+            //height: 52px;
+            background-image: url('img/knowledge-token-outline.png');
         }
       }
 

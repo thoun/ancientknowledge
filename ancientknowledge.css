@@ -696,7 +696,7 @@ body > .card {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 8px;
 }
 .builder-card .front .background[data-type=A] {
   background-image: url("img/cards-background-artifact.jpg");
@@ -710,6 +710,19 @@ body > .card {
 }
 .builder-card .front .background[data-type=P] {
   background-image: url("img/cards-background-pyramid.jpg");
+}
+.builder-card .front .background .knowledge-token {
+  z-index: 1;
+}
+.builder-card .front .background .knowledge-token::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  right: -7px;
+  top: -7px;
+  bottom: -7px;
+  display: inline-block;
+  background-image: url("img/knowledge-token-outline.png");
 }
 .builder-card .front .type-box[data-type=A] {
   border-radius: 0 0 7px 0;
@@ -1506,16 +1519,25 @@ html, .mode_3d #game_play_area_background {
 }
 
 .knowledge-token {
+  position: relative;
   display: inline-block;
   width: 25px;
   height: 38px;
-  background-size: auto 100%;
+  flex-shrink: 0;
   vertical-align: middle;
+}
+.knowledge-token::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-size: auto 100%;
   background-image: url("img/knowledge-tokens.png");
   background-position-x: 0%;
-  flex-shrink: 0;
 }
-.knowledge-token.golden {
+.knowledge-token.golden::after {
   background-position-x: 100%;
 }
 .knowledge-token.selectable {
