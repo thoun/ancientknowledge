@@ -167,6 +167,10 @@ $cardBackground: #f8f4f0;
         text-align: center;
         font-size: 13px;
         font-family: "quador-display", serif;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
         
         .icon {
             width: 16px;

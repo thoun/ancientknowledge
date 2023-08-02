@@ -175,6 +175,10 @@
         border-radius: 0 0 5px 0;
         border: 1px solid #b7aca7;
         background: #edeae7;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
         
         color: #404040;
         text-align: center;
@@ -200,7 +204,7 @@
         }
 
         .effect {            
-            top: 15px;
+            top: 28px;
         }
       }
     }

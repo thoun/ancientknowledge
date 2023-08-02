@@ -36,6 +36,10 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
     }    
 
     private setupFrontDiv(card: TechnologyTile, div: HTMLElement, ignoreTooltip: boolean = false) { 
+        if (div.style.getPropertyValue('--card-color')) {
+            return;
+        }
+        
         const type = card.type;
         const requirement = card.requirement?.length > 0;
         div.dataset.requirement = requirement.toString();
@@ -60,7 +64,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
         
         if (requirement) {
-            html += `<div class="requirement">${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>`;
+            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div></div>`;
         }
         html += `<div class="name-box">
             <div class="name">
@@ -73,16 +77,137 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
             <div class="line right"></div>
             <div class="line middle"></div>
             <div class="activation" data-type="${card.activation}"></div>
-        </div>`;
-        html += `<div class="effect">${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+        </div>
+        <div class="effect">
+            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+        </div>
         `;
 
         div.innerHTML = html;
+
+        if (requirement) {
+            this.reduceToFit(div.querySelector('.requirement'));
+            setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
+        }
+        this.reduceToFit(div.querySelector('.effect'));
+        setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
 
         if (!ignoreTooltip) {            
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     }
+
+    private reduceToFit(outerDiv: HTMLDivElement) {
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+        }
+    }
+
+    /*private reduceToFit(outerDiv: HTMLDivElement) {        
+        //if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
+
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        while (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+
+            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
+            
+            console.log('outer div',
+                outerDiv.style.height, 
+                window.getComputedStyle(outerDiv).height, 
+                outerDiv.clientHeight, 
+                outerDiv.offsetHeight, 
+                outerDiv.scrollHeight, 
+                outerDiv.getBoundingClientRect().height
+            );
+            
+            console.log('inner div',
+                innerDiv.style.height, 
+                window.getComputedStyle(innerDiv).height, 
+                innerDiv.clientHeight, 
+                innerDiv.offsetHeight, 
+                innerDiv.scrollHeight, 
+                innerDiv.getBoundingClientRect().height
+            );
+
+            setTimeout(() => {
+                console.log('outer div',
+                    outerDiv.style.height, 
+                    window.getComputedStyle(outerDiv).height, 
+                    outerDiv.clientHeight, 
+                    outerDiv.offsetHeight, 
+                    outerDiv.scrollHeight, 
+                    outerDiv.getBoundingClientRect().height
+                );
+                
+                console.log('inner div',
+                    innerDiv.style.height, 
+                    window.getComputedStyle(innerDiv).height, 
+                    innerDiv.clientHeight, 
+                    innerDiv.offsetHeight, 
+                    innerDiv.scrollHeight, 
+                    innerDiv.getBoundingClientRect().height
+                );
+            }, 0);
+        }
+    }*/
+
+    /*private reduceToFit(outerDiv: HTMLDivElement, fontSize: number | null = null) {        
+        if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
+
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        fontSize = fontSize ?? Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+
+            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
+            
+            console.log('outer div',
+                outerDiv.style.height, 
+                window.getComputedStyle(outerDiv).height, 
+                outerDiv.clientHeight, 
+                outerDiv.offsetHeight, 
+                outerDiv.scrollHeight, 
+                outerDiv.getBoundingClientRect().height
+            );
+            
+            console.log('inner div',
+                innerDiv.style.height, 
+                window.getComputedStyle(innerDiv).height, 
+                innerDiv.clientHeight, 
+                innerDiv.offsetHeight, 
+                innerDiv.scrollHeight, 
+                innerDiv.getBoundingClientRect().height
+            );
+
+            setTimeout(() => {
+                /_*console.log('outer div',
+                    outerDiv.style.height, 
+                    window.getComputedStyle(outerDiv).height, 
+                    outerDiv.clientHeight, 
+                    outerDiv.offsetHeight, 
+                    outerDiv.scrollHeight, 
+                    outerDiv.getBoundingClientRect().height
+                );
+                
+                console.log('inner div',
+                    innerDiv.style.height, 
+                    window.getComputedStyle(innerDiv).height, 
+                    innerDiv.clientHeight, 
+                    innerDiv.offsetHeight, 
+                    innerDiv.scrollHeight, 
+                    innerDiv.getBoundingClientRect().height
+                );*_/
+                this.reduceToFit(outerDiv, fontSize);
+            }, 100);
+        }
+    }*/
 
     private getType(type: string) {
         switch (type) {

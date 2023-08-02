@@ -657,6 +657,9 @@ body > .card {
   text-align: center;
   font-size: 13px;
   font-family: "quador-display", serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .card .front .effect .icon {
   width: 16px;
@@ -891,10 +894,10 @@ body > .card {
   margin-top: 4px;
 }
 .builder-card .front .effect {
-  left: 32px;
+  left: 35px;
   right: 5px;
   bottom: 5px;
-  min-height: 56px;
+  height: 56px;
 }
 
 @keyframes selectable-card-animation {
@@ -1048,6 +1051,9 @@ body > .card {
   border-radius: 0 0 5px 0;
   border: 1px solid #b7aca7;
   background: #edeae7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: #404040;
   text-align: center;
   font-size: 13px;
@@ -1067,7 +1073,7 @@ body > .card {
   top: 28px;
 }
 .technology-tile .front[data-requirement=false] .effect {
-  top: 15px;
+  top: 28px;
 }
 .technology-tile[data-level="2"] .front .effect {
   top: unset;

@@ -2164,6 +2164,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return _this;
     }
     BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
         if (div.style.getPropertyValue('--card-color')) {
@@ -2197,10 +2198,22 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_c = card.initialKnowledge) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_d = card.victoryPoint) !== null && _d !== void 0 ? _d : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n                <div class=\"country\">").concat((_f = card.country) !== null && _f !== void 0 ? _f : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\">").concat((_h = (_g = card.effect) === null || _g === void 0 ? void 0 : _g.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _h !== void 0 ? _h : '', "</div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n                <div class=\"country\">").concat((_f = card.country) !== null && _f !== void 0 ? _f : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_h = (_g = card.effect) === null || _g === void 0 ? void 0 : _g.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _h !== void 0 ? _h : '', "</div></div>\n        ");
         div.innerHTML = html;
+        this.reduceToFit(div.querySelector('.effect'));
+        setTimeout(function () { return _this.reduceToFit(div.querySelector('.effect')); }, 2000);
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
+        }
+    };
+    BuilderCardsManager.prototype.reduceToFit = function (outerDiv) {
+        var innerDiv = outerDiv.getElementsByTagName('div')[0];
+        var fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+            fontSize--;
+            innerDiv.style.fontSize = "".concat(fontSize, "px");
         }
     };
     BuilderCardsManager.prototype.getType = function (cardId) {
@@ -2271,8 +2284,12 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         return _this;
     }
     TechnologyTilesManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
+        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
+        if (div.style.getPropertyValue('--card-color')) {
+            return;
+        }
         var type = card.type;
         var requirement = ((_a = card.requirement) === null || _a === void 0 ? void 0 : _a.length) > 0;
         div.dataset.requirement = requirement.toString();
@@ -2286,15 +2303,129 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         // TODO TEMP
         html += "<div class=\"implemented\" data-implemented=\"".concat((_c = (_b = card.implemented) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : 'false', "\"></div>");
         if (requirement) {
-            html += "<div class=\"requirement\">".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "</div>");
+            html += "<div class=\"requirement\"><div>".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>");
         }
-        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>");
-        html += "<div class=\"effect\">".concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        ");
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        </div>\n        ");
         div.innerHTML = html;
+        if (requirement) {
+            this.reduceToFit(div.querySelector('.requirement'));
+            setTimeout(function () { return _this.reduceToFit(div.querySelector('.requirement')); }, 2000);
+        }
+        this.reduceToFit(div.querySelector('.effect'));
+        setTimeout(function () { return _this.reduceToFit(div.querySelector('.effect')); }, 2000);
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
+    TechnologyTilesManager.prototype.reduceToFit = function (outerDiv) {
+        var innerDiv = outerDiv.getElementsByTagName('div')[0];
+        var fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = "".concat(fontSize, "px");
+        }
+    };
+    /*private reduceToFit(outerDiv: HTMLDivElement) {
+        //if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
+
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        while (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+
+            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
+            
+            console.log('outer div',
+                outerDiv.style.height,
+                window.getComputedStyle(outerDiv).height,
+                outerDiv.clientHeight,
+                outerDiv.offsetHeight,
+                outerDiv.scrollHeight,
+                outerDiv.getBoundingClientRect().height
+            );
+            
+            console.log('inner div',
+                innerDiv.style.height,
+                window.getComputedStyle(innerDiv).height,
+                innerDiv.clientHeight,
+                innerDiv.offsetHeight,
+                innerDiv.scrollHeight,
+                innerDiv.getBoundingClientRect().height
+            );
+
+            setTimeout(() => {
+                console.log('outer div',
+                    outerDiv.style.height,
+                    window.getComputedStyle(outerDiv).height,
+                    outerDiv.clientHeight,
+                    outerDiv.offsetHeight,
+                    outerDiv.scrollHeight,
+                    outerDiv.getBoundingClientRect().height
+                );
+                
+                console.log('inner div',
+                    innerDiv.style.height,
+                    window.getComputedStyle(innerDiv).height,
+                    innerDiv.clientHeight,
+                    innerDiv.offsetHeight,
+                    innerDiv.scrollHeight,
+                    innerDiv.getBoundingClientRect().height
+                );
+            }, 0);
+        }
+    }*/
+    /*private reduceToFit(outerDiv: HTMLDivElement, fontSize: number | null = null) {
+        if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
+
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        fontSize = fontSize ?? Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+
+            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
+            
+            console.log('outer div',
+                outerDiv.style.height,
+                window.getComputedStyle(outerDiv).height,
+                outerDiv.clientHeight,
+                outerDiv.offsetHeight,
+                outerDiv.scrollHeight,
+                outerDiv.getBoundingClientRect().height
+            );
+            
+            console.log('inner div',
+                innerDiv.style.height,
+                window.getComputedStyle(innerDiv).height,
+                innerDiv.clientHeight,
+                innerDiv.offsetHeight,
+                innerDiv.scrollHeight,
+                innerDiv.getBoundingClientRect().height
+            );
+
+            setTimeout(() => {
+                /_*console.log('outer div',
+                    outerDiv.style.height,
+                    window.getComputedStyle(outerDiv).height,
+                    outerDiv.clientHeight,
+                    outerDiv.offsetHeight,
+                    outerDiv.scrollHeight,
+                    outerDiv.getBoundingClientRect().height
+                );
+                
+                console.log('inner div',
+                    innerDiv.style.height,
+                    window.getComputedStyle(innerDiv).height,
+                    innerDiv.clientHeight,
+                    innerDiv.offsetHeight,
+                    innerDiv.scrollHeight,
+                    innerDiv.getBoundingClientRect().height
+                );*_/
+                this.reduceToFit(outerDiv, fontSize);
+            }, 100);
+        }
+    }*/
     TechnologyTilesManager.prototype.getType = function (type) {
         switch (type) {
             case 'ancient': return _('Ancient');
