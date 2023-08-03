@@ -29,6 +29,7 @@ class Actions
     DESTROY => 'Destroy',
     STRAIGHTEN => 'Straighten',
     DISCARD_MULTI => 'DiscardMulti',
+    DRAW_AND_KEEP => 'DrawAndKeep',
   ];
 
   public static function get($actionId, $ctx = null)

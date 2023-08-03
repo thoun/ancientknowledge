@@ -15,7 +15,8 @@ trait DebugTrait
 {
   function tp()
   {
-    $this->actTakeAtomicAction('actDiscardMulti', [['P10_Teotihuacan', 'P14_TikalTempleI']]);
+    // $this->actTakeAtomicAction('actDiscardMulti', [['P10_Teotihuacan', 'P14_TikalTempleI']]);
+    $this->actTakeAtomicAction('actDrawAndKeep', ['A28_DogUFigurines']);
   }
 
   function addHand($cardId)

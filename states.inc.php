@@ -286,6 +286,15 @@ $machinestates = [
     'possibleactions' => ['actMoveBuilding', 'actRestart'],
   ],
 
+  ST_DRAW_AND_KEEP => [
+    'name' => 'drawAndKeep',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('${actplayer} must choose ${m} card(s) to keep among the top ${n}'),
+    'descriptionmyturn' => clienttranslate('${you} must choose ${m} card(s) to keep among the top ${n}'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actDrawAndKeep', 'actRestart'],
+  ],
+
   ST_DESTROY => [
     'name' => 'destroy',
     'type' => 'game',

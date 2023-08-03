@@ -325,6 +325,18 @@ class Notifications
     ]);
   }
 
+  public static function keep($player, $card, $cards)
+  {
+    self::notifyAll('keepAndDiscard', clienttranslate('${player_name} keeps 1 card'), [
+      'player' => $player,
+    ]);
+    self::notify($player, 'keepAndDiscard', clienttranslate('You keep ${card_name} and discard ${card_names}'), [
+      'player' => $player,
+      'card' => $card,
+      'cards' => $cards->toArray(),
+    ]);
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___

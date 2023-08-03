@@ -146,7 +146,9 @@ class Cards extends \AK\Helpers\CachedPieces
     $cards = self::pickForLocation($n, $fromLocation, $toLocation);
     foreach ($cards as $cId => &$c) {
       self::insertOnTop($cId, $toLocation);
-      $c->setPId($player->getId());
+      if ($toLocation == 'hand') {
+        $c->setPId($player->getId());
+      }
     }
     return $cards;
   }
