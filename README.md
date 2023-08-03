@@ -33,4 +33,21 @@ Also add one auto-FTP upload extension (for example https://marketplace.visualst
 Make sure ftp-sync.json and node_modules are in .gitignore
 
 # Rules
-TODO
+Is the discard pile visible ?
+Only he last one can be made visible
+
+Are a card decline effects applied before the card is moved to the past (so it is still considered as a timeline card) ?
+Yes, and you can remove knowledge of this card f the effect allows you too, before moving it to the past
+
+If I play a card with immediate effect, and playing this card trigger another card effect, can I choose resolution order ?
+Yes, if possible
+
+POULNABRONE DOLMEN : does its effect apply to other cards bonuses? Like if we DOLMEN OF MENGA with already 11 cards, can we play a 2nd building + 2 more?
+Yes
+
+Are all the effect mandatory if nothing is specified ?
+Yes
+
+Are the tech tiles deck/discard/counters visible ? Are the building cards deck/discard/counters visible ?
+At least show the number of remaining cards in the tech tile deck. A button to show the discarded tiles would be nice.
+Not really useful for building cards
