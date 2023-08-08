@@ -64,7 +64,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
         
         if (requirement) {
-            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div></div>`;
+            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>`;
         }
         html += `<div class="name-box">
             <div class="name">
@@ -79,7 +79,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
             <div class="activation" data-type="${card.activation}"></div>
         </div>
         <div class="effect">
-            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div>
         </div>
         `;
 

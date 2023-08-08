@@ -117,25 +117,25 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 <div class="country">${card.country ?? ''}</div>
             </div>
         </div>
-        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div></div>
+        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>
         `;
 
         div.innerHTML = html;
 
         this.reduceToFit(div.querySelector('.effect'));
-        setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
+        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
 
         if (!ignoreTooltip) {            
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     }
 
-    private reduceToFit(outerDiv: HTMLDivElement) {
+    private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
         const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
         let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+        //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+            //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
             fontSize--;
             innerDiv.style.fontSize = `${fontSize}px`;
         }

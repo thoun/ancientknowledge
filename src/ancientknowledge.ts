@@ -32,6 +32,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private megalithTimelineCounters: Counter[] = [];
     private pyramidCounters: Counter[] = [];
     private pyramidTimelineCounters: Counter[] = [];
+
+    private drawAndPeekStock: LineStock<BuilderCard>;
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
@@ -252,6 +254,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'excavate':
                 this.onEnteringExcavate(args.args);
                 break;
+            case 'drawAndKeep':
+                this.onEnteringDrawAndKeep(args.args);
+                break;
+
         }
     }
 
@@ -337,6 +343,30 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.getCurrentPlayerTable().past.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
         }
     }
+  
+    private onEnteringDrawAndKeep(args: EnteringDrawAndKeepArgs) {
+        const currentPlayer = (this as any).isCurrentPlayerActive();
+        
+        const cards = args._private?.cardIds ? this.builderCardsManager.getFullCardsByIds(args._private?.cardIds ?? []) : Array.from(Array(args.n)).map((_, index) => ({ id: `${-index}` } as BuilderCard));
+        const pickDiv = document.getElementById('draw-and-keep-pick');
+        pickDiv.innerHTML = '';
+        pickDiv.dataset.visible = 'true';
+
+        if (!this.drawAndPeekStock) {
+            this.drawAndPeekStock = new LineStock<BuilderCard>(this.builderCardsManager, pickDiv);
+            this.drawAndPeekStock.onSelectionChange = selection => {                
+                const m = this.gamedatas.gamestate.args.m;
+                document.getElementById('actDrawAndKeep_button')?.classList.toggle('disabled', selection.length != m);
+            };
+        }
+
+        cards.forEach(card => {
+            this.drawAndPeekStock.addCard(card);
+        });
+        if (currentPlayer) {
+            this.drawAndPeekStock.setSelectionMode('multiple');
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
@@ -370,6 +400,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'discardMulti':
                 this.getCurrentPlayerTable()?.setHandSelectable('none');
                 break;
+            case 'drawAndKeep':
+                this.onLeavingDrawAndKeep();
+                break;
         }
     }
 
@@ -398,6 +431,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
   
     private onLeavingSwap() {
         this.getCurrentPlayerTable()?.leaveSwap();
+    }
+
+    private onLeavingDrawAndKeep() {
+        const pickDiv = document.getElementById('draw-and-keep-pick');
+        pickDiv.dataset.visible = 'false';
+        this.drawAndPeekStock?.removeAll();
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -448,6 +487,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
+                    break;
+                case 'drawAndKeep':
+                    (this as any).addActionButton(`actDrawAndKeep_button`, _("Keep selected card(s)"), () => this.actDrawAndKeep());
+                    document.getElementById('actDrawAndKeep_button').classList.add('disabled');
                     break;
             }
         } else {
@@ -837,6 +880,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actDiscardMulti', [cardsIds]);
     }
   	
+    public actDrawAndKeep() {
+        const selectedCards = this.drawAndPeekStock.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actDrawAndKeep', cardsIds);
+    }
+  	
     public actSelectCardsToDiscard() {
         if(!(this as any).checkAction('actSelectCardsToDiscard')) {
             return;
@@ -949,6 +999,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['swapCards', ANIMATION_MS],
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
+            ['keepAndDiscard', ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -992,6 +1043,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         );
         (this as any).notifqueue.setIgnoreNotificationCheck('discardCards', (notif: Notif<any>) => 
             notif.args.player_id == this.getPlayerId()
+        );
+        (this as any).notifqueue.setIgnoreNotificationCheck('keepAndDiscard', (notif: Notif<NotifKeepAndDiscardArgs>) => 
+            notif.args.player_id == this.getPlayerId() && !notif.args.card
         );
     }
 
@@ -1114,6 +1168,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_straightenCards(args: NotifRotateCardsArgs) {
         return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
     }
+    
+    notif_keepAndDiscard(args: NotifKeepAndDiscardArgs) {
+        const { player_id, card } = args;
+        this.handCounters[player_id].incValue(1);
+        return card ?
+            this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card)) :
+            Promise.resolve(true);
+    }
+    
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="https://use.typekit.net/jim0ypy.css">
 
 <div id="table">
+    <div id="draw-and-keep-pick" data-visible="false"></div>
     <div id="tables-and-center">
         <div id="table-center-wrapper">
             <div id="table-center">

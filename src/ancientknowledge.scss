@@ -170,6 +170,20 @@ html, .mode_3d #game_play_area_background {
   }
 }
 
+#draw-and-keep-pick {
+    background: #FFFFFF66;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    padding: 5px;
+
+    &[data-visible="false"] {
+        display: none;
+    }
+}
+
 .knowledge-token {
   position: relative;
   display: inline-block;

@@ -2164,7 +2164,6 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         return _this;
     }
     BuilderCardsManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
-        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g, _h;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
         if (div.style.getPropertyValue('--card-color')) {
@@ -2198,20 +2197,21 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             html += "\n            <div class=\"center-zone\">\n                <div class=\"initial-knowledge\">".concat((_c = card.initialKnowledge) !== null && _c !== void 0 ? _c : '', "</div>\n                <div class=\"knowledge-icon\"></div>\n                <div class=\"victory-point\">").concat((_d = card.victoryPoint) !== null && _d !== void 0 ? _d : '', "</div>\n                <div class=\"vp-icon\"></div>\n            </div>\n            ");
         }
-        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n                <div class=\"country\">").concat((_f = card.country) !== null && _f !== void 0 ? _f : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_h = (_g = card.effect) === null || _g === void 0 ? void 0 : _g.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _h !== void 0 ? _h : '', "</div></div>\n        ");
+        html += "\n            <div class=\"activation\" data-type=\"".concat(card.activation, "\"></div>\n        </div>\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ").concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n                <div class=\"country\">").concat((_f = card.country) !== null && _f !== void 0 ? _f : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_h = (_g = card.effect) === null || _g === void 0 ? void 0 : _g.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _h !== void 0 ? _h : '', "</div></div>\n        ");
         div.innerHTML = html;
         this.reduceToFit(div.querySelector('.effect'));
-        setTimeout(function () { return _this.reduceToFit(div.querySelector('.effect')); }, 2000);
+        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
-    BuilderCardsManager.prototype.reduceToFit = function (outerDiv) {
+    BuilderCardsManager.prototype.reduceToFit = function (outerDiv, attemps) {
+        if (attemps === void 0) { attemps = 0; }
         var innerDiv = outerDiv.getElementsByTagName('div')[0];
         var fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+        //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+            //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
             fontSize--;
             innerDiv.style.fontSize = "".concat(fontSize, "px");
         }
@@ -2303,9 +2303,9 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         // TODO TEMP
         html += "<div class=\"implemented\" data-implemented=\"".concat((_c = (_b = card.implemented) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : 'false', "\"></div>");
         if (requirement) {
-            html += "<div class=\"requirement\"><div>".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>");
+            html += "<div class=\"requirement\"><div>".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>");
         }
-        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        </div>\n        ");
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        </div>\n        ");
         div.innerHTML = html;
         if (requirement) {
             this.reduceToFit(div.querySelector('.requirement'));
@@ -3315,6 +3315,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'excavate':
                 this.onEnteringExcavate(args.args);
                 break;
+            case 'drawAndKeep':
+                this.onEnteringDrawAndKeep(args.args);
+                break;
         }
     };
     /*
@@ -3394,6 +3397,29 @@ var AncientKnowledge = /** @class */ (function () {
             this.getCurrentPlayerTable().past.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
         }
     };
+    AncientKnowledge.prototype.onEnteringDrawAndKeep = function (args) {
+        var _this = this;
+        var _a, _b, _c;
+        var currentPlayer = this.isCurrentPlayerActive();
+        var cards = ((_a = args._private) === null || _a === void 0 ? void 0 : _a.cardIds) ? this.builderCardsManager.getFullCardsByIds((_c = (_b = args._private) === null || _b === void 0 ? void 0 : _b.cardIds) !== null && _c !== void 0 ? _c : []) : Array.from(Array(args.n)).map(function (_, index) { return ({ id: "".concat(-index) }); });
+        var pickDiv = document.getElementById('draw-and-keep-pick');
+        pickDiv.innerHTML = '';
+        pickDiv.dataset.visible = 'true';
+        if (!this.drawAndPeekStock) {
+            this.drawAndPeekStock = new LineStock(this.builderCardsManager, pickDiv);
+            this.drawAndPeekStock.onSelectionChange = function (selection) {
+                var _a;
+                var m = _this.gamedatas.gamestate.args.m;
+                (_a = document.getElementById('actDrawAndKeep_button')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', selection.length != m);
+            };
+        }
+        cards.forEach(function (card) {
+            _this.drawAndPeekStock.addCard(card);
+        });
+        if (currentPlayer) {
+            this.drawAndPeekStock.setSelectionMode('multiple');
+        }
+    };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         var _a, _b;
         log('Leaving state: ' + stateName);
@@ -3425,6 +3451,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'discardMulti':
                 (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable('none');
                 break;
+            case 'drawAndKeep':
+                this.onLeavingDrawAndKeep();
+                break;
         }
     };
     AncientKnowledge.prototype.onLeavingInitialSelection = function () {
@@ -3452,6 +3481,12 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onLeavingSwap = function () {
         var _a;
         (_a = this.getCurrentPlayerTable()) === null || _a === void 0 ? void 0 : _a.leaveSwap();
+    };
+    AncientKnowledge.prototype.onLeavingDrawAndKeep = function () {
+        var _a;
+        var pickDiv = document.getElementById('draw-and-keep-pick');
+        pickDiv.dataset.visible = 'false';
+        (_a = this.drawAndPeekStock) === null || _a === void 0 ? void 0 : _a.removeAll();
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -3501,6 +3536,10 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
+                    break;
+                case 'drawAndKeep':
+                    this.addActionButton("actDrawAndKeep_button", _("Keep selected card(s)"), function () { return _this.actDrawAndKeep(); });
+                    document.getElementById('actDrawAndKeep_button').classList.add('disabled');
                     break;
             }
         }
@@ -3800,6 +3839,11 @@ var AncientKnowledge = /** @class */ (function () {
         var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
         this.takeAtomicAction('actDiscardMulti', [cardsIds]);
     };
+    AncientKnowledge.prototype.actDrawAndKeep = function () {
+        var selectedCards = this.drawAndPeekStock.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actDrawAndKeep', cardsIds);
+    };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {
             return;
@@ -3897,6 +3941,7 @@ var AncientKnowledge = /** @class */ (function () {
             ['swapCards', ANIMATION_MS],
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
+            ['keepAndDiscard', ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -3932,6 +3977,9 @@ var AncientKnowledge = /** @class */ (function () {
         });
         this.notifqueue.setIgnoreNotificationCheck('discardCards', function (notif) {
             return notif.args.player_id == _this.getPlayerId();
+        });
+        this.notifqueue.setIgnoreNotificationCheck('keepAndDiscard', function (notif) {
+            return notif.args.player_id == _this.getPlayerId() && !notif.args.card;
         });
     };
     AncientKnowledge.prototype.notif_drawCards = function (args) {
@@ -4036,6 +4084,13 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_straightenCards = function (args) {
         return this.getPlayerTable(args.player_id).rotateCards(this.builderCardsManager.getFullCards(args.cards));
+    };
+    AncientKnowledge.prototype.notif_keepAndDiscard = function (args) {
+        var player_id = args.player_id, card = args.card;
+        this.handCounters[player_id].incValue(1);
+        return card ?
+            this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card)) :
+            Promise.resolve(true);
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

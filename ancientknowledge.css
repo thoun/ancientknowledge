@@ -1524,6 +1524,19 @@ html, .mode_3d #game_play_area_background {
   border-bottom: 1px solid gray;
 }
 
+#draw-and-keep-pick {
+  background: rgba(255, 255, 255, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+#draw-and-keep-pick[data-visible=false] {
+  display: none;
+}
+
 .knowledge-token {
   position: relative;
   display: inline-block;
