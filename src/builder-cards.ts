@@ -37,7 +37,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 div.classList.add('builder-card');
                 div.dataset.cardId = ''+card.id;
                 div.dataset.rotated = ''+card.rotated;
-            },
+            },            
             setupFrontDiv: (card: BuilderCard, div: HTMLElement) => this.setupFrontDiv(card, div),
             isCardVisible: card => Boolean(card.number),
             cardWidth: 163,
@@ -194,9 +194,29 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         <br>
         <br>
         <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        <br>
+        <br>
+        ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
         `;
  
         return message;
+    }
+    
+
+    public generateCardDiv(card: BuilderCard): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('card', 'builder-card');
+        tempDiv.innerHTML = `
+        <div class="card-sides">
+            <div class="card-side front"></div>
+        </div>
+        `;
+
+        document.body.appendChild(tempDiv);
+        this.setupFrontDiv(card, tempDiv.querySelector('.front'), true);
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
     }
 
     public getFullCard(card: BuilderCard): BuilderCard {

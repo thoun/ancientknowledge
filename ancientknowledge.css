@@ -908,6 +908,13 @@ body > .card {
     box-shadow: 0 0 5px 3px white;
   }
 }
+.dijitTooltipContents .builder-card {
+  transform: scale(1.5);
+  transform-origin: top left;
+  margin-bottom: 114px;
+  margin-right: 82px;
+}
+
 .technology-tile {
   display: inline-block;
   position: relative;

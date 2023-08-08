@@ -2241,8 +2241,17 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             message += "\n            <br>\n            <strong>".concat(_("Initial knowledge:"), "</strong> ").concat(card.initialKnowledge, "\n            <br>\n            <strong>").concat(_("Victory point:"), "</strong> ").concat(card.victoryPoint, "\n            ");
         }
-        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        ");
+        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        ");
         return message;
+    };
+    BuilderCardsManager.prototype.generateCardDiv = function (card) {
+        var tempDiv = document.createElement('div');
+        tempDiv.classList.add('card', 'builder-card');
+        tempDiv.innerHTML = "\n        <div class=\"card-sides\">\n            <div class=\"card-side front\"></div>\n        </div>\n        ";
+        document.body.appendChild(tempDiv);
+        this.setupFrontDiv(card, tempDiv.querySelector('.front'), true);
+        document.body.removeChild(tempDiv);
+        return tempDiv;
     };
     BuilderCardsManager.prototype.getFullCard = function (card) {
         return __assign(__assign({}, CARDS_DATA[card.id]), { id: card.id, location: card.location, knowledge: card.knowledge, rotated: card.rotated });
