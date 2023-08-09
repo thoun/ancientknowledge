@@ -41,6 +41,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private _notif_uid_to_mobile_log_id = [];
     private _last_notif;
     private _last_tooltip_id = 0;
+    private tooltipsToMap: [tooltipId: number, card_id: string][] = [];
 
     private createEngine: CreateEngine;
     private archiveEngine: ArchiveEngine;
@@ -1234,6 +1235,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
       if ($('dockedlog_' + notif.mobileLogId)) {
         dojo.addClass('dockedlog_' + notif.mobileLogId, 'notif_' + type);
       }
+
+      while (this.tooltipsToMap.length) {
+        const tooltipToMap = this.tooltipsToMap.pop();
+        const tooltip = tooltipToMap[1][0] == 'T' ?
+            this.technologyTilesManager.getTooltip(this.technologyTilesManager.getFullCardById(tooltipToMap[1])) :
+            this.builderCardsManager.getTooltip(this.builderCardsManager.getFullCardById(tooltipToMap[1]));
+        this.setTooltip(`tooltip-${tooltipToMap[0]}`, tooltip);
+      }
     }
 
     private onClick(elem: HTMLElement, callback) {
@@ -1294,10 +1303,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public format_string_recursive(log: string, args: any) {
         try {
             if (log && args && !args.processed) {
-                for (const property in args) {
-                    /*if (['card_names'].includes(property) && args[property][0] != '<') {
-                        args[property] = `<strong>${_(args[property])}</strong>`;
-                    }*/
+                if (args.card_name && args.card_name[0] != '<') {
+                    this.tooltipsToMap.push([this._last_tooltip_id, args.card_id]);
+                    args.card_name = `<strong id="tooltip-${this._last_tooltip_id}">${_(args.card_name)}</strong>`;
+                    this._last_tooltip_id++;
                 }
 
                 log = formatTextIcons(_(log));

@@ -2206,14 +2206,26 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         }
     };
     BuilderCardsManager.prototype.reduceToFit = function (outerDiv, attemps) {
+        var _this = this;
         if (attemps === void 0) { attemps = 0; }
         var innerDiv = outerDiv.getElementsByTagName('div')[0];
-        var fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (!innerDiv) {
+            return;
+        }
+        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        var fontSize = Number(match[0]);
         //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
             //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
             fontSize--;
             innerDiv.style.fontSize = "".concat(fontSize, "px");
+        }
+        if (attemps < 5) {
+            attemps++;
+            setTimeout(function () { return _this.reduceToFit(outerDiv, attemps); });
         }
     };
     BuilderCardsManager.prototype.getType = function (cardId) {
@@ -2293,7 +2305,6 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         return _this;
     }
     TechnologyTilesManager.prototype.setupFrontDiv = function (card, div, ignoreTooltip) {
-        var _this = this;
         var _a, _b, _c, _d, _e, _f, _g;
         if (ignoreTooltip === void 0) { ignoreTooltip = false; }
         if (div.style.getPropertyValue('--card-color')) {
@@ -2318,20 +2329,33 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         div.innerHTML = html;
         if (requirement) {
             this.reduceToFit(div.querySelector('.requirement'));
-            setTimeout(function () { return _this.reduceToFit(div.querySelector('.requirement')); }, 2000);
+            //setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
         }
         this.reduceToFit(div.querySelector('.effect'));
-        setTimeout(function () { return _this.reduceToFit(div.querySelector('.effect')); }, 2000);
+        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
         if (!ignoreTooltip) {
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     };
-    TechnologyTilesManager.prototype.reduceToFit = function (outerDiv) {
+    TechnologyTilesManager.prototype.reduceToFit = function (outerDiv, attemps) {
+        var _this = this;
+        if (attemps === void 0) { attemps = 0; }
         var innerDiv = outerDiv.getElementsByTagName('div')[0];
-        var fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (!innerDiv) {
+            return;
+        }
+        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        var fontSize = Number(match[0]);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
             fontSize--;
             innerDiv.style.fontSize = "".concat(fontSize, "px");
+        }
+        if (attemps < 5) {
+            attemps++;
+            setTimeout(function () { return _this.reduceToFit(outerDiv, attemps); });
         }
     };
     /*private reduceToFit(outerDiv: HTMLDivElement) {
@@ -2448,8 +2472,18 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         if (card.requirement) {
             message += "\n            <br><br>\n            <strong>".concat(_("Requirement:"), "</strong> ").concat((_a = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _a !== void 0 ? _a : '', "\n            ");
         }
-        message += "\n        <br>\n        <br>\n        <strong>".concat(_("Effect:"), "</strong> ").concat((_c = (_b = card.effect) === null || _b === void 0 ? void 0 : _b.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _c !== void 0 ? _c : '', "\n        ");
+        message += "\n        <br>\n        <br>\n        <strong>".concat(_("Effect:"), "</strong> ").concat((_c = (_b = card.effect) === null || _b === void 0 ? void 0 : _b.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _c !== void 0 ? _c : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        ");
         return message;
+    };
+    TechnologyTilesManager.prototype.generateCardDiv = function (card) {
+        var tempDiv = document.createElement('div');
+        tempDiv.classList.add('card', 'technology-tile');
+        tempDiv.dataset.level = '' + card.level;
+        tempDiv.innerHTML = "\n        <div class=\"card-sides\">\n            <div class=\"card-side front\"></div>\n        </div>\n        ";
+        document.body.appendChild(tempDiv);
+        this.setupFrontDiv(card, tempDiv.querySelector('.front'), true);
+        document.body.removeChild(tempDiv);
+        return tempDiv;
     };
     TechnologyTilesManager.prototype.setForHelp = function (card, divId) {
         var div = document.getElementById(divId);
@@ -3158,6 +3192,7 @@ var AncientKnowledge = /** @class */ (function () {
         this._notif_uid_to_log_id = [];
         this._notif_uid_to_mobile_log_id = [];
         this._last_tooltip_id = 0;
+        this.tooltipsToMap = [];
     }
     /*
         setup:
@@ -4154,6 +4189,13 @@ var AncientKnowledge = /** @class */ (function () {
         if ($('dockedlog_' + notif.mobileLogId)) {
             dojo.addClass('dockedlog_' + notif.mobileLogId, 'notif_' + type);
         }
+        while (this.tooltipsToMap.length) {
+            var tooltipToMap = this.tooltipsToMap.pop();
+            var tooltip = tooltipToMap[1][0] == 'T' ?
+                this.technologyTilesManager.getTooltip(this.technologyTilesManager.getFullCardById(tooltipToMap[1])) :
+                this.builderCardsManager.getTooltip(this.builderCardsManager.getFullCardById(tooltipToMap[1]));
+            this.setTooltip("tooltip-".concat(tooltipToMap[0]), tooltip);
+        }
     };
     AncientKnowledge.prototype.onClick = function (elem, callback) {
         elem.addEventListener('click', callback);
@@ -4207,10 +4249,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.format_string_recursive = function (log, args) {
         try {
             if (log && args && !args.processed) {
-                for (var property in args) {
-                    /*if (['card_names'].includes(property) && args[property][0] != '<') {
-                        args[property] = `<strong>${_(args[property])}</strong>`;
-                    }*/
+                if (args.card_name && args.card_name[0] != '<') {
+                    this.tooltipsToMap.push([this._last_tooltip_id, args.card_id]);
+                    args.card_name = "<strong id=\"tooltip-".concat(this._last_tooltip_id, "\">").concat(_(args.card_name), "</strong>");
+                    this._last_tooltip_id++;
                 }
                 log = formatTextIcons(_(log));
             }

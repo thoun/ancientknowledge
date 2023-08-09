@@ -132,12 +132,24 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
 
     private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
         const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (!innerDiv) {
+            return;
+        }
+        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        let fontSize = Number(match[0]);
         //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
             //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
             fontSize--;
             innerDiv.style.fontSize = `${fontSize}px`;
+        }
+
+        if (attemps < 5) {
+            attemps++;
+            setTimeout(() => this.reduceToFit(outerDiv, attemps));
         }
     }
 
@@ -151,7 +163,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         }
     }
 
-    private getTooltip(card: BuilderCard): string {
+    public getTooltip(card: BuilderCard): string {
         const typeLetter = card.id.substring(0, 1);
 
         let message = `
@@ -201,7 +213,6 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
  
         return message;
     }
-    
 
     public generateCardDiv(card: BuilderCard): HTMLDivElement {
         const tempDiv: HTMLDivElement = document.createElement('div');

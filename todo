@@ -20,8 +20,6 @@ Frontend:
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?
 
- - automatically add tooltips with zoomed card on every 'card_name' going through format_string_recursive
-
  - remove knowledge : 
    - a "select all knowledge on this card" button on each card ?
    - player can always choose to not remove all of them : "discard up to X..."
