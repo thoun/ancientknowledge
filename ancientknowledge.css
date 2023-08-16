@@ -908,6 +908,13 @@ body > .card {
     box-shadow: 0 0 5px 3px white;
   }
 }
+.dijitTooltipContents .builder-card {
+  transform: scale(1.5);
+  transform-origin: top left;
+  margin-bottom: 114px;
+  margin-right: 82px;
+}
+
 .technology-tile {
   display: inline-block;
   position: relative;
@@ -1102,6 +1109,13 @@ body > .card {
     box-shadow: 0 0 5px 3px white;
   }
 }
+.dijitTooltipContents .technology-tile {
+  transform: scale(1.5);
+  transform-origin: top left;
+  margin-bottom: 57px;
+  margin-right: 82px;
+}
+
 #table-center-wrapper {
   display: flex;
   justify-content: center;
@@ -1522,6 +1536,19 @@ html, .mode_3d #game_play_area_background {
 }
 .artifact-tooltip > div:not(:last-child) {
   border-bottom: 1px solid gray;
+}
+
+#draw-and-keep-pick {
+  background: rgba(255, 255, 255, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+#draw-and-keep-pick[data-visible=false] {
+  display: none;
 }
 
 .knowledge-token {

@@ -7,7 +7,6 @@ Backend:
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
 Frontend:
- - drawAndKeep action : eg Thalès
  - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
  - error : Uncaught (in promise) Error: Impossible to add card to slot "timeline-0-0" : slot "timeline-0-0" doesn't exists.
  
@@ -19,8 +18,6 @@ Frontend:
 
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?
-
- - automatically add tooltips with zoomed card on every 'card_name' going through format_string_recursive
 
  - remove knowledge : 
    - a "select all knowledge on this card" button on each card ?

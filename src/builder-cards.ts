@@ -37,7 +37,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 div.classList.add('builder-card');
                 div.dataset.cardId = ''+card.id;
                 div.dataset.rotated = ''+card.rotated;
-            },
+            },            
             setupFrontDiv: (card: BuilderCard, div: HTMLElement) => this.setupFrontDiv(card, div),
             isCardVisible: card => Boolean(card.number),
             cardWidth: 163,
@@ -117,27 +117,39 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
                 <div class="country">${card.country ?? ''}</div>
             </div>
         </div>
-        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div></div>
+        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>
         `;
 
         div.innerHTML = html;
 
         this.reduceToFit(div.querySelector('.effect'));
-        setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
+        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
 
         if (!ignoreTooltip) {            
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     }
 
-    private reduceToFit(outerDiv: HTMLDivElement) {
+    private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
         const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+        if (!innerDiv) {
+            return;
+        }
+        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        let fontSize = Number(match[0]);
+        //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
+            //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
             fontSize--;
             innerDiv.style.fontSize = `${fontSize}px`;
+        }
+
+        if (attemps < 5) {
+            attemps++;
+            setTimeout(() => this.reduceToFit(outerDiv, attemps));
         }
     }
 
@@ -151,7 +163,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         }
     }
 
-    private getTooltip(card: BuilderCard): string {
+    public getTooltip(card: BuilderCard): string {
         const typeLetter = card.id.substring(0, 1);
 
         let message = `
@@ -194,9 +206,28 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         <br>
         <br>
         <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        <br>
+        <br>
+        ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
         `;
  
         return message;
+    }
+
+    public generateCardDiv(card: BuilderCard): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('card', 'builder-card');
+        tempDiv.innerHTML = `
+        <div class="card-sides">
+            <div class="card-side front"></div>
+        </div>
+        `;
+
+        document.body.appendChild(tempDiv);
+        this.setupFrontDiv(card, tempDiv.querySelector('.front'), true);
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
     }
 
     public getFullCard(card: BuilderCard): BuilderCard {

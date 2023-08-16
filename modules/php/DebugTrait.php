@@ -19,6 +19,7 @@ trait DebugTrait
     $this->actTakeAtomicAction('actDrawAndKeep', ['A28_DogUFigurines']);
   }
 
+  // addHand(P34_PyramidsOfPlaineMagnien)
   function addHand($cardId)
   {
     $player = Players::getCurrent();

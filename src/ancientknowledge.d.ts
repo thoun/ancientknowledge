@@ -129,6 +129,12 @@ interface EnteringResolveChoiceArgs {
     choices: ResolveChoice[];
 }
 
+interface EnteringDrawAndKeepArgs {
+    n: number; // number of cards to pick from
+    m: number; // number of cards to keep
+    _private: { cardIds: string[] };
+}
+
 // pDrawCards
 interface NotifPDrawCardsArgs {
     n: number;
@@ -234,4 +240,10 @@ interface NotifSwapCardsArgs {
 interface NotifRotateCardsArgs {
     player_id: number;
     cards: BuilderCard[];
+}
+
+// keepAndDiscard
+interface NotifKeepAndDiscardArgs {
+    player_id: number;
+    card?: BuilderCard;
 }

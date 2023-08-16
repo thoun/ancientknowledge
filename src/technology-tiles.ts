@@ -64,7 +64,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
         
         if (requirement) {
-            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div></div>`;
+            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>`;
         }
         html += `<div class="name-box">
             <div class="name">
@@ -79,7 +79,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
             <div class="activation" data-type="${card.activation}"></div>
         </div>
         <div class="effect">
-            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}</div>
+            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div>
         </div>
         `;
 
@@ -87,22 +87,34 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
 
         if (requirement) {
             this.reduceToFit(div.querySelector('.requirement'));
-            setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
+            //setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
         }
         this.reduceToFit(div.querySelector('.effect'));
-        setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
+        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
 
         if (!ignoreTooltip) {            
             this.game.setTooltip(div.id, this.getTooltip(card));
         }
     }
 
-    private reduceToFit(outerDiv: HTMLDivElement) {
+    private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
         const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
+        if (!innerDiv) {
+            return;
+        }
+        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        let fontSize = Number(match[0]);
         while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
             fontSize--;
             innerDiv.style.fontSize = `${fontSize}px`;
+        }
+
+        if (attemps < 5) {
+            attemps++;
+            setTimeout(() => this.reduceToFit(outerDiv, attemps));
         }
     }
 
@@ -217,7 +229,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         }
     }
 
-    private getTooltip(card: TechnologyTile): string {
+    public getTooltip(card: TechnologyTile): string {
         let message = `
         <strong>${card.name}</strong>
         <br>
@@ -238,9 +250,29 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         <br>
         <br>
         <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        <br>
+        <br>
+        ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
         `;
  
         return message;
+    }
+
+    public generateCardDiv(card: TechnologyTile): HTMLDivElement {
+        const tempDiv: HTMLDivElement = document.createElement('div');
+        tempDiv.classList.add('card', 'technology-tile');
+        tempDiv.dataset.level = ''+card.level;
+        tempDiv.innerHTML = `
+        <div class="card-sides">
+            <div class="card-side front"></div>
+        </div>
+        `;
+
+        document.body.appendChild(tempDiv);
+        this.setupFrontDiv(card, tempDiv.querySelector('.front'), true);
+        document.body.removeChild(tempDiv);
+            
+        return tempDiv;
     }
     
     public setForHelp(card: TechnologyTile, divId: string): void {
