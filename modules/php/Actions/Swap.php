@@ -13,6 +13,17 @@ class Swap extends \AK\Models\Action
     return ST_SWAP;
   }
 
+  public function isOptional()
+  {
+    $player = Players::getActive();
+    return !$this->isDoable($player);
+  }
+
+  public function isDoable($player, $ignoreResources = false)
+  {
+    return $player->getTimeline()->count() >= 2;
+  }
+
   public function getDescription()
   {
     $cardId = $this->getCardId();

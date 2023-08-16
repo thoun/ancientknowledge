@@ -2,7 +2,6 @@ Backend:
  - detect end of game
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
- - T16_SatorSquare : asks to swap, with no card on timeline
  - add a log like "{player_name} Timeline phase is skipped (no Timeline phase effect)" ?
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
