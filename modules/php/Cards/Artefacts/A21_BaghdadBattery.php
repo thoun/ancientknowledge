@@ -22,5 +22,24 @@ class A21_BaghdadBattery extends \AK\Models\Artefact
         'You may discard this card from your board. If you do, discard up to 4 <KNOWLEDGE> from one or several of your monuments.'
       ),
     ];
+    $this->implemented = true;
+  }
+
+  public function getTimelineEffect()
+  {
+    return [
+      'type' => NODE_SEQ,
+      'optional' => true,
+      'childs' => [
+        [
+          'action' => DESTROY,
+          'args' => ['cardId' => $this->id],
+        ],
+        [
+          'action' => REMOVE_KNOWLEDGE,
+          'args' => ['n' => 4],
+        ],
+      ],
+    ];
   }
 }

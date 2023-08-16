@@ -282,6 +282,8 @@ $machinestates = [
     'type' => 'activeplayer',
     'description' => clienttranslate('${actplayer} must move a monument to an available space in their timeline'),
     'descriptionmyturn' => clienttranslate('${you} must move a monument to an available space in your timeline'),
+    'descriptionfixed' => clienttranslate('${actplayer} must move ${card_name} in their timeline'),
+    'descriptionmyturnfixed' => clienttranslate('${you} must move ${card_name} in your timeline'),
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actMoveBuilding', 'actRestart'],
   ],

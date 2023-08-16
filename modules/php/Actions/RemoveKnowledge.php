@@ -115,7 +115,7 @@ class RemoveKnowledge extends \AK\Models\Action
     }
 
     if ($total > 0) {
-      $sourceId = $this->ctx->getSourceId();
+      $sourceId = $this->getSourceId();
       Notifications::removeKnowledge($player, $total, $cards, $sourceId);
     }
     $this->resolveAction();

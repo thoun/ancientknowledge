@@ -7,6 +7,13 @@ Backend:
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
 Frontend:
+ - move building action
+
+ - knowledge on card : too hard to see => either add a white contour or (better IMO) put a counter instead inside a white (opacity 0.8 or sthg) rounded square with 1/3 the size of the background image in the top right corner
+  -> them problem with a counter is how do they select the knowledge to remove? let's try with a white countour
+  -> click on the card to select it, click several times to select multiple times ?
+      during selection, add another counter under it with the number of pending removed tokens
+
  - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
  - error : Uncaught (in promise) Error: Impossible to add card to slot "timeline-0-0" : slot "timeline-0-0" doesn't exists.
  
@@ -23,7 +30,5 @@ Frontend:
    - a "select all knowledge on this card" button on each card ?
    - player can always choose to not remove all of them : "discard up to X..."
 
- - knowledge on card : too hard to see => either add a white contour or (better IMO) put a counter instead inside a white (opacity 0.8 or sthg) rounded square with 1/3 the size of the background image in the top right corner
-  -> them problem with a counter is how do they select the knowledge to remove? let's try with a white countour
 
  - past cards : see how to display straight cards mixed with rotated cards 

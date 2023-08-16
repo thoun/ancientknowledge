@@ -18,10 +18,29 @@ class A6_AntikytheraMechanism extends \AK\Models\Artefact
         'If one of your monuments in the [n°1] space of your Timeline has at least 4 <KNOWLEDGE>, move it to [n°3] if possible. Otherwise nothing happens.'
       ),
     ];
+    $this->implemented = true;
   }
 
   public function getTimelineEffect()
   {
-    return null;
+    $player = $this->getPlayer();
+    $slots = ['timeline-1-0', 'timeline-1-1'];
+    $childs = [];
+    foreach ($slots as $slot) {
+      $card = $player->getCardOnTimelineSpace($slot);
+      if (!is_null($card) && $card->getKnowledge() >= 4) {
+        $childs[] = [
+          'action' => \MOVE_BUILDING,
+          'args' => ['cardId' => $card->getId()],
+        ];
+      }
+    }
+
+    return empty($childs)
+      ? null
+      : [
+        'type' => NODE_XOR,
+        'childs' => $childs,
+      ];
   }
 }

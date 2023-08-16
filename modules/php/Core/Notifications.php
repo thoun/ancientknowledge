@@ -309,6 +309,15 @@ class Notifications
     );
   }
 
+  public static function moveBuilding($player, $card, $sourceId)
+  {
+    self::notifyAll('moveCard', \clienttranslate('${player_name} move ${card_name}${source}'), [
+      'player' => $player,
+      'card' => $card1,
+      'sourceId' => $source,
+    ]);
+  }
+
   public static function destroyCard($player, $card)
   {
     self::notifyAll('destroyCard', clienttranslate('${player_name} discards ${card_name}'), [

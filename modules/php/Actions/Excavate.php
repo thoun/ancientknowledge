@@ -45,10 +45,28 @@ class Excavate extends \AK\Models\Action
     Cards::rotate($cardIds);
     Notifications::rotateCards($player, $cards);
 
-    $this->insertAsChild([
-      'action' => DRAW,
-      'args' => ['n' => 2 * count($cardIds)],
-    ]);
+    $mult = $player->hasEffect('A29_PhaistosDisc') ? 3 : 2;
+
+    if ($player->hasEffect('A25_KensingtonRunestone') && count($cardIds) == 2) {
+      $this->insertAsChild([
+        'type' => NODE_XOR,
+        'childs' => [
+          [
+            'action' => REMOVE_KNOWLEDGE,
+            'args' => ['n' => 6],
+          ],
+          [
+            'action' => DRAW,
+            'args' => ['n' => $mult * count($cardIds)],
+          ],
+        ],
+      ]);
+    } else {
+      $this->insertAsChild([
+        'action' => DRAW,
+        'args' => ['n' => $mult * count($cardIds)],
+      ]);
+    }
 
     // Check listener
     $this->checkAfterListeners($player, ['n' => count($cardIds)]);

@@ -30,6 +30,7 @@ class Actions
     STRAIGHTEN => 'Straighten',
     DISCARD_MULTI => 'DiscardMulti',
     DRAW_AND_KEEP => 'DrawAndKeep',
+    MOVE_BUILDING => 'MoveBuilding',
   ];
 
   public static function get($actionId, $ctx = null)
