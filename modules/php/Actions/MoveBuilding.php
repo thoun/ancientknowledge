@@ -46,6 +46,7 @@ class MoveBuilding extends \AK\Models\Action
 
   public function argsMoveBuilding()
   {
+    $player = Players::getActive();
     $cardId = $this->getCardId();
     return [
       'cardIds' => $player->getTimeline()->getIds(),

@@ -83,8 +83,8 @@ class Building extends \AK\Helpers\DB_Model
 
   public function getAdjacentBuildings()
   {
-    $space = $this->getTimelineSpace();
-    if (is_null($space)) {
+    $t = $this->getTimelineSpace();
+    if (is_null($t)) {
       return [];
     } else {
       $slots = [[$t[0], 1 - $t[1]]]; // Space above/below
