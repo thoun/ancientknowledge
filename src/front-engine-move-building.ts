@@ -23,7 +23,7 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                         return;
                     }
                     const selectableCards = this.cardsIds.map(id => this.game.builderCardsManager.getFullCardById(id));
-                    this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
+                    this.game.getCurrentPlayerTable().timeline.setSelectionMode('single', selectableCards);
                 },
                 () => {
                     this.game.getCurrentPlayerTable().setHandSelectable('none');
@@ -41,7 +41,8 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                     this.slotsIds.forEach(slotId => locations[slotId] = 0);
                     this.game.getCurrentPlayerTable().setTimelineSelectable(true, locations);
                 },
-                () => {
+                engine => {
+                    this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
                     this.game.getCurrentPlayerTable().setTimelineSelectable(false);
                     this.removeCancel();
                 }

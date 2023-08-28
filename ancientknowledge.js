@@ -3173,7 +3173,7 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
                     return;
                 }
                 var selectableCards = _this.cardsIds.map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
-                _this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
+                _this.game.getCurrentPlayerTable().timeline.setSelectionMode('single', selectableCards);
             }, function () {
                 _this.game.getCurrentPlayerTable().setHandSelectable('none');
             }),
@@ -3185,7 +3185,9 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
                 var locations = {};
                 _this.slotsIds.forEach(function (slotId) { return locations[slotId] = 0; });
                 _this.game.getCurrentPlayerTable().setTimelineSelectable(true, locations);
-            }, function () {
+            }, function (engine) {
+                var _a;
+                (_a = _this.game.builderCardsManager.getCardElement(engine.data.selectedCard)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
                 _this.game.getCurrentPlayerTable().setTimelineSelectable(false);
                 _this.removeCancel();
             }),
@@ -3520,7 +3522,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringMoveBuilding = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, args.slots);
+            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, Object.values(args.slots));
         }
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
@@ -3885,6 +3887,11 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.gamedatas.gamestate.name == 'swap') {
             var length_1 = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
             document.getElementById('actSwap_button').classList.toggle('disabled', length_1 != 2);
+        }
+        else if (this.gamedatas.gamestate.name == 'moveBuilding') {
+            if (selection.length == 1) {
+                this.moveBuildingEngine.selectCard(selection[0]);
+            }
         }
     };
     AncientKnowledge.prototype.onPastCardSelectionChange = function (selection) {

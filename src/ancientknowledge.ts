@@ -375,7 +375,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
   
     private onEnteringMoveBuilding(args: EnteringMoveBuildingArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, args.slots);
+            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, Object.values(args.slots));
         }
     }
 
@@ -821,6 +821,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'swap') {
             const length = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
             document.getElementById('actSwap_button').classList.toggle('disabled', length != 2);
+        } else if (this.gamedatas.gamestate.name == 'moveBuilding') {
+            if (selection.length == 1) {
+                this.moveBuildingEngine.selectCard(selection[0]);
+            }
         }
     }
 
