@@ -3168,6 +3168,7 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
                 }
                 engine.data.selectedCard = forcedCardId ? _this.game.builderCardsManager.getFullCardById(forcedCardId) : null;
                 if (engine.data.selectedCard) {
+                    engine.data.selectedCard.location = _this.game.getCurrentPlayerTable().timeline.getCards().find(function (card) { return card.id == engine.data.selectedCard.id; }).location;
                     (_b = _this.game.builderCardsManager.getCardElement(engine.data.selectedCard)) === null || _b === void 0 ? void 0 : _b.classList.add('created-card');
                     _this.nextState('slot');
                     return;
@@ -3175,15 +3176,17 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
                 var selectableCards = _this.cardsIds.map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
                 _this.game.getCurrentPlayerTable().timeline.setSelectionMode('single', selectableCards);
             }, function () {
-                _this.game.getCurrentPlayerTable().setHandSelectable('none');
+                _this.game.getCurrentPlayerTable().timeline.setSelectionMode('none');
             }),
             new FrontState('slot', function (engine) {
-                //this.game.changePageTitle(`SelectSlot`, true);
                 if (!_this.forcedCardId) {
                     _this.addCancel();
                 }
+                console.log('engine.data.selectedCard', engine.data.selectedCard, forcedCardId);
+                // we ignore location over the selected card
+                var ignoreLocation = engine.data.selectedCard.location.substring(0, engine.data.selectedCard.location.length - 1) + '1';
                 var locations = {};
-                _this.slotsIds.forEach(function (slotId) { return locations[slotId] = 0; });
+                _this.slotsIds.filter(function (slotId) { return slotId != ignoreLocation; }).forEach(function (slotId) { return locations[slotId] = 0; });
                 _this.game.getCurrentPlayerTable().setTimelineSelectable(true, locations);
             }, function (engine) {
                 var _a;
@@ -3522,7 +3525,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.onEnteringMoveBuilding = function (args) {
         if (this.isCurrentPlayerActive()) {
-            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, Object.values(args.slots));
+            this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
@@ -4221,7 +4224,9 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_moveCard = function (args) {
         var player_id = args.player_id, card = args.card;
-        return this.getPlayerTable(player_id).timeline.addCard(this.builderCardsManager.getFullCard(card));
+        var playerTable = this.getPlayerTable(player_id);
+        var newStock = card.location == 'past' ? playerTable.past : playerTable.timeline;
+        return newStock.addCard(this.builderCardsManager.getFullCard(card));
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

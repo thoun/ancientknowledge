@@ -18,6 +18,7 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                     }
                     engine.data.selectedCard = forcedCardId ? this.game.builderCardsManager.getFullCardById(forcedCardId) : null;
                     if (engine.data.selectedCard) {
+                        engine.data.selectedCard.location = this.game.getCurrentPlayerTable().timeline.getCards().find(card => card.id == engine.data.selectedCard.id).location;
                         this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.add('created-card');
                         this.nextState('slot');
                         return;
@@ -26,19 +27,20 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                     this.game.getCurrentPlayerTable().timeline.setSelectionMode('single', selectableCards);
                 },
                 () => {
-                    this.game.getCurrentPlayerTable().setHandSelectable('none');
+                    this.game.getCurrentPlayerTable().timeline.setSelectionMode('none');
                 }
             ),
             new FrontState<MoveBuildingEngineData>(
                 'slot',
                 engine => {
-                    //this.game.changePageTitle(`SelectSlot`, true);
                     if (!this.forcedCardId) {
                         this.addCancel();
                     }
-                    
+                    console.log('engine.data.selectedCard', engine.data.selectedCard, forcedCardId);
+                    // we ignore location over the selected card
+                    const ignoreLocation = engine.data.selectedCard.location.substring(0, engine.data.selectedCard.location.length - 1) + '1';
                     const locations = {};
-                    this.slotsIds.forEach(slotId => locations[slotId] = 0);
+                    this.slotsIds.filter(slotId => slotId != ignoreLocation).forEach(slotId => locations[slotId] = 0);
                     this.game.getCurrentPlayerTable().setTimelineSelectable(true, locations);
                 },
                 engine => {
