@@ -4,6 +4,8 @@ use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
 use AK\Core\Stats;
+use AK\Core\Globals;
+use AK\Core\Engine;
 use AK\Helpers\Utils;
 
 class MoveBuilding extends \AK\Models\Action
@@ -115,6 +117,22 @@ class MoveBuilding extends \AK\Models\Action
     // Swap them
     $card->setLocation($slot);
     Notifications::moveBuilding($player, $card, $this->getSourceId());
+
+    // Edge case !
+    if (Globals::isDeclinePhase() && $card->getTimelineSpace()[0] == 1) {
+      $node = $this->ctx;
+      while (!is_null($node) && $node->getAction() != 'DECLINE_CARD') {
+        $node = $node->getParent();
+      }
+      if (!is_null($node)) {
+        $node->insertAsBrother(
+          Engine::buildTree([
+            'action' => DECLINE_CARD,
+            'args' => ['cardId' => $card->getId()],
+          ])
+        );
+      }
+    }
 
     $this->resolveAction();
   }

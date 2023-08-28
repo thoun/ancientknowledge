@@ -28,6 +28,7 @@ class DeclinePhase extends \AK\Models\Action
       $this->resolveAction();
       return;
     }
+    Globals::setDeclinePhase(true);
 
     // The two first slot of the timeline
     $spaces = [[1, 0], [1, 1]];
@@ -80,6 +81,7 @@ class DeclinePhase extends \AK\Models\Action
     if ($n > 0) {
       Notifications::declineSlideLeft($player, $n);
     }
+    Globals::setDeclinePhase(false);
     $this->resolveAction();
   }
 }
