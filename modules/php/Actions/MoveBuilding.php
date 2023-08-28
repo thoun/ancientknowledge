@@ -13,6 +13,11 @@ class MoveBuilding extends \AK\Models\Action
     return ST_MOVE_BUILDING;
   }
 
+  public function isAutomatic($player = null)
+  {
+    return !is_null($this->getCardId()) && !is_null($this->getSlot());
+  }
+
   public function isOptional()
   {
     $player = Players::getActive();
@@ -21,7 +26,7 @@ class MoveBuilding extends \AK\Models\Action
 
   public function isDoable($player, $ignoreResources = false)
   {
-    return $player->getTimeline()->count() >= 1;
+    return $player->getTimeline()->count() >= 1 && !empty($this->getCardIds($player));
   }
 
   public function getDescription()
@@ -44,12 +49,32 @@ class MoveBuilding extends \AK\Models\Action
     return $this->getCtxArg('cardId');
   }
 
+  public function getSlot()
+  {
+    return $this->getCtxArg('slot');
+  }
+
+  public function getCardIds($player)
+  {
+    $cardId = $this->getCardId();
+    if (!is_null($cardId)) {
+      return [$cardId];
+    }
+
+    $ids = $player->getTimeline()->getIds();
+    $excludedId = $this->getCtxArg('excluded');
+    if (!is_null($excludedId)) {
+      $ids = array_diff($ids, [$excludedId]);
+    }
+    return $ids;
+  }
+
   public function argsMoveBuilding()
   {
     $player = Players::getActive();
     $cardId = $this->getCardId();
     return [
-      'cardIds' => $player->getTimeline()->getIds(),
+      'cardIds' => $this->getCardIds($player),
       'slots' => $player->getFreeSlots(),
       'descSuffix' => is_null($cardId) ? '' : 'fixed',
       'card_id' => $cardId,
@@ -57,24 +82,37 @@ class MoveBuilding extends \AK\Models\Action
     ];
   }
 
-  public function actMoveBuilding($cardId1, $slot)
+  public function stMoveBuilding()
+  {
+    $cardId = $this->getCardId();
+    $slot = $this->getSlot();
+    if (!is_null($cardId) && !is_null($slot)) {
+      $this->actMoveBuilding($cardId, $slot, true);
+    }
+  }
+
+  public function actMoveBuilding($cardId, $slot, $auto = false)
   {
     // Sanity checks
-    self::checkAction('actMoveBuilding');
+    self::checkAction('actMoveBuilding', $auto);
     $player = Players::getActive();
-    $args = $this->argsSwap();
-    if (!in_array($cardId1, $args['cardIds'])) {
+    $args = $this->argsMoveBuilding();
+    if (!in_array($cardId, $args['cardIds'])) {
       throw new \BgaVisibleSystemException('Invalid card. Should not happen');
     }
     if (!in_array($slot, $args['slots'])) {
       throw new \BgaVisibleSystemException('Invalid slot. Should not happen');
     }
-    if (!is_null($args['card_id']) && $cardId1 != $args['card_id']) {
+    if (!is_null($args['card_id']) && $cardId != $args['card_id']) {
       throw new \BgaVisibleSystemException('You must move the forced card. Should not happen');
+    }
+    $card = Cards::get($cardId);
+    $from = $card->getTimelineSpace();
+    if ($from[1] == 0 && $slot == "timeline-$from[0]-1") {
+      throw new \BgaVisibleSystemException('You cant move a card on top of itself. Should not happen');
     }
 
     // Swap them
-    $card = Cards::get($cardId1);
     $card->setLocation($slot);
     Notifications::moveBuilding($player, $card, $this->getSourceId());
 

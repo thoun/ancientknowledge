@@ -27,6 +27,7 @@ class C15_AjantaCaves extends \AK\Models\Building
   {
     return [
       'action' => MOVE_BUILDING,
+      'args' => ['excluded' => $this->id],
     ];
   }
 }

@@ -313,8 +313,8 @@ class Notifications
   {
     self::notifyAll('moveCard', \clienttranslate('${player_name} move ${card_name}${source}'), [
       'player' => $player,
-      'card' => $card1,
-      'sourceId' => $source,
+      'card' => $card,
+      'sourceId' => $sourceId,
     ]);
   }
 
@@ -396,6 +396,7 @@ class Notifications
       $data['card_name'] = $data['card']->getName();
       $data['i18n'][] = 'card_name';
       $data['preserve'][] = 'card_id';
+      $data['card'] = $data['card']->jsonSerialize();
     }
 
     if (isset($data['card2'])) {
@@ -403,6 +404,7 @@ class Notifications
       $data['card2_name'] = $data['card2']->getName();
       $data['i18n'][] = 'card2_name';
       $data['preserve'][] = 'card2_id';
+      $data['card2'] = $data['card3']->jsonSerialize();
     }
 
     if (isset($data['card3'])) {
@@ -410,6 +412,7 @@ class Notifications
       $data['card3_name'] = $data['card3']->getName();
       $data['i18n'][] = 'card3_name';
       $data['preserve'][] = 'card3_id';
+      $data['card3'] = $data['card3']->jsonSerialize();
     }
 
     if (isset($data['cards'])) {

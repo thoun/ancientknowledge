@@ -25,6 +25,7 @@ class P12_GunungPadang extends \AK\Models\Building
   {
     return [
       'action' => MOVE_BUILDING,
+      'args' => ['excluded' => $this->id],
     ];
   }
 }

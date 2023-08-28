@@ -31,6 +31,7 @@ class M16_DiquisStoneSpheres extends \AK\Models\Building
     return [
       'action' => CREATE,
       'args' => ['constraint' => [\ARTEFACT]],
+      'optional' => true,
     ];
   }
 }

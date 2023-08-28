@@ -24,14 +24,28 @@ class A6_AntikytheraMechanism extends \AK\Models\Artefact
   public function getTimelineEffect()
   {
     $player = $this->getPlayer();
-    $slots = ['timeline-1-0', 'timeline-1-1'];
+    // Slot 3 available ?
+    $target = null;
+    $freeSlots = $player->getFreeSlots();
+    if (in_array('timeline-3-0', $freeSlots)) {
+      $target = 'timeline-3-0';
+    }
+    if (in_array('timeline-3-1', $freeSlots)) {
+      $target = 'timeline-3-1';
+    }
+    if (is_null($target)) {
+      return null;
+    }
+
+    // Any valid building ?
+    $slots = [[1, 0], [1, 1]];
     $childs = [];
     foreach ($slots as $slot) {
       $card = $player->getCardOnTimelineSpace($slot);
       if (!is_null($card) && $card->getKnowledge() >= 4) {
         $childs[] = [
           'action' => \MOVE_BUILDING,
-          'args' => ['cardId' => $card->getId()],
+          'args' => ['cardId' => $card->getId(), 'slot' => $target],
         ];
       }
     }

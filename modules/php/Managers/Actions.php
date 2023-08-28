@@ -31,6 +31,7 @@ class Actions
     DISCARD_MULTI => 'DiscardMulti',
     DRAW_AND_KEEP => 'DrawAndKeep',
     MOVE_BUILDING => 'MoveBuilding',
+    ADD_KNOWLEDGE => 'AddKnowledge',
   ];
 
   public static function get($actionId, $ctx = null)
