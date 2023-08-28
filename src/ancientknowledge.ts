@@ -375,7 +375,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
   
     private onEnteringMoveBuilding(args: EnteringMoveBuildingArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, Object.values(args.slots));
+            this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
     }
 
@@ -1210,7 +1210,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     notif_moveCard(args: NotifMoveCardArgs) {
         const { player_id, card } = args;
-        return this.getPlayerTable(player_id).timeline.addCard(this.builderCardsManager.getFullCard(card));
+        const playerTable = this.getPlayerTable(player_id);
+        const newStock = card.location == 'past' ? playerTable.past : playerTable.timeline;
+        return newStock.addCard(this.builderCardsManager.getFullCard(card));
     }
     
     /*
