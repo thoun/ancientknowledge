@@ -15,6 +15,9 @@
   align-items: center;
   
   .builder-card {
+    &.created-card {
+      opacity: 0.75;
+    }
     &.created-card, &.swapped-card {
       box-shadow: unset;
       outline: 4px solid green;

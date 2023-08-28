@@ -1234,6 +1234,9 @@ body > .card {
   flex-direction: column;
   align-items: center;
 }
+.player-table .builder-card.created-card {
+  opacity: 0.75;
+}
 .player-table .builder-card.created-card, .player-table .builder-card.swapped-card {
   box-shadow: unset;
   outline: 4px solid green;

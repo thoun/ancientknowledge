@@ -65,7 +65,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                 engine => {
                     const discardCount = this.getDiscardCount();
                     if (!discardCount) {
-                        this.nextState('confirm');
+                        this.game.onCreateCardConfirm(this.data);
                         return;
                     } 
 
@@ -76,41 +76,12 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     this.addConfirmDiscardSelection();
                     this.addCancel();
                 },
-                () => {
+                engine => {
                     this.removeConfirmDiscardSelection();
                     this.game.getCurrentPlayerTable().setHandSelectable('none');
                     this.removeCancel();
-                }
-            ),
-            new FrontState<CreateEngineData>(
-                'confirm',
-                engine => {
-                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('discarded-card'));
-                    this.game.changePageTitle(`Confirm`, true);
-
-                    const card = engine.data.selectedCard;
-
-                    const artifact = card.id[0] == 'A';
-                    const discardedCardsCount = engine.data.discardCards.length;
-
-                    let label = '';
-                    if (artifact) {
-                        label = _('Confirm creation of Artifact ${card_name}');
-                    } else {
-                        label = discardedCardsCount ? 
-                            _('Confirm creation of Monument ${card_name} with ${number} discarded cards').replace('${number}', discardedCardsCount) : 
-                            _('Confirm creation of Monument ${card_name}');
-                    }
-                    label = label.replace('${card_name}', card.name);
-
-                    this.game.addPrimaryActionButton('confirmCreate_btn', label, () => this.game.onCreateCardConfirm(engine.data));
-                    this.addCancel();
-                },
-                engine => {
                     engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.remove('discarded-card'));
                     this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
-                    this.removeCancel();
-                    document.getElementById('confirmCreate_btn')?.remove();
                 }
             ),
         ]);
@@ -154,7 +125,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
     }
 
     private addConfirmDiscardSelection() {    
-        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), () => this.nextState('confirm'));
+        this.game.addPrimaryActionButton('confirmDiscardSelection_btn', _('Confirm discarded cards'), () => this.game.onCreateCardConfirm(this.data));
         this.setConfirmDiscardSelectionState();
     }
 
