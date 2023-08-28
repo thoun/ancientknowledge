@@ -3,6 +3,8 @@ Backend:
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
  - add a log like "{player_name} Timeline phase is skipped (no Timeline phase effect)" ?
+ - M16_DiquisStoneSpheres : action should be optional
+ - A6_AntikytheraMechanism : fix grayed button when action is valid?
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 

@@ -135,6 +135,12 @@ interface EnteringDrawAndKeepArgs {
     _private: { cardIds: string[] };
 }
 
+interface EnteringMoveBuildingArgs {
+    cardIds: string[];
+    slots: string[];
+    card_id: string | null;
+}
+
 // pDrawCards
 interface NotifPDrawCardsArgs {
     n: number;
@@ -246,4 +252,10 @@ interface NotifRotateCardsArgs {
 interface NotifKeepAndDiscardArgs {
     player_id: number;
     card?: BuilderCard;
+}
+
+// moveCard
+interface NotifMoveCardArgs {
+    player_id: number;
+    card: BuilderCard;
 }

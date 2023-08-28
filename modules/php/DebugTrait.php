@@ -20,6 +20,7 @@ trait DebugTrait
   }
 
   // addHand(P34_PyramidsOfPlaineMagnien)
+  // addHand(A6_AntikytheraMechanism)
   function addHand($cardId)
   {
     $player = Players::getCurrent();

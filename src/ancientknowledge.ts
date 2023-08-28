@@ -46,6 +46,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private createEngine: CreateEngine;
     private archiveEngine: ArchiveEngine;
     private removeKnowledgeEngine: RemoveKnowledgeEngine;
+    private moveBuildingEngine: MoveBuildingEngine;
 
     constructor() {
     }
@@ -258,6 +259,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'drawAndKeep':
                 this.onEnteringDrawAndKeep(args.args);
                 break;
+            case 'moveBuilding':
+                this.onEnteringMoveBuilding(args.args);
+                break;
 
         }
     }
@@ -368,6 +372,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.drawAndPeekStock.setSelectionMode('multiple');
         }
     }
+  
+    private onEnteringMoveBuilding(args: EnteringMoveBuildingArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.moveBuildingEngine = new MoveBuildingEngine(this, args.cardIds, args.card_id, args.slots);
+        }
+    }
 
     public onLeavingState(stateName: string) {
         log( 'Leaving state: '+stateName );
@@ -390,7 +400,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.onLeavingLearn();
                 break;
             case 'removeKnowledge':
-                this.onLeavingRemoveKnowledgeEngine();
+                this.onLeavingRemoveKnowledge();
                 break;
             case 'swap':
                 this.onLeavingSwap();
@@ -403,6 +413,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 break;
             case 'drawAndKeep':
                 this.onLeavingDrawAndKeep();
+                break;
+            case 'moveBuilding':
+                this.onLeavingMoveBuilding();
                 break;
         }
     }
@@ -421,7 +434,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.archiveEngine = null;
     }
 
-    private onLeavingRemoveKnowledgeEngine() {
+    private onLeavingRemoveKnowledge() {
         this.removeKnowledgeEngine?.leaveState();
         this.removeKnowledgeEngine = null;
     }
@@ -438,6 +451,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const pickDiv = document.getElementById('draw-and-keep-pick');
         pickDiv.dataset.visible = 'false';
         this.drawAndPeekStock?.removeAll();
+    }
+
+    private onLeavingMoveBuilding() {
+        this.moveBuildingEngine?.leaveState();
+        this.moveBuildingEngine = null;
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -819,7 +837,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     public onTimelineSlotClick(slotId: string): void {
-        this.createEngine?.selectSlot(slotId);
+        if (this.gamedatas.gamestate.name == 'create') {
+            this.createEngine?.selectSlot(slotId);
+        } else if (this.gamedatas.gamestate.name == 'moveBuilding') {
+            this.takeAtomicAction('actMoveBuilding', [
+                this.moveBuildingEngine.data.selectedCard.id,
+                slotId,
+            ]);
+        }
     }
 
     public onCreateCardConfirm(data: CreateEngineData): void {
@@ -1001,6 +1026,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
+            ['moveCard', undefined],
         ];
     
         notifs.forEach((notif) => {
@@ -1178,6 +1204,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             Promise.resolve(true);
     }
     
+    notif_moveCard(args: NotifMoveCardArgs) {
+        const { player_id, card } = args;
+        return this.getPlayerTable(player_id).timeline.addCard(this.builderCardsManager.getFullCard(card));
+    }
     
     /*
     * [Undocumented] Called by BGA framework on any notification message
@@ -1238,10 +1268,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
       while (this.tooltipsToMap.length) {
         const tooltipToMap = this.tooltipsToMap.pop();
-        const tooltip = tooltipToMap[1][0] == 'T' ?
-            this.technologyTilesManager.getTooltip(this.technologyTilesManager.getFullCardById(tooltipToMap[1])) :
-            this.builderCardsManager.getTooltip(this.builderCardsManager.getFullCardById(tooltipToMap[1]));
-        this.setTooltip(`tooltip-${tooltipToMap[0]}`, tooltip);
+        if (!tooltipToMap || !tooltipToMap[1]) {
+            console.error('erreur tooltipToMap', tooltipToMap);
+        } else {
+            const tooltip = tooltipToMap[1][0] == 'T' ?
+                this.technologyTilesManager.getTooltip(this.technologyTilesManager.getFullCardById(tooltipToMap[1])) :
+                this.builderCardsManager.getTooltip(this.builderCardsManager.getFullCardById(tooltipToMap[1]));
+            this.setTooltip(`tooltip-${tooltipToMap[0]}`, tooltip);
+        }
       }
     }
 

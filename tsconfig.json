@@ -41,6 +41,7 @@
         "src/front-engine-create.ts",
         "src/front-engine-archive.ts",
         "src/front-engine-remove-knowledge.ts",
+        "src/front-engine-move-building.ts",
         "src/ancientknowledge.ts",
         "src/define.ts"
     ]
