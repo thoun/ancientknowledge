@@ -4,9 +4,12 @@
 }
 
 #table-center {
+  width: 903px;
   display: flex;
   gap: 20px;
   align-items: center;
+  position: relative;
+  transition: height 0.5s;
 
   #table-technology {
     display: flex;
@@ -44,4 +47,59 @@
       }
     }
   }
+
+  .fold-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 0 2px 2px gray;
+    animation: left 0.5s;
+    display: flex;
+    align-items: center;
+    transition: width 0.5px;
+
+    .fold-message {
+      display: none;
+      flex: 1;
+    }
+
+    .fold-button-arrow {
+      width: 48px;
+      height: 48px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.folded {
+    height: 48px;
+
+    .fold-button {
+      width: 903px;
+
+      .fold-message {
+        display: unset;
+      }
+    }
+    
+    .fold-button-arrow {
+      transform: rotate(180deg);
+    }
+
+    #table-technology {
+      display: none;
+    }
+  }
+}
+
+.double-column #table-center .fold-button {
+  display: none;
 }

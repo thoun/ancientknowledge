@@ -21,6 +21,9 @@
                         <div id="table-technology-tiles-3" class="table-technology-tiles" data-level="2"></div>
                     </div>
                 </div>
+                <button class="fold-button">
+                    <div class="fold-button-arrow">▲</div>
+                </button>
             </div>
         </div>
         <div id="tables"></div>

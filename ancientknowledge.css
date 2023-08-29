@@ -1177,9 +1177,12 @@ body > .card {
 }
 
 #table-center {
+  width: 903px;
   display: flex;
   gap: 20px;
   align-items: center;
+  position: relative;
+  transition: height 0.5s;
 }
 #table-center #table-technology {
   display: flex;
@@ -1212,6 +1215,53 @@ body > .card {
 }
 #table-center #table-technology #table-technology-tiles .table-technology-tiles[data-level="2"] {
   background-image: url("img/obelisk2.png");
+}
+#table-center .fold-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  background: white;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 0 2px 2px gray;
+  animation: left 0.5s;
+  display: flex;
+  align-items: center;
+  transition: width 0.5px;
+}
+#table-center .fold-button .fold-message {
+  display: none;
+  flex: 1;
+}
+#table-center .fold-button .fold-button-arrow {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#table-center.folded {
+  height: 48px;
+}
+#table-center.folded .fold-button {
+  width: 903px;
+}
+#table-center.folded .fold-button .fold-message {
+  display: unset;
+}
+#table-center.folded .fold-button-arrow {
+  transform: rotate(180deg);
+}
+#table-center.folded #table-technology {
+  display: none;
+}
+
+.double-column #table-center .fold-button {
+  display: none;
 }
 
 .player-board {

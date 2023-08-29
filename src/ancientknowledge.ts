@@ -111,7 +111,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
             onDimensionsChange: () => {
                 const tablesAndCenter = document.getElementById('tables-and-center');
                 const clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 903 + 20 + 1574); //table size + gap + player board size
+                const doubleColumn = clientWidth > (903 + 20 + 1574); // table size + gap + player board size
+                tablesAndCenter.classList.toggle('double-column', doubleColumn);
+                if (doubleColumn) {
+                    document.getElementById(`table-center`).classList.remove('folded');
+                }
             },
         });
 

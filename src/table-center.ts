@@ -33,6 +33,13 @@ class TableCenter {
             topCard: { id: `deck-card` } as BuilderCard,
             // TODO counter: { counterId: 'deck-counter', },
         });
+
+        document.querySelector(`.fold-button`).insertAdjacentHTML(`afterbegin`, `
+        <div class="fold-message">${_('Click here to display table center')}</div>
+        `);
+        document.querySelector(`.fold-button`).addEventListener('click', () => {
+            document.getElementById(`table-center`).classList.toggle('folded');
+        });
     }
     
     public setTechnologyTilesSelectable(selectable: boolean, selectableCards: TechnologyTile[] | null = null) {

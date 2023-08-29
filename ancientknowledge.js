@@ -2539,6 +2539,10 @@ var TableCenter = /** @class */ (function () {
             topCard: { id: "deck-card" },
             // TODO counter: { counterId: 'deck-counter', },
         });
+        document.querySelector(".fold-button").insertAdjacentHTML("afterbegin", "\n        <div class=\"fold-message\">".concat(_('Click here to display table center'), "</div>\n        "));
+        document.querySelector(".fold-button").addEventListener('click', function () {
+            document.getElementById("table-center").classList.toggle('folded');
+        });
     }
     TableCenter.prototype.setTechnologyTilesSelectable = function (selectable, selectableCards) {
         var _this = this;
@@ -3304,7 +3308,11 @@ var AncientKnowledge = /** @class */ (function () {
             onDimensionsChange: function () {
                 var tablesAndCenter = document.getElementById('tables-and-center');
                 var clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 903 + 20 + 1574); //table size + gap + player board size
+                var doubleColumn = clientWidth > (903 + 20 + 1574); // table size + gap + player board size
+                tablesAndCenter.classList.toggle('double-column', doubleColumn);
+                if (doubleColumn) {
+                    document.getElementById("table-center").classList.remove('folded');
+                }
             },
         });
         new HelpManager(this, {
