@@ -13,6 +13,12 @@ use AK\Helpers\Collection;
 
 trait DebugTrait
 {
+  function triggerEnd()
+  {
+    Globals::setEndOfGameTriggered(true);
+    Notifications::endOfGameTriggered(Players::getCurrent());
+  }
+
   function tp()
   {
     // $this->actTakeAtomicAction('actDiscardMulti', [['P10_Teotihuacan', 'P14_TikalTempleI']]);

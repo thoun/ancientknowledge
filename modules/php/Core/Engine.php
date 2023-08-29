@@ -3,7 +3,6 @@ namespace AK\Core;
 use AK\Managers\Players;
 use AK\Managers\Actions;
 use AK\Managers\Scores;
-use AK\Managers\ZooCards;
 use AK\Helpers\Log;
 use AK\Helpers\QueryBuilder;
 use AK\Helpers\UserException;
@@ -250,6 +249,7 @@ class Engine
     }
 
     self::save();
+    Scores::update();
 
     if (!isset($args['automatic']) || $args['automatic'] === false) {
       Globals::incEngineChoices();

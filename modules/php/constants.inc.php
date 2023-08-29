@@ -8,6 +8,10 @@ const OPTION_FIRST_GAME = 101;
 const OPTION_FIRST_GAME_ENABLED = 0;
 const OPTION_FIRST_GAME_DISABLED = 1;
 
+const OPTION_SCORING = 102;
+const OPTION_SCORING_ENABLED = 1;
+const OPTION_SCORING_DISABLED = 0;
+
 /*
  * User preferences
  */
@@ -136,6 +140,18 @@ const ICONS = [CITY, MEGALITH, PYRAMID, ARTEFACT, ANCIENT, WRITING, SECRET];
 
 const KNOWLEDGE = 'knowledge';
 const LOST_KNOWLEDGE = 'lost-knowledge';
+
+/*
+ * Scoring categories
+ */
+const SCORING_BUILDINGS = 'past';
+const SCORING_EFFECTS = 'effects';
+const SCORING_TECHS = 'techs';
+const SCORING_TIMELINE = 'timeline';
+const SCORING_LOST_KNOWNLEDGE = 'knowledge';
+const SCORING_CATEGORIES = [SCORING_BUILDINGS, SCORING_EFFECTS, SCORING_TECHS, SCORING_TIMELINE, SCORING_LOST_KNOWNLEDGE];
+
+const SCORING_TOTAL = 'total';
 
 /******************
  ****** STATS ******

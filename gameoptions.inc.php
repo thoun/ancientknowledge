@@ -42,6 +42,20 @@ $game_options = [
       ],
     ],
   ],
+
+  OPTION_SCORING => [
+    'name' => totranslate('Live scoring'),
+    'values' => [
+      OPTION_SCORING_ENABLED => [
+        'name' => totranslate('Enabled'),
+      ],
+      OPTION_SCORING_DISABLED => [
+        'name' => totranslate('Disabled'),
+        'tmdisplay' => totranslate('No live scoring'),
+      ],
+    ],
+    'default' => OPTION_SCORING_ENABLED,
+  ],
 ];
 
 $game_preferences = [

@@ -32,10 +32,10 @@ spl_autoload_register($swdNamespaceAutoload, true, true);
 
 require_once APP_GAMEMODULE_PATH . 'module/table/table.game.php';
 
-use AK\Managers\Meeples;
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Managers\Technologies;
+use AK\Managers\Scores;
 use AK\Helpers\Log;
 use AK\Core\Globals;
 use AK\Core\Preferences;
@@ -83,6 +83,8 @@ class AncientKnowledge extends Table
       'cards' => Cards::getUiData(),
       'techs' => Technologies::getUiData(),
       'firstHalf' => Globals::isFirstHalf(),
+      'endOfGameTriggered' => Globals::isEndOfGameTriggered(),
+      'scores' => Globals::isLiveScoring() ? Scores::compute() : null,
     ];
   }
 

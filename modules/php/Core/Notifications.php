@@ -171,6 +171,40 @@ class Notifications
     );
   }
 
+  public static function endOfGameTriggered($player)
+  {
+    self::notifyAll(
+      'endOfGameTriggered',
+      \clienttranslate('${player_name} has 14 buildings in their past, triggering the end of the game.'),
+      ['player' => $player]
+    );
+  }
+
+  public static function scoringEntry($player, $category, $score)
+  {
+    $msgs = [
+      SCORING_BUILDINGS => clienttranslate('${player_name} scores ${n} <VP> from monuments in their past'),
+      SCORING_EFFECTS => clienttranslate('${player_name} scores ${n} <VP> from endgame monument effects in their past'),
+      SCORING_TECHS => clienttranslate('${player_name} scores ${n} <VP> from learnt technology tiles'),
+      SCORING_TIMELINE => clienttranslate('${player_name} scores ${n} <VP> for monuments left in their timeline'),
+      SCORING_LOST_KNOWNLEDGE => clienttranslate('${player_name} lost ${m} <VP> for lost knowledge on their board'),
+      SCORING_TOTAL => clienttranslate('${player_name} final score is ${n} <VP>'),
+    ];
+    self::notifyAll('scoringEntry', $msgs[$category], [
+      'player' => $player,
+      'n' => $score,
+      'm' => -$score, // only useful for lost knowledge
+      'category' => $category,
+    ]);
+  }
+
+  public static function updateScores($scores)
+  {
+    self::notifyAll('updateScores', '', [
+      'scores' => $scores,
+    ]);
+  }
+
   ///////////////////////////
   //    ____              _
   //   / ___|__ _ _ __ __| |___

@@ -31,6 +31,7 @@ class Globals extends \AK\Helpers\DB_Manager
 
     // Game options
     'startingHands' => 'bool',
+    'liveScoring' => 'bool',
   ];
 
   protected static $table = 'global_variables';
@@ -159,7 +160,8 @@ class Globals extends \AK\Helpers\DB_Manager
    */
   public static function setupNewGame($players, $options)
   {
-    Globals::setStartingHands($options[OPTION_FIRST_GAME] == OPTION_FIRST_GAME_ENABLED);
-    Globals::setFirstHalf(true);
+    self::setStartingHands($options[OPTION_FIRST_GAME] == OPTION_FIRST_GAME_ENABLED);
+    self::setFirstHalf(true);
+    self::setLiveScoring($options[OPTION_SCORING] == OPTION_SCORING_ENABLED);
   }
 }

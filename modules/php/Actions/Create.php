@@ -4,6 +4,7 @@ use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
 use AK\Core\Stats;
+use AK\Core\Globals;
 use AK\Helpers\Utils;
 
 class Create extends \AK\Models\Action

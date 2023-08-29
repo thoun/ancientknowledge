@@ -9,6 +9,7 @@ use AK\Managers\Players;
 use AK\Managers\Meeples;
 use AK\Managers\Cards;
 use AK\Managers\Actions;
+use AK\Managers\Scores;
 
 trait TurnTrait
 {
@@ -33,10 +34,10 @@ trait TurnTrait
     $player = Players::getActive();
     self::giveExtraTime($player->getId());
 
-    // if (Globals::isEndTriggered() && Globals::getEndRemainingPlayers() == []) {
-    //   $this->endOfGameInit();
-    //   return;
-    // }
+    if (Globals::isEndOfGameTriggered() && $player->getId() == Globals::getFirstPlayer()) {
+      $this->endOfGameInit();
+      return;
+    }
 
     // Stats::incTurns($player);
     $node = [
@@ -67,17 +68,25 @@ trait TurnTrait
     Engine::proceed();
   }
 
-  /*******************************
-   ********************************
-   ********** END OF TURN *********
-   ********************************
-   *******************************/
-
   /**
    * End of turn
    */
   function stEndOfTurn()
   {
     $this->nextPlayerCustomOrder('turn');
+  }
+
+  /*******************************
+   ********************************
+   ********** END OF GAME *********
+   ********************************
+   *******************************/
+  function endOfGameInit()
+  {
+    Globals::setLiveScoring(true);
+    Scores::update(true);
+
+    $this->gamestate->jumpToState(\ST_PRE_END_OF_GAME);
+    // $this->gamestate->jumpToState(\ST_END_GAME);
   }
 }

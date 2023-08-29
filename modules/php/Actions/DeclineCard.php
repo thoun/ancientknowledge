@@ -97,7 +97,11 @@ class DeclineCard extends \AK\Models\Action
       }
     }
 
-    // TODO : end of game detection
+    // Check if end of game is reached
+    if (!Globals::isEndOfGameTriggered() && $player->getPast()->count() >= 14) {
+      Globals::setEndOfGameTriggered(true);
+      Notifications::endOfGameTriggered($player);
+    }
 
     $this->resolveAction([], $irreversible);
   }

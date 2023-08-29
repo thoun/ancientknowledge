@@ -7,6 +7,10 @@ Backend:
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
 Frontend:
+ - scoreboard
+ - endOfGameTriggered notif => can be tested using "triggerEnd()" function in chat
+  => boolean in getAllDatas to display banner near page title (endOfGameTriggered field)
+
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases
