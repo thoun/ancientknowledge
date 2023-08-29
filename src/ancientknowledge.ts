@@ -111,7 +111,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             onDimensionsChange: () => {
                 const tablesAndCenter = document.getElementById('tables-and-center');
                 const clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 903 + 20 + 1574); //table size + gap + player board size
             },
         });
 
@@ -1088,7 +1088,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
         const { player_id, cards } = args;        
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
+        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards), {
+            fromStock: this.tableCenter.cardDeck,
+        });
     }
 
     notif_discardCards(args: NotifPDrawCardsArgs) {

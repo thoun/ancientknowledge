@@ -30,6 +30,7 @@
     }
 
     .front {
+
       .background {
         top: 8px;
         left: 8px;
@@ -304,5 +305,68 @@
         transform-origin: top left;
         margin-bottom: 114px;
         margin-right: 82px;
+    }
+}
+
+.builder-card.card .card-sides .card-side {
+    overflow: unset;
+}
+
+.token-counter {
+    font-size: 24px;
+    position: absolute;
+    top: -12px;
+    background: white;
+    color: #404040;
+    height: 36px;
+    left: 48px;
+    right: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-radius: 18px;
+    transition: left 0.5s, right 0.5s;
+
+    .token-counter-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .token-selection {
+        display: none;
+
+        &.action {
+            width: 24px;
+            text-align: center;
+            pointer-events: all;
+            cursor: pointer;
+
+            &.minus {
+                border-right: 2px lightgray solid;
+            }
+            &.plus {
+                border-left: 2px lightgray solid;
+            }
+        }
+    }
+
+    .knowledge-token {
+        width: 18px;
+        height: 27px;
+    }
+}
+
+.knowledge-selectable {
+    .token-counter {
+        left: 24px;
+        right: 24px;
+        justify-content: space-between;
+
+        .token-selection {
+            display: unset;
+        }
     }
 }

@@ -915,6 +915,61 @@ body > .card {
   margin-right: 82px;
 }
 
+.builder-card.card .card-sides .card-side {
+  overflow: unset;
+}
+
+.token-counter {
+  font-size: 24px;
+  position: absolute;
+  top: -12px;
+  background: white;
+  color: #404040;
+  height: 36px;
+  left: 48px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 18px;
+  transition: left 0.5s, right 0.5s;
+}
+.token-counter .token-counter-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.token-counter .token-selection {
+  display: none;
+}
+.token-counter .token-selection.action {
+  width: 24px;
+  text-align: center;
+  pointer-events: all;
+  cursor: pointer;
+}
+.token-counter .token-selection.action.minus {
+  border-right: 2px lightgray solid;
+}
+.token-counter .token-selection.action.plus {
+  border-left: 2px lightgray solid;
+}
+.token-counter .knowledge-token {
+  width: 18px;
+  height: 27px;
+}
+
+.knowledge-selectable .token-counter {
+  left: 24px;
+  right: 24px;
+  justify-content: space-between;
+}
+.knowledge-selectable .token-counter .token-selection {
+  display: unset;
+}
+
 .technology-tile {
   display: inline-block;
   position: relative;
@@ -1121,6 +1176,11 @@ body > .card {
   justify-content: center;
 }
 
+#table-center {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
 #table-center #table-technology {
   display: flex;
   flex-direction: row;
@@ -1132,11 +1192,13 @@ body > .card {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  gap: 10px;
 }
 #table-center #table-technology #table-technology-tiles {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  justify-content: space-around;
 }
 #table-center #table-technology #table-technology-tiles .table-technology-tiles {
   width: 730px;
@@ -1150,12 +1212,6 @@ body > .card {
 }
 #table-center #table-technology #table-technology-tiles .table-technology-tiles[data-level="2"] {
   background-image: url("img/obelisk2.png");
-}
-#table-center #builder-decks {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
 }
 
 .player-board {

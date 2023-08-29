@@ -2699,6 +2699,7 @@ var PlayerTable = /** @class */ (function () {
         //const basic = knowledge % 5;
         var golden = 0;
         var basic = knowledge;
+        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n        <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n            <div class=\"token-selection action minus\" id=\"").concat(cardId, "-token-counter-minus\">-</div>\n            <div class=\"token-counter-center\">\n                <div class=\"knowledge-token\"></div>\n                <div class=\"token-selection selected-number\" id=\"").concat(cardId, "-token-counter-selected-number\">0</div>\n                <div class=\"token-selection\"> / </div>\n                <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n            </div>\n            <div class=\"token-selection action plus\" id=\"").concat(cardId, "-token-counter-plus\">+</div>\n        </div>\n        "));
         var stockDiv = document.getElementById("".concat(cardId, "-tokens"));
         while (stockDiv.childElementCount > (golden + basic)) {
             stockDiv.removeChild(stockDiv.lastChild);
@@ -2770,6 +2771,7 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setTimelineTokensSelectable = function (selectionMode, cardsIds) {
         if (cardsIds === void 0) { cardsIds = []; }
+        document.getElementById("player-table-".concat(this.playerId, "-timeline")).classList.toggle('knowledge-selectable', selectionMode !== 'none');
         document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".knowledge-token").forEach(function (token) {
             var card = token.closest('.builder-card');
             token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
@@ -3302,7 +3304,7 @@ var AncientKnowledge = /** @class */ (function () {
             onDimensionsChange: function () {
                 var tablesAndCenter = document.getElementById('tables-and-center');
                 var clientWidth = tablesAndCenter.clientWidth;
-                tablesAndCenter.classList.toggle('double-column', clientWidth > 2478); // TODO player board size + table size
+                tablesAndCenter.classList.toggle('double-column', clientWidth > 903 + 20 + 1574); //table size + gap + player board size
             },
         });
         new HelpManager(this, {
@@ -4119,7 +4121,9 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_pDrawCards = function (args) {
         var player_id = args.player_id, cards = args.cards;
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
+        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards), {
+            fromStock: this.tableCenter.cardDeck,
+        });
     };
     AncientKnowledge.prototype.notif_discardCards = function (args) {
         var player_id = args.player_id, n = args.n;

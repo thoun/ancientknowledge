@@ -174,6 +174,19 @@ class PlayerTable {
         const golden = 0;
         const basic = knowledge;
 
+        document.getElementById(`builder-card-${cardId}-front`).insertAdjacentHTML('beforeend', `
+        <div id="${cardId}-token-counter" class="token-counter">
+            <div class="token-selection action minus" id="${cardId}-token-counter-minus">-</div>
+            <div class="token-counter-center">
+                <div class="knowledge-token"></div>
+                <div class="token-selection selected-number" id="${cardId}-token-counter-selected-number">0</div>
+                <div class="token-selection"> / </div>
+                <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
+            </div>
+            <div class="token-selection action plus" id="${cardId}-token-counter-plus">+</div>
+        </div>
+        `);
+
         const stockDiv = document.getElementById(`${cardId}-tokens`);
 
         while (stockDiv.childElementCount > (golden + basic)) {
@@ -247,6 +260,7 @@ class PlayerTable {
     }
     
     public setTimelineTokensSelectable(selectionMode: CardSelectionMode, cardsIds: string[] = []) {
+        document.getElementById(`player-table-${this.playerId}-timeline`).classList.toggle('knowledge-selectable', selectionMode !== 'none');
         document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.knowledge-token`).forEach((token: HTMLDivElement) => {
             const card: HTMLDivElement = token.closest('.builder-card');
             token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));

@@ -4,6 +4,10 @@
 }
 
 #table-center {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+
   #table-technology {
     display: flex;
     flex-direction: row;
@@ -15,12 +19,14 @@
       flex-direction: column;
       justify-content: space-evenly;
       align-items: center;
+      gap: 10px;
     }
 
     #table-technology-tiles {
       display: flex;
       flex-direction: column;
       gap: 10px;
+      justify-content: space-around;
 
       .table-technology-tiles {
         width: 730px;
@@ -37,12 +43,5 @@
         }
       }
     }
-  }
-
-  #builder-decks {
-    margin-top: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
   }
 }
