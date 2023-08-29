@@ -695,11 +695,6 @@ body > .card {
   right: 7px;
   height: 128px;
   background-size: 600% auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 .builder-card .front .background[data-type=A] {
   background-image: url("img/cards-background-artifact.jpg");
@@ -713,19 +708,6 @@ body > .card {
 }
 .builder-card .front .background[data-type=P] {
   background-image: url("img/cards-background-pyramid.jpg");
-}
-.builder-card .front .background .knowledge-token {
-  z-index: 1;
-}
-.builder-card .front .background .knowledge-token::before {
-  content: "";
-  position: absolute;
-  left: -7px;
-  right: -7px;
-  top: -7px;
-  bottom: -7px;
-  display: inline-block;
-  background-image: url("img/knowledge-token-outline.png");
 }
 .builder-card .front .type-box[data-type=A] {
   border-radius: 0 0 7px 0;
@@ -955,6 +937,10 @@ body > .card {
 }
 .token-counter .token-selection.action.plus {
   border-left: 2px lightgray solid;
+}
+.token-counter .token-selection.action.disabled {
+  color: lightgray;
+  cursor: not-allowed;
 }
 .token-counter .knowledge-token {
   width: 18px;

@@ -153,8 +153,8 @@ class PlayerTable {
         }
     }
     
-    private createTimelineCard(card: BuilderCard): Promise<any> {
-        const promise = this.timeline.addCard(card);
+    private async createTimelineCard(card: BuilderCard): Promise<any> {
+        const promise = await this.timeline.addCard(card);
         this.setCardKnowledge(card.id, card.knowledge);
         return promise;
     }
@@ -166,49 +166,67 @@ class PlayerTable {
     public refreshHand(hand: BuilderCard[]): Promise<any> {
         this.hand.removeAll();
         return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
-    }    
+    }
 
-    public setCardKnowledge(cardId: string, knowledge: number) {
-        //const golden = Math.floor(knowledge / 5);
-        //const basic = knowledge % 5;
-        const golden = 0;
-        const basic = knowledge;
-
+    private createKnowledgeCounter(cardId: string, knowledge: number = 0) {
         document.getElementById(`builder-card-${cardId}-front`).insertAdjacentHTML('beforeend', `
-        <div id="${cardId}-token-counter" class="token-counter">
-            <div class="token-selection action minus" id="${cardId}-token-counter-minus">-</div>
-            <div class="token-counter-center">
-                <div class="knowledge-token"></div>
-                <div class="token-selection selected-number" id="${cardId}-token-counter-selected-number">0</div>
-                <div class="token-selection"> / </div>
-                <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
+            <div id="${cardId}-token-counter" class="token-counter">
+                <div class="token-selection action minus" id="${cardId}-token-counter-minus">-</div>
+                <div class="token-counter-center">
+                    <div class="knowledge-token"></div>
+                    <div class="token-selection selected-number" id="${cardId}-token-counter-selected-number">0</div>
+                    <div class="token-selection"> / </div>
+                    <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
+                </div>
+                <div class="token-selection action plus" id="${cardId}-token-counter-plus">+</div>
             </div>
-            <div class="token-selection action plus" id="${cardId}-token-counter-plus">+</div>
-        </div>
         `);
 
-        const stockDiv = document.getElementById(`${cardId}-tokens`);
+        document.getElementById(`${cardId}-token-counter-minus`).addEventListener('click', () => {
+            const current = this.getCardSelectedKnowledge(cardId);
+            if (current > 0) {
+                this.setCardSelectedKnowledge(cardId, current - 1);
+            }
+        });
+        document.getElementById(`${cardId}-token-counter-plus`).addEventListener('click', () => {
+            const current = this.getCardSelectedKnowledge(cardId);
+            if (current < this.getCardKnowledge(cardId)) {
+                this.setCardSelectedKnowledge(cardId, current + 1);
+            }
+        });
+    }
 
-        while (stockDiv.childElementCount > (golden + basic)) {
-            stockDiv.removeChild(stockDiv.lastChild);
+    public setCardKnowledge(cardId: string, knowledge: number) {
+        const counterDiv = document.getElementById(`${cardId}-token-counter-number`);
+        if (counterDiv) {
+            counterDiv.innerHTML = `${knowledge}`;
+        } else {
+            this.createKnowledgeCounter(cardId, knowledge);
         }
-        while (stockDiv.childElementCount < (golden + basic)) {
-            const div = document.createElement('div');
-            div.classList.add('knowledge-token');
-            stockDiv.appendChild(div);
-            div.addEventListener('click', () => {
-                if (div.classList.contains('selectable')) {
-                    div.classList.toggle('selected');
-                    const card: HTMLDivElement = div.closest('.builder-card');
-                    this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
-                }
-            });
+        this.setCardSelectedKnowledge(cardId, 0);
+    }
+
+    public getCardKnowledge(cardId: string): number {
+        return Number(document.getElementById(`${cardId}-token-counter-number`)?.innerHTML);
+    }
+
+    public getCardSelectedKnowledge(cardId: string): number {
+        return Number(document.getElementById(`${cardId}-token-counter-selected-number`)?.innerHTML);
+    }
+
+    public setCardSelectedKnowledge(cardId: string, selectedKnowledge: number, initial: boolean = false) {
+        if (!document.getElementById(`${cardId}-token-counter-number`)) {
+            this.createKnowledgeCounter(cardId);
         }
 
-        for (let i = 0; i < (golden + basic); i++) {
-            stockDiv.children[i].classList.toggle('golden', i < golden);
+        const knowledge = this.getCardKnowledge(cardId);
+        document.getElementById(`${cardId}-token-counter-selected-number`).innerHTML = `${selectedKnowledge}`;
+        document.getElementById(`${cardId}-token-counter-minus`).classList.toggle('disabled', selectedKnowledge == 0);
+        document.getElementById(`${cardId}-token-counter-plus`).classList.toggle('disabled', selectedKnowledge >= knowledge);
+        if (!initial) {
+            this.game.onTimelineKnowledgeClick(cardId, selectedKnowledge);
         }
-    } 
+    }
 
     public incLostKnowledge(inc: number) {
         this.setLostKnowledge(this.lostKnowledge + inc);
@@ -260,14 +278,14 @@ class PlayerTable {
     }
     
     public setTimelineTokensSelectable(selectionMode: CardSelectionMode, cardsIds: string[] = []) {
-        document.getElementById(`player-table-${this.playerId}-timeline`).classList.toggle('knowledge-selectable', selectionMode !== 'none');
-        document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.knowledge-token`).forEach((token: HTMLDivElement) => {
-            const card: HTMLDivElement = token.closest('.builder-card');
-            token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
-            if (selectionMode == 'none') {
-                token.classList.remove('selected');
-            }
-        });
+        if (selectionMode == 'none') {
+            document.querySelectorAll('.knowledge-selectable').forEach(elem => elem.classList.remove('knowledge-selectable'));
+        } else {
+            cardsIds.forEach(cardId => {
+                this.setCardSelectedKnowledge(cardId, 0);
+                document.getElementById(`builder-card-${cardId}`).classList.add('knowledge-selectable');
+            });
+        }
     }
     
     public declineCard(card: BuilderCard, lostKnowledge: number): Promise<any> {
@@ -285,7 +303,6 @@ class PlayerTable {
     }
     
     public enterSwap(cardIds: string[], fixedCardId: string) {
-        console.log(cardIds, fixedCardId);
         this.timeline.setSelectionMode('multiple', this.game.builderCardsManager.getFullCardsByIds(cardIds.filter(id => id != fixedCardId)));
         if (fixedCardId) {
             const fixedCard = this.game.builderCardsManager.getFullCardById(fixedCardId);
@@ -303,8 +320,10 @@ class PlayerTable {
         cards.forEach(card => this.setCardKnowledge(card.id, card.knowledge));
     }
 
-    public hasKnowledgeOnTimeline() {
-        return document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll('.knowledge').length > 0;
+    public hasKnowledgeOnTimeline() { // TODO
+        return true;
+        //console.log(document.getElementById(`player-table-${this.playerId}-timeline`));
+        //return Array.from(document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll('.token-number')).map(elem => Number(elem.innerHTML)).reduce((a, b) => a + b, 0) > 0;
     }
     
     public rotateCards(cards: BuilderCard[]) {
