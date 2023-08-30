@@ -37,6 +37,8 @@ class TimelinePhase extends \AK\Models\Action
         'type' => \NODE_PARALLEL,
         'childs' => $childs,
       ]);
+    } else {
+      Notifications::skipTimelinePhase($player);
     }
 
     $this->resolveAction();

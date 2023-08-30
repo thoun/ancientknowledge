@@ -103,6 +103,20 @@ class Notifications
     );
   }
 
+  public static function skipDeclinePhase($player)
+  {
+    self::notifyAll('mediumMessage', clienttranslate('${player_name} skips their decline phase due to Potala Palace\'s effect'), [
+      'player' => $player,
+    ]);
+  }
+
+  public static function skipTimelinePhase($player)
+  {
+    self::notifyAll('mediumMessage', clienttranslate('${player_name} Timeline phase is skipped (no Timeline phase effect)'), [
+      'player' => $player,
+    ]);
+  }
+
   //////////////////////////////
   //  _____         _
   // |_   _|__  ___| |__  ___

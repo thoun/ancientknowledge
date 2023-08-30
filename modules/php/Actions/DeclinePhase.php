@@ -25,6 +25,7 @@ class DeclinePhase extends \AK\Models\Action
     // PotatoPalace: skip decline
     if (Globals::isSkipDecline()) {
       Globals::setSkipDecline(false);
+      Notifications::skipDeclinePhase($player);
       $this->resolveAction();
       return;
     }
