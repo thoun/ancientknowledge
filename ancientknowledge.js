@@ -3241,11 +3241,10 @@ var AncientKnowledge = /** @class */ (function () {
         this.lostKnowledgeCounters = [];
         this.artifactCounters = [];
         this.cityCounters = [];
-        this.cityTimelineCounters = [];
+        //private cityTimelineCounters: Counter[] = [];
         this.megalithCounters = [];
-        this.megalithTimelineCounters = [];
+        //private megalithTimelineCounters: Counter[] = [];
         this.pyramidCounters = [];
-        this.pyramidTimelineCounters = [];
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
         this._notif_uid_to_log_id = [];
         this._notif_uid_to_mobile_log_id = [];
@@ -3813,7 +3812,7 @@ var AncientKnowledge = /** @class */ (function () {
             document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div class=\"vp icon\"></div>");
             document.getElementById("icon_point_".concat(player.id)).remove();
             var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div>").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
-            html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"").concat(type, " icon\"></div>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                    ").concat(type == 'artifact' ? '' : "<span class=\"timeline-counter\">(<span id=\"".concat(type, "-timeline-counter-").concat(player.id, "\"></span>)</span>"), "\n                </div>\n            "); }).join('');
+            html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"").concat(type, " icon\"></div>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                </div>\n            "); }).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
             html += "</div>";
             dojo.place(html, "player_board_".concat(player.id));
             var handCounter = new ebg.counter();
@@ -3834,9 +3833,9 @@ var AncientKnowledge = /** @class */ (function () {
                     _this.setTooltip("".concat(type, "-counter-wrapper-").concat(player.id), _('Artifact cards'));
                 }
                 else {
-                    _this["".concat(type, "TimelineCounters")][playerId] = new ebg.counter();
-                    _this["".concat(type, "TimelineCounters")][playerId].create("".concat(type, "-timeline-counter-").concat(playerId));
-                    _this["".concat(type, "TimelineCounters")][playerId].setValue(player.icons["".concat(type, "-timeline")]);
+                    /*this[`${type}TimelineCounters`][playerId] = new ebg.counter();
+                    this[`${type}TimelineCounters`][playerId].create(`${type}-timeline-counter-${playerId}`);
+                    this[`${type}TimelineCounters`][playerId].setValue(player.icons[`${type}-timeline`]);*/
                     var typeName = '';
                     switch (type) {
                         case 'city':
@@ -3871,9 +3870,9 @@ var AncientKnowledge = /** @class */ (function () {
         ICONS_COUNTERS_TYPES.forEach(function (type) {
             var artifact = type == 'artifact';
             _this["".concat(type, "Counters")][playerId].toValue(icons[artifact ? 'artefact' : type]);
-            if (!artifact) {
-                _this["".concat(type, "TimelineCounters")][playerId].toValue(icons["".concat(type, "-timeline")]);
-            }
+            /*if (!artifact) {
+                this[`${type}TimelineCounters`][playerId].toValue(icons[`${type}-timeline`]);
+            }*/
         });
     };
     AncientKnowledge.prototype.getHelpHtml = function () {

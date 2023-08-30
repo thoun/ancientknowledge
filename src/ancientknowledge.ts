@@ -28,11 +28,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private artifactCounters: Counter[] = [];
     private cityCounters: Counter[] = [];
-    private cityTimelineCounters: Counter[] = [];
+    //private cityTimelineCounters: Counter[] = [];
     private megalithCounters: Counter[] = [];
-    private megalithTimelineCounters: Counter[] = [];
+    //private megalithTimelineCounters: Counter[] = [];
     private pyramidCounters: Counter[] = [];
-    private pyramidTimelineCounters: Counter[] = [];
+    //private pyramidTimelineCounters: Counter[] = [];
 
     private drawAndPeekStock: LineStock<BuilderCard>;
     
@@ -708,9 +708,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 <div id="${type}-counter-wrapper-${player.id}">
                     <div class="${type} icon"></div>
                     <span id="${type}-counter-${player.id}"></span>
-                    ${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
                 </div>
-            `).join('');
+            `).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
             html += `</div>`;
 
             dojo.place(html, `player_board_${player.id}`);
@@ -736,9 +735,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 if (artifact) {
                     this.setTooltip(`${type}-counter-wrapper-${player.id}`, _('Artifact cards'));
                 } else {
-                    this[`${type}TimelineCounters`][playerId] = new ebg.counter();
+                    /*this[`${type}TimelineCounters`][playerId] = new ebg.counter();
                     this[`${type}TimelineCounters`][playerId].create(`${type}-timeline-counter-${playerId}`);
-                    this[`${type}TimelineCounters`][playerId].setValue(player.icons[`${type}-timeline`]);
+                    this[`${type}TimelineCounters`][playerId].setValue(player.icons[`${type}-timeline`]);*/
 
                     let typeName = '';
                     switch (type) {
@@ -774,9 +773,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
             this[`${type}Counters`][playerId].toValue(icons[artifact ? 'artefact' : type]);
     
-            if (!artifact) {
+            /*if (!artifact) {
                 this[`${type}TimelineCounters`][playerId].toValue(icons[`${type}-timeline`]);
-            }
+            }*/
         });
     }
 
