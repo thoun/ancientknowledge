@@ -3233,7 +3233,7 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
 }(FrontEngine));
 var ANIMATION_MS = 500;
 var SCORE_ANIMATION_MS = 1500;
-var ACTION_TIMER_DURATION = 5;
+var ACTION_TIMER_DURATION = 10;
 var LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 var LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 var ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
@@ -3249,6 +3249,7 @@ var AncientKnowledge = /** @class */ (function () {
         //private megalithTimelineCounters: Counter[] = [];
         this.pyramidCounters = [];
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
+        this.actionTimerId = null;
         this._notif_uid_to_log_id = [];
         this._notif_uid_to_mobile_log_id = [];
         this._last_tooltip_id = 0;
@@ -3705,6 +3706,7 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'confirmTurn':
                     this.addActionButton("actConfirmTurn_button", _("Confirm turn"), function () { return _this.actConfirmTurn(); });
+                    this.startActionTimer("actConfirmTurn_button");
                     break;
                 case 'drawAndKeep':
                     this.addActionButton("actDrawAndKeep_button", _("Keep selected card(s)"), function () { return _this.actDrawAndKeep(); });
@@ -3801,6 +3803,32 @@ var AncientKnowledge = /** @class */ (function () {
         dojo.query(".preference_control").connect("onchange", onchange);
         // Call onPreferenceChange() now
         dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
+    };
+    AncientKnowledge.prototype.startActionTimer = function (buttonId, time) {
+        var _this = this;
+        var _a;
+        if (time === void 0) { time = ACTION_TIMER_DURATION; }
+        if (Number((_a = this.prefs[103]) === null || _a === void 0 ? void 0 : _a.value) !== 3) {
+            return;
+        }
+        var button = document.getElementById(buttonId);
+        var _actionTimerLabel = button.innerHTML;
+        var _actionTimerSeconds = time;
+        var actionTimerFunction = function () {
+            var button = document.getElementById(buttonId);
+            if (button == null || button.classList.contains('disabled')) {
+                window.clearInterval(_this.actionTimerId);
+            }
+            else if (_actionTimerSeconds-- > 1) {
+                button.innerHTML = _actionTimerLabel + ' (' + _actionTimerSeconds + ')';
+            }
+            else {
+                window.clearInterval(_this.actionTimerId);
+                button.click();
+            }
+        };
+        actionTimerFunction();
+        this.actionTimerId = window.setInterval(function () { return actionTimerFunction(); }, 1000);
     };
     AncientKnowledge.prototype.getOrderedPlayers = function (gamedatas) {
         var _this = this;
@@ -4392,7 +4420,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAction('actUndoToStep', { stepId: stepId } /*, false*/);
     };
     AncientKnowledge.prototype.stopActionTimer = function () {
-        console.warn('TODO');
+        window.clearInterval(this.actionTimerId);
     };
     AncientKnowledge.prototype.getGain = function (type) {
         switch (type) {

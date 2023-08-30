@@ -7,7 +7,7 @@ declare const g_gamethemeurl;
 
 const ANIMATION_MS = 500;
 const SCORE_ANIMATION_MS = 1500;
-const ACTION_TIMER_DURATION = 5;
+const ACTION_TIMER_DURATION = 10;
 
 const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 const LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
@@ -38,6 +38,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
+    private actionTimerId = null;
     private _notif_uid_to_log_id = [];
     private _notif_uid_to_mobile_log_id = [];
     private _last_notif;
@@ -560,6 +561,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
+                    this.startActionTimer(`actConfirmTurn_button`);
                     break;
                 case 'drawAndKeep':
                     (this as any).addActionButton(`actDrawAndKeep_button`, _("Keep selected card(s)"), () => this.actDrawAndKeep());
@@ -673,6 +675,30 @@ class AncientKnowledge implements AncientKnowledgeGame {
           dojo.query("#ingame_menu_content .preference_control"),
           el => onchange({ target: el })
         );
+    }
+
+    private startActionTimer(buttonId: string, time: number = ACTION_TIMER_DURATION) {
+        if (Number((this as any).prefs[103]?.value) !== 3) {
+            return;
+        }
+
+        const button = document.getElementById(buttonId);
+ 
+        const _actionTimerLabel = button.innerHTML;
+        let _actionTimerSeconds = time;
+        const actionTimerFunction = () => {
+          const button = document.getElementById(buttonId);
+          if (button == null || button.classList.contains('disabled')) {
+            window.clearInterval(this.actionTimerId);
+          } else if (_actionTimerSeconds-- > 1) {
+            button.innerHTML = _actionTimerLabel + ' (' + _actionTimerSeconds + ')';
+          } else {
+            window.clearInterval(this.actionTimerId);
+            button.click();
+          }
+        };
+        actionTimerFunction();
+        this.actionTimerId = window.setInterval(() => actionTimerFunction(), 1000);
     }
 
     private getOrderedPlayers(gamedatas: AncientKnowledgeGamedatas) {
@@ -1393,7 +1419,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     stopActionTimer() {
-        console.warn('TODO');
+        window.clearInterval(this.actionTimerId);
     }
 
     public getGain(type: number): string {
