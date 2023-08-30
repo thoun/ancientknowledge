@@ -2686,9 +2686,18 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.createTimelineCard = function (card) {
-        var promise = this.timeline.addCard(card);
-        this.setCardKnowledge(card.id, card.knowledge);
-        return promise;
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.timeline.addCard(card)];
+                    case 1:
+                        promise = _a.sent();
+                        this.setCardKnowledge(card.id, card.knowledge);
+                        return [2 /*return*/, promise];
+                }
+            });
+        });
     };
     PlayerTable.prototype.addTechnologyTile = function (card) {
         return this.technologyTilesDecks[card.type].addCard(card);
@@ -2697,14 +2706,65 @@ var PlayerTable = /** @class */ (function () {
         this.hand.removeAll();
         return this.hand.addCards(this.game.builderCardsManager.getFullCards(hand));
     };
-    PlayerTable.prototype.setCardKnowledge = function (cardId, knowledge) {
+    PlayerTable.prototype.createKnowledgeCounter = function (cardId, knowledge) {
         var _this = this;
-        //const golden = Math.floor(knowledge / 5);
-        //const basic = knowledge % 5;
-        var golden = 0;
-        var basic = knowledge;
-        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n        <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n            <div class=\"token-selection action minus\" id=\"").concat(cardId, "-token-counter-minus\">-</div>\n            <div class=\"token-counter-center\">\n                <div class=\"knowledge-token\"></div>\n                <div class=\"token-selection selected-number\" id=\"").concat(cardId, "-token-counter-selected-number\">0</div>\n                <div class=\"token-selection\"> / </div>\n                <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n            </div>\n            <div class=\"token-selection action plus\" id=\"").concat(cardId, "-token-counter-plus\">+</div>\n        </div>\n        "));
-        var stockDiv = document.getElementById("".concat(cardId, "-tokens"));
+        if (knowledge === void 0) { knowledge = 0; }
+        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-selection action minus\" id=\"").concat(cardId, "-token-counter-minus\">-</div>\n                <div class=\"token-counter-center\">\n                    <div class=\"knowledge-token\"></div>\n                    <div class=\"token-selection selected-number\" id=\"").concat(cardId, "-token-counter-selected-number\">0</div>\n                    <div class=\"token-selection\"> / </div>\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                </div>\n                <div class=\"token-selection action plus\" id=\"").concat(cardId, "-token-counter-plus\">+</div>\n            </div>\n        "));
+        document.getElementById("".concat(cardId, "-token-counter-minus")).addEventListener('click', function () {
+            var current = _this.getCardSelectedKnowledge(cardId);
+            if (current > 0) {
+                _this.setCardSelectedKnowledge(cardId, current - 1);
+            }
+        });
+        document.getElementById("".concat(cardId, "-token-counter-plus")).addEventListener('click', function () {
+            var current = _this.getCardSelectedKnowledge(cardId);
+            if (current < _this.getCardKnowledge(cardId)) {
+                _this.setCardSelectedKnowledge(cardId, current + 1);
+            }
+        });
+    };
+    PlayerTable.prototype.setCardKnowledge = function (cardId, knowledge) {
+        var counterDiv = document.getElementById("".concat(cardId, "-token-counter-number"));
+        if (counterDiv) {
+            counterDiv.innerHTML = "".concat(knowledge);
+        }
+        else {
+            this.createKnowledgeCounter(cardId, knowledge);
+        }
+        this.setCardSelectedKnowledge(cardId, 0);
+    };
+    PlayerTable.prototype.getCardKnowledge = function (cardId) {
+        var _a;
+        return Number((_a = document.getElementById("".concat(cardId, "-token-counter-number"))) === null || _a === void 0 ? void 0 : _a.innerHTML);
+    };
+    PlayerTable.prototype.getCardSelectedKnowledge = function (cardId) {
+        var _a;
+        return Number((_a = document.getElementById("".concat(cardId, "-token-counter-selected-number"))) === null || _a === void 0 ? void 0 : _a.innerHTML);
+    };
+    PlayerTable.prototype.setCardSelectedKnowledge = function (cardId, selectedKnowledge, initial) {
+        if (initial === void 0) { initial = false; }
+        if (!document.getElementById("".concat(cardId, "-token-counter-number"))) {
+            this.createKnowledgeCounter(cardId);
+        }
+        var knowledge = this.getCardKnowledge(cardId);
+        document.getElementById("".concat(cardId, "-token-counter-selected-number")).innerHTML = "".concat(selectedKnowledge);
+        document.getElementById("".concat(cardId, "-token-counter-minus")).classList.toggle('disabled', selectedKnowledge == 0);
+        document.getElementById("".concat(cardId, "-token-counter-plus")).classList.toggle('disabled', selectedKnowledge >= knowledge);
+        if (!initial) {
+            this.game.onTimelineKnowledgeClick(cardId, selectedKnowledge);
+        }
+    };
+    PlayerTable.prototype.incLostKnowledge = function (inc) {
+        this.setLostKnowledge(this.lostKnowledge + inc);
+    };
+    PlayerTable.prototype.setLostKnowledge = function (knowledge) {
+        var _this = this;
+        this.lostKnowledge = knowledge;
+        var golden = Math.floor(knowledge / 5);
+        var basic = knowledge % 5;
+        //const golden = 0;
+        //const basic = knowledge;
+        var stockDiv = document.getElementById("player-table-".concat(this.playerId, "-lost-knowledge"));
         while (stockDiv.childElementCount > (golden + basic)) {
             stockDiv.removeChild(stockDiv.lastChild);
         }
@@ -2727,39 +2787,6 @@ var PlayerTable = /** @class */ (function () {
             stockDiv.children[i].classList.toggle('golden', i < golden);
         }
     };
-    PlayerTable.prototype.incLostKnowledge = function (inc) {
-        this.setLostKnowledge(this.lostKnowledge + inc);
-    };
-    PlayerTable.prototype.setLostKnowledge = function (knowledge) {
-        var _this = this;
-        this.lostKnowledge = knowledge;
-        var golden = Math.floor(knowledge / 5);
-        var basic = knowledge % 5;
-        //const golden = 0;
-        //const basic = knowledge;
-        var stockDiv = document.getElementById("player-table-".concat(this.playerId, "-lost-knowledge"));
-        while (stockDiv.childElementCount > (golden + basic)) {
-            stockDiv.removeChild(stockDiv.lastChild);
-        }
-        var _loop_4 = function () {
-            var div = document.createElement('div');
-            div.classList.add('knowledge-token');
-            stockDiv.appendChild(div);
-            div.addEventListener('click', function () {
-                if (div.classList.contains('selectable')) {
-                    div.classList.toggle('selected');
-                    var card = div.closest('.builder-card');
-                    _this.game.onTimelineKnowledgeClick(card.dataset.cardId, card.querySelectorAll('.knowledge-token.selected').length);
-                }
-            });
-        };
-        while (stockDiv.childElementCount < (golden + basic)) {
-            _loop_4();
-        }
-        for (var i = 0; i < (golden + basic); i++) {
-            stockDiv.children[i].classList.toggle('golden', i < golden);
-        }
-    };
     PlayerTable.prototype.setTimelineSelectable = function (selectable, possibleCardLocations) {
         if (possibleCardLocations === void 0) { possibleCardLocations = null; }
         var slotIds = selectable ? Object.keys(possibleCardLocations) : [];
@@ -2774,15 +2801,17 @@ var PlayerTable = /** @class */ (function () {
         });
     };
     PlayerTable.prototype.setTimelineTokensSelectable = function (selectionMode, cardsIds) {
+        var _this = this;
         if (cardsIds === void 0) { cardsIds = []; }
-        document.getElementById("player-table-".concat(this.playerId, "-timeline")).classList.toggle('knowledge-selectable', selectionMode !== 'none');
-        document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll(".knowledge-token").forEach(function (token) {
-            var card = token.closest('.builder-card');
-            token.classList.toggle('selectable', selectionMode != 'none' && cardsIds.includes(card.dataset.cardId));
-            if (selectionMode == 'none') {
-                token.classList.remove('selected');
-            }
-        });
+        if (selectionMode == 'none') {
+            document.querySelectorAll('.knowledge-selectable').forEach(function (elem) { return elem.classList.remove('knowledge-selectable'); });
+        }
+        else {
+            cardsIds.forEach(function (cardId) {
+                _this.setCardSelectedKnowledge(cardId, 0);
+                document.getElementById("builder-card-".concat(cardId)).classList.add('knowledge-selectable');
+            });
+        }
     };
     PlayerTable.prototype.declineCard = function (card, lostKnowledge) {
         this.incLostKnowledge(lostKnowledge);
@@ -2795,7 +2824,6 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.enterSwap = function (cardIds, fixedCardId) {
         var _a;
-        console.log(cardIds, fixedCardId);
         this.timeline.setSelectionMode('multiple', this.game.builderCardsManager.getFullCardsByIds(cardIds.filter(function (id) { return id != fixedCardId; })));
         if (fixedCardId) {
             var fixedCard = this.game.builderCardsManager.getFullCardById(fixedCardId);
@@ -2812,7 +2840,9 @@ var PlayerTable = /** @class */ (function () {
         cards.forEach(function (card) { return _this.setCardKnowledge(card.id, card.knowledge); });
     };
     PlayerTable.prototype.hasKnowledgeOnTimeline = function () {
-        return document.getElementById("player-table-".concat(this.playerId, "-timeline")).querySelectorAll('.knowledge').length > 0;
+        return true;
+        //console.log(document.getElementById(`player-table-${this.playerId}-timeline`));
+        //return Array.from(document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll('.token-number')).map(elem => Number(elem.innerHTML)).reduce((a, b) => a + b, 0) > 0;
     };
     PlayerTable.prototype.rotateCards = function (cards) {
         var _this = this;
