@@ -13,41 +13,22 @@ XOR ça veut dire qu'il faut enlever $n knowledge d'exactement une carte parmis 
 OR c'est le cas "normal" où tu répartis les $n comme tu veux parmis les cartes des args
 et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, 'cardId2' => n2, ...]*/
 
-    constructor (public game: AncientKnowledgeGame, private cardIds: string[], private n: number, private type: 'or' | 'xor') {
+    constructor (public game: AncientKnowledgeGame, private cardIds: string[], private n: number, private m: number, private type: 'or' | 'xor') {
         super(game, [
             new FrontState<RemoveKnowledgeEngineData>(
                 'discardTokens',
                 engine => {
                     engine.data.discardTokens = {};
+                    cardIds.forEach(cardId => this.game.getCurrentPlayerTable().setCardSelectedKnowledge(cardId, 0, true));
                     this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', this.cardIds);
                     this.addConfirmDiscardTokenSelection();
                     this.setConfirmDiscardTokenSelectionState();
-                    //this.addCancel();
                 },
                 () => {
                     this.removeConfirmDiscardTokenSelection();
                     this.game.getCurrentPlayerTable().setTimelineTokensSelectable('none');
-                    //this.removeCancel();
                 }
             ),
-            /*new FrontState<RemoveKnowledgeEngineData>(
-                'confirm',
-                engine => {
-                    const discardCount = this.data.discardCards.length;
-                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('discarded-card'));
-                    this.game.changePageTitle(`Confirm`, true);
-
-                    const label = formatTextIcons(_('Confirm discard of ${number} cards to remove ${number} <KNOWLEDGE>')).replace(/\${number}/g, ''+discardCount);
-
-                    this.game.addPrimaryActionButton('confirmArchive_btn', label, () => this.game.onArchiveCardConfirm(engine.data));
-                    this.addCancel();
-                },
-                engine => {
-                    engine.data.discardCards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.remove('discarded-card'));
-                    this.removeCancel();
-                    document.getElementById('confirmArchive_btn')?.remove();
-                }
-            ),*/
         ]);
 
         this.enterState('discardTokens');
@@ -66,14 +47,6 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
         }
     }
 
-    /*private addCancel() {    
-        this.game.addSecondaryActionButton('restartCardCreation_btn', _('Restart card creation'), () => this.nextState('init'));
-    }
-
-    private removeCancel() {    
-        document.getElementById('restartCardCreation_btn')?.remove();
-    }*/
-
     private addConfirmDiscardTokenSelection() {    
         this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', _('Confirm discarded tokens'), () => this.game.onRemoveKnowledgeConfirm(this.data.discardTokens));
         this.setConfirmDiscardTokenSelectionState();
@@ -85,10 +58,10 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
 
     private setConfirmDiscardTokenSelectionState() { 
         const discardCount = Object.values(this.data.discardTokens).reduce((a, b) => a + b, 0);
-        //console.log(discardCount, this.n, Object.keys(this.data.discardTokens), this.cardIds);
+        //console.log(this.m, Object.values(this.data.discardTokens).filter(val => val > 0), discardCount, this.n * this.m);
         document.getElementById('confirmDiscardTokenSelection_btn')?.classList.toggle('disabled', 
-            discardCount != this.n || 
-            (this.type === 'xor' && Object.keys(this.data.discardTokens).length > 1) ||
+            discardCount > this.n * this.m || 
+            (this.type === 'xor' && Object.values(this.data.discardTokens).filter(val => val > 0).length > this.m) ||
             Object.keys(this.data.discardTokens).some(cardId => !this.cardIds.includes(cardId))
         );
     }

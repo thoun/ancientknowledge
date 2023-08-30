@@ -338,7 +338,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onEnteringRemoveKnowledge(args: EnteringRemoveKnowledgeArgs) {
         if ((this as any).isCurrentPlayerActive()) {
-            this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.type);
+            this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.m, args.type);
         }
     }
   

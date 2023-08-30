@@ -282,7 +282,6 @@ class PlayerTable {
             document.querySelectorAll('.knowledge-selectable').forEach(elem => elem.classList.remove('knowledge-selectable'));
         } else {
             cardsIds.forEach(cardId => {
-                this.setCardSelectedKnowledge(cardId, 0);
                 document.getElementById(`builder-card-${cardId}`).classList.add('knowledge-selectable');
             });
         }
