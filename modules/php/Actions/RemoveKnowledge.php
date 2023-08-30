@@ -63,6 +63,7 @@ class RemoveKnowledge extends \AK\Models\Action
       'n' => $this->getN(),
       'cardIds' => $cardIds,
       'type' => $this->getType(),
+      'm' => $this->getCtxArg('m') ?? 1,
     ];
   }
 
@@ -101,8 +102,9 @@ class RemoveKnowledge extends \AK\Models\Action
     if (!empty(array_diff($cardIds, $args['cardIds']))) {
       throw new \BgaVisibleSystemException('Invalid cards. Should not happen');
     }
-    if ($args['type'] == NODE_XOR && count($choices) > 1) {
-      throw new \BgaVisibleSystemException('You should only choose 1 card to remove knowledge from. Should not happen');
+    $m = $this->getCtxArg('m') ?? 1;
+    if ($args['type'] == NODE_XOR && count($choices) > $m) {
+      throw new \BgaVisibleSystemException("You should only choose $m card to remove knowledge from. Should not happen");
     }
 
     // Remove knowledges
