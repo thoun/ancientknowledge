@@ -5,15 +5,18 @@ Backend:
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
- Dès qu’un joueur a au moins 7 monuments dans son Passé,
+ - add tech decks counters
+
+ - Dès qu’un joueur a au moins 7 monuments dans son Passé,
 retournez une tuile Connaissance de niveau I sur sa face de
 niveau II (>>> au choix de ce joueur <<<). ça lui permet notamment de virer des cartes qui intéresseraient l'adversaire.
 
-Cartes qui bugguent : "Diquis Stone Spheres
+ - bugged cards : "Diquis Stone Spheres
 planetary stone, tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
 Frontend:
+ - add tech decks counters
 
  - error : During notification declineCard
   tooltipToMap[1] is undefined

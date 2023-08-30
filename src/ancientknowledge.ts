@@ -1144,9 +1144,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
         const { player_id, cards } = args;        
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards), {
-            fromStock: this.tableCenter.cardDeck,
-        });
+        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     }
 
     notif_discardCards(args: NotifPDrawCardsArgs) {

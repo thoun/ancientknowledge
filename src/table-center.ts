@@ -1,8 +1,6 @@
 class TableCenter {
     public technologyTilesDecks: Deck<TechnologyTile>[] = [];
     public technologyTilesStocks: LineStock<TechnologyTile>[] = [];
-    //public technologyTilesStocks: SlotStock<TechnologyTile>[] = [];
-    public cardDeck: Deck<BuilderCard>;
         
     constructor(private game: AncientKnowledgeGame, gamedatas: AncientKnowledgeGamedatas) {
         if (!gamedatas.firstHalf) {
@@ -19,20 +17,11 @@ class TableCenter {
 
         [1, 2, 3].forEach(number => {
             this.technologyTilesStocks[number] = new LineStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
-            //this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
-                //slotsIds: [1, 2, 3],
                 center: false,
             });
             this.technologyTilesStocks[number].onCardClick = tile => this.game.onTableTechnologyTileClick(tile);
         });
         this.refreshTechnologyTiles(gamedatas.techs);
-
-        const cardDeckDiv = document.getElementById(`builder-deck`);
-        this.cardDeck = new Deck<BuilderCard>(game.builderCardsManager, cardDeckDiv, {
-            // TODO cardNumber: gamedatas.cardDeckCount,
-            topCard: { id: `deck-card` } as BuilderCard,
-            // TODO counter: { counterId: 'deck-counter', },
-        });
 
         document.querySelector(`.fold-button`).insertAdjacentHTML(`afterbegin`, `
         <div class="fold-message">${_('Click here to display table center')}</div>

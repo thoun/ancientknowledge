@@ -2526,19 +2526,11 @@ var TableCenter = /** @class */ (function () {
         });
         [1, 2, 3].forEach(function (number) {
             _this.technologyTilesStocks[number] = new LineStock(game.technologyTilesManager, document.getElementById("table-technology-tiles-".concat(number)), {
-                //this.technologyTilesStocks[number] = new SlotStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
-                //slotsIds: [1, 2, 3],
                 center: false,
             });
             _this.technologyTilesStocks[number].onCardClick = function (tile) { return _this.game.onTableTechnologyTileClick(tile); };
         });
         this.refreshTechnologyTiles(gamedatas.techs);
-        var cardDeckDiv = document.getElementById("builder-deck");
-        this.cardDeck = new Deck(game.builderCardsManager, cardDeckDiv, {
-            // TODO cardNumber: gamedatas.cardDeckCount,
-            topCard: { id: "deck-card" },
-            // TODO counter: { counterId: 'deck-counter', },
-        });
         document.querySelector(".fold-button").insertAdjacentHTML("afterbegin", "\n        <div class=\"fold-message\">".concat(_('Click here to display table center'), "</div>\n        "));
         document.querySelector(".fold-button").addEventListener('click', function () {
             document.getElementById("table-center").classList.toggle('folded');
@@ -4180,9 +4172,7 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_pDrawCards = function (args) {
         var player_id = args.player_id, cards = args.cards;
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards), {
-            fromStock: this.tableCenter.cardDeck,
-        });
+        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
     };
     AncientKnowledge.prototype.notif_discardCards = function (args) {
         var player_id = args.player_id, n = args.n;

@@ -23,9 +23,6 @@
                 <div id="table-technology">
                     <div id="technology-decks">
                         <div id="technology-deck-1"></div>
-                        <div id="builder-decks">
-                            <div id="builder-deck"></div>
-                        </div>
                         <div id="technology-deck-2"></div>
                     </div>
                     <div id="table-technology-tiles">
