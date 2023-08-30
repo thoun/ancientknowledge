@@ -9,9 +9,9 @@ class TableCenter {
 
         [1, 2].forEach(level => {
             this.technologyTilesDecks[level] = new Deck<TechnologyTile>(game.technologyTilesManager, document.getElementById(`technology-deck-${level}`), {
-                // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+                cardNumber: gamedatas[`techsDeckLvl${level}`],
                 topCard: { id: `deck-tile-${level}`, level } as TechnologyTile,
-                // TODO counter: {},
+                counter: {},
             });
         });
 
@@ -52,9 +52,13 @@ class TableCenter {
         return Promise.resolve(true);
     }
 
-    public fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }): Promise<any> {
+    public fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }, args): Promise<any> {
         const tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
         this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[tiles[0]?.level] : undefined });
+        
+        [1, 2].forEach(level => {
+            this.technologyTilesDecks[level].setCardNumber(args[`techsDeckLvl${level}`]);
+        });
         
         return Promise.resolve(true);
     }

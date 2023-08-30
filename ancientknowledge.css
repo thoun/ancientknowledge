@@ -1013,10 +1013,10 @@ body > .card {
   background-size: auto 100%;
   background-image: url("img/level-icon.png");
 }
-.technology-tile .front .level-box .level-icon[data-level="0"] {
+.technology-tile .front .level-box .level-icon[data-level="1"] {
   background-position: 0%;
 }
-.technology-tile .front .level-box .level-icon[data-level="1"] {
+.technology-tile .front .level-box .level-icon[data-level="2"] {
   background-position: 100%;
 }
 .technology-tile .front .name-box {

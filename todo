@@ -14,8 +14,6 @@ Frontend:
    => new field in getAllDatas : secondLvl2TechTile is either 0 if irrelevant, or otherwise give you the board number that should have lvlII techs as well
    => updated midGameReached notification to send you the board number as well
    
- - add tech decks counters : techsDeckLvl1/techsDeckLvl2 in getAllDatas
-
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases
@@ -34,5 +32,4 @@ Frontend:
  - past cards : see how to display straight cards mixed with rotated cards 
 
  - todo make it clearer when selecting tokens : is it how many selected or how many remaining ?
- - allow to click on a card in "choice" state
  - test text auto-sizing on all cards

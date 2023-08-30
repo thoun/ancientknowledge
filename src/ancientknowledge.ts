@@ -1267,6 +1267,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+        [1, 2].forEach(level => {
+            this.tableCenter.technologyTilesDecks[level].setCardNumber(args.datas[`techsDeckLvl${level}`]);
+        });
 
         const lastRoundDiv = document.getElementById(`last-round`);
         if (lastRoundDiv && !args.datas.endOfGameTriggered) {
@@ -1305,7 +1308,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
     
     notif_fillUpTechBoard(args: NotifTechBoardArgs) {
-        return this.tableCenter.fillUpTechBoard(args.board, args.cards);
+        return this.tableCenter.fillUpTechBoard(args.board, args.cards, args);
     }
     
     notif_swapCards(args: NotifSwapCardsArgs) {

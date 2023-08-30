@@ -68,10 +68,10 @@
             background-size: auto 100%;
             background-image: url('img/level-icon.png');
 
-            &[data-level="0"] {
+            &[data-level="1"] {
                 background-position: 0%;
             }
-            &[data-level="1"] {
+            &[data-level="2"] {
                 background-position: 100%;
             }
         }
