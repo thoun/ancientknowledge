@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bga-animations": "thoun/bga-animations#1.0.2",
+    "bga-animations": "thoun/bga-animations#1.1.1",
     "bga-cards": "thoun/bga-cards#2.2.2",
     "bga-help": "thoun/bga-help#1.0.0",
     "bga-jump-to": "thoun/bga-jump-to#1.0.0",

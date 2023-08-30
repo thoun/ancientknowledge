@@ -34,3 +34,6 @@ Frontend:
   => maybe a slider to choose speed of notifs ?
 
  - past cards : see how to display straight cards mixed with rotated cards 
+
+ - todo make it clearer when selecting tokens : is it how many selected or how many remaining ?
+ - allow to click on a card in "choice" state

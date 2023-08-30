@@ -298,7 +298,7 @@ class PlayerTable {
             ...card,
             location: card.location.replace(/(\d)/, a => `${Number(a) - 1}`)
         }));
-        return this.timeline.addCards(shiftedCards);
+        return this.timeline.addCards(shiftedCards, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) });
     }
     
     public enterSwap(cardIds: string[], fixedCardId: string) {
