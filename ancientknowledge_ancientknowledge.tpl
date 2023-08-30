@@ -2,6 +2,19 @@
 
 <link rel="stylesheet" href="https://use.typekit.net/jim0ypy.css">
 
+<div id="score">
+    <div id="table-wrapper">
+        <table>
+            <thead>
+                <tr id="scoretr">
+                </tr>
+            </thead>
+            <tbody id="score-table-body">
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <div id="table">
     <div id="draw-and-keep-pick" data-visible="false"></div>
     <div id="tables-and-center">

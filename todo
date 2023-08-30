@@ -8,13 +8,7 @@ Backend:
 Frontend:
  - removeKnowledge action: new parameter 'm' only useful if the type if NODE_XOR => how many card we are able to select that will received the -n reduction
    => default to 1, only useful for C31_Philae
-   
- - mediumMessage notification: nothing to code, but just add a timeout of 1s (or 1.2s) so that players have the time to read the notif in the top bar
-
- - scoreboard
- - endOfGameTriggered notif => can be tested using "triggerEnd()" function in chat
-  => boolean in getAllDatas to display banner near page title (endOfGameTriggered field)
-
+  
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases

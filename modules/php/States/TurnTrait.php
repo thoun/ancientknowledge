@@ -86,7 +86,7 @@ trait TurnTrait
     Globals::setLiveScoring(true);
     Scores::update(true);
 
-    $this->gamestate->jumpToState(\ST_PRE_END_OF_GAME);
-    // $this->gamestate->jumpToState(\ST_END_GAME);
+    // $this->gamestate->jumpToState(\ST_PRE_END_OF_GAME);
+    $this->gamestate->jumpToState(\ST_END_GAME);
   }
 }

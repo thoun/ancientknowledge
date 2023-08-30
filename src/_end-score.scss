@@ -1,0 +1,40 @@
+#score {
+    display: none;
+    justify-content: center;
+
+    #table-wrapper {
+        background: url('img/scorepad.jpg');
+        width: 1039px;
+        height: 744px;
+        position: relative;
+
+        table {
+            position: absolute;
+            left: 144px;
+
+            tr {
+                height: 99px;
+
+                &#scoretr, &.score-total {
+                    height: 122px;
+                }
+
+                &.score-total td {
+                    font-weight: bold;
+                }
+
+                th, td {
+                    width: 215px;
+                    text-align: center;
+                    font-size: 120%;
+                }
+
+                th {
+                    text-shadow: 0px 0px 1px white, 0px 0px 2px white, 0px 0px 3px white;
+                    font-weight: bold;
+                    word-break: break-all;
+                }
+            }
+        }
+    }
+}

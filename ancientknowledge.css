@@ -1499,6 +1499,40 @@ body > .card {
   flex: 1;
 }
 
+#score {
+  display: none;
+  justify-content: center;
+}
+#score #table-wrapper {
+  background: url("img/scorepad.jpg");
+  width: 1039px;
+  height: 744px;
+  position: relative;
+}
+#score #table-wrapper table {
+  position: absolute;
+  left: 144px;
+}
+#score #table-wrapper table tr {
+  height: 99px;
+}
+#score #table-wrapper table tr#scoretr, #score #table-wrapper table tr.score-total {
+  height: 122px;
+}
+#score #table-wrapper table tr.score-total td {
+  font-weight: bold;
+}
+#score #table-wrapper table tr th, #score #table-wrapper table tr td {
+  width: 215px;
+  text-align: center;
+  font-size: 120%;
+}
+#score #table-wrapper table tr th {
+  text-shadow: 0px 0px 1px white, 0px 0px 2px white, 0px 0px 3px white;
+  font-weight: bold;
+  word-break: break-all;
+}
+
 /* make space between buttons on touch devices */
 @media (hover: none) {
   #page-title .action-button.bgabutton, #page-title .bgabutton {

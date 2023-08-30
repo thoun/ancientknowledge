@@ -3264,6 +3264,7 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
     return MoveBuildingEngine;
 }(FrontEngine));
 var ANIMATION_MS = 500;
+var SCORE_ANIMATION_MS = 1500;
 var ACTION_TIMER_DURATION = 5;
 var LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 var LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
@@ -3357,6 +3358,13 @@ var AncientKnowledge = /** @class */ (function () {
         });
         this.setupNotifications();
         this.setupPreferences();
+        var isEnd = this.getGameStateName() == 'gameEnd';
+        if (gamedatas.endOfGameTriggered && !isEnd) {
+            this.notif_endOfGameTriggered(false);
+        }
+        if (isEnd) {
+            this.onEnteringEndScore(true);
+        }
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -3567,6 +3575,43 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
+    };
+    AncientKnowledge.prototype.onEnteringEndScore = function (fromReload) {
+        var _this = this;
+        if (fromReload === void 0) { fromReload = false; }
+        var lastTurnBar = document.getElementById('last-round');
+        if (lastTurnBar) {
+            lastTurnBar.style.display = 'none';
+        }
+        document.getElementById('score').style.display = 'flex';
+        var players = Object.values(this.gamedatas.players);
+        players.forEach(function (player) {
+            document.getElementById('scoretr').insertAdjacentHTML('beforeend', "<th class=\"player_name\" style=\"color: #".concat(player.color, "\">").concat(player.name, "</th>"));
+        });
+        document.getElementById('score-table-body').innerHTML = [
+            'past',
+            'effects',
+            'techs',
+            'timeline',
+            'knowledge',
+            'total',
+        ].map(function (field) { return "<tr class=\"score-".concat(field, "\">").concat(players.map(function (player) { return "<td id=\"score-".concat(field, "-").concat(player.id, "\"></td>"); }).join(''), "</tr>"); }).join('');
+        if (fromReload) {
+            players.map(function (player) { return Number(player.id); }).forEach(function (playerId) { return _this.addPlayerSummaryColumn(playerId, _this.gamedatas.scores[playerId]); });
+        }
+    };
+    AncientKnowledge.prototype.addPlayerSummaryColumn = function (playerId, playerScore) {
+        [
+            'past',
+            'effects',
+            'techs',
+            'timeline',
+            'knowledge',
+            'total',
+        ].forEach(function (field) {
+            var value = field == 'total' ? playerScore[field] : playerScore[field].total;
+            document.getElementById("score-".concat(field, "-").concat(playerId)).innerHTML = "".concat(value);
+        });
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
         var _a, _b;
@@ -4112,6 +4157,9 @@ var AncientKnowledge = /** @class */ (function () {
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
             ['moveCard', undefined],
+            ['mediumMessage', 1000],
+            ['endOfGameTriggered', 1],
+            ['scoringEntry', SCORE_ANIMATION_MS],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -4220,6 +4268,10 @@ var AncientKnowledge = /** @class */ (function () {
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+        var lastRoundDiv = document.getElementById("last-round");
+        if (lastRoundDiv && !args.datas.endOfGameTriggered) {
+            lastRoundDiv === null || lastRoundDiv === void 0 ? void 0 : lastRoundDiv.remove();
+        }
     };
     AncientKnowledge.prototype.notif_refreshHand = function (args) {
         var player_id = args.player_id, hand = args.hand;
@@ -4269,6 +4321,17 @@ var AncientKnowledge = /** @class */ (function () {
         var playerTable = this.getPlayerTable(player_id);
         var newStock = card.location == 'past' ? playerTable.past : playerTable.timeline;
         return newStock.addCard(this.builderCardsManager.getFullCard(card));
+    };
+    AncientKnowledge.prototype.notif_mediumMessage = function () { };
+    AncientKnowledge.prototype.notif_endOfGameTriggered = function (animate) {
+        if (animate === void 0) { animate = true; }
+        dojo.place("<div id=\"last-round\">\n            <span class=\"last-round-text ".concat(animate ? 'animate' : '', "\">").concat(_("This is the final round!"), "</span>\n        </div>"), 'page-title');
+    };
+    AncientKnowledge.prototype.notif_scoringEntry = function (args) {
+        if (!document.getElementById('scoretr').childElementCount) {
+            this.onEnteringEndScore();
+        }
+        document.getElementById("score-".concat(args.category, "-").concat(args.player_id)).innerHTML = "".concat(args.n);
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

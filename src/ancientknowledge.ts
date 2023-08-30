@@ -6,6 +6,7 @@ declare const _;
 declare const g_gamethemeurl;
 
 const ANIMATION_MS = 500;
+const SCORE_ANIMATION_MS = 1500;
 const ACTION_TIMER_DURATION = 5;
 
 const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
@@ -131,6 +132,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
         });
         this.setupNotifications();
         this.setupPreferences();
+
+        const isEnd = this.getGameStateName() == 'gameEnd';
+        if (gamedatas.endOfGameTriggered && !isEnd) {
+            this.notif_endOfGameTriggered(false);
+        }
+        if (isEnd) {
+            this.onEnteringEndScore(true);
+        }
 
         log( "Ending game setup" );
     }
@@ -266,7 +275,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'moveBuilding':
                 this.onEnteringMoveBuilding(args.args);
                 break;
-
         }
     }
 
@@ -381,6 +389,47 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
+    }
+
+    private onEnteringEndScore(fromReload: boolean = false) {
+        const lastTurnBar = document.getElementById('last-round');
+        if (lastTurnBar) {
+            lastTurnBar.style.display = 'none';
+        }
+
+        document.getElementById('score').style.display = 'flex';
+
+        const players = Object.values(this.gamedatas.players);
+        players.forEach(player => {
+            document.getElementById('scoretr').insertAdjacentHTML('beforeend', `<th class="player_name" style="color: #${player.color}">${player.name}</th>`);
+        });        
+    
+        document.getElementById('score-table-body').innerHTML = [
+            'past',
+            'effects',
+            'techs',
+            'timeline',
+            'knowledge',
+            'total',
+        ].map(field => `<tr class="score-${field}">${players.map(player => `<td id="score-${field}-${player.id}"></td>`).join('')}</tr>`).join('');
+
+        if (fromReload) {
+            players.map(player => Number(player.id)).forEach(playerId => this.addPlayerSummaryColumn(playerId, this.gamedatas.scores[playerId]));
+        }
+    }
+    
+    private addPlayerSummaryColumn(playerId: number, playerScore: PlayerScore): void {
+        [
+            'past',
+            'effects',
+            'techs',
+            'timeline',
+            'knowledge',
+            'total',
+        ].forEach(field => {
+            const value = field == 'total' ? playerScore[field] : playerScore[field].total;
+            document.getElementById(`score-${field}-${playerId}`).innerHTML = `${value}`;
+        });
     }
 
     public onLeavingState(stateName: string) {
@@ -1035,6 +1084,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
             ['moveCard', undefined],
+            ['mediumMessage', 1000],
+            ['endOfGameTriggered', 1],
+            ['scoringEntry', SCORE_ANIMATION_MS],
         ];
     
         notifs.forEach((notif) => {
@@ -1159,6 +1211,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+
+        const lastRoundDiv = document.getElementById(`last-round`);
+        if (lastRoundDiv && !args.datas.endOfGameTriggered) {
+            lastRoundDiv?.remove();
+        }
     }
     
     notif_refreshHand(args: NotifRefreshHandArgs) {
@@ -1220,6 +1277,23 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const newStock = card.location == 'past' ? playerTable.past : playerTable.timeline;
         return newStock.addCard(this.builderCardsManager.getFullCard(card));
     }
+    
+    notif_mediumMessage() {}    
+    
+    notif_endOfGameTriggered(animate: boolean = true) {
+        dojo.place(`<div id="last-round">
+            <span class="last-round-text ${animate ? 'animate' : ''}">${_("This is the final round!")}</span>
+        </div>`, 'page-title');
+    }
+    
+    notif_scoringEntry(args: NotifScoringEntryArgs) {
+        if (!document.getElementById('scoretr').childElementCount) {
+            this.onEnteringEndScore();
+        }
+
+        document.getElementById(`score-${args.category}-${args.player_id}`).innerHTML = `${args.n}`;
+    }
+    
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

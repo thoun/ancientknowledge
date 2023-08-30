@@ -25,6 +25,20 @@ interface AncientKnowledgePlayer extends Player {
     techs: TechnologyTile[];
 }
 
+interface Score {
+    entries: any[]; // TODO
+    total: number;
+}
+
+interface PlayerScore {
+    effects: Score;
+    knowledge: Score;
+    past: Score;
+    techs: Score;
+    timeline: Score;
+    total: number;
+}
+
 interface AncientKnowledgeGamedatas {
     current_player_id: string;
     decision: {decision_type: string};
@@ -40,9 +54,8 @@ interface AncientKnowledgeGamedatas {
     // Add here variables you set up in getAllDatas
     techs: TechnologyTile[];
     firstHalf: boolean;
-    /*tableTiles: { [type: number]: TechnologyTile[] }; // row 1..3
-    firstPlayerId: number;
-    // TODO deck counters ? discard counters ?*/
+    endOfGameTriggered: boolean;
+    scores?: { [playerId: number]: PlayerScore };
 }
 
 interface AncientKnowledgeGame extends Game {
@@ -201,6 +214,7 @@ interface NotifRefreshUIArgs {
     datas: {
         players: { [playerId: number]: AncientKnowledgePlayer };
         techs: TechnologyTile[];
+        endOfGameTriggered: boolean;
     };
 }
 
@@ -258,4 +272,11 @@ interface NotifKeepAndDiscardArgs {
 interface NotifMoveCardArgs {
     player_id: number;
     card: BuilderCard;
+}
+
+// scoringEntry
+interface NotifScoringEntryArgs {
+    player_id: number;
+    n: number;
+    category: string;
 }
