@@ -2633,7 +2633,11 @@ var PlayerTable = /** @class */ (function () {
         this.past.onSelectionChange = function (selection) { return _this.game.onPastCardSelectionChange(selection); };
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             var technologyTilesDeckDiv = document.getElementById("player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type));
-            _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {});
+            _this.technologyTilesDecks[type] = new AllVisibleDeck(_this.game.technologyTilesManager, technologyTilesDeckDiv, {
+                counter: {
+                    hideWhenEmpty: true,
+                },
+            });
         });
         this.refreshUI(player);
         if (this.currentPlayer) {

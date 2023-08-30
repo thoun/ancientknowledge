@@ -98,6 +98,9 @@ class PlayerTable {
         ['ancient', 'writing', 'secret'].forEach(type => {
             const technologyTilesDeckDiv = document.getElementById(`player-table-${this.playerId}-technology-tiles-deck-${type}`);
             this.technologyTilesDecks[type] = new AllVisibleDeck<TechnologyTile>(this.game.technologyTilesManager, technologyTilesDeckDiv, {
+                counter: {
+                    hideWhenEmpty: true,
+                },
             });
         });
 
