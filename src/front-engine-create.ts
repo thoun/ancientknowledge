@@ -26,7 +26,6 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
                 },
                 () => {
-                    this.game.getCurrentPlayerTable().setHandSelectable('none');
                 }
             ),
             new FrontState<CreateEngineData>(
@@ -58,6 +57,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                 () => {
                     this.game.getCurrentPlayerTable().setTimelineSelectable(false);
                     this.removeCancel();
+                    this.game.getCurrentPlayerTable().setHandSelectable('none');
                 }
             ),
             new FrontState<CreateEngineData>(
@@ -90,7 +90,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
     }
     
     public cardSelectionChange(selection: BuilderCard[]) {
-        if (this.currentState == 'init') {
+        if (this.currentState == 'init' || this.currentState == 'slot') {
             if (selection.length == 1) {
                 this.selectCard(selection[0]);
             }
@@ -101,6 +101,10 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
     }
 
     public selectCard(card: BuilderCard) {
+        if (this.data.selectedCard) {
+            this.nextState('init');
+        }
+
         this.data.selectedCard = card;
         this.game.builderCardsManager.getCardElement(card)?.classList.add('created-card');
         this.game.getCurrentPlayerTable().hand.unselectCard(card);

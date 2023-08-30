@@ -2897,7 +2897,6 @@ var CreateEngine = /** @class */ (function (_super) {
                 var selectableCards = Object.keys(_this.possibleCardsLocations).map(function (id) { return _this.game.builderCardsManager.getFullCardById(id); });
                 _this.game.getCurrentPlayerTable().setHandSelectable('single', selectableCards, 'create-init', true);
             }, function () {
-                _this.game.getCurrentPlayerTable().setHandSelectable('none');
             }),
             new FrontState('slot', function (engine) {
                 var card = engine.data.selectedCard;
@@ -2920,6 +2919,7 @@ var CreateEngine = /** @class */ (function (_super) {
             }, function () {
                 _this.game.getCurrentPlayerTable().setTimelineSelectable(false);
                 _this.removeCancel();
+                _this.game.getCurrentPlayerTable().setHandSelectable('none');
             }),
             new FrontState('discard', function (engine) {
                 var discardCount = _this.getDiscardCount();
@@ -2949,7 +2949,7 @@ var CreateEngine = /** @class */ (function (_super) {
         return _this;
     }
     CreateEngine.prototype.cardSelectionChange = function (selection) {
-        if (this.currentState == 'init') {
+        if (this.currentState == 'init' || this.currentState == 'slot') {
             if (selection.length == 1) {
                 this.selectCard(selection[0]);
             }
@@ -2961,6 +2961,9 @@ var CreateEngine = /** @class */ (function (_super) {
     };
     CreateEngine.prototype.selectCard = function (card) {
         var _a;
+        if (this.data.selectedCard) {
+            this.nextState('init');
+        }
         this.data.selectedCard = card;
         (_a = this.game.builderCardsManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('created-card');
         this.game.getCurrentPlayerTable().hand.unselectCard(card);
