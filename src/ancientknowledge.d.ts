@@ -114,6 +114,7 @@ interface EnteringLearnArgs {
 
 interface EnteringRemoveKnowledgeArgs {
     n: number;
+    m: number;
     cardIds: string[];
     type: 'or' | 'xor';
 }
