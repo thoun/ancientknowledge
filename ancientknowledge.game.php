@@ -82,6 +82,8 @@ class AncientKnowledge extends Table
       'players' => Players::getUiData($pId),
       'cards' => Cards::getUiData(),
       'techs' => Technologies::getUiData(),
+      'techsDeckLvl1' => Technologies::countInLocation('deck_1'),
+      'techsDeckLvl2' => Technologies::countInLocation('deck_2'),
       'firstHalf' => Globals::isFirstHalf(),
       'endOfGameTriggered' => Globals::isEndOfGameTriggered(),
       'scores' => Globals::isLiveScoring() ? Scores::compute() : null,

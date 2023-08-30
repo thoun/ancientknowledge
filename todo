@@ -1,11 +1,8 @@
 Backend:
- - detect end of game
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
-
- - add tech decks counters
 
  - Dès qu’un joueur a au moins 7 monuments dans son Passé,
 retournez une tuile Connaissance de niveau I sur sa face de
@@ -16,7 +13,7 @@ planetary stone, tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
 Frontend:
- - add tech decks counters
+ - add tech decks counters : techsDeckLvl1/techsDeckLvl2 in getAllDatas
 
  - error : During notification declineCard
   tooltipToMap[1] is undefined
