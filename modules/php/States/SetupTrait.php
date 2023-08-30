@@ -124,7 +124,7 @@ trait SetupTrait
       $selection = Globals::getInitialSelection();
       foreach ($players as $pId => $player) {
         $cardIds = $selection[$pId];
-        $cards = Cards::get($cardIds);
+        $cards = Cards::getMany($cardIds);
         Cards::discard($cardIds);
         Notifications::discardCards(
           $player,

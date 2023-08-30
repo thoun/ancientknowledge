@@ -111,7 +111,8 @@ class Cards extends \AK\Helpers\CachedPieces
   {
     $turnOrder = Players::getTurnOrder();
     for ($i = 2; $i < count($turnOrder); $i++) {
-      $cards = self::draw($turnOrder[$i], 1);
+      $player = Players::get($turnOrder[$i]);
+      $cards = self::draw($player, 1);
       Notifications::drawCards($player, $cards);
     }
   }
@@ -143,11 +144,12 @@ class Cards extends \AK\Helpers\CachedPieces
    */
   public static function draw($player, $n = 1, $fromLocation = 'deck', $toLocation = 'hand')
   {
+    $pId = is_int($player) ? $player : $player->getId();
     $cards = self::pickForLocation($n, $fromLocation, $toLocation);
     foreach ($cards as $cId => &$c) {
       self::insertOnTop($cId, $toLocation);
       if ($toLocation == 'hand') {
-        $c->setPId($player->getId());
+        $c->setPId($pId);
       }
     }
     return $cards;
