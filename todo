@@ -37,3 +37,4 @@ Frontend:
 
  - todo make it clearer when selecting tokens : is it how many selected or how many remaining ?
  - allow to click on a card in "choice" state
+ - test text auto-sizing on all cards

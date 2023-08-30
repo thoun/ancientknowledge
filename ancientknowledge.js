@@ -2616,6 +2616,7 @@ var PlayerTable = /** @class */ (function () {
             mapCardToSlot: function (card) { return card.location; },
             gap: '36px',
         });
+        this.artifacts.onCardClick = function (card) { return _this.game.onArtifactCardClick(card); };
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
         this.past = new AllVisibleDeck(this.game.builderCardsManager, pastDiv, {
             verticalShift: '0px',
@@ -3506,6 +3507,10 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             Object.values(args.choices).forEach(function (choice) { return _this.addActionChoiceBtn(choice, false); });
             Object.values(args.allChoices).forEach(function (choice) { return _this.addActionChoiceBtn(choice, true); });
+            var selectableCards = this.builderCardsManager.getFullCardsByIds(Object.values(args.choices).filter(function (choice) { var _a; return (_a = choice.args) === null || _a === void 0 ? void 0 : _a.cardId; }).map(function (choice) { return choice.args.cardId; }));
+            var playerTable = this.getCurrentPlayerTable();
+            playerTable.timeline.setSelectionMode('single', selectableCards);
+            playerTable.artifacts.setSelectionMode('single', selectableCards);
         }
     };
     AncientKnowledge.prototype.onEnteringSwap = function (args) {
@@ -3620,6 +3625,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'moveBuilding':
                 this.onLeavingMoveBuilding();
                 break;
+            case 'resolveChoice':
+                this.onLeavingResolveChoice();
+                break;
         }
     };
     AncientKnowledge.prototype.onLeavingInitialSelection = function () {
@@ -3658,6 +3666,11 @@ var AncientKnowledge = /** @class */ (function () {
         var _a;
         (_a = this.moveBuildingEngine) === null || _a === void 0 ? void 0 : _a.leaveState();
         this.moveBuildingEngine = null;
+    };
+    AncientKnowledge.prototype.onLeavingResolveChoice = function () {
+        var playerTable = this.getCurrentPlayerTable();
+        playerTable === null || playerTable === void 0 ? void 0 : playerTable.timeline.setSelectionMode('none');
+        playerTable === null || playerTable === void 0 ? void 0 : playerTable.artifacts.setSelectionMode('none');
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -3979,6 +3992,11 @@ var AncientKnowledge = /** @class */ (function () {
                 this.moveBuildingEngine.selectCard(selection[0]);
             }
         }
+        else if (this.gamedatas.gamestate.name == 'resolveChoice') {
+            if (selection.length == 1) {
+                this.resolveChoiceCardClicked(selection[0]);
+            }
+        }
     };
     AncientKnowledge.prototype.onPastCardSelectionChange = function (selection) {
         if (this.gamedatas.gamestate.name == 'excavate') {
@@ -4001,6 +4019,18 @@ var AncientKnowledge = /** @class */ (function () {
                 this.moveBuildingEngine.data.selectedCard.id,
                 slotId,
             ]);
+        }
+    };
+    AncientKnowledge.prototype.onArtifactCardClick = function (card) {
+        if (this.gamedatas.gamestate.name == 'resolveChoice') {
+            this.resolveChoiceCardClicked(card);
+        }
+    };
+    AncientKnowledge.prototype.resolveChoiceCardClicked = function (card) {
+        var _this = this;
+        var choice = Object.values(this.gamedatas.gamestate.args.choices).find(function (choice) { var _a; return ((_a = choice.args) === null || _a === void 0 ? void 0 : _a.cardId) == card.id; });
+        if (choice) {
+            this.askConfirmation(choice.irreversibleAction, function () { return _this.takeAction('actChooseAction', { id: choice.id }); });
         }
     };
     AncientKnowledge.prototype.onCreateCardConfirm = function (data) {

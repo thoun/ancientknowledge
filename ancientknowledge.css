@@ -884,10 +884,10 @@ body > .card {
 
 @keyframes selectable-card-animation {
   0% {
-    box-shadow: 0 0 3px 2px lightgreen;
+    box-shadow: 0 0 3px 2px var(--selectable-card-color);
   }
   100% {
-    box-shadow: 0 0 5px 3px lightgreen;
+    box-shadow: 0 0 5px 3px var(--selectable-card-color);
   }
 }
 .dijitTooltipContents .builder-card {
@@ -1144,10 +1144,10 @@ body > .card {
 
 @keyframes selectable-tile-animation {
   0% {
-    box-shadow: 0 0 3px 2px lightgreen;
+    box-shadow: 0 0 3px 2px var(--selectable-card-color);
   }
   100% {
-    box-shadow: 0 0 5px 3px lightgreen;
+    box-shadow: 0 0 5px 3px var(--selectable-card-color);
   }
 }
 .dijitTooltipContents .technology-tile {
@@ -1531,6 +1531,14 @@ body > .card {
   text-shadow: 0px 0px 1px white, 0px 0px 2px white, 0px 0px 3px white;
   font-weight: bold;
   word-break: break-all;
+}
+
+:root {
+  --selectable-card-color: lightgreen;
+}
+
+.gamestate_resolveChoice {
+  --selectable-card-color: gold;
 }
 
 /* make space between buttons on touch devices */

@@ -347,6 +347,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             Object.values(args.choices).forEach((choice) => this.addActionChoiceBtn(choice, false));
             Object.values(args.allChoices).forEach((choice) => this.addActionChoiceBtn(choice, true));
+
+            const selectableCards = this.builderCardsManager.getFullCardsByIds(Object.values(args.choices).filter(choice => choice.args?.cardId).map(choice => choice.args.cardId));
+            const playerTable = this.getCurrentPlayerTable();
+            playerTable.timeline.setSelectionMode('single', selectableCards);
+            playerTable.artifacts.setSelectionMode('single', selectableCards);
         }
     }
   
@@ -471,6 +476,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'moveBuilding':
                 this.onLeavingMoveBuilding();
                 break;
+            case 'resolveChoice':
+                this.onLeavingResolveChoice();
+                break;
         }
     }
 
@@ -510,6 +518,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingMoveBuilding() {
         this.moveBuildingEngine?.leaveState();
         this.moveBuildingEngine = null;
+    }
+
+    private onLeavingResolveChoice() {
+        const playerTable = this.getCurrentPlayerTable();
+        playerTable?.timeline.setSelectionMode('none');
+        playerTable?.artifacts.setSelectionMode('none');
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -904,6 +918,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             if (selection.length == 1) {
                 this.moveBuildingEngine.selectCard(selection[0]);
             }
+        } else if (this.gamedatas.gamestate.name == 'resolveChoice') {
+            if (selection.length == 1) {
+                this.resolveChoiceCardClicked(selection[0]);
+            }
         }
     }
 
@@ -927,6 +945,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.moveBuildingEngine.data.selectedCard.id,
                 slotId,
             ]);
+        }
+    }
+    
+    public onArtifactCardClick(card: BuilderCard): void {
+        if (this.gamedatas.gamestate.name == 'resolveChoice') {
+            this.resolveChoiceCardClicked(card);
+        }
+    }
+
+    public resolveChoiceCardClicked(card: BuilderCard): void {
+        const choice = Object.values((this.gamedatas.gamestate.args as EnteringResolveChoiceArgs).choices).find(choice => choice.args?.cardId == card.id);
+        if (choice) {
+            this.askConfirmation(choice.irreversibleAction, () => this.takeAction('actChooseAction', { id: choice.id }));
         }
     }
 

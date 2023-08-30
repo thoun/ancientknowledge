@@ -81,6 +81,7 @@ class PlayerTable {
             mapCardToSlot: card => card.location,
             gap: '36px',
         });
+        this.artifacts.onCardClick = card => this.game.onArtifactCardClick(card);
 
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
         this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {

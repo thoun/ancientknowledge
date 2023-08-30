@@ -76,6 +76,7 @@ interface AncientKnowledgeGame extends Game {
     onTimelineCardSelectionChange(selection: BuilderCard[]): void;
     onPastCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
+    onArtifactCardClick(card: BuilderCard): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
     changePageTitle(suffix?: string, save?: boolean): void;
