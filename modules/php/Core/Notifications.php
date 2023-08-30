@@ -53,15 +53,9 @@ class Notifications
 
   public static function refreshUI($datas)
   {
-    // // Keep only the thing that matters
-    $fDatas = [
-      'players' => $datas['players'],
-      'cards' => \AK\Managers\Cards::getUiData(),
-      'techs' => \AK\Managers\Technologies::getUiData(),
-    ];
-
+    unset($datas['prefs']);
     self::notifyAll('refreshUI', '', [
-      'datas' => $fDatas,
+      'datas' => $datas,
     ]);
   }
 
