@@ -525,14 +525,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'chooseAction':
                     [
-                        ['create', _('Create')], 
-                        ['learn', _('Learn')], 
-                        ['excavate', _('Excavate')], 
-                        ['archive', _('Archive')], 
-                        ['search', _('Search')],
-                    ].forEach(codeAndLabel => 
-                        (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]))
-                    );
+                        ['create', _('Create'), _("Play a monument or artifact card from your hand.")], 
+                        ['learn', _('Learn'), _("Take a technology card.")], 
+                        ['excavate', _('Excavate'), _("Rotate by 90° monument card(s) from your Past. For each card rotated this way, draw 2 Builder cards and add them to your hand.")],
+                        ['archive', _('Archive'), formatTextIcons(_("Discard as many cards from your hand as you want. For each card discarded this way, remove 1 <KNOWLEDGE> from a monument in your Timeline."))],
+                        ['search', _('Search'), _("Draw 1 Builder card and add it to your hand.")],
+                    ].forEach(codeAndLabel => {
+                        (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]));
+                        this.setTooltip(`actChooseAction_${codeAndLabel[0]}_button`, codeAndLabel[2]);
+                    });
                     const table = this.getCurrentPlayerTable();
                     if (!table.hand.getCards().length) {
                         document.getElementById('actChooseAction_create_button').classList.add('disabled');
