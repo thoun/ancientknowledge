@@ -13,8 +13,6 @@ planetary stone, tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
 Frontend:
- - add tech decks counters : techsDeckLvl1/techsDeckLvl2 in getAllDatas
-
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases
@@ -33,5 +31,4 @@ Frontend:
  - past cards : see how to display straight cards mixed with rotated cards 
 
  - todo make it clearer when selecting tokens : is it how many selected or how many remaining ?
- - allow to click on a card in "choice" state
  - test text auto-sizing on all cards

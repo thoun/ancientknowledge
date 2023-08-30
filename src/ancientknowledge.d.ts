@@ -56,6 +56,8 @@ interface AncientKnowledgeGamedatas {
     firstHalf: boolean;
     endOfGameTriggered: boolean;
     scores?: { [playerId: number]: PlayerScore };
+    techsDeckLvl1: number;
+    techsDeckLvl2: number;
 }
 
 interface AncientKnowledgeGame extends Game {
@@ -249,6 +251,8 @@ interface NotifRemoveKnowledgeArgs {
 interface NotifTechBoardArgs {
     board: number;
     cards: { [cardId: string]: TechnologyTile };
+    techsDeckLvl1: number;
+    techsDeckLvl2: number;
 }
 
 // swapCards

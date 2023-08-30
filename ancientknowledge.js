@@ -2521,9 +2521,9 @@ var TableCenter = /** @class */ (function () {
         }
         [1, 2].forEach(function (level) {
             _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
-                // TODO cardNumber: gamedatas.centerDestinationsDeckCount[level],
+                cardNumber: gamedatas["techsDeckLvl".concat(level)],
                 topCard: { id: "deck-tile-".concat(level), level: level },
-                // TODO counter: {},
+                counter: {},
             });
         });
         [1, 2, 3].forEach(function (number) {
@@ -2558,10 +2558,14 @@ var TableCenter = /** @class */ (function () {
         this.technologyTilesStocks[board].removeCards(tiles);
         return Promise.resolve(true);
     };
-    TableCenter.prototype.fillUpTechBoard = function (board, cards) {
+    TableCenter.prototype.fillUpTechBoard = function (board, cards, args) {
+        var _this = this;
         var _a;
         var tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
         this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[(_a = tiles[0]) === null || _a === void 0 ? void 0 : _a.level] : undefined });
+        [1, 2].forEach(function (level) {
+            _this.technologyTilesDecks[level].setCardNumber(args["techsDeckLvl".concat(level)]);
+        });
         return Promise.resolve(true);
     };
     TableCenter.prototype.midGameReached = function () {
@@ -4295,6 +4299,9 @@ var AncientKnowledge = /** @class */ (function () {
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
+        [1, 2].forEach(function (level) {
+            _this.tableCenter.technologyTilesDecks[level].setCardNumber(args.datas["techsDeckLvl".concat(level)]);
+        });
         var lastRoundDiv = document.getElementById("last-round");
         if (lastRoundDiv && !args.datas.endOfGameTriggered) {
             lastRoundDiv === null || lastRoundDiv === void 0 ? void 0 : lastRoundDiv.remove();
@@ -4326,7 +4333,7 @@ var AncientKnowledge = /** @class */ (function () {
         return this.notif_clearTechBoard(args).then(function () { return _this.tableCenter.midGameReached(); });
     };
     AncientKnowledge.prototype.notif_fillUpTechBoard = function (args) {
-        return this.tableCenter.fillUpTechBoard(args.board, args.cards);
+        return this.tableCenter.fillUpTechBoard(args.board, args.cards, args);
     };
     AncientKnowledge.prototype.notif_swapCards = function (args) {
         return this.getPlayerTable(args.player_id).swapCards(this.builderCardsManager.getFullCards([args.card, args.card2]));
