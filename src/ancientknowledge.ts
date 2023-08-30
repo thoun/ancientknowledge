@@ -1263,6 +1263,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.getPlayerTable(playerId).refreshUI(player);
             this.handCounters[playerId].setValue(player.handCount);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
+            document.getElementById(`player-table-${playerId}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[playerId].getValue()}`;
             this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
@@ -1282,6 +1283,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_declineCard(args: NotifDeclineCardArgs) {
         const { player_id, card, n } = args;
         this.lostKnowledgeCounters[player_id].incValue(n);
+        document.getElementById(`player-table-${player_id}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[player_id].getValue()}`;
         return this.getPlayerTable(player_id).declineCard(card, n);
     }  
 

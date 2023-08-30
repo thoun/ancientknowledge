@@ -36,6 +36,7 @@ class PlayerTable {
             <div id="player-table-${this.playerId}-timeline" class="timeline"></div>
             <div id="player-table-${this.playerId}-board" class="player-board" data-color="${player.color}">
                 <div id="player-table-${this.playerId}-lost-knowledge" class="lost-knowledge-space"></div>
+                <div id="player-table-${this.playerId}-lost-knowledge-counter" class="lost-knowledge-counter bga-cards_deck-counter round">${player.lostKnowledge}</div>
                 <div id="player-table-${this.playerId}-past" class="past"></div>
                 <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
                 <div class="technology-tiles-decks">`;            

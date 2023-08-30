@@ -2584,7 +2584,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge-counter\" class=\"lost-knowledge-counter bga-cards_deck-counter round\">").concat(player.lostKnowledge, "</div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
@@ -4291,6 +4291,7 @@ var AncientKnowledge = /** @class */ (function () {
             _this.getPlayerTable(playerId).refreshUI(player);
             _this.handCounters[playerId].setValue(player.handCount);
             _this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
+            document.getElementById("player-table-".concat(playerId, "-lost-knowledge-counter")).innerHTML = "".concat(_this.lostKnowledgeCounters[playerId].getValue());
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
@@ -4307,6 +4308,7 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_declineCard = function (args) {
         var player_id = args.player_id, card = args.card, n = args.n;
         this.lostKnowledgeCounters[player_id].incValue(n);
+        document.getElementById("player-table-".concat(player_id, "-lost-knowledge-counter")).innerHTML = "".concat(this.lostKnowledgeCounters[player_id].getValue());
         return this.getPlayerTable(player_id).declineCard(card, n);
     };
     AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {

@@ -93,7 +93,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      flex-wrap: wrap;
       gap: 5px;
+    }
+
+    .lost-knowledge-counter {
+      position: absolute;
+      left: 62px;
+      top: 427px;
     }
   }
   

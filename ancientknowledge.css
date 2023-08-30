@@ -1405,7 +1405,14 @@ body > .card {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  flex-wrap: wrap;
   gap: 5px;
+}
+.player-table .player-board .lost-knowledge-counter {
+  position: absolute;
+  left: 62px;
+  top: 427px;
 }
 .player-table .block-with-text {
   display: flex;
