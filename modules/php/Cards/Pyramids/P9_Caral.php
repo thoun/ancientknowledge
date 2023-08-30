@@ -13,7 +13,7 @@ class P9_Caral extends \AK\Models\Building
     $this->country = clienttranslate('Peru');
     $this->text = [
       clienttranslate(
-        'Estimated to be around 5,000 years old, whereas urban development  in the rest of the Americas began 1,500 years later.'
+        'Estimated to be around 5,000 years old, whereas urban development in the rest of the Americas began 1,500 years later.'
       ),
     ];
 

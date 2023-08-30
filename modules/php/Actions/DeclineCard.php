@@ -80,21 +80,10 @@ class DeclineCard extends \AK\Models\Action
     }
 
     // Check if mid game is reached
-    $irreversible = false;
-    if (Globals::isFirstHalf() && $player->getPast()->count() == 7) {
-      $irreversible = true;
-      $board = 2;
-      // Empty board 2 and fill it with lvl 2 cards
-      $discarded = Technologies::getBoard($board);
-      Technologies::move($discarded->getIds(), 'discard_1');
-      Notifications::midGameReached($player, $discarded);
-      Globals::setFirstHalf(false);
-
-      // Try to fill it up
-      if (Technologies::canRefillBoard($board)) {
-        $cards = Technologies::pickForLocation(3, 'deck_2', "board_$board");
-        Notifications::fillUpTechBoard($board, $cards);
-      }
+    if (Globals::isFirstHalf() && $player->getPast()->count() == 3) {
+      $this->insertAsChild([
+        'action' => FLIP_TECH_TILE,
+      ]);
     }
 
     // Check if end of game is reached
@@ -103,6 +92,6 @@ class DeclineCard extends \AK\Models\Action
       Notifications::endOfGameTriggered($player);
     }
 
-    $this->resolveAction([], $irreversible);
+    $this->resolveAction([]);
   }
 }

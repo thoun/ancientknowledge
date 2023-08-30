@@ -23,6 +23,11 @@ class Discard extends \AK\Models\Action
     ];
   }
 
+  public function isDoable($player)
+  {
+    return $player->getHand()->count() >= $this->getN();
+  }
+
   public function getN()
   {
     return $this->getCtxArg('n') ?? 1;

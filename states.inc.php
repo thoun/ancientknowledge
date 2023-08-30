@@ -195,8 +195,10 @@ $machinestates = [
     'type' => 'activeplayer',
     'description' => clienttranslate('${actplayer} must choose a technology to learn'),
     'descriptionmyturn' => clienttranslate('${you} must choose a technology to learn'),
+    'descriptionskippable' => clienttranslate('${actplayer} may choose a technology to learn'),
+    'descriptionmyturn' => clienttranslate('${you} may choose a technology to learn'),
     'args' => 'argsAtomicAction',
-    'possibleactions' => ['actLearn', 'actRestart'],
+    'possibleactions' => ['actLearn', 'actRestart', 'actPassOptionalAction'],
   ],
 
   ST_EXCAVATE => [
@@ -296,6 +298,15 @@ $machinestates = [
     'descriptionmyturn' => clienttranslate('${you} must choose ${m} card(s) to keep among the top ${n}'),
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actDrawAndKeep', 'actRestart'],
+  ],
+
+  ST_FLIP_TECH_TILE => [
+    'name' => 'flipTechTile',
+    'type' => 'activeplayer',
+    'description' => clienttranslate('Middle of the game reached: ${actplayer} must choose which technology tile to flip'),
+    'descriptionmyturn' => clienttranslate('Middle of the game reached: ${you} must choose which technology tile to flip'),
+    'args' => 'argsAtomicAction',
+    'possibleactions' => ['actFlipTechTile', 'actRestart'],
   ],
 
   ST_DESTROY => [

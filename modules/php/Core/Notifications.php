@@ -165,16 +165,17 @@ class Notifications
     );
   }
 
-  public static function midGameReached($player, $discarded)
+  public static function midGameReached($player, $discarded, $board)
   {
     self::notifyAll(
       'midGameReached',
       \clienttranslate(
-        '${player_name} has 7 buildings in their past, triggering the middle of the game. The technology tile n°2 is cleared by discarding ${card_names}'
+        '${player_name} has 7 buildings in their past, triggering the middle of the game. The technology tile n°${board} is cleared by discarding ${card_names}'
       ),
       [
         'player' => $player,
         'cards' => $discarded->toArray(),
+        'board' => $board,
       ]
     );
   }

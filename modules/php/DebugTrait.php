@@ -22,7 +22,8 @@ trait DebugTrait
   function tp()
   {
     // $this->actTakeAtomicAction('actDiscardMulti', [['P10_Teotihuacan', 'P14_TikalTempleI']]);
-    $this->actTakeAtomicAction('actDrawAndKeep', ['A28_DogUFigurines']);
+    // $this->actTakeAtomicAction('actDrawAndKeep', ['A28_DogUFigurines']);
+    $this->actTakeAtomicAction('actFlipTechTile', [1]);
   }
 
   // addHand(P34_PyramidsOfPlaineMagnien)

@@ -104,7 +104,8 @@ class Technologies extends \AK\Helpers\CachedPieces
 
   public static function getCorrespondingDeckId($board)
   {
-    return $board == 1 || ($board == 2 && Globals::isFirstHalf()) ? 1 : 2;
+    $t = Globals::getSecondLvl2TechTile();
+    return $board == 3 || ($board == $t && Globals::isFirstHalf()) ? 2 : 1;
   }
 
   public static function canRefillBoard($board, $n = 3)
@@ -117,40 +118,6 @@ class Technologies extends \AK\Helpers\CachedPieces
   {
     Notifications::reformTechDeck($deck);
   }
-
-  /**
-   * fillPool: slide the cards on the pool to the left and draw additional cards to fill the pool
-   *
-  public static function fillPool()
-  {
-    if (self::countInLocation(['pool', '%']) == 6) {
-      return false;
-    }
-
-    // Moving cards to fill in hole on their left
-    $lastHole = null;
-    for ($i = 1; $i <= 6; $i++) {
-      $card = self::getInLocation(['pool', $i])->first();
-      if (is_null($card) && is_null($lastHole)) {
-        $lastHole = $i;
-      } elseif (!is_null($card) && !is_null($lastHole)) {
-        self::move($card->getId(), ['pool', $lastHole]);
-        $lastHole++;
-      }
-    }
-
-    // Drawing cards to fill remaining holes
-    $cards = [];
-    for ($i = $lastHole ?? 7; $i <= 6; $i++) {
-      $cards[] = self::pickOneForLocation('deck', ['pool', $i]);
-    }
-
-    if (!empty($cards)) {
-      $pool = self::getInLocation(['pool', '%']);
-      Notifications::fillPool($cards, $pool);
-    }
-  }
-  */
 
   ///////////////////////////////////////////////
   //    ____                                 _

@@ -32,6 +32,7 @@ class Actions
     DRAW_AND_KEEP => 'DrawAndKeep',
     MOVE_BUILDING => 'MoveBuilding',
     ADD_KNOWLEDGE => 'AddKnowledge',
+    FLIP_TECH_TILE => 'FlipTechTile',
   ];
 
   public static function get($actionId, $ctx = null)

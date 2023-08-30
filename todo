@@ -4,15 +4,16 @@ Backend:
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
- - Dès qu’un joueur a au moins 7 monuments dans son Passé,
-retournez une tuile Connaissance de niveau I sur sa face de
-niveau II (>>> au choix de ce joueur <<<). ça lui permet notamment de virer des cartes qui intéresseraient l'adversaire.
-
  - bugged cards : "Diquis Stone Spheres
 planetary stone, tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
 Frontend:
+ - flipTechTile action :
+   => propose tile 1 and tile 2 with buttons => send 1 or 2 to backend + dont forget to ask for confirmation since it's an irreversible action
+   => new field in getAllDatas : secondLvl2TechTile is either 0 if irrelevant, or otherwise give you the board number that should have lvlII techs as well
+   => updated midGameReached notification to send you the board number as well
+   
  - add tech decks counters : techsDeckLvl1/techsDeckLvl2 in getAllDatas
 
  - error : During notification declineCard

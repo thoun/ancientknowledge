@@ -21,6 +21,7 @@ class Globals extends \AK\Helpers\DB_Manager
 
     'endOfGameTriggered' => 'bool',
     'firstHalf' => 'bool',
+    'secondLvl2TechTile' => 'int',
     'declinePhase' => 'bool',
 
     'firstPlayer' => 'int',
