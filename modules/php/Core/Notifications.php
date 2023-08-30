@@ -446,7 +446,7 @@ class Notifications
       $data['card2_name'] = $data['card2']->getName();
       $data['i18n'][] = 'card2_name';
       $data['preserve'][] = 'card2_id';
-      $data['card2'] = $data['card3']->jsonSerialize();
+      $data['card2'] = $data['card2']->jsonSerialize();
     }
 
     if (isset($data['card3'])) {

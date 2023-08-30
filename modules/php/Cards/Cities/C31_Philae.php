@@ -27,7 +27,7 @@ class C31_Philae extends \AK\Models\Building
   {
     $cardIds = [];
     $n = 0;
-    foreach ($this->getTimeline() as $card) {
+    foreach ($this->getPlayer()->getTimeline() as $card) {
       if ($card->getType() == CITY) {
         $n++;
         if ($card->getKnowledge() > 0) {

@@ -34,6 +34,7 @@ class A33_MichauxStone extends \AK\Models\Artefact
       : [
         'action' => LEARN,
         'args' => ['n' => 1],
+        'optional' => true,
       ];
   }
 }
