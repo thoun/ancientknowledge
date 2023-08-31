@@ -85,7 +85,7 @@ class AncientKnowledge extends Table
       'techsDeckLvl1' => Technologies::countInLocation('deck_1'),
       'techsDeckLvl2' => Technologies::countInLocation('deck_2'),
       'firstHalf' => Globals::isFirstHalf(),
-      'secondLvl2TechTile' => Globals::secondLvl2TechTile(),
+      'secondLvl2TechTile' => Globals::getSecondLvl2TechTile(),
       'endOfGameTriggered' => Globals::isEndOfGameTriggered(),
       'scores' => Globals::isLiveScoring() ? Scores::compute() : null,
     ];
