@@ -467,6 +467,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'excavate':
                 this.getCurrentPlayerTable()?.past.setSelectionMode('none');
                 break;
+            case 'discard':
             case 'discardMulti':
                 this.getCurrentPlayerTable()?.setHandSelectable('none');
                 break;
@@ -568,10 +569,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     (this as any).addActionButton(`actExcavate_button`, _("Excavate selected cards"), () => this.actExcavate());
                     document.getElementById('actExcavate_button').classList.add('disabled');
                     break;
+                case 'discard':
                 case 'discardMulti':
                     this.getCurrentPlayerTable().setHandSelectable('multiple');
-                    (this as any).addActionButton(`actDiscardMulti_button`, _("Discard selected cards"), () => this.actDiscardMulti());
-                    document.getElementById('actDiscardMulti_button').classList.add('disabled');
+                    (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(stateName == 'discardMulti'));
+                    document.getElementById('actDiscard_button').classList.add('disabled');
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
@@ -904,9 +906,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.createEngine?.cardSelectionChange(selection);
         } else if (this.gamedatas.gamestate.name == 'archive') {
             this.archiveEngine?.cardSelectionChange(selection);
-        }if (this.gamedatas.gamestate.name == 'discardMulti') {
+        } else if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
             const n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
-            document.getElementById('actDiscardMulti_button').classList.toggle('disabled', selection.length != n);
+            document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
         }
     }
 
@@ -1013,11 +1015,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actExcavate', [cardsIds], true);
     }
   	
-    public actDiscardMulti() {
+    public actDiscard(multi: boolean) {
         const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         const cardsIds = selectedCards.map(card => card.id).sort();
 
-        this.takeAtomicAction('actDiscardMulti', [cardsIds]);
+        this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);
     }
   	
     public actDrawAndKeep() {

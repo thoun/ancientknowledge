@@ -26,7 +26,7 @@ trait DebugTrait
     $this->actTakeAtomicAction('actFlipTechTile', [1]);
   }
 
-  // addCardToPast(6)
+  // addCardsToPast(6)
   function addCardsToPast($n = 1)
   {
     for ($i = 0; $i < $n; $i++) {
