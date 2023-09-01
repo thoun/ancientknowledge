@@ -1,3 +1,10 @@
+TO TEST :
+  * Barabar Caves and other addKnowledge
+  * PYRAMID OF USERKAF and other discard Multi
+  * P15_XixiaWangling
+  * A32_ElongatedSkulls
+
+
 Backend:
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
@@ -7,7 +14,11 @@ Backend:
  - bugged cards : "tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
+ - improve discard multi: awake only players that have choices + bypass action if no other players can discard
+
 Frontend:
+ - discardMulti action: maybe wont change much, but cardIds can also be artefact for P8_PYRAMID OF USERKAF
+
  - addKnowledge action :
    => cardIds : for each pId, list of card ids in their timeline
    => takeAtomicAction(actAddKnowledge, choices) where choices is of the form { pId1: cardId1, pId2: cardId2, ...}

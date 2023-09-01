@@ -30,6 +30,7 @@ class DeclinePhase extends \AK\Models\Action
       return;
     }
     Globals::setDeclinePhase(true);
+    Globals::setDeclinedKnowledge(0);
 
     // The two first slot of the timeline
     $spaces = [[1, 0], [1, 1]];
@@ -71,6 +72,18 @@ class DeclinePhase extends \AK\Models\Action
   public function stDeclineSlideLeft()
   {
     $player = Players::getActive();
+
+    // A32_ElongatedSkulls
+    if ($player->hasEffect('A32_ElongatedSkulls')) {
+      $n = 2 * intdiv(Globals::getDeclinedKnowledge(), 3);
+      if ($n > 0) {
+        $this->insertAsChild([
+          'action' => DRAW,
+          'args' => ['n' => $n],
+        ]);
+      }
+    }
+
     $n = 0;
     foreach ($player->getTimeline() as $card) {
       $n++;

@@ -76,6 +76,7 @@ class DeclineCard extends \AK\Models\Action
       $knowledge = $card->getKnowledge();
       $card->setKnowledge(0);
       $player->incLostKnowledge($knowledge);
+      Globals::incDeclinedKnowledge($knowledge);
       Notifications::declineCard($player, $card, $knowledge);
     }
 

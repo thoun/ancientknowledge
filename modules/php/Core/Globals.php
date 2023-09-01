@@ -29,6 +29,7 @@ class Globals extends \AK\Helpers\DB_Manager
 
     // Card effects
     'skipDecline' => 'bool',
+    'declinedKnowledge' => 'int',
 
     // Game options
     'startingHands' => 'bool',

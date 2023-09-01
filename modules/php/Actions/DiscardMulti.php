@@ -16,12 +16,25 @@ class DiscardMulti extends \AK\Models\Action
 
   public function getDescription()
   {
-    return [
-      'log' => clienttranslate('Other players discard ${n} card(s)'),
-      'args' => [
-        'n' => $this->getN(),
-      ],
-    ];
+    $location = $this->getLocation();
+    if ($location == 'hand') {
+      return [
+        'log' => clienttranslate('Other players discard ${n} card(s)'),
+        'args' => [
+          'n' => $this->getN(),
+        ],
+      ];
+    }
+    if ($location == 'artefact') {
+      return [
+        'log' => clienttranslate('Other players discard ${n} artefact(s)'),
+        'args' => [
+          'n' => $this->getN(),
+        ],
+      ];
+    }
+
+    die('DiscardMulti: unsupported location');
   }
 
   public function isIrreversible($player = null)
@@ -34,13 +47,19 @@ class DiscardMulti extends \AK\Models\Action
     return $this->getCtxArg('n') ?? 1;
   }
 
+  public function getLocation()
+  {
+    return $this->getCtxArg('location') ?? 'hand';
+  }
+
   public function argsDiscardMulti()
   {
+    $location = $this->getLocation();
     $args = ['n' => $this->getN()];
     foreach (Players::getAll() as $pId => $player) {
-      $hand = $player->getHand();
+      $cards = $location == 'hand' ? $player->getHand() : $player->getArtefacts();
       $args['_private'][$pId] = [
-        'cardIds' => $hand->getIds(),
+        'cardIds' => $cards->getIds(),
       ];
     }
     return $args;
