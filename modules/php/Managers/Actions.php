@@ -34,6 +34,8 @@ class Actions
     ADD_KNOWLEDGE => 'AddKnowledge',
     ADD_KNOWLEDGE_FROM_BOARD => 'AddKnowledgeFromBoard',
     FLIP_TECH_TILE => 'FlipTechTile',
+
+    SPECIAL_EFFECT => 'SpecialEffect',
   ];
 
   public static function get($actionId, $ctx = null)

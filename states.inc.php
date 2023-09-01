@@ -349,6 +349,16 @@ $machinestates = [
     'possibleactions' => ['actAddKnowledgeFromBoard', 'actRestart'],
   ],
 
+  ST_SPECIAL_EFFECT => [
+    'name' => 'specialEffect',
+    'description' => '',
+    'descriptionmyturn' => '',
+    'action' => 'stAtomicAction',
+    'args' => 'argsAtomicAction',
+    'type' => 'activeplayer',
+    'possibleactions' => ['actPassOptionalAction', 'actRestart'],
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___
