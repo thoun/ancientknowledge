@@ -32,6 +32,7 @@ class Actions
     DRAW_AND_KEEP => 'DrawAndKeep',
     MOVE_BUILDING => 'MoveBuilding',
     ADD_KNOWLEDGE => 'AddKnowledge',
+    ADD_KNOWLEDGE_FROM_BOARD => 'AddKnowledgeFromBoard',
     FLIP_TECH_TILE => 'FlipTechTile',
   ];
 

@@ -4,11 +4,21 @@ Backend:
 
  Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
 
- - bugged cards : "Diquis Stone Spheres
-planetary stone, tzolkin (artefacts), rongorongo glyph (connaissance)
+ - bugged cards : "tzolkin (artefacts), rongorongo glyph (connaissance)
 ancient hebrew"
 
 Frontend:
+ - addKnowledge action :
+   => cardIds : for each pId, list of card ids in their timeline
+   => takeAtomicAction(actAddKnowledge, choices) where choices is of the form { pId1: cardId1, pId2: cardId2, ...}
+   => dont put anything for pId with empty timeline
+   => autoselect opponents card for opponent with exactly 1 card in their timeline
+   => Notif addKnowledge : very similar to removeKnowledge
+  - addKnowledgeFromBoard action: just for Barabar Caves, knowledge comes from lost knowledge instead of reserve + select a single card
+   => same args
+   => takeAtomicAction(actAddKnowledgeFromBoard, cardId), just the single card selected
+   => Notif addKnowledgeFromBoard : card instead of cards + need to use player_id to remove knowledge from them instead of taking them from the reserve
+
  - flipTechTile action :
    => propose tile 1 and tile 2 with buttons => send 1 or 2 to backend + dont forget to ask for confirmation since it's an irreversible action
    => new field in getAllDatas : secondLvl2TechTile is either 0 if irrelevant, or otherwise give you the board number that should have lvlII techs as well

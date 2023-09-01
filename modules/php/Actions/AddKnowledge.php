@@ -28,88 +28,101 @@ class AddKnowledge extends \AK\Models\Action
     return $this->getCtxArg('n') ?? 1;
   }
 
-  //   public function getCardIds($player = null)
-  //   {
-  //     $player = $player ?? Players::getActive();
-  //     return $this->getCtxArg('cardIds') ??
-  //       $player
-  //         ->getTimeline()
-  //         ->filter(function ($card) {
-  //           return $card->getKnowledge() > 0;
-  //         })
-  //         ->getIds();
-  //   }
+  public function isOptional()
+  {
+    $player = Players::getActive();
+    return !$this->isDoable($player);
+  }
 
-  //   public function isAutomatic($player = null)
-  //   {
-  //     $type = $this->getType();
-  //     if ($type == \NODE_SEQ) {
-  //       return true;
-  //     }
+  public function isDoable($player)
+  {
+    $cardIds = $this->getCardIds($player);
+    foreach ($cardIds as $cIds) {
+      if (!empty($cIds)) {
+        return true;
+      }
+    }
 
-  //     $cardIds = $this->getCardIds($player);
-  //     return count($cardIds) <= 1;
-  //   }
+    return false;
+  }
+
+  public function getCardIds($player = null)
+  {
+    $player = $player ?? Players::getActive();
+    $cardIds = [];
+    foreach (Players::getAll() as $pId => $oppPlayer) {
+      if ($pId == $player->getId()) {
+        continue;
+      }
+      $cardIds[$pId] = $oppPlayer->getTimeline()->getIds();
+    }
+    return $cardIds;
+  }
+
+  public function isAutomatic($player = null)
+  {
+    $cardIds = $this->getCardIds($player);
+    foreach ($cardIds as $pId => $cIds) {
+      if (count($cIds) > 1) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   public function argsAddKnowledge()
   {
+    $player = Players::getActive();
     return [
+      'cardIds' => $this->getCardIds($player),
       'n' => $this->getN(),
     ];
   }
 
-  //   public function stRemoveKnowledge()
-  //   {
-  //     $n = $this->getN();
-  //     $type = $this->getType();
-  //     $cardIds = $this->getCardIds();
+  public function stAddKnowledge()
+  {
+    $player = Players::getActive();
+    $cardIds = $this->getCardIds($player);
+    $choices = [];
+    foreach ($cardIds as $pId => $cIds) {
+      if (count($cIds) > 1) {
+        return;
+      }
+      if (count($cIds) == 1) {
+        $choices[$pId] = $cIds[0];
+      }
+    }
 
-  //     // No targetable cards => pass
-  //     if (empty($cardIds)) {
-  //       $this->actPass();
-  //     }
-  //     // Only 1 targetable card => auto select it
-  //     elseif (count($cardIds) == 1) {
-  //       $choices = [$cardIds[0] => $n];
-  //       $this->actRemoveKnowledge($choices, true);
-  //     }
-  //     // Node seq => auto remove on all cards
-  //     elseif ($type == \NODE_SEQ) {
-  //       $choices = [];
-  //       foreach ($cardIds as $cardId) {
-  //         $choices[$cardId] = $n;
-  //       }
-  //       $this->actRemoveKnowledge($choices, true);
-  //     }
-  //   }
+    $this->actAddKnowledge($choices, true);
+  }
 
   public function actAddKnowledge($choices, $auto = false)
   {
     // Sanity checks
-    self::checkAction('actRemoveKnowledge', $auto);
+    self::checkAction('actAddKnowledge', $auto);
     $player = Players::getActive();
-    // $args = $this->argsRemoveKnowledge();
-    // $cardIds = array_keys($choices);
-    // if (!empty(array_diff($cardIds, $args['cardIds']))) {
-    //   throw new \BgaVisibleSystemException('Invalid cards. Should not happen');
-    // }
-    // if ($args['type'] == NODE_XOR && count($choices) > 1) {
-    //   throw new \BgaVisibleSystemException('You should only choose 1 card to remove knowledge from. Should not happen');
-    // }
+    $cardIds = $this->getCardIds($player);
+    foreach ($cardIds as $pId => $cIds) {
+      if (!isset($choices[$pId])) {
+        if (count($cIds) > 0) {
+          throw new \BgaVisibleSystemException('You must select one building in everyone else\'s timeline. Should not happen');
+        }
+      } else {
+        if (!in_array($choices[$pId], $cIds[$pId])) {
+          throw new \BgaVisibleSystemException('Invalid choice of card for some player. Should not happen');
+        }
+      }
+    }
 
-    // // Remove knowledges
-    // $total = 0;
-    // $cards = Cards::getMany($cardIds);
-    // foreach ($cards as $cardId => $card) {
-    //   $m = min($choices[$cardId], $card->getKnowledge());
-    //   $card->incKnowledge(-$m);
-    //   $total += $m;
-    // }
+    // Add knowledges
+    $cards = Cards::getMany(array_values($choices));
+    $n = $this->getN();
+    foreach ($cards as $cardId => $card) {
+      $card->incKnowledge($n);
+    }
 
-    // if ($total > 0) {
-    //   $sourceId = $this->getSourceId();
-    //   Notifications::removeKnowledge($player, $total, $cards, $sourceId);
-    // }
-    // $this->resolveAction();
+    $sourceId = $this->getSourceId();
+    Notifications::addKnowledge($player, $n, $cards, $sourceId);
+    $this->resolveAction();
   }
 }

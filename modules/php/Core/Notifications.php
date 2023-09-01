@@ -338,6 +338,35 @@ class Notifications
     ]);
   }
 
+  public static function addKnowledge($player, $n, $cards, $sourceId)
+  {
+    self::notifyAll(
+      'addKnowledge',
+      \clienttranslate('${player_name} adds ${n} knowledge on opponents\' cards ${card_names}${source}'),
+      [
+        'player' => $player,
+        'n' => $n,
+        'cards' => $cards,
+        'sourceId' => $sourceId,
+      ]
+    );
+  }
+
+  public static function addKnowledgeFromBoard($player, $target, $n, $card, $sourceId)
+  {
+    self::notifyAll(
+      'addKnowledgeFromBoard',
+      \clienttranslate('${player_name} adds ${n} knowledge from their board on ${player2_name}\'s card ${card_name}${source}'),
+      [
+        'player' => $player,
+        'player2' => $target,
+        'n' => $n,
+        'card' => $card,
+        'sourceId' => $sourceId,
+      ]
+    );
+  }
+
   public static function swapCards($player, $card1, $card2, $source)
   {
     self::notifyAll(

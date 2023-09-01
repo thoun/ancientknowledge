@@ -321,6 +321,34 @@ $machinestates = [
     'action' => 'stAtomicAction',
   ],
 
+  ST_ADD_KNOWLEDGE => [
+    'name' => 'addKnowledge',
+    'type' => 'activeplayer',
+    'description' => clienttranslate(
+      '${actplayer} must choose one building in each opponents\' timeline to add ${n} <KNOWLEDGE> onto'
+    ),
+    'descriptionmyturn' => clienttranslate(
+      '${you} must choose one building in each opponents\' timeline to add ${n} <KNOWLEDGE> onto'
+    ),
+    'args' => 'argsAtomicAction',
+    'action' => 'stAtomicAction',
+    'possibleactions' => ['actAddKnowledge', 'actRestart'],
+  ],
+
+  ST_ADD_KNOWLEDGE_FROM_BOARD => [
+    'name' => 'addKnowledgeFromBoard',
+    'type' => 'activeplayer',
+    'description' => clienttranslate(
+      '${actplayer} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from your board'
+    ),
+    'descriptionmyturn' => clienttranslate(
+      '${you} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from your board'
+    ),
+    'args' => 'argsAtomicAction',
+    'action' => 'stAtomicAction',
+    'possibleactions' => ['actAddKnowledgeFromBoard', 'actRestart'],
+  ],
+
   //////////////////////////////////////////////////////////////////
   //  _____           _    ___   __    ____
   // | ____|_ __   __| |  / _ \ / _|  / ___| __ _ _ __ ___   ___
