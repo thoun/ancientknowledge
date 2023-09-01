@@ -44,6 +44,11 @@
         &[data-level="2"] {
           background-image: url('img/obelisk2.png');
         }
+
+        &.selectable {
+          animation: selectable-card-animation 1s alternate infinite ease-in-out;
+          cursor: pointer;
+        }
       }
     }
   }

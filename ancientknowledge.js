@@ -2517,7 +2517,7 @@ var TableCenter = /** @class */ (function () {
         this.technologyTilesDecks = [];
         this.technologyTilesStocks = [];
         if (!gamedatas.firstHalf) {
-            this.midGameReached();
+            this.midGameReached(gamedatas.secondLvl2TechTile);
         }
         [1, 2].forEach(function (level) {
             _this.technologyTilesDecks[level] = new Deck(game.technologyTilesManager, document.getElementById("technology-deck-".concat(level)), {
@@ -2527,10 +2527,16 @@ var TableCenter = /** @class */ (function () {
             });
         });
         [1, 2, 3].forEach(function (number) {
-            _this.technologyTilesStocks[number] = new LineStock(game.technologyTilesManager, document.getElementById("table-technology-tiles-".concat(number)), {
+            var tileStockDiv = document.getElementById("table-technology-tiles-".concat(number));
+            _this.technologyTilesStocks[number] = new LineStock(game.technologyTilesManager, tileStockDiv, {
                 center: false,
             });
             _this.technologyTilesStocks[number].onCardClick = function (tile) { return _this.game.onTableTechnologyTileClick(tile); };
+            tileStockDiv.addEventListener('click', function () {
+                if (tileStockDiv.classList.contains('selectable')) {
+                    _this.game.onTableTechnologyTileStockClick(number);
+                }
+            });
         });
         this.refreshTechnologyTiles(gamedatas.techs);
         document.querySelector(".fold-button").insertAdjacentHTML("afterbegin", "\n        <div class=\"fold-message\">".concat(_('Click here to display table center'), "</div>\n        "));
@@ -2568,8 +2574,12 @@ var TableCenter = /** @class */ (function () {
         });
         return Promise.resolve(true);
     };
-    TableCenter.prototype.midGameReached = function () {
-        document.getElementById("table-technology-tiles-2").dataset.level = '2';
+    TableCenter.prototype.midGameReached = function (board) {
+        document.getElementById("table-technology-tiles-".concat(board)).dataset.level = '2';
+    };
+    TableCenter.prototype.setTileStocksSelectable = function (selectable) {
+        var stocks = Array.from(document.querySelectorAll(".table-technology-tiles".concat(selectable ? '[data-level="1"]' : '')));
+        stocks.forEach(function (stock) { return stock.classList.toggle('selectable', selectable); });
     };
     return TableCenter;
 }());
@@ -3448,6 +3458,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'moveBuilding':
                 this.onEnteringMoveBuilding(args.args);
                 break;
+            case 'flipTechTile':
+                this.onEnteringFlipTechTile();
+                break;
         }
     };
     /*
@@ -3559,6 +3572,12 @@ var AncientKnowledge = /** @class */ (function () {
             this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
     };
+    AncientKnowledge.prototype.onEnteringFlipTechTile = function () {
+        if (this.isCurrentPlayerActive()) {
+            document.getElementById("table-center").classList.remove("folded");
+            this.tableCenter.setTileStocksSelectable(true);
+        }
+    };
     AncientKnowledge.prototype.onEnteringEndScore = function (fromReload) {
         var _this = this;
         if (fromReload === void 0) { fromReload = false; }
@@ -3637,6 +3656,9 @@ var AncientKnowledge = /** @class */ (function () {
             case 'resolveChoice':
                 this.onLeavingResolveChoice();
                 break;
+            case 'flipTechTile':
+                this.onLeavingFlipTechTile();
+                break;
         }
     };
     AncientKnowledge.prototype.onLeavingInitialSelection = function () {
@@ -3680,6 +3702,9 @@ var AncientKnowledge = /** @class */ (function () {
         var playerTable = this.getCurrentPlayerTable();
         playerTable === null || playerTable === void 0 ? void 0 : playerTable.timeline.setSelectionMode('none');
         playerTable === null || playerTable === void 0 ? void 0 : playerTable.artifacts.setSelectionMode('none');
+    };
+    AncientKnowledge.prototype.onLeavingFlipTechTile = function () {
+        this.tableCenter.setTileStocksSelectable(false);
     };
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
     //                        action status bar (ie: the HTML links in the status bar).
@@ -3959,6 +3984,9 @@ var AncientKnowledge = /** @class */ (function () {
                 ]);
             }
         }
+    };
+    AncientKnowledge.prototype.onTableTechnologyTileStockClick = function (number) {
+        this.takeAtomicAction('actFlipTechTile', [number]);
     };
     AncientKnowledge.prototype.onHandCardClick = function (card) {
         if (this.gamedatas.gamestate.name == 'create') {
@@ -4336,7 +4364,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_midGameReached = function (args) {
         var _this = this;
-        return this.notif_clearTechBoard(args).then(function () { return _this.tableCenter.midGameReached(); });
+        return this.notif_clearTechBoard(args).then(function () { return _this.tableCenter.midGameReached(args.board); });
     };
     AncientKnowledge.prototype.notif_fillUpTechBoard = function (args) {
         return this.tableCenter.fillUpTechBoard(args.board, args.cards, args);

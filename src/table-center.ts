@@ -4,7 +4,7 @@ class TableCenter {
         
     constructor(private game: AncientKnowledgeGame, gamedatas: AncientKnowledgeGamedatas) {
         if (!gamedatas.firstHalf) {
-            this.midGameReached();
+            this.midGameReached(gamedatas.secondLvl2TechTile);
         }
 
         [1, 2].forEach(level => {
@@ -16,10 +16,16 @@ class TableCenter {
         });
 
         [1, 2, 3].forEach(number => {
-            this.technologyTilesStocks[number] = new LineStock<TechnologyTile>(game.technologyTilesManager, document.getElementById(`table-technology-tiles-${number}`), {
+            const tileStockDiv = document.getElementById(`table-technology-tiles-${number}`);
+            this.technologyTilesStocks[number] = new LineStock<TechnologyTile>(game.technologyTilesManager, tileStockDiv, {
                 center: false,
             });
             this.technologyTilesStocks[number].onCardClick = tile => this.game.onTableTechnologyTileClick(tile);
+            tileStockDiv.addEventListener('click', () => {
+                if (tileStockDiv.classList.contains('selectable')) {
+                    this.game.onTableTechnologyTileStockClick(number);
+                }
+            })
         });
         this.refreshTechnologyTiles(gamedatas.techs);
 
@@ -63,8 +69,13 @@ class TableCenter {
         return Promise.resolve(true);
     }
     
-    public midGameReached(): void {
-        document.getElementById(`table-technology-tiles-2`).dataset.level = '2';
+    public midGameReached(board: number): void {
+        document.getElementById(`table-technology-tiles-${board}`).dataset.level = '2';
+    }
+
+    public setTileStocksSelectable(selectable: boolean) {
+        const stocks = Array.from(document.querySelectorAll(`.table-technology-tiles${selectable ? '[data-level="1"]' : ''}`));
+        stocks.forEach(stock => stock.classList.toggle('selectable', selectable));
     }
 
 }

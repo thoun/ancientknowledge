@@ -5,6 +5,7 @@ use AK\Helpers\Utils;
 use AK\Helpers\Collection;
 use AK\Core\Globals;
 use AK\Managers\Effects;
+use AK\Managers\Technologies;
 
 class Notifications
 {
@@ -148,6 +149,8 @@ class Notifications
     self::notifyAll('fillUpTechBoard', \clienttranslate('Filling up technology tile n°${board} with ${card_names}'), [
       'board' => $board,
       'cards' => $cards->toArray(),
+      'techsDeckLvl1' => Technologies::countInLocation('deck_1'),
+      'techsDeckLvl2' => Technologies::countInLocation('deck_2'),
     ]);
   }
 

@@ -276,6 +276,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'moveBuilding':
                 this.onEnteringMoveBuilding(args.args);
                 break;
+            case 'flipTechTile':
+                this.onEnteringFlipTechTile();
+                break;
         }
     }
 
@@ -396,6 +399,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.moveBuildingEngine = new MoveBuildingEngine(this, Object.values(args.cardIds), args.card_id, Object.values(args.slots));
         }
     }
+    
+    private onEnteringFlipTechTile() {
+        if ((this as any).isCurrentPlayerActive()) {
+            document.getElementById(`table-center`).classList.remove(`folded`);
+            this.tableCenter.setTileStocksSelectable(true);
+        }
+    }
 
     private onEnteringEndScore(fromReload: boolean = false) {
         const lastTurnBar = document.getElementById('last-round');
@@ -480,6 +490,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'resolveChoice':
                 this.onLeavingResolveChoice();
                 break;
+            case 'flipTechTile':
+                this.onLeavingFlipTechTile();
+                break;
         }
     }
 
@@ -525,6 +538,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const playerTable = this.getCurrentPlayerTable();
         playerTable?.timeline.setSelectionMode('none');
         playerTable?.artifacts.setSelectionMode('none');
+    }
+    
+    private onLeavingFlipTechTile() {
+        this.tableCenter.setTileStocksSelectable(false);
     }
 
     // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
@@ -879,6 +896,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 ]);
             }
         }
+    }
+
+    public onTableTechnologyTileStockClick(number: number): void {
+        this.takeAtomicAction('actFlipTechTile', [number]);
     }
 
     public onHandCardClick(card: BuilderCard): void {
@@ -1305,8 +1326,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.tableCenter.clearTechBoard(args.board, args.cards);
     }
 
-    notif_midGameReached(args: NotifTechBoardArgs) {
-        return this.notif_clearTechBoard(args).then(() => this.tableCenter.midGameReached());
+    notif_midGameReached(args: NotifMidGameReachedArgs) {
+        return this.notif_clearTechBoard(args).then(() => this.tableCenter.midGameReached(args.board));
     }
     
     notif_fillUpTechBoard(args: NotifTechBoardArgs) {

@@ -54,6 +54,7 @@ interface AncientKnowledgeGamedatas {
     // Add here variables you set up in getAllDatas
     techs: TechnologyTile[];
     firstHalf: boolean;
+    secondLvl2TechTile: number;
     endOfGameTriggered: boolean;
     scores?: { [playerId: number]: PlayerScore };
     techsDeckLvl1: number;
@@ -73,6 +74,7 @@ interface AncientKnowledgeGame extends Game {
 
     setTooltip(id: string, html: string): void;
     onTableTechnologyTileClick(destination: TechnologyTile): void;
+    onTableTechnologyTileStockClick(number: number): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineCardSelectionChange(selection: BuilderCard[]): void;
@@ -253,6 +255,11 @@ interface NotifTechBoardArgs {
     cards: { [cardId: string]: TechnologyTile };
     techsDeckLvl1: number;
     techsDeckLvl2: number;
+}
+
+// midGameReached
+interface NotifMidGameReachedArgs extends NotifTechBoardArgs {
+    board: number;
 }
 
 // swapCards
