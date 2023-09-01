@@ -26,6 +26,15 @@ trait DebugTrait
     $this->actTakeAtomicAction('actFlipTechTile', [1]);
   }
 
+  // addCardToPast(6)
+  function addCardsToPast($n = 1)
+  {
+    for ($i = 0; $i < $n; $i++) {
+      $card = Cards::getTopOf('deck', 1)->first();
+      self::addPast($card->getId());
+    }
+  }
+
   // addHand(P34_PyramidsOfPlaineMagnien)
   // addHand(A6_AntikytheraMechanism)
   function addHand($cardId)
