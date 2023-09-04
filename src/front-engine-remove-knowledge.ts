@@ -20,7 +20,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                 engine => {
                     engine.data.discardTokens = {};
                     cardIds.forEach(cardId => this.game.getCurrentPlayerTable().setCardSelectedKnowledge(cardId, 0, true));
-                    this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', this.cardIds);
+                    this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', 'remove', this.cardIds);
                     this.addConfirmDiscardTokenSelection();
                     this.setConfirmDiscardTokenSelectionState();
                 },
@@ -40,7 +40,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
 
             if (this.type === 'xor') {
                 const selectableCardsIds = knowledge > 0 ? [cardId] : this.cardIds;
-                this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', selectableCardsIds);
+                this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', 'remove', selectableCardsIds);
             }
 
             this.setConfirmDiscardTokenSelectionState();

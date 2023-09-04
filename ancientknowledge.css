@@ -907,38 +907,47 @@ body > .card {
   top: -12px;
   background: white;
   color: #404040;
-  height: 36px;
   left: 48px;
   right: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
   border-radius: 18px;
   transition: left 0.5s, right 0.5s;
 }
-.token-counter .token-counter-center {
+.token-counter .token-counter-info {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
+  height: 36px;
 }
-.token-counter .token-selection {
+.token-counter .token-counter-actions {
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   display: none;
+  margin-top: 15px;
 }
-.token-counter .token-selection.action {
+.token-counter .token-counter-actions .actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 24px;
+}
+.token-counter .token-counter-actions .actions .selected-group {
+  display: flex;
+  gap: 4px;
+}
+.token-counter .token-counter-actions .action {
   width: 24px;
+  height: 24px;
   text-align: center;
   pointer-events: all;
   cursor: pointer;
+  border: 1px lightgray solid;
+  border-radius: 50%;
+  font-size: 16px;
 }
-.token-counter .token-selection.action.minus {
-  border-right: 2px lightgray solid;
-}
-.token-counter .token-selection.action.plus {
-  border-left: 2px lightgray solid;
-}
-.token-counter .token-selection.action.disabled {
+.token-counter .token-counter-actions .action.disabled {
   color: lightgray;
   cursor: not-allowed;
 }
@@ -950,10 +959,15 @@ body > .card {
 .knowledge-selectable .token-counter {
   left: 24px;
   right: 24px;
-  justify-content: space-between;
 }
-.knowledge-selectable .token-counter .token-selection {
-  display: unset;
+.knowledge-selectable .token-counter-actions {
+  display: flex;
+}
+.knowledge-selectable[data-knowledge-selection-mode=remove] .token-action-info.add {
+  display: none;
+}
+.knowledge-selectable[data-knowledge-selection-mode=add] .token-action-info.remove {
+  display: none;
 }
 
 .technology-tile {
