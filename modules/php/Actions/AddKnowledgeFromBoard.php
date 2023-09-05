@@ -83,7 +83,7 @@ class AddKnowledgeFromBoard extends \AK\Models\Action
 
   public function isAutomatic($player = null)
   {
-    $cardId = $this->getTarget();
+    $cardId = $this->getTarget($player);
     return !is_null($cardId);
   }
 
@@ -98,7 +98,8 @@ class AddKnowledgeFromBoard extends \AK\Models\Action
 
   public function stAddKnowledgeFromBoard()
   {
-    $cardId = $this->getTarget();
+    $player = Players::getActive();
+    $cardId = $this->getTarget($player);
     if (!is_null($cardId)) {
       $this->actAddKnowledgeFromBoard($cardId, true);
     }
@@ -113,7 +114,7 @@ class AddKnowledgeFromBoard extends \AK\Models\Action
     $targetPId = null;
     foreach ($cardIds as $pId => $cIds) {
       if (in_array($cardId, $cIds)) {
-        $targetPId = $cardId;
+        $targetPId = $pId;
       }
     }
     if (is_null($targetPId)) {
@@ -121,7 +122,7 @@ class AddKnowledgeFromBoard extends \AK\Models\Action
     }
 
     // Add knowledges and remove them from board
-    $cards = Cards::getSingle($cardId);
+    $card = Cards::getSingle($cardId);
     $n = min($player->getLostKnowledge(), $this->getN());
     $card->incKnowledge($n);
     $player->incLostKnowledge(-$n);

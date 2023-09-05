@@ -23,13 +23,15 @@ class T20_RongorongoGlyphs extends \AK\Models\Technology
       ->getTimeline(MEGALITH)
       ->getIds();
 
-    return [
-      'action' => REMOVE_KNOWLEDGE,
-      'args' => [
-        'n' => 1,
-        'cardIds' => $cardIds,
-        'type' => NODE_SEQ,
-      ],
-    ];
+    return empty($cardIds)
+      ? null
+      : [
+        'action' => REMOVE_KNOWLEDGE,
+        'args' => [
+          'n' => 1,
+          'cardIds' => $cardIds,
+          'type' => NODE_SEQ,
+        ],
+      ];
   }
 }

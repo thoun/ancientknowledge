@@ -359,7 +359,7 @@ class Notifications
   {
     self::notifyAll(
       'addKnowledgeFromBoard',
-      \clienttranslate('${player_name} adds ${n} knowledge from their board on ${player2_name}\'s card ${card_name}${source}'),
+      \clienttranslate('${player_name} adds ${n} knowledge from their board on ${player_name2}\'s card ${card_name}${source}'),
       [
         'player' => $player,
         'player2' => $target,

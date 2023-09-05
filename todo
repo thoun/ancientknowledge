@@ -1,18 +1,12 @@
 TO TEST :
   * Barabar Caves and other addKnowledge
   * PYRAMID OF USERKAF and other discard Multi
-  * P15_XixiaWangling
   * A32_ElongatedSkulls
 
 
 Backend:
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
-
- Barbaras Cave soit le seul qui dise "jusqu'à 3 savoirs" -> appliquer la suggestion de Iello On vous propose donc la formulation suivante : "Choisissez 1 monument dans la Frise d’un de vos adversaires, et placez-y 3 [savoir perdu] de votre plateau.". 
-
- - bugged cards : "tzolkin (artefacts), rongorongo glyph (connaissance)
-ancient hebrew"
 
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 

@@ -108,7 +108,7 @@ class AddKnowledge extends \AK\Models\Action
           throw new \BgaVisibleSystemException('You must select one building in everyone else\'s timeline. Should not happen');
         }
       } else {
-        if (!in_array($choices[$pId], $cIds[$pId])) {
+        if (!in_array($choices[$pId], $cIds)) {
           throw new \BgaVisibleSystemException('Invalid choice of card for some player. Should not happen');
         }
       }
