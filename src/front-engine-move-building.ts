@@ -41,11 +41,11 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                     const ignoreLocation = engine.data.selectedCard.location.substring(0, engine.data.selectedCard.location.length - 1) + '1';
                     const locations = {};
                     this.slotsIds.filter(slotId => slotId != ignoreLocation).forEach(slotId => locations[slotId] = 0);
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(true, locations);
+                    this.game.getCurrentPlayerTable().setTimelineSlotsSelectable(true, locations);
                 },
                 engine => {
                     this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(false);
+                    this.game.getCurrentPlayerTable().setTimelineSlotsSelectable(false);
                     this.removeCancel();
                 }
             ),

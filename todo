@@ -1,5 +1,5 @@
 TO TEST :
-  * Barabar Caves and other addKnowledge
+  * Barabar Caves and other addKnowledge M24_TlalocsStatue   M15_BarabarCaves
   * PYRAMID OF USERKAF and other discard Multi
   * A32_ElongatedSkulls
 
@@ -13,12 +13,6 @@ Backend:
 Frontend:
  - discardMulti action: maybe wont change much, but cardIds can also be artefact for P8_PYRAMID OF USERKAF
 
- - addKnowledge action :
-   => cardIds : for each pId, list of card ids in their timeline
-   => takeAtomicAction(actAddKnowledge, choices) where choices is of the form { pId1: cardId1, pId2: cardId2, ...}
-   => dont put anything for pId with empty timeline
-   => autoselect opponents card for opponent with exactly 1 card in their timeline
-   => Notif addKnowledge : very similar to removeKnowledge
   - addKnowledgeFromBoard action: just for Barabar Caves, knowledge comes from lost knowledge instead of reserve + select a single card
    => same args
    => takeAtomicAction(actAddKnowledgeFromBoard, cardId), just the single card selected

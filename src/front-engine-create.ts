@@ -52,10 +52,10 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     engine.data.selectedSlot = null;
                     engine.data.discardCards = [];
                     this.addCancel();
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(true, this.possibleCardsLocations[card.id]);
+                    this.game.getCurrentPlayerTable().setTimelineSlotsSelectable(true, this.possibleCardsLocations[card.id]);
                 },
                 () => {
-                    this.game.getCurrentPlayerTable().setTimelineSelectable(false);
+                    this.game.getCurrentPlayerTable().setTimelineSlotsSelectable(false);
                     this.removeCancel();
                     this.game.getCurrentPlayerTable().setHandSelectable('none');
                 }

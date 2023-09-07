@@ -66,7 +66,7 @@ class PlayerTable {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
-        this.timeline.onSelectionChange = (selection: BuilderCard[]) => this.game.onTimelineCardSelectionChange(selection);
+        this.timeline.onSelectionChange = (selection: BuilderCard[]) => this.game.onTimelineCardSelectionChange(selection, this.playerId);
         
         timelineSlotsIds.map(slotId => timelineDiv.querySelector(`[data-slot-id="${slotId}"]`)).forEach((element: HTMLDivElement) => element.addEventListener('click', () => {
             if (element.classList.contains('selectable')) {
@@ -283,7 +283,7 @@ class PlayerTable {
         }
     }
     
-    public setTimelineSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
+    public setTimelineSlotsSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
         const slotIds = selectable ? Object.keys(possibleCardLocations) : [];
         document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => {
             const slotId = slot.dataset.slotId;

@@ -77,7 +77,7 @@ interface AncientKnowledgeGame extends Game {
     onTableTechnologyTileStockClick(number: number): void;
     onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
-    onTimelineCardSelectionChange(selection: BuilderCard[]): void;
+    onTimelineCardSelectionChange(selection: BuilderCard[], playerId: number): void;
     onPastCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onArtifactCardClick(card: BuilderCard): void;
@@ -115,6 +115,10 @@ interface EnteringArchiveArgs {
 interface EnteringLearnArgs {
     techs: string[];
     irreversibleIds: string[];
+}
+
+interface EnteringAddKnowledgeArgs {
+    cardIds: {[playerId: string]: string[]};
 }
 
 interface EnteringRemoveKnowledgeArgs {
@@ -243,6 +247,12 @@ interface NotifDeclineCardArgs {
     n: number;
 }
 
+// addKnowledge
+interface NotifAddKnowledgeArgs {
+    n: number;
+    cards: { [cardId: string]: BuilderCard };
+}
+
 // removeKnowledge
 interface NotifRemoveKnowledgeArgs {
     player_id: number;
@@ -293,3 +303,4 @@ interface NotifScoringEntryArgs {
     n: number;
     category: string;
 }
+
