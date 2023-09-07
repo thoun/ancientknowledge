@@ -13,11 +13,6 @@ Backend:
 Frontend:
  - discardMulti action: maybe wont change much, but cardIds can also be artefact for P8_PYRAMID OF USERKAF
 
-  - addKnowledgeFromBoard action: just for Barabar Caves, knowledge comes from lost knowledge instead of reserve + select a single card
-   => same args
-   => takeAtomicAction(actAddKnowledgeFromBoard, cardId), just the single card selected
-   => Notif addKnowledgeFromBoard : card instead of cards + need to use player_id to remove knowledge from them instead of taking them from the reserve
-   
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases

@@ -261,7 +261,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.onEnteringLearn(args.args);
                 break;
             case 'addKnowledge':
-                this.onEnteringAddKnowledge(args.args);
+                this.onEnteringAddKnowledge(args.args, true);
+                break;
+            case 'addKnowledgeFromBoard':
+                this.onEnteringAddKnowledge(args.args, false);
                 break;
             case 'removeKnowledge':
                 this.onEnteringRemoveKnowledge(args.args);
@@ -345,13 +348,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    private onEnteringAddKnowledge(args: EnteringAddKnowledgeArgs) {
+    private onEnteringAddKnowledge(args: EnteringAddKnowledgeArgs, autoSelect: boolean) {
         if ((this as any).isCurrentPlayerActive()) {
             this.addKnowledgeSelection = {};
             Object.entries(args.cardIds).forEach(([pId, cardIds]) => {
                 const timeline = this.getPlayerTable(Number(pId)).timeline;
                 timeline.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(cardIds));
-                if (cardIds.length == 1) {
+                if (autoSelect && cardIds.length == 1) {
                     timeline.selectCard(this.builderCardsManager.getFullCardById(cardIds[0]));
                 }
             });
@@ -487,6 +490,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.onLeavingLearn();
                 break;
             case 'addKnowledge':
+            case 'addKnowledgeFromBoard':
                 this.onLeavingAddKnowledge();
                 break;
             case 'removeKnowledge':
@@ -628,6 +632,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'addKnowledge':
                     (this as any).addActionButton(`actAddKnowledge_button`, formatTextIcons(_("Add ${n} <LOST_KNOWLEDGE> to selected cards").replace('${n}', args.n), true), () => this.actAddKnowledge());
                     document.getElementById('actAddKnowledge_button').classList.add('disabled');
+                    break;
+                case 'addKnowledgeFromBoard':
+                    (this as any).addActionButton(`actAddKnowledgeFromBoard_button`, formatTextIcons(_("Add ${n} <LOST_KNOWLEDGE> to selected cards").replace('${n}', args.n), true), () => this.actAddKnowledgeFromBoard());
+                    document.getElementById('actAddKnowledgeFromBoard_button').classList.add('disabled');
                     break;
             }
         } else {
@@ -990,7 +998,26 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 });
             }
             document.getElementById('actAddKnowledge_button').classList.toggle('disabled', !valid);
-            
+        } else if (this.gamedatas.gamestate.name == 'addKnowledgeFromBoard') {
+            Object.keys(this.addKnowledgeSelection).forEach((pId) => {
+                const timeline = this.getPlayerTable(Number(pId)).timeline;
+                timeline.unselectCard(this.builderCardsManager.getFullCardById(this.addKnowledgeSelection[pId]), true);
+            });
+            this.addKnowledgeSelection = {};
+
+            if (selection.length <= 1) {
+                this.addKnowledgeSelection[playerId] = selection[0]?.id;
+            }
+            let valid = Boolean(this.addKnowledgeSelection[playerId]);
+            if (valid) {
+                const cardIdsPerPlayer = (this.gamedatas.gamestate.args as EnteringAddKnowledgeArgs).cardIds;
+                Object.entries(this.addKnowledgeSelection).forEach(([pId, cardId]) => {
+                    if (!cardIdsPerPlayer[pId]?.includes(cardId)) {
+                        valid = false;
+                    }
+                });
+            }
+            document.getElementById('actAddKnowledgeFromBoard_button').classList.toggle('disabled', !valid);
         }
     }
 
@@ -1083,6 +1110,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             }
         })
         this.takeAtomicAction('actAddKnowledge', [this.addKnowledgeSelection])
+    }
+  	
+    public actAddKnowledgeFromBoard() {
+        this.takeAtomicAction('actAddKnowledgeFromBoard', [Object.values(this.addKnowledgeSelection)[0]]);
     }
   	
     public actExcavate() {
@@ -1212,6 +1243,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['declineCard', undefined],
             ['declineSlideLeft', undefined],
             ['addKnowledge', ANIMATION_MS],
+            ['addKnowledgeFromBoard', ANIMATION_MS],
             ['removeKnowledge', ANIMATION_MS],
             ['clearTechBoard', ANIMATION_MS],
             ['midGameReached', ANIMATION_MS],
@@ -1376,6 +1408,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     notif_addKnowledge(args: NotifAddKnowledgeArgs) {
         Object.values(args.cards).forEach(card => this.playersTables.find(playerTable => playerTable.timeline.getCards().some(c => c.id == card.id)).setCardKnowledge(card.id, card.knowledge));
+    }
+    
+    notif_addKnowledgeFromBoard(args: NotifAddKnowledgeFromBoardArgs) {
+        const { card, player_id, n } = args;
+        this.playersTables.find(playerTable => playerTable.timeline.getCards().some(c => c.id == card.id)).setCardKnowledge(card.id, card.knowledge);
+
+        this.getPlayerTable(player_id).incLostKnowledge(-n);
+        this.lostKnowledgeCounters[player_id].incValue(-n);
+        document.getElementById(`player-table-${player_id}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[player_id].getValue()}`;
     }
     
     notif_removeKnowledge(args: NotifRemoveKnowledgeArgs) {

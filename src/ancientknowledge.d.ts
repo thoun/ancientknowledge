@@ -253,6 +253,13 @@ interface NotifAddKnowledgeArgs {
     cards: { [cardId: string]: BuilderCard };
 }
 
+// addKnowledgeFromBoard
+interface NotifAddKnowledgeFromBoardArgs {
+    n: number;
+    player_id: number;
+    card: BuilderCard;
+}
+
 // removeKnowledge
 interface NotifRemoveKnowledgeArgs {
     player_id: number;
