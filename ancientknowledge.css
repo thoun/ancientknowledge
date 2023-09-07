@@ -1524,6 +1524,16 @@ body > .card {
   flex: 1;
 }
 
+.help-actions {
+  background-image: url("img/help-actions.png");
+  background-size: cover;
+}
+
+.help-turn {
+  background-image: url("img/help-turn.png");
+  background-size: cover;
+}
+
 #score {
   display: none;
   justify-content: center;

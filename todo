@@ -11,6 +11,8 @@ Backend:
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 
 Frontend:
+ - make help cards translatable
+
  - discardMulti action: maybe wont change much, but cardIds can also be artefact for P8_PYRAMID OF USERKAF
 
  - error : During notification declineCard
@@ -30,5 +32,4 @@ Frontend:
 
  - past cards : see how to display straight cards mixed with rotated cards 
 
- - todo make it clearer when selecting tokens : is it how many selected or how many remaining ?
  - test text auto-sizing on all cards

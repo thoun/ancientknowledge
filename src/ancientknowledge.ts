@@ -11,6 +11,8 @@ const ACTION_TIMER_DURATION = 10;
 
 const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 const LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
+const LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY = 'AncientKnowledge-help-actions-folded';
+const LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 
 const ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
 
@@ -128,8 +130,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 new BgaHelpPopinButton({
                     title: _("Card help").toUpperCase(),
                     html: this.getHelpHtml(),
-                    onPopinCreated: () => this.populateHelp(),
                     buttonBackground: '#87a04f',
+                }),
+                new BgaHelpExpandableButton({
+                    expandedWidth: '326px',
+                    expandedHeight: '456px',
+                    defaultFolded: true,
+                    localStorageFoldedKey: LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY,
+                    buttonExtraClasses: `help-actions`
+                }),
+                new BgaHelpExpandableButton({
+                    expandedWidth: '326px',
+                    expandedHeight: '456px',
+                    defaultFolded: true,
+                    localStorageFoldedKey: LOCAL_STORAGE_HELP_TURN_FOLDED_KEY,
+                    buttonExtraClasses: `help-turn`
                 }),
             ]
         });
@@ -879,47 +894,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
-            <h1>${_("Assets")}</h2>
-            <div class="help-section">
-                <div class="icon vp"></div>
-                <div class="help-label">${_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon recruit"></div>
-                <div class="help-label">${_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship.")} ${_("It is not possible to have more than 3.")} ${_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon bracelet"></div>
-                <div class="help-label">${_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship.")} ${_("It is not possible to have more than 3.")} ${_("They are used for Trading.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon reputation"></div>
-                <div class="help-label">${_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon take-card"></div>
-                <div class="help-label">${_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player\'s Crew Zone (without taking any assets).")}</div>
-            </div>
-
-            <h1>${_("Powers of the artifacts (variant option)")}</h1>
-        `;
-
-        for (let i = 1; i <=7; i++) {
-            html += `
-            <div class="help-section">
-                <div id="help-artifact-${i}"></div>
-                <div>${/*this.technologyTilesManager.getTooltip(i as any)*/''}</div>
-            </div> `;
-        }
-        html += `</div>`;
+            <h1>${_("Icons")}</h2>
+            TODO help p14
+        </div>`;
 
         return html;
-    }
-
-    private populateHelp() {
-        for (let i = 1; i <=7; i++) {
-            //this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
-        }
     }
     
     public onTableTechnologyTileClick(tile: TechnologyTile, showWarning: boolean = true): void {
