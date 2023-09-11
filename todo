@@ -1,3 +1,19 @@
+IELLO :
+1)            Les savoirs s'affichent dans le passé (via le chiffre 0), ce n’est pas utile.
+2)            Ecriture Rongorongo a fait bugger la partie.
+X3)            Toutes les images des cartes connaissances ne sont pas les bonnes.
+4)            Colosses de Memnon permet d’enlever des savoirs sur lui-même mais ne devrait pas.
+5)            On devrait voir les cartes connaissance lorsqu'on sélectionne sa main de départ et pas après seulement.
+6)            Cyrène (cité) : on me propose de faire le marteau alors que je n'ai pas 4 cités, on devrait ne pas avoir à cliquer sur « pass » si on ne peut activer le pouvoir de chronique
+7)            Statue moai (artefact) présente une erreur : normalement c’est 2 artefacts de sa main qu’il faut défausser et non deux cartes quelconques
+8)            Serait-il possible de choisir son plateau en début de partie ? Et choisir sa main de départ en option ?
+9)            Proposition : lors de la phase de chronique (marteau) mettre en surbrillance verte les monuments sur la frise qui peuvent être activés. Ensuite le joueur peut cliquer dessus pour les activer un par un. Il peut aussi cliquer sur les boutons comme c’est maintenant = moins d’aller-retour en haut et bas de
+page
+10)         Hagar qim et masuda ivafun n'enlèvent pas les savoirs perdus de suite. Je pense que la diminution ne s’affiche pas directement car ils sont enlevés lors du tour suivant, corrigé avec F5
+11)         La pyramide de Djoser ne marche pas lorsque que l’on a 4 savoir perdu ou moins
+12)         Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
+»
+
 TO TEST :
   * Barabar Caves and other addKnowledge
   * PYRAMID OF USERKAF and other discard Multi
