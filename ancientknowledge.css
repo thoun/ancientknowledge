@@ -1524,6 +1524,16 @@ body > .card {
   flex: 1;
 }
 
+.help-actions {
+  background-image: url("img/help-actions.png");
+  background-size: cover;
+}
+
+.help-turn {
+  background-image: url("img/help-turn.png");
+  background-size: cover;
+}
+
 #score {
   display: none;
   justify-content: center;
@@ -1598,6 +1608,9 @@ html, .mode_3d #game_play_area_background {
 }
 .icon.lost-knowledge {
   background-image: url("img/lost-knowledge-icon.svg");
+}
+.icon.lost-knowledge.white {
+  background-image: url("img/lost-knowledge-icon-white.svg");
 }
 .icon.vp {
   background-image: url("img/vp-icon.svg");

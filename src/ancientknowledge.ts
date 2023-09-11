@@ -11,6 +11,8 @@ const ACTION_TIMER_DURATION = 10;
 
 const LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
 const LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
+const LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY = 'AncientKnowledge-help-actions-folded';
+const LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 
 const ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
 
@@ -49,6 +51,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private archiveEngine: ArchiveEngine;
     private removeKnowledgeEngine: RemoveKnowledgeEngine;
     private moveBuildingEngine: MoveBuildingEngine;
+
+    private addKnowledgeSelection: { [playerId: string]: string } = {};
 
     constructor() {
     }
@@ -126,8 +130,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 new BgaHelpPopinButton({
                     title: _("Card help").toUpperCase(),
                     html: this.getHelpHtml(),
-                    onPopinCreated: () => this.populateHelp(),
                     buttonBackground: '#87a04f',
+                }),
+                new BgaHelpExpandableButton({
+                    expandedWidth: '326px',
+                    expandedHeight: '456px',
+                    defaultFolded: true,
+                    localStorageFoldedKey: LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY,
+                    buttonExtraClasses: `help-actions`
+                }),
+                new BgaHelpExpandableButton({
+                    expandedWidth: '326px',
+                    expandedHeight: '456px',
+                    defaultFolded: true,
+                    localStorageFoldedKey: LOCAL_STORAGE_HELP_TURN_FOLDED_KEY,
+                    buttonExtraClasses: `help-turn`
                 }),
             ]
         });
@@ -258,6 +275,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'learn':
                 this.onEnteringLearn(args.args);
                 break;
+            case 'addKnowledge':
+                this.onEnteringAddKnowledge(args.args, true);
+                break;
+            case 'addKnowledgeFromBoard':
+                this.onEnteringAddKnowledge(args.args, false);
+                break;
             case 'removeKnowledge':
                 this.onEnteringRemoveKnowledge(args.args);
                 break;
@@ -337,6 +360,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onEnteringLearn(args: EnteringLearnArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args.techs));
+        }
+    }
+
+    private onEnteringAddKnowledge(args: EnteringAddKnowledgeArgs, autoSelect: boolean) {
+        if ((this as any).isCurrentPlayerActive()) {
+            this.addKnowledgeSelection = {};
+            Object.entries(args.cardIds).forEach(([pId, cardIds]) => {
+                const timeline = this.getPlayerTable(Number(pId)).timeline;
+                timeline.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(cardIds));
+                if (autoSelect && cardIds.length == 1) {
+                    timeline.selectCard(this.builderCardsManager.getFullCardById(cardIds[0]));
+                }
+            });
         }
     }
 
@@ -468,6 +504,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'learn':
                 this.onLeavingLearn();
                 break;
+            case 'addKnowledge':
+            case 'addKnowledgeFromBoard':
+                this.onLeavingAddKnowledge();
+                break;
             case 'removeKnowledge':
                 this.onLeavingRemoveKnowledge();
                 break;
@@ -508,6 +548,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private onLeavingArchive() {
         this.archiveEngine?.leaveState();
         this.archiveEngine = null;
+    }
+
+    private onLeavingAddKnowledge() {
+        this.playersTables.forEach(playerTable => playerTable.timeline.setSelectionMode('none'));
     }
 
     private onLeavingRemoveKnowledge() {
@@ -599,6 +643,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'drawAndKeep':
                     (this as any).addActionButton(`actDrawAndKeep_button`, _("Keep selected card(s)"), () => this.actDrawAndKeep());
                     document.getElementById('actDrawAndKeep_button').classList.add('disabled');
+                    break;
+                case 'addKnowledge':
+                    (this as any).addActionButton(`actAddKnowledge_button`, formatTextIcons(_("Add ${n} <LOST_KNOWLEDGE> to selected cards").replace('${n}', args.n), true), () => this.actAddKnowledge());
+                    document.getElementById('actAddKnowledge_button').classList.add('disabled');
+                    break;
+                case 'addKnowledgeFromBoard':
+                    (this as any).addActionButton(`actAddKnowledgeFromBoard_button`, formatTextIcons(_("Add ${n} <LOST_KNOWLEDGE> to selected cards").replace('${n}', args.n), true), () => this.actAddKnowledgeFromBoard());
+                    document.getElementById('actAddKnowledgeFromBoard_button').classList.add('disabled');
                     break;
             }
         } else {
@@ -842,47 +894,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
-            <h1>${_("Assets")}</h2>
-            <div class="help-section">
-                <div class="icon vp"></div>
-                <div class="help-label">${_("Gain 1 <strong>Victory Point</strong>. The player moves their token forward 1 space on the Score Track.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon recruit"></div>
-                <div class="help-label">${_("Gain 1 <strong>Recruit</strong>: The player adds 1 Recruit token to their ship.")} ${_("It is not possible to have more than 3.")} ${_("A recruit allows a player to draw the Viking card of their choice when Recruiting or replaces a Viking card during Exploration.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon bracelet"></div>
-                <div class="help-label">${_("Gain 1 <strong>Silver Bracelet</strong>: The player adds 1 Silver Bracelet token to their ship.")} ${_("It is not possible to have more than 3.")} ${_("They are used for Trading.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon reputation"></div>
-                <div class="help-label">${_("Gain 1 <strong>Reputation Point</strong>: The player moves their token forward 1 space on the Reputation Track.")}</div>
-            </div>
-            <div class="help-section">
-                <div class="icon take-card"></div>
-                <div class="help-label">${_("Draw <strong>the first Viking card</strong> from the deck: It is placed in the player\'s Crew Zone (without taking any assets).")}</div>
-            </div>
-
-            <h1>${_("Powers of the artifacts (variant option)")}</h1>
-        `;
-
-        for (let i = 1; i <=7; i++) {
-            html += `
-            <div class="help-section">
-                <div id="help-artifact-${i}"></div>
-                <div>${/*this.technologyTilesManager.getTooltip(i as any)*/''}</div>
-            </div> `;
-        }
-        html += `</div>`;
+            <h1>${_("Icons")}</h2>
+            TODO help p14
+        </div>`;
 
         return html;
-    }
-
-    private populateHelp() {
-        for (let i = 1; i <=7; i++) {
-            //this.technologyTilesManager.setForHelp(i, `help-artifact-${i}`);
-        }
     }
     
     public onTableTechnologyTileClick(tile: TechnologyTile, showWarning: boolean = true): void {
@@ -933,7 +949,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    public onTimelineCardSelectionChange(selection: BuilderCard[]): void {
+    public onTimelineCardSelectionChange(selection: BuilderCard[], playerId: number): void {
         if (this.gamedatas.gamestate.name == 'swap') {
             const length = selection.length + (this.gamedatas.gamestate.args.card_id ? 1 : 0);
             document.getElementById('actSwap_button').classList.toggle('disabled', length != 2);
@@ -945,6 +961,42 @@ class AncientKnowledge implements AncientKnowledgeGame {
             if (selection.length == 1) {
                 this.resolveChoiceCardClicked(selection[0]);
             }
+        } else if (this.gamedatas.gamestate.name == 'addKnowledge') {
+            if (selection.length <= 1) {
+                this.addKnowledgeSelection[playerId] = selection[0]?.id;
+            }
+            const cardIdsPerPlayer = (this.gamedatas.gamestate.args as EnteringAddKnowledgeArgs).cardIds;
+            const expectedNumber = Object.values(cardIdsPerPlayer).filter(cardIds => cardIds.length > 0).length;
+            const currentNumber = Object.values(this.addKnowledgeSelection).filter(cardId => Boolean(cardId)).length;
+            let valid = expectedNumber === currentNumber;
+            if (valid) {
+                Object.entries(this.addKnowledgeSelection).forEach(([pId, cardId]) => {
+                    if (!cardIdsPerPlayer[pId]?.includes(cardId)) {
+                        valid = false;
+                    }
+                });
+            }
+            document.getElementById('actAddKnowledge_button').classList.toggle('disabled', !valid);
+        } else if (this.gamedatas.gamestate.name == 'addKnowledgeFromBoard') {
+            Object.keys(this.addKnowledgeSelection).forEach((pId) => {
+                const timeline = this.getPlayerTable(Number(pId)).timeline;
+                timeline.unselectCard(this.builderCardsManager.getFullCardById(this.addKnowledgeSelection[pId]), true);
+            });
+            this.addKnowledgeSelection = {};
+
+            if (selection.length <= 1) {
+                this.addKnowledgeSelection[playerId] = selection[0]?.id;
+            }
+            let valid = Boolean(this.addKnowledgeSelection[playerId]);
+            if (valid) {
+                const cardIdsPerPlayer = (this.gamedatas.gamestate.args as EnteringAddKnowledgeArgs).cardIds;
+                Object.entries(this.addKnowledgeSelection).forEach(([pId, cardId]) => {
+                    if (!cardIdsPerPlayer[pId]?.includes(cardId)) {
+                        valid = false;
+                    }
+                });
+            }
+            document.getElementById('actAddKnowledgeFromBoard_button').classList.toggle('disabled', !valid);
         }
     }
 
@@ -1027,6 +1079,20 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
 
         this.takeAtomicAction('actSwap', cardsIds);
+    }
+  	
+    public actAddKnowledge() {
+        const addKnowledgeSelection = this.addKnowledgeSelection;
+        Object.keys(addKnowledgeSelection).forEach(key => {
+            if (!addKnowledgeSelection[key]) {
+                delete addKnowledgeSelection[key];
+            }
+        })
+        this.takeAtomicAction('actAddKnowledge', [this.addKnowledgeSelection])
+    }
+  	
+    public actAddKnowledgeFromBoard() {
+        this.takeAtomicAction('actAddKnowledgeFromBoard', [Object.values(this.addKnowledgeSelection)[0]]);
     }
   	
     public actExcavate() {
@@ -1155,6 +1221,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['refreshHand', 1],
             ['declineCard', undefined],
             ['declineSlideLeft', undefined],
+            ['addKnowledge', ANIMATION_MS],
+            ['addKnowledgeFromBoard', ANIMATION_MS],
             ['removeKnowledge', ANIMATION_MS],
             ['clearTechBoard', ANIMATION_MS],
             ['midGameReached', ANIMATION_MS],
@@ -1315,6 +1383,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     notif_declineSlideLeft(args: NotifDeclineCardArgs) {
         return this.getPlayerTable(args.player_id).declineSlideLeft();
+    }
+    
+    notif_addKnowledge(args: NotifAddKnowledgeArgs) {
+        Object.values(args.cards).forEach(card => this.playersTables.find(playerTable => playerTable.timeline.getCards().some(c => c.id == card.id)).setCardKnowledge(card.id, card.knowledge));
+    }
+    
+    notif_addKnowledgeFromBoard(args: NotifAddKnowledgeFromBoardArgs) {
+        const { card, player_id, n } = args;
+        this.playersTables.find(playerTable => playerTable.timeline.getCards().some(c => c.id == card.id)).setCardKnowledge(card.id, card.knowledge);
+
+        this.getPlayerTable(player_id).incLostKnowledge(-n);
+        this.lostKnowledgeCounters[player_id].incValue(-n);
+        document.getElementById(`player-table-${player_id}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[player_id].getValue()}`;
     }
     
     notif_removeKnowledge(args: NotifRemoveKnowledgeArgs) {

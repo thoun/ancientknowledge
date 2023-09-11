@@ -1,10 +1,11 @@
-function formatTextIcons(rawText: string) {
+function formatTextIcons(rawText: string, white: boolean = false) {
     if (!rawText) {
         return '';
     }
+    const whiteText = white ? 'white' : '';
     return rawText
         .replace(/<KNOWLEDGE>/ig, '<span class="icon knowledge"></span>')
-        .replace(/<LOST_KNOWLEDGE>/ig, '<span class="icon lost-knowledge"></span>')
+        .replace(/<LOST_KNOWLEDGE>/ig, `<span class="icon lost-knowledge ${whiteText}"></span>`)
         .replace(/<VP>/ig, '<span class="icon vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon city"></span>')
         .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')

@@ -62,6 +62,10 @@ html, .mode_3d #game_play_area_background {
   }
   &.lost-knowledge {
     background-image: url('img/lost-knowledge-icon.svg');
+
+    &.white {
+      background-image: url('img/lost-knowledge-icon-white.svg');
+    }
   }
   &.vp {
     background-image: url('img/vp-icon.svg');

@@ -4,12 +4,26 @@ const log = isDebug ? console.log.bind(window.console) : function () { };
 const timelineSlotsIds = [];
 [1, 0].forEach(line => [1,2,3,4,5,6].forEach(space => timelineSlotsIds.push(`timeline-${space}-${line}`)));
 
+class PastDeck extends AllVisibleDeck<BuilderCard> {
+    constructor(protected manager: CardManager<BuilderCard>, protected element: HTMLElement) {
+        super(manager, element, {
+            verticalShift: '0px',
+            horizontalShift: '5px',
+            direction: 'horizontal',
+            counter: {
+                hideWhenEmpty: true,
+            },
+            sort: (a: BuilderCard, b: BuilderCard) => a.rotated == b.rotated ? a.id.charCodeAt(0) - b.id.charCodeAt(0) : a.rotated - b.rotated,
+        });
+    }
+}
+
 class PlayerTable {
     public playerId: number;
     public hand?: LineStock<BuilderCard>;
     public handTech?: LineStock<TechnologyTile>;
     public timeline: SlotStock<BuilderCard>;
-    public past: AllVisibleDeck<BuilderCard>;
+    public past: PastDeck;
     public artifacts: SlotStock<BuilderCard>;
     public technologyTilesDecks: AllVisibleDeck<TechnologyTile>[] = [];
 
@@ -66,7 +80,7 @@ class PlayerTable {
             slotsIds: timelineSlotsIds,
             mapCardToSlot: card => card.location,
         });
-        this.timeline.onSelectionChange = (selection: BuilderCard[]) => this.game.onTimelineCardSelectionChange(selection);
+        this.timeline.onSelectionChange = (selection: BuilderCard[]) => this.game.onTimelineCardSelectionChange(selection, this.playerId);
         
         timelineSlotsIds.map(slotId => timelineDiv.querySelector(`[data-slot-id="${slotId}"]`)).forEach((element: HTMLDivElement) => element.addEventListener('click', () => {
             if (element.classList.contains('selectable')) {
@@ -85,14 +99,7 @@ class PlayerTable {
         this.artifacts.onCardClick = card => this.game.onArtifactCardClick(card);
 
         const pastDiv = document.getElementById(`player-table-${this.playerId}-past`);
-        this.past = new AllVisibleDeck<BuilderCard>(this.game.builderCardsManager, pastDiv, {
-            verticalShift: '0px',
-            horizontalShift: '5px',
-            direction: 'horizontal',
-            counter: {
-                hideWhenEmpty: true,
-            },
-        });
+        this.past = new PastDeck(this.game.builderCardsManager, pastDiv);
         this.past.onSelectionChange = (selection: BuilderCard[]) => this.game.onPastCardSelectionChange(selection);
         
         ['ancient', 'writing', 'secret'].forEach(type => {
@@ -283,7 +290,7 @@ class PlayerTable {
         }
     }
     
-    public setTimelineSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
+    public setTimelineSlotsSelectable(selectable: boolean, possibleCardLocations: PossibleCardLocations = null) {
         const slotIds = selectable ? Object.keys(possibleCardLocations) : [];
         document.getElementById(`player-table-${this.playerId}-timeline`).querySelectorAll(`.slot`).forEach((slot: HTMLDivElement) => {
             const slotId = slot.dataset.slotId;
@@ -352,5 +359,6 @@ class PlayerTable {
     
     public rotateCards(cards: BuilderCard[]) {
         cards.forEach(card => this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }));
+        this.past.sort();
     }
 }

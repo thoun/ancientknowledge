@@ -67,7 +67,7 @@ class AddKnowledgeFromBoard extends \AK\Models\Action
   {
     $cardId = null;
     foreach ($this->getCardIds($player) as $pId => $cIds) {
-      if (count($cIds) > 2) {
+      if (count($cIds) > 1) {
         return null;
       }
       if (count($cIds) == 1) {

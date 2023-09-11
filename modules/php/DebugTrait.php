@@ -35,8 +35,8 @@ trait DebugTrait
     }
   }
 
-  // addHand(P34_PyramidsOfPlaineMagnien)
-  // addHand(A6_AntikytheraMechanism)
+  // addHand(M15_BarabarCaves)
+  // addHand(M24_TlalocsStatue)
   function addHand($cardId)
   {
     $player = Players::getCurrent();
