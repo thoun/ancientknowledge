@@ -19,9 +19,12 @@ class T20_RongorongoGlyphs extends \AK\Models\Technology
 
   public function getImmediateEffect()
   {
-    $cardIds = $this->getPlayer()
-      ->getTimeline(MEGALITH)
-      ->getIds();
+    $cardIds = [];
+    foreach ($this->getPlayer()->getTimeline(MEGALITH) as $cardId => $card) {
+      if ($card->getKnowledge() > 0) {
+        $cardIds[] = $cardId;
+      }
+    }
 
     return empty($cardIds)
       ? null

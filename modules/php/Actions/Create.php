@@ -130,7 +130,9 @@ class Create extends \AK\Models\Action
       $knowledge = $card->getInitialKnowledge();
       $knowledge -= $card->getInitialKnowledgeDiscount();
       foreach ($player->getTimeline()->merge($player->getArtefacts()) as $card2) {
-        $knowledge -= $card2->getKnowledgeReduction($card);
+        if ($card->getId() != $card2->getId()) {
+          $knowledge -= $card2->getKnowledgeReduction($card);
+        }
       }
       $card->setKnowledge($knowledge);
     }
