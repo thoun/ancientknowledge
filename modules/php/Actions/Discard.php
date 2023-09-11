@@ -41,9 +41,13 @@ class Discard extends \AK\Models\Action
     // Do we have any constraint on the type of card to discard ?
     $constraint = $this->getCtxArg('constraint');
     if (!is_null($constraint)) {
-      $cards = $cards->filter(function ($card) use ($constraint) {
-        return in_array($card->getType(), $constraint);
-      });
+      if ($constraint == ARTEFACT) {
+        $cards = $player->getArtefacts();
+      } else {
+        $cards = $cards->filter(function ($card) use ($constraint) {
+          return in_array($card->getType(), $constraint);
+        });
+      }
     }
 
     return [
