@@ -39,7 +39,7 @@ class Building extends \AK\Helpers\DB_Model
     ['initialKnowledge', 'int'],
     ['victoryPoint', 'int'],
     ['discard', 'int'],
-    ['locked', 'bool'],
+    ['lockedSpace', 'bool'],
     ['activation', 'string'],
     ['effect', 'obj'],
 

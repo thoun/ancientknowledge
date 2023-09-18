@@ -33,7 +33,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                 engine => {
                     const card = engine.data.selectedCard;
 
-                    if (card.id[0] == 'A' || card.locked) {
+                    if (card.id[0] == 'A' || card.lockedSpace) {
                         this.data.selectedSlot = Object.keys(this.possibleCardsLocations[card.id])[0];
 
                         const stock = card.id[0] == 'A' ?
@@ -148,7 +148,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
             return null;
         }
 
-        const slot = card.id[0] == 'A' || card.locked ?
+        const slot = card.id[0] == 'A' || card.lockedSpace ?
             Object.keys(this.possibleCardsLocations[card.id])[0] :
             this.data.selectedSlot;
 

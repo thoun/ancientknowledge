@@ -12,7 +12,7 @@ interface BuilderCard {
     initialKnowledge: string;
     victoryPoint: string;
     discard: number;
-    locked: boolean;
+    lockedSpace: boolean;
     activation: string;
     effect: string[];
 
@@ -58,62 +58,10 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
         div.style.backgroundPositionX = `${backgroundPositionX}%`;
         div.style.backgroundPositionY = `${backgroundPositionY}%`;
-        /*
-        div.dataset.type = ''+card.type;
-        div.dataset.number = ''+card.number;*/
-        let html = `
-        <div id="${card.id}-tokens" class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
-        <div class="type-box" data-type="${typeLetter}">
-            <div class="type" data-type="${typeLetter}">
-                <div class="type-icon"></div>
-            </div>
-        `;
-
-        if (card.startingSpace) {
-            html += `<div class="starting-space">${card.startingSpace}</div>`;
-        }
-        html += `</div>`;
+        let html = ``;
 
         // TODO TEMP
-        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
-
-        if (card.discard || card.locked) {
-            html += `
-            <div class="discard">`;
-            if (card.discard) {
-                html += `
-                    <div class="discard-text">${card.discard}</div>
-                    <div class="discard-icon"></div>`;
-            }
-            if (card.locked) {
-                html += `
-                <div class="discard">
-                    <div class="lock-icon"></div>
-                </div>`;
-            }
-            html += `
-            </div>`;
-        }
-
-        html += `
-        <div class="center-box">
-            <div class="activation-box"></div>
-            <div class="line bottom"></div>
-            <div class="line top"></div>
-            <div class="line middle"></div>`;
-        if (typeLetter != 'A') {
-            html += `
-            <div class="center-zone">
-                <div class="initial-knowledge">${card.initialKnowledge ?? ''}</div>
-                <div class="knowledge-icon"></div>
-                <div class="victory-point">${card.victoryPoint ?? ''}</div>
-                <div class="vp-icon"></div>
-            </div>
-            `;
-        }
-        html += `
-            <div class="activation" data-type="${card.activation}"></div>
-        </div>
+        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>
         <div class="name-box">
             <div class="name">
                 ${card.name ?? ''}
@@ -189,7 +137,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
             <strong>${_("Discard cards:")}</strong> ${card.discard}
             `;
         }
-        if (card.locked) {
+        if (card.lockedSpace) {
             message += `
             <br>
             <strong>${_("Locked card")}</strong>

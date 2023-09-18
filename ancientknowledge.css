@@ -1171,6 +1171,7 @@ body > .card {
   bottom: -7px;
   right: 40px;
   color: white;
+  text-shadow: 0 1px gray, 0 0 2px gray;
   font-size: 48px;
 }
 

@@ -54,7 +54,7 @@ class Create extends \AK\Models\Action
       }
       // Buildings => check all the slots, unless locked
       else {
-        $available = $card->isLocked() ? [$card->getStartingSpace()] : [1, 2, 3, 4, 5, 6];
+        $available = $card->isLockedSpace() ? [$card->getStartingSpace()] : [1, 2, 3, 4, 5, 6];
         foreach ($available as $time) {
           // Enough card ?
           $totalToDiscard = $discard + abs($time - $card->getStartingSpace());
