@@ -2318,18 +2318,17 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         var requirement = ((_a = card.requirement) === null || _a === void 0 ? void 0 : _a.length) > 0;
         div.dataset.requirement = requirement.toString();
         div.style.setProperty('--card-color', TILE_COLORS[type]);
-        /*
-        div.dataset.type = ''+card.type;
-        div.dataset.number = ''+card.number;*/
-        var backgroundPositionX = ((card.number - 1) % 9) * 100 / 8;
-        var backgroundPositionY = Math.floor((card.number - 1) / 9) * 100 / 4;
-        var html = "\n        <div class=\"background\" data-type=\"".concat(type, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(type, "\">\n            <div class=\"type\" data-type=\"").concat(type, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        </div>\n        <div class=\"level-box\">\n            <div class=\"level-icon\" data-level=\"").concat(card.level, "\"></div>\n        </div>");
+        var backgroundIndex = card.number - (card.level == 2 ? 28 : 1);
+        var tilesByRow = card.level == 2 ? 6 : 9;
+        div.style.backgroundPositionX = "".concat((backgroundIndex % tilesByRow) * 100 / (tilesByRow - 1), "%");
+        div.style.backgroundPositionY = "".concat(Math.floor(backgroundIndex / tilesByRow) * 50, "%");
+        var html = "";
         // TODO TEMP
         html += "<div class=\"implemented\" data-implemented=\"".concat((_c = (_b = card.implemented) === null || _b === void 0 ? void 0 : _b.toString()) !== null && _c !== void 0 ? _c : 'false', "\"></div>");
         if (requirement) {
             html += "<div class=\"requirement\"><div>".concat((_d = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>");
         }
-        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"center-box\">\n            <div class=\"activation-box\"></div>\n            <div class=\"line left\"></div>\n            <div class=\"line right\"></div>\n            <div class=\"line middle\"></div>\n            <div class=\"activation\" data-type=\"").concat(card.activation, "\"></div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        </div>\n        ");
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_e = card.name) !== null && _e !== void 0 ? _e : '', "\n            </div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_g = (_f = card.effect) === null || _f === void 0 ? void 0 : _f.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _g !== void 0 ? _g : '', "</div>\n        </div>\n        ");
         div.innerHTML = html;
         if (requirement) {
             this.reduceToFit(div.querySelector('.requirement'));

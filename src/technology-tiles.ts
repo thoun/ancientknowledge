@@ -44,21 +44,12 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         const requirement = card.requirement?.length > 0;
         div.dataset.requirement = requirement.toString();
         div.style.setProperty('--card-color', TILE_COLORS[type]);
-        /*
-        div.dataset.type = ''+card.type;
-        div.dataset.number = ''+card.number;*/
-        const backgroundPositionX = ((card.number - 1) % 9) * 100 / 8;
-        const backgroundPositionY = Math.floor((card.number - 1) / 9) * 100 / 4;
-        let html = `
-        <div class="background" data-type="${type}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
-        <div class="type-box" data-type="${type}">
-            <div class="type" data-type="${type}">
-                <div class="type-icon"></div>
-            </div>
-        </div>
-        <div class="level-box">
-            <div class="level-icon" data-level="${card.level}"></div>
-        </div>`;
+
+        const backgroundIndex = card.number - (card.level == 2 ? 28 : 1);
+        const tilesByRow = card.level == 2 ? 6 : 9;
+        div.style.backgroundPositionX = `${(backgroundIndex % tilesByRow) * 100 / (tilesByRow - 1)}%`;
+        div.style.backgroundPositionY = `${Math.floor(backgroundIndex / tilesByRow) * 50}%`;
+        let html = ``;
 
         // TODO TEMP
         html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
@@ -70,13 +61,6 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
             <div class="name">
                 ${card.name ?? ''}
             </div>
-        </div>
-        <div class="center-box">
-            <div class="activation-box"></div>
-            <div class="line left"></div>
-            <div class="line right"></div>
-            <div class="line middle"></div>
-            <div class="activation" data-type="${card.activation}"></div>
         </div>
         <div class="effect">
             <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div>
