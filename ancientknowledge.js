@@ -2174,12 +2174,15 @@ var BuilderCardsManager = /** @class */ (function (_super) {
             return;
         }
         var typeLetter = card.id.substring(0, 1);
+        var backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
+        var backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
+        div.dataset.type = typeLetter;
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
+        div.style.backgroundPositionX = "".concat(backgroundPositionX, "%");
+        div.style.backgroundPositionY = "".concat(backgroundPositionY, "%");
         /*
         div.dataset.type = ''+card.type;
         div.dataset.number = ''+card.number;*/
-        var backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
-        var backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
         var html = "\n        <div id=\"".concat(card.id, "-tokens\" class=\"background\" data-type=\"").concat(typeLetter, "\" style=\"background-position: ").concat(backgroundPositionX, "% ").concat(backgroundPositionY, "%\"></div>\n        <div class=\"type-box\" data-type=\"").concat(typeLetter, "\">\n            <div class=\"type\" data-type=\"").concat(typeLetter, "\">\n                <div class=\"type-icon\"></div>\n            </div>\n        ");
         if (card.startingSpace) {
             html += "<div class=\"starting-space\">".concat(card.startingSpace, "</div>");

@@ -52,12 +52,15 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         }
 
         const typeLetter = card.id.substring(0, 1);
+        const backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
+        const backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
+        div.dataset.type = typeLetter;
         div.style.setProperty('--card-color', CARD_COLORS[typeLetter]);
+        div.style.backgroundPositionX = `${backgroundPositionX}%`;
+        div.style.backgroundPositionY = `${backgroundPositionY}%`;
         /*
         div.dataset.type = ''+card.type;
         div.dataset.number = ''+card.number;*/
-        const backgroundPositionX = ((card.number - 1) % 6) * 100 / 5;
-        const backgroundPositionY = Math.floor((card.number - 1) / 6) * 100 / 5;
         let html = `
         <div id="${card.id}-tokens" class="background" data-type="${typeLetter}" style="background-position: ${backgroundPositionX}% ${backgroundPositionY}%"></div>
         <div class="type-box" data-type="${typeLetter}">
