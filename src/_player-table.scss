@@ -102,6 +102,10 @@
       position: absolute;
       left: 62px;
       top: 427px;
+
+      &[data-empty="true"] {
+        display: none;
+      }
     }
   }
   

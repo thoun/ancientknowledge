@@ -2598,7 +2598,7 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge-counter\" class=\"lost-knowledge-counter bga-cards_deck-counter round\">").concat(player.lostKnowledge, "</div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge-counter\" class=\"lost-knowledge-counter bga-cards_deck-counter round\" data-empty=\"").concat((!player.lostKnowledge).toString(), "\">").concat(player.lostKnowledge, "</div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
@@ -2827,8 +2827,10 @@ var PlayerTable = /** @class */ (function () {
         }
     };
     PlayerTable.prototype.declineCard = function (card, lostKnowledge) {
+        var _a;
         this.incLostKnowledge(lostKnowledge);
         this.setCardKnowledge(card.id, 0);
+        (_a = document.getElementById("".concat(card.id, "-token-counter"))) === null || _a === void 0 ? void 0 : _a.remove();
         return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
     };
     PlayerTable.prototype.declineSlideLeft = function () {
@@ -3256,6 +3258,7 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
     return MoveBuildingEngine;
 }(FrontEngine));
 var ANIMATION_MS = 500;
+var MIN_NOTIFICATION_MS = 1200;
 var SCORE_ANIMATION_MS = 1500;
 var ACTION_TIMER_DURATION = 10;
 var LOCAL_STORAGE_ZOOM_KEY = 'AncientKnowledge-zoom';
@@ -3263,6 +3266,9 @@ var LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 var LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY = 'AncientKnowledge-help-actions-folded';
 var LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 var ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
+function sleep(ms) {
+    return new Promise(function (r) { return setTimeout(r, ms); });
+}
 var AncientKnowledge = /** @class */ (function () {
     function AncientKnowledge() {
         this.playersTables = [];
@@ -4335,15 +4341,33 @@ var AncientKnowledge = /** @class */ (function () {
                 if (notifDetails.args.player_id && notifDetails.args.icons) {
                     _this.updateIcons(notifDetails.args.player_id, notifDetails.args.icons);
                 }
+                var promises = [];
+                if (!isNaN(notif[1])) {
+                    promises.push(sleep(notif[1]));
+                }
+                if (promise) {
+                    promises.push(promise);
+                }
+                var minDuration = 1;
                 // tell the UI notification ends, if the function returned a promise
                 promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
-                var msg = /*this.formatString(*/ _this.format_string_recursive(notifDetails.log, notifDetails.args) /*)*/;
+                var msg = _this.format_string_recursive(notifDetails.log, notifDetails.args);
                 if (msg != '') {
                     $('gameaction_status').innerHTML = msg;
                     $('pagemaintitletext').innerHTML = msg;
+                    $('generalactions').innerHTML = '';
+                    // If there is some text, we let the message some time, to be read 
+                    minDuration = MIN_NOTIFICATION_MS;
+                }
+                // tell the UI notification ends, if the function returned a promise. 
+                if (_this.animationManager.animationsActive()) {
+                    Promise.all(__spreadArray(__spreadArray([], promises, true), [sleep(minDuration)], false)).then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
+                }
+                else {
+                    _this.notifqueue.setSynchronousDuration(0);
                 }
             });
-            _this.notifqueue.setSynchronous(notif[0], notif[1]);
+            _this.notifqueue.setSynchronous(notif[0], undefined);
         });
         if (isDebug) {
             notifs.forEach(function (notif) {
@@ -4413,8 +4437,17 @@ var AncientKnowledge = /** @class */ (function () {
         });
         return Promise.all(promises);
     };
+    AncientKnowledge.prototype.updatePlayerLostCounter = function (playerId) {
+        var playerCounter = document.getElementById("player-table-".concat(playerId, "-lost-knowledge-counter"));
+        var value = this.lostKnowledgeCounters[playerId].getValue();
+        playerCounter.innerHTML = "".concat(value);
+        playerCounter.dataset.empty = (!value).toString();
+    };
     AncientKnowledge.prototype.notif_discardLostKnowledge = function (args) {
-        //  TODO
+        var player_id = args.player_id, n = args.n;
+        this.lostKnowledgeCounters[player_id].incValue(-n);
+        this.updatePlayerLostCounter(player_id);
+        this.getPlayerTable(player_id).incLostKnowledge(-n);
     };
     AncientKnowledge.prototype.notif_learnTech = function (args) {
         return this.getPlayerTable(args.player_id).addTechnologyTile(args.card);
@@ -4430,7 +4463,7 @@ var AncientKnowledge = /** @class */ (function () {
             _this.getPlayerTable(playerId).refreshUI(player);
             _this.handCounters[playerId].setValue(player.handCount);
             _this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
-            document.getElementById("player-table-".concat(playerId, "-lost-knowledge-counter")).innerHTML = "".concat(_this.lostKnowledgeCounters[playerId].getValue());
+            _this.updatePlayerLostCounter(player_id);
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
@@ -4450,7 +4483,7 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.notif_declineCard = function (args) {
         var player_id = args.player_id, card = args.card, n = args.n;
         this.lostKnowledgeCounters[player_id].incValue(n);
-        document.getElementById("player-table-".concat(player_id, "-lost-knowledge-counter")).innerHTML = "".concat(this.lostKnowledgeCounters[player_id].getValue());
+        this.updatePlayerLostCounter(player_id);
         return this.getPlayerTable(player_id).declineCard(card, n);
     };
     AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {
@@ -4465,7 +4498,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.playersTables.find(function (playerTable) { return playerTable.timeline.getCards().some(function (c) { return c.id == card.id; }); }).setCardKnowledge(card.id, card.knowledge);
         this.getPlayerTable(player_id).incLostKnowledge(-n);
         this.lostKnowledgeCounters[player_id].incValue(-n);
-        document.getElementById("player-table-".concat(player_id, "-lost-knowledge-counter")).innerHTML = "".concat(this.lostKnowledgeCounters[player_id].getValue());
+        this.updatePlayerLostCounter(player_id);
     };
     AncientKnowledge.prototype.notif_removeKnowledge = function (args) {
         var table = this.getPlayerTable(args.player_id);

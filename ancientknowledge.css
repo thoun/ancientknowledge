@@ -1097,6 +1097,9 @@ body > .card {
   left: 62px;
   top: 427px;
 }
+.player-table .player-board .lost-knowledge-counter[data-empty=true] {
+  display: none;
+}
 .player-table .block-with-text {
   display: flex;
 }

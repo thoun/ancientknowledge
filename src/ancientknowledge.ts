@@ -6,6 +6,7 @@ declare const _;
 declare const g_gamethemeurl;
 
 const ANIMATION_MS = 500;
+const MIN_NOTIFICATION_MS = 1200;
 const SCORE_ANIMATION_MS = 1500;
 const ACTION_TIMER_DURATION = 10;
 
@@ -15,6 +16,10 @@ const LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY = 'AncientKnowledge-help-actions-fol
 const LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 
 const ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
+
+function sleep(ms: number){
+    return new Promise((r) => setTimeout(r, ms));
+}
 
 class AncientKnowledge implements AncientKnowledgeGame {
     public animationManager: AnimationManager;
@@ -1247,16 +1252,35 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.updateIcons(notifDetails.args.player_id, notifDetails.args.icons);
                 }
 
+                const promises = [];
+                if (!isNaN(notif[1] as number)) {
+                    promises.push(sleep(notif[1] as number));
+                }
+                if (promise) {
+                    promises.push(promise);
+                }
+                let minDuration = 1;
                 // tell the UI notification ends, if the function returned a promise
                 promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
 
-                let msg = /*this.formatString(*/this.format_string_recursive(notifDetails.log, notifDetails.args)/*)*/;
+                let msg = this.format_string_recursive(notifDetails.log, notifDetails.args);
                 if (msg != '') {
                     $('gameaction_status').innerHTML = msg;
                     $('pagemaintitletext').innerHTML = msg;
+                    $('generalactions').innerHTML = '';
+
+                    // If there is some text, we let the message some time, to be read 
+                    minDuration = MIN_NOTIFICATION_MS;
+                }
+
+                // tell the UI notification ends, if the function returned a promise. 
+                if (this.animationManager.animationsActive()) {
+                    Promise.all([...promises, sleep(minDuration)]).then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
+                } else {
+                    (this as any).notifqueue.setSynchronousDuration(0);
                 }
             });
-            (this as any).notifqueue.setSynchronous(notif[0], notif[1]);
+            (this as any).notifqueue.setSynchronous(notif[0], undefined);
         });
 
         if (isDebug) {
@@ -1335,8 +1359,18 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return Promise.all(promises);
     }
 
+    private updatePlayerLostCounter(playerId: number) {
+        const playerCounter = document.getElementById(`player-table-${playerId}-lost-knowledge-counter`);
+        const value = this.lostKnowledgeCounters[playerId].getValue();
+        playerCounter.innerHTML = `${value}`;
+        playerCounter.dataset.empty = (!value).toString();
+    }
+
     notif_discardLostKnowledge(args: NotifDiscardLostKnowledgeArgs) {
-        //  TODO
+        const { player_id, n } = args;
+        this.lostKnowledgeCounters[player_id].incValue(-n);
+        this.updatePlayerLostCounter(player_id);
+        this.getPlayerTable(player_id).incLostKnowledge(-n);
     }
 
     notif_learnTech(args: NotifLearnTechArgs) {
@@ -1354,7 +1388,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.getPlayerTable(playerId).refreshUI(player);
             this.handCounters[playerId].setValue(player.handCount);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
-            document.getElementById(`player-table-${playerId}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[playerId].getValue()}`;
+            this.updatePlayerLostCounter(player_id);
             this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
@@ -1377,7 +1411,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_declineCard(args: NotifDeclineCardArgs) {
         const { player_id, card, n } = args;
         this.lostKnowledgeCounters[player_id].incValue(n);
-        document.getElementById(`player-table-${player_id}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[player_id].getValue()}`;
+        this.updatePlayerLostCounter(player_id);
         return this.getPlayerTable(player_id).declineCard(card, n);
     }  
 
@@ -1395,7 +1429,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
         this.getPlayerTable(player_id).incLostKnowledge(-n);
         this.lostKnowledgeCounters[player_id].incValue(-n);
-        document.getElementById(`player-table-${player_id}-lost-knowledge-counter`).innerHTML = `${this.lostKnowledgeCounters[player_id].getValue()}`;
+        this.updatePlayerLostCounter(player_id);
     }
     
     notif_removeKnowledge(args: NotifRemoveKnowledgeArgs) {

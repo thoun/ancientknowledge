@@ -49,7 +49,7 @@ class DiscardLostKnowledge extends \AK\Models\Action
       $knowledge = max(0, $knowledge - $n);
       $player->setLostKnowledge($knowledge);
       // Stats::incCardsDrawn($player, $nInDeck);
-      Notifications::discardLostKnowledge($player, $knowledge);
+      Notifications::discardLostKnowledge($player, $n);
     }
 
     $this->resolveAction();
