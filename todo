@@ -1,11 +1,8 @@
 IELLO :
-?? 11)         La pyramide de Djoser ne marche pas lorsque que l’on a 4 savoir perdu ou moins
 - 12)         Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
 »
 
 Quelques retours :
-- La mana pyramid (artefact) ne fonctionne pas.
-
 - Le « 0 savoir » apparait toujours sur les monuments dans le passé (peut-être faut-il actualiser ? Gênant dans tous les cas).
 
 - S'il n'y a aucun monument avec pouvoir de déclin cela ne sert à rien de demander dans quel ordre on décline.
