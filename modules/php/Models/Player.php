@@ -176,7 +176,15 @@ class Player extends \AK\Helpers\DB_Model
 
   public function countIcons($toKeep = null)
   {
-    $icons = [CITY => 0, MEGALITH => 0, PYRAMID => 0, ARTEFACT => $this->getArtefacts()->count()];
+    $icons = [
+      CITY => 0, 
+      MEGALITH => 0, 
+      PYRAMID => 0, 
+      ARTEFACT => $this->getArtefacts()->count(), 
+      ANCIENT => $this->getTechTiles(ANCIENT)->count(),
+      WRITING => $this->getTechTiles(WRITING)->count(), 
+      SECRET => $this->getTechTiles(SECRET)->count(),
+    ];
     foreach ($this->getPast() as $card) {
       $icons[$card->getType()]++;
     }
