@@ -1,19 +1,3 @@
-IELLO :
-- 12)         Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
-»
-
-Quelques retours :
-- Lorsque l'on tap/incline des monuments dans le passé, on ne voit plus les derniers lorsque ça défile. Je pense qu'il faut plus globalement revoir l'affichage du passé.
-
-- Bug lorsqu'il n'y a plus de cartes Technology/Connaissance dans le deck alors que normalement on remélange.
-
-- Cité Oseirion, Mégalithe Ghagwa, Pyramide Kephren ne scorent pas du tout à la fin.
-
-
-On a aussi une erreur de visuel sur une carte mais l’erreur vient de notre côté, vous trouverez la nouvelle version de la carte en pièce jointe de ce mail. J
-Pour le background, notre graphiste en charge du projet essaye de se dégager du temps en fin de semaine car notre premier test n’était pas concluant (blanc sur blanc, manque de détails).
-
-
 TO TEST :
   * Barabar Caves and other addKnowledge M24_TlalocsStatue   M15_BarabarCaves
   * PYRAMID OF USERKAF and other discard Multi
@@ -21,6 +5,8 @@ TO TEST :
 
 
 Backend:
+- Bug lorsqu'il n'y a plus de cartes Technology/Connaissance dans le deck alors que normalement on remélange.
+- Cité Oseirion, Mégalithe Ghagwa, Pyramide Kephren ne scorent pas du tout à la fin.
  - S'il n'y a aucun monument avec pouvoir de déclin cela ne sert à rien de demander dans quel ordre on décline.
  - 6) Cyrène (cité) : on me propose de faire le marteau alors que je n'ai pas 4 cités, on devrait ne pas avoir à cliquer sur « pass » si on ne peut activer le pouvoir de chronique => autopass si pas d'action de marteau possible. Ou argumenter pour dire que c'est pas une bonne idée ? ça permet de voir que la phase s'est bien déclenchée, mais que nos pouvoirs ne sont pas actuellement utilisable. Perso je laisserai comme c'est, s'ils acceptent
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
@@ -29,6 +15,9 @@ Backend:
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 
 Frontend:
+On a aussi une erreur de visuel sur une carte mais l’erreur vient de notre côté, vous trouverez la nouvelle version de la carte en pièce jointe de ce mail. J
+Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
+- Lorsque l'on tap/incline des monuments dans le passé, on ne voit plus les derniers lorsque ça défile. Je pense qu'il faut plus globalement revoir l'affichage du passé.
  - discard action : use cardIds sent by backend because sometimes you need to discard artefacts and sometimes from hand
 
  - make help cards translatable
