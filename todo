@@ -1,8 +1,5 @@
 IELLO :
-?? 2)            Ecriture Rongorongo a fait bugger la partie.
-X 4)            Colosses de Memnon permet d’enlever des savoirs sur lui-même mais ne devrait pas.
-5)            On devrait voir les cartes connaissance lorsqu'on sélectionne sa main de départ et pas après seulement.
-6)            Cyrène (cité) : on me propose de faire le marteau alors que je n'ai pas 4 cités, on devrait ne pas avoir à cliquer sur « pass » si on ne peut activer le pouvoir de chronique
+
 - 7)            Statue moai (artefact) présente une erreur : normalement c’est 2 artefacts de sa main qu’il faut défausser et non deux cartes quelconques
 9)            Proposition : lors de la phase de chronique (marteau) mettre en surbrillance verte les monuments sur la frise qui peuvent être activés. Ensuite le joueur peut cliquer dessus pour les activer un par un. Il peut aussi cliquer sur les boutons comme c’est maintenant = moins d’aller-retour en haut et bas de
 page
@@ -11,6 +8,25 @@ page
 - 12)         Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
 »
 
+Quelques retours :
+- La mana pyramid (artefact) ne fonctionne pas.
+
+- Le « 0 savoir » apparait toujours sur les monuments dans le passé (peut-être faut-il actualiser ? Gênant dans tous les cas).
+
+- S'il n'y a aucun monument avec pouvoir de déclin cela ne sert à rien de demander dans quel ordre on décline.
+- Lorsque l'on tap/incline des monuments dans le passé, on ne voit plus les derniers lorsque ça défile. Je pense qu'il faut plus globalement revoir l'affichage du passé.
+
+- Pliny the elder / Pline l’ancien ne fonctionne pas, même avec trois « anciens »/têtes dans sa collection.
+
+- Bug lorsqu'il n'y a plus de cartes Technology/Connaissance dans le deck alors que normalement on remélange.
+
+- Cité Oseirion, Mégalithe Ghagwa, Pyramide Kephren ne scorent pas du tout à la fin.
+
+
+On a aussi une erreur de visuel sur une carte mais l’erreur vient de notre côté, vous trouverez la nouvelle version de la carte en pièce jointe de ce mail. J
+Pour le background, notre graphiste en charge du projet essaye de se dégager du temps en fin de semaine car notre premier test n’était pas concluant (blanc sur blanc, manque de détails).
+
+
 TO TEST :
   * Barabar Caves and other addKnowledge M24_TlalocsStatue   M15_BarabarCaves
   * PYRAMID OF USERKAF and other discard Multi
@@ -18,6 +34,7 @@ TO TEST :
 
 
 Backend:
+ - 6) Cyrène (cité) : on me propose de faire le marteau alors que je n'ai pas 4 cités, on devrait ne pas avoir à cliquer sur « pass » si on ne peut activer le pouvoir de chronique => autopass si pas d'action de marteau possible. Ou argumenter pour dire que c'est pas une bonne idée ? ça permet de voir que la phase s'est bien déclenchée, mais que nos pouvoirs ne sont pas actuellement utilisable. Perso je laisserai comme c'est, s'ils acceptent
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
  - end implementation of cards
 

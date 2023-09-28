@@ -3762,6 +3762,7 @@ var AncientKnowledge = /** @class */ (function () {
     //
     AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
+        var _a;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
@@ -3801,7 +3802,9 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'discard':
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    var cardsIds = (_a = args._private) === null || _a === void 0 ? void 0 : _a.cardIds;
+                    var selectableCards = cardsIds === null || cardsIds === void 0 ? void 0 : cardsIds.map(function (id) { return _this.builderCardsManager.getFullCardById(id); });
+                    this.getCurrentPlayerTable().setHandSelectable('multiple', selectableCards);
                     this.addActionButton("actDiscard_button", _("Discard selected cards"), function () { return _this.actDiscard(stateName == 'discardMulti'); });
                     document.getElementById('actDiscard_button').classList.add('disabled');
                     break;

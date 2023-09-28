@@ -85,14 +85,14 @@ class Notifications
     ]);
   }
 
-  public static function discardLostKnowledge($player, $knowledge)
+  public static function discardLostKnowledge($player, $n)
   {
     self::notifyAll(
       'discardLostKnowledge',
       clienttranslate('${player_name} discard ${n} <LOST_KNOWLEDGE> and now has ${m} left'),
       [
         'player' => $player,
-        'n' => $knowledge,
+        'n' => $n,
         'm' => $player->getLostKnowledge(),
       ]
     );

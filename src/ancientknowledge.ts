@@ -637,7 +637,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'discard':
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('multiple');
+                    const cardsIds = args._private?.cardIds;
+                    const selectableCards = cardsIds?.map(id => this.builderCardsManager.getFullCardById(id));
+                    this.getCurrentPlayerTable().setHandSelectable('multiple', selectableCards);
                     (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(stateName == 'discardMulti'));
                     document.getElementById('actDiscard_button').classList.add('disabled');
                     break;
