@@ -28,7 +28,7 @@ class P29_PyramidOfDjoser extends \AK\Models\Building
   public function getTimelineEffect()
   {
     $player = $this->getPlayer();
-    return $player->getLostKnowledge() < 4 || $player->getPast()->empty()
+    return $player->getLostKnowledge() > 4 || $player->getPast()->empty()
       ? null
       : [
         'action' => \REMOVE_KNOWLEDGE,

@@ -1,9 +1,4 @@
 IELLO :
-
-- 7)            Statue moai (artefact) présente une erreur : normalement c’est 2 artefacts de sa main qu’il faut défausser et non deux cartes quelconques
-9)            Proposition : lors de la phase de chronique (marteau) mettre en surbrillance verte les monuments sur la frise qui peuvent être activés. Ensuite le joueur peut cliquer dessus pour les activer un par un. Il peut aussi cliquer sur les boutons comme c’est maintenant = moins d’aller-retour en haut et bas de
-page
-- 10)         Hagar qim et masuda ivafun n'enlèvent pas les savoirs perdus de suite. Je pense que la diminution ne s’affiche pas directement car ils sont enlevés lors du tour suivant, corrigé avec F5
 ?? 11)         La pyramide de Djoser ne marche pas lorsque que l’on a 4 savoir perdu ou moins
 - 12)         Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
 »

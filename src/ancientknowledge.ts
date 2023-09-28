@@ -1390,7 +1390,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.getPlayerTable(playerId).refreshUI(player);
             this.handCounters[playerId].setValue(player.handCount);
             this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
-            this.updatePlayerLostCounter(player_id);
+            this.updatePlayerLostCounter(playerId);
             this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);

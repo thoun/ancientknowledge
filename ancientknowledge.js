@@ -4466,7 +4466,7 @@ var AncientKnowledge = /** @class */ (function () {
             _this.getPlayerTable(playerId).refreshUI(player);
             _this.handCounters[playerId].setValue(player.handCount);
             _this.lostKnowledgeCounters[playerId].setValue(player.lostKnowledge);
-            _this.updatePlayerLostCounter(player_id);
+            _this.updatePlayerLostCounter(playerId);
             _this.updateIcons(playerId, player.icons);
         });
         this.tableCenter.refreshTechnologyTiles(args.datas.techs);
