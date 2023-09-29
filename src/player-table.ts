@@ -4,20 +4,6 @@ const log = isDebug ? console.log.bind(window.console) : function () { };
 const timelineSlotsIds = [];
 [1, 0].forEach(line => [1,2,3,4,5,6].forEach(space => timelineSlotsIds.push(`timeline-${space}-${line}`)));
 
-class PastDeck extends AllVisibleDeck<BuilderCard> {
-    constructor(protected manager: CardManager<BuilderCard>, protected element: HTMLElement) {
-        super(manager, element, {
-            verticalShift: '0px',
-            horizontalShift: '5px',
-            direction: 'horizontal',
-            counter: {
-                hideWhenEmpty: true,
-            },
-            sort: (a: BuilderCard, b: BuilderCard) => a.rotated == b.rotated ? a.id.charCodeAt(0) - b.id.charCodeAt(0) : a.rotated - b.rotated,
-        });
-    }
-}
-
 class PlayerTable {
     public playerId: number;
     public hand?: LineStock<BuilderCard>;
@@ -126,6 +112,7 @@ class PlayerTable {
 
         this.past.removeAll();
         this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
+        this.past.resetPastOrder();
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             this.technologyTilesDecks[type].removeAll();
@@ -319,11 +306,15 @@ class PlayerTable {
         }
     }
     
-    public declineCard(card: BuilderCard, lostKnowledge: number): Promise<any> {
+    public async declineCard(card: BuilderCard, lostKnowledge: number): Promise<any> {
         this.incLostKnowledge(lostKnowledge);
         this.setCardKnowledge(card.id, 0);
         document.getElementById(`${card.id}-token-counter`)?.remove();
-        return this.past.addCard(this.game.builderCardsManager.getFullCard(card));
+        const promise = await this.past.addCard(this.game.builderCardsManager.getFullCard(card));
+        
+        this.past.resetPastOrder();
+
+        return promise;
     }
     
     public declineSlideLeft(): Promise<any> {
@@ -360,6 +351,6 @@ class PlayerTable {
     
     public rotateCards(cards: BuilderCard[]) {
         cards.forEach(card => this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }));
-        this.past.sort();
+        this.past.resetPastOrder();
     }
 }

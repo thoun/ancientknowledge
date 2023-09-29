@@ -164,6 +164,13 @@ interface EnteringMoveBuildingArgs {
     card_id: string | null;
 }
 
+interface EnteringSpecialEffectArgs {
+    sourceId: string;
+    _private: {
+        cardIds: string[];
+    };
+}
+
 // pDrawCards
 interface NotifPDrawCardsArgs {
     n: number;

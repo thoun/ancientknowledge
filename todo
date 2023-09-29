@@ -17,28 +17,17 @@ Backend:
 Frontend:
 - special effect
  - Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
-- Lorsque l'on tap/incline des monuments dans le passé, on ne voit plus les derniers lorsque ça défile. Je pense qu'il faut plus globalement revoir l'affichage du passé.
- - discard action : use cardIds sent by backend because sometimes you need to discard artefacts and sometimes from hand
-
  - make help cards translatable
-
- - discardMulti action: maybe wont change much, but cardIds can also be artefact for P8_PYRAMID OF USERKAF
 
  - error : During notification declineCard
   tooltipToMap[1] is undefined
   AncientKnowledge.prototype.addLogClass@https://studio.boardgamearena.com:8084/data/themereleases
 
-
- - error on declineSlideLeft notif : Uncaught (in promise) Error: Impossible to add card to slot "past" : slot "past" doesn't exists.
- - error : Uncaught (in promise) Error: Impossible to add card to slot "timeline-0-0" : slot "timeline-0-0" doesn't exists.
- 
  - update "undo turn" on the log depending on the args => dont work after irreversible step where the old "undo here" are still here.
     => works when you refresh
  - undo : multiple trigger when clicking on one "undo here"
 
  - increase timing of notifications so we can read the title page and process it before moving on the next one (lot of them are chaining at the end of a turn)
   => maybe a slider to choose speed of notifs ?
-
- - past cards : see how to display straight cards mixed with rotated cards 
 
  - test text auto-sizing on all cards

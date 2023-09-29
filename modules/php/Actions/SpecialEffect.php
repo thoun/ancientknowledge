@@ -1,6 +1,6 @@
 <?php
 namespace AK\Actions;
-use AGR\Managers\Effects;
+use AK\Managers\Effects;
 
 class SpecialEffect extends \AK\Models\Action
 {

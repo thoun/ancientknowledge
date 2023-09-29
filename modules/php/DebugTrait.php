@@ -29,9 +29,14 @@ trait DebugTrait
   // addCardsToPast(6)
   function addCardsToPast($n = 1)
   {
-    for ($i = 0; $i < $n; $i++) {
+    for ($i = 0; $i < $n; ) {
       $card = Cards::getTopOf('deck', 1)->first();
-      self::addPast($card->getId());
+      if ($card->getType() == ARTEFACT) {
+        Cards::insertOnTop($card->getId(), 'hand');
+      } else {
+        self::addPast($card->getId());
+        $i++;
+      }
     }
   }
 

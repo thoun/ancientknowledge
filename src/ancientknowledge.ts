@@ -307,6 +307,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'flipTechTile':
                 this.onEnteringFlipTechTile();
                 break;
+            case 'specialEffect':
+                this.onEnteringSpecialEffect(args.args);
+                break;
         }
     }
 
@@ -407,6 +410,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
   
     private onEnteringExcavate(args: EnteringSwapArgs) {
         if ((this as any).isCurrentPlayerActive()) {
+            this.getCurrentPlayerTable().past.setOpened(true);
             this.getCurrentPlayerTable().past.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
         }
     }
@@ -445,6 +449,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             document.getElementById(`table-center`).classList.remove(`folded`);
             this.tableCenter.setTileStocksSelectable(true);
+        }
+    }
+  
+    private onEnteringSpecialEffect(args: EnteringSpecialEffectArgs) {
+        if ((this as any).isCurrentPlayerActive()) {
+            switch (args.sourceId) {
+                case 'T17_EarthquakeEngineering':
+                    this.getCurrentPlayerTable().setHandSelectable('multiple', this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
+                    break;
+            }
         }
     }
 
@@ -520,6 +534,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 this.onLeavingSwap();
                 break;
             case 'excavate':
+                this.getCurrentPlayerTable().past.setOpened(false);
                 this.getCurrentPlayerTable()?.past.setSelectionMode('none');
                 break;
             case 'discard':
@@ -658,6 +673,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'addKnowledgeFromBoard':
                     (this as any).addActionButton(`actAddKnowledgeFromBoard_button`, formatTextIcons(_("Add ${n} <LOST_KNOWLEDGE> to selected cards").replace('${n}', args.n), true), () => this.actAddKnowledgeFromBoard());
                     document.getElementById('actAddKnowledgeFromBoard_button').classList.add('disabled');
+                    break;
+                case 'specialEffect':
+                    const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
+                    switch (specialEffectArgs.sourceId) {
+                        case 'T17_EarthquakeEngineering':
+                            (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(false));
+                            break;
+                    }
                     break;
             }
         } else {
@@ -953,6 +976,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         } else if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
             const n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
             document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
+        } if (this.gamedatas.gamestate.name == 'specialEffect') {
+            const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
+            switch (args.sourceId) {
+                case 'T17_EarthquakeEngineering':
+                    document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length <= 3);
+                    break;
+            }
         }
     }
 
@@ -1471,11 +1501,15 @@ class AncientKnowledge implements AncientKnowledgeGame {
             Promise.resolve(true);
     }
     
-    notif_moveCard(args: NotifMoveCardArgs) {
+    async notif_moveCard(args: NotifMoveCardArgs) {
         const { player_id, card } = args;
         const playerTable = this.getPlayerTable(player_id);
         const newStock = card.location == 'past' ? playerTable.past : playerTable.timeline;
-        return newStock.addCard(this.builderCardsManager.getFullCard(card));
+        await newStock.addCard(this.builderCardsManager.getFullCard(card));
+        
+        if (card.location == 'past') {
+            playerTable.past.resetPastOrder();
+        }
     }
     
     notif_mediumMessage() {}    
