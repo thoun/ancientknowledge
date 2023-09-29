@@ -1268,6 +1268,116 @@ body > .card {
   background-size: cover;
 }
 
+#help-action-popin {
+  position: relative;
+  text-align: left;
+}
+#help-action-popin h1 {
+  position: absolute;
+  color: white;
+  top: 18px;
+  left: 25px;
+  width: auto;
+  text-transform: uppercase;
+  font-family: "apotek-comp", sans-serif;
+}
+#help-action-popin .action {
+  position: absolute;
+  left: 14px;
+  right: 8px;
+  font-family: "quador-display", serif;
+}
+#help-action-popin .action[data-index="0"] {
+  top: 64px;
+}
+#help-action-popin .action[data-index="1"] {
+  top: 133px;
+}
+#help-action-popin .action[data-index="2"] {
+  top: 202px;
+}
+#help-action-popin .action[data-index="3"] {
+  top: 304px;
+}
+#help-action-popin .action[data-index="4"] {
+  top: 385px;
+}
+#help-action-popin .action .name {
+  position: absolute;
+  left: 63px;
+  top: 2px;
+  color: white;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+#help-action-popin .action .description {
+  position: absolute;
+  left: 58px;
+  top: 34px;
+}
+#help-action-popin .action .description .icon {
+  width: 20px;
+  height: 20px;
+}
+
+#help-turn-popin {
+  position: relative;
+  text-align: left;
+}
+#help-turn-popin h1 {
+  position: absolute;
+  color: white;
+  left: 35px;
+  width: auto;
+  text-transform: uppercase;
+  font-family: "apotek-comp", sans-serif;
+}
+#help-turn-popin h1.overview {
+  top: 18px;
+}
+#help-turn-popin h1.end {
+  top: 404px;
+}
+#help-turn-popin .phase {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  font-family: "quador-display", serif;
+}
+#help-turn-popin .phase.a {
+  top: 64px;
+}
+#help-turn-popin .phase.b {
+  top: 160px;
+}
+#help-turn-popin .phase.c {
+  top: 278px;
+}
+#help-turn-popin .phase h1 {
+  top: 3px;
+  left: 22px;
+}
+#help-turn-popin .phase .description {
+  position: absolute;
+  top: 42px;
+  left: 10px;
+  right: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+#help-turn-popin .phase .description .icon {
+  width: 20px;
+  height: 20px;
+}
+#help-turn-popin .phase .description .icon.timeline {
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  background-image: url("img/timeline-icon.svg");
+}
+
 #score {
   display: none;
   justify-content: center;

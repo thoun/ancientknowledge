@@ -26,3 +26,111 @@
     background-image: url('img/help-turn.png');
     background-size: cover;
 }
+
+#help-action-popin {
+    position: relative;
+    text-align: left;
+
+    h1 {
+        position: absolute;
+        color: white;
+        top: 18px;
+        left: 25px;
+        width: auto;
+        text-transform: uppercase;
+        font-family: "apotek-comp", sans-serif;
+    }
+
+    .action {
+        position: absolute;
+        left: 14px;
+        right: 8px;
+        font-family: "quador-display", serif;
+
+        &[data-index="0"] { top: 64px; }
+        &[data-index="1"] { top: 133px; }
+        &[data-index="2"] { top: 202px; }
+        &[data-index="3"] { top: 304px; }
+        &[data-index="4"] { top: 385px; }
+
+        .name {
+            position: absolute;
+            left: 63px;
+            top: 2px;
+            color: white;
+            text-transform: uppercase;
+            font-size: 18px;
+        }
+
+        .description {
+            position: absolute;
+            left: 58px;
+            top: 34px;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
+}
+
+#help-turn-popin {
+    position: relative;
+    text-align: left;
+
+    h1 {
+        position: absolute;
+        color: white;
+        left: 35px;
+        width: auto;
+        text-transform: uppercase;
+        font-family: "apotek-comp", sans-serif;
+
+        &.overview {
+            top: 18px;
+        }
+        &.end {
+            top: 404px;
+        }
+    }
+
+    .phase {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        font-family: "quador-display", serif;
+
+        &.a { top: 64px; }
+        &.b { top: 160px; }
+        &.c { top: 278px; }
+
+        h1 {
+            top: 3px;
+            left: 22px;
+        }
+
+        .description {
+            position: absolute;
+            top: 42px;
+            left: 10px;
+            right: 10px;
+            font-weight: bold;
+            text-align: center;
+
+            .icon {
+                width: 20px;
+                height: 20px;
+
+                &.timeline {
+                    display: inline-block;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    vertical-align: middle;
+                    background-image: url('img/timeline-icon.svg');
+                }
+            }
+        }
+    }
+}

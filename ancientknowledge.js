@@ -3295,6 +3295,7 @@ var LOCAL_STORAGE_JUMP_TO_FOLDED_KEY = 'AncientKnowledge-jump-to-folded';
 var LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY = 'AncientKnowledge-help-actions-folded';
 var LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 var ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
+var ACTIONS = ['create', 'learn', 'archive', 'excavate', 'search'];
 function sleep(ms) {
     return new Promise(function (r) { return setTimeout(r, ms); });
 }
@@ -3387,14 +3388,16 @@ var AncientKnowledge = /** @class */ (function () {
                     expandedHeight: '456px',
                     defaultFolded: true,
                     localStorageFoldedKey: LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY,
-                    buttonExtraClasses: "help-actions"
+                    buttonExtraClasses: "help-actions",
+                    unfoldedHtml: this.getHelpActionsHtml(),
                 }),
                 new BgaHelpExpandableButton({
                     expandedWidth: '326px',
                     expandedHeight: '456px',
                     defaultFolded: true,
                     localStorageFoldedKey: LOCAL_STORAGE_HELP_TURN_FOLDED_KEY,
-                    buttonExtraClasses: "help-turn"
+                    buttonExtraClasses: "help-turn",
+                    unfoldedHtml: this.getHelpTurnHtml(),
                 }),
             ]
         });
@@ -3814,15 +3817,9 @@ var AncientKnowledge = /** @class */ (function () {
                     document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
                     break;
                 case 'chooseAction':
-                    [
-                        ['create', _('Create'), _("Play a monument or artifact card from your hand.")],
-                        ['learn', _('Learn'), _("Take a technology card.")],
-                        ['excavate', _('Excavate'), _("Rotate by 90° monument card(s) from your Past. For each card rotated this way, draw 2 Builder cards and add them to your hand.")],
-                        ['archive', _('Archive'), formatTextIcons(_("Discard as many cards from your hand as you want. For each card discarded this way, remove 1 <KNOWLEDGE> from a monument in your Timeline."))],
-                        ['search', _('Search'), _("Draw 1 Builder card and add it to your hand.")],
-                    ].forEach(function (codeAndLabel) {
-                        _this.addActionButton("actChooseAction_".concat(codeAndLabel[0], "_button"), "<div class=\"action-icon ".concat(codeAndLabel[0], "\"></div> ").concat(codeAndLabel[1]), function () { return _this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]); });
-                        _this.setTooltip("actChooseAction_".concat(codeAndLabel[0], "_button"), codeAndLabel[2]);
+                    ACTIONS.map(function (action) { return _this.getActionInformations(action); }).forEach(function (actionInformations) {
+                        _this.addActionButton("actChooseAction_".concat(actionInformations[0], "_button"), "<div class=\"action-icon ".concat(actionInformations[0], "\"></div> ").concat(actionInformations[1]), function () { return _this.takeAtomicAction('actChooseAction', [actionInformations[0]]); });
+                        _this.setTooltip("actChooseAction_".concat(actionInformations[0], "_button"), actionInformations[2]);
                     });
                     var table = this.getCurrentPlayerTable();
                     if (!table.hand.getCards().length) {
@@ -4072,6 +4069,26 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.getHelpHtml = function () {
         var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Icons"), "</h2>\n            TODO help p14\n        </div>");
+        return html;
+    };
+    AncientKnowledge.prototype.getActionInformations = function (action) {
+        switch (action) {
+            case 'create': return ['create', _('Create'), formatTextIcons(_("<strong>Play</strong> 1 <CITY>, <MEGALITH>, <PYRAMID> or <ARTIFACT> card."))];
+            case 'learn': return ['learn', _('Learn'), formatTextIcons(_("<strong>Take</strong> 1 <ANCIENT>, <WRITING> or <SECRET> Technology card."))];
+            case 'archive': return ['archive', _('Archive'), formatTextIcons(_("<strong>Discard</strong> 1 <KNOWLEDGE> from 1 any of your <i>monuments</i> for each card discarded."))];
+            case 'excavate': return ['excavate', _('Excavate'), _("<strong>Draw</strong> 2 Builder cards for each card in your Past you rotate.")];
+            case 'search': return ['search', _('Search'), _("<strong>Draw</strong> 1 Builder card.")];
+        }
+    };
+    AncientKnowledge.prototype.getHelpActionsHtml = function () {
+        var _this = this;
+        var html = "\n        <div id=\"help-action-popin\">\n            <h1>".concat(_("Actions (any 2)"), "</h1>\n            ").concat(ACTIONS.map(function (action) { return _this.getActionInformations(action); }).map(function (actionInformations, index) {
+            return "<div class=\"action\" data-index=\"".concat(index, "\">\n                <div class=\"name\">").concat(actionInformations[1], "</div>\n                <div class=\"description\">").concat(actionInformations[2], "</div>\n                </div>");
+        }).join(''), "\n        </div>");
+        return html;
+    };
+    AncientKnowledge.prototype.getHelpTurnHtml = function () {
+        var html = "\n        <div id=\"help-turn-popin\">\n            <h1 class=\"overview\">".concat(_("TURN OVERVIEW"), "</h1>\n            <div class=\"phase a\">\n                <h1>").concat(_("A. ACTION PHASE"), "</h1>\n                <div class=\"description\">").concat(_("Any 2 actions."), "</div>\n            </div>\n            <div class=\"phase b\">\n                <h1>").concat(_("B. TIMELINE PHASE"), "</h1>\n                <div class=\"description\">").concat(_("Activate all your cards with the symbol <TIMELINE> in any order.").replace('<TIMELINE>', '<div class="timeline icon"></div>'), "</div>\n            </div>\n            <div class=\"phase c\">\n                <h1>").concat(_("C. DECLINE PHASE"), "</h1>\n                <div class=\"description\">").concat(_("Slide all the monuments in your Timeline to the left."), "</div>\n            </div>\n            <h1 class=\"end\">").concat(_("END OF THE GAME"), "</h1>\n        </div>");
         return html;
     };
     AncientKnowledge.prototype.onTableTechnologyTileClick = function (tile, showWarning) {

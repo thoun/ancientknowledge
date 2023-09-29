@@ -17,6 +17,8 @@ const LOCAL_STORAGE_HELP_TURN_FOLDED_KEY = 'AncientKnowledge-help-turn-folded';
 
 const ICONS_COUNTERS_TYPES = ['city', 'megalith', 'pyramid', 'artifact'];
 
+const ACTIONS = ['create', 'learn', 'archive', 'excavate', 'search'];
+
 function sleep(ms: number){
     return new Promise((r) => setTimeout(r, ms));
 }
@@ -142,14 +144,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     expandedHeight: '456px',
                     defaultFolded: true,
                     localStorageFoldedKey: LOCAL_STORAGE_HELP_ACTIONS_FOLDED_KEY,
-                    buttonExtraClasses: `help-actions`
+                    buttonExtraClasses: `help-actions`,
+                    unfoldedHtml: this.getHelpActionsHtml(),
                 }),
                 new BgaHelpExpandableButton({
                     expandedWidth: '326px',
                     expandedHeight: '456px',
                     defaultFolded: true,
                     localStorageFoldedKey: LOCAL_STORAGE_HELP_TURN_FOLDED_KEY,
-                    buttonExtraClasses: `help-turn`
+                    buttonExtraClasses: `help-turn`,
+                    unfoldedHtml: this.getHelpTurnHtml(),
                 }),
             ]
         });
@@ -621,15 +625,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     document.getElementById('actSelectCardsToDiscard_button').classList.add('disabled');
                     break;
                 case 'chooseAction':
-                    [
-                        ['create', _('Create'), _("Play a monument or artifact card from your hand.")], 
-                        ['learn', _('Learn'), _("Take a technology card.")], 
-                        ['excavate', _('Excavate'), _("Rotate by 90° monument card(s) from your Past. For each card rotated this way, draw 2 Builder cards and add them to your hand.")],
-                        ['archive', _('Archive'), formatTextIcons(_("Discard as many cards from your hand as you want. For each card discarded this way, remove 1 <KNOWLEDGE> from a monument in your Timeline."))],
-                        ['search', _('Search'), _("Draw 1 Builder card and add it to your hand.")],
-                    ].forEach(codeAndLabel => {
-                        (this as any).addActionButton(`actChooseAction_${codeAndLabel[0]}_button`, `<div class="action-icon ${codeAndLabel[0]}"></div> ${codeAndLabel[1]}`, () => this.takeAtomicAction('actChooseAction', [codeAndLabel[0]]));
-                        this.setTooltip(`actChooseAction_${codeAndLabel[0]}_button`, codeAndLabel[2]);
+                    ACTIONS.map(action => this.getActionInformations(action)).forEach(actionInformations => {
+                        (this as any).addActionButton(`actChooseAction_${actionInformations[0]}_button`, `<div class="action-icon ${actionInformations[0]}"></div> ${actionInformations[1]}`, () => this.takeAtomicAction('actChooseAction', [actionInformations[0]]));
+                        this.setTooltip(`actChooseAction_${actionInformations[0]}_button`, actionInformations[2]);
                     });
                     const table = this.getCurrentPlayerTable();
                     if (!table.hand.getCards().length) {
@@ -926,6 +924,53 @@ class AncientKnowledge implements AncientKnowledgeGame {
         <div id="help-popin">
             <h1>${_("Icons")}</h2>
             TODO help p14
+        </div>`;
+
+        return html;
+    }
+
+    private getActionInformations(action: string) { // icon/code, name (label), description
+        switch (action) {
+            case 'create': return ['create', _('Create'), formatTextIcons(_("<strong>Play</strong> 1 <CITY>, <MEGALITH>, <PYRAMID> or <ARTIFACT> card."))];
+            case 'learn': return ['learn', _('Learn'), formatTextIcons(_("<strong>Take</strong> 1 <ANCIENT>, <WRITING> or <SECRET> Technology card."))];
+            case 'archive': return ['archive', _('Archive'), formatTextIcons(_("<strong>Discard</strong> 1 <KNOWLEDGE> from 1 any of your <i>monuments</i> for each card discarded."))];
+            case 'excavate': return ['excavate', _('Excavate'), _("<strong>Draw</strong> 2 Builder cards for each card in your Past you rotate.")];
+            case 'search': return ['search', _('Search'), _("<strong>Draw</strong> 1 Builder card.")];
+        }
+    }
+
+    private getHelpActionsHtml() {
+        let html = `
+        <div id="help-action-popin">
+            <h1>${_("Actions (any 2)")}</h1>
+            ${ACTIONS.map(action => this.getActionInformations(action)).map((actionInformations, index) => 
+                `<div class="action" data-index="${index}">
+                <div class="name">${actionInformations[1]}</div>
+                <div class="description">${actionInformations[2]}</div>
+                </div>`
+            ).join('')}
+        </div>`;
+
+        return html;
+    }
+
+    private getHelpTurnHtml() {
+        let html = `
+        <div id="help-turn-popin">
+            <h1 class="overview">${_("TURN OVERVIEW")}</h1>
+            <div class="phase a">
+                <h1>${_("A. ACTION PHASE")}</h1>
+                <div class="description">${_("Any 2 actions.")}</div>
+            </div>
+            <div class="phase b">
+                <h1>${_("B. TIMELINE PHASE")}</h1>
+                <div class="description">${_("Activate all your cards with the symbol <TIMELINE> in any order.").replace('<TIMELINE>', '<div class="timeline icon"></div>')}</div>
+            </div>
+            <div class="phase c">
+                <h1>${_("C. DECLINE PHASE")}</h1>
+                <div class="description">${_("Slide all the monuments in your Timeline to the left.")}</div>
+            </div>
+            <h1 class="end">${_("END OF THE GAME")}</h1>
         </div>`;
 
         return html;
