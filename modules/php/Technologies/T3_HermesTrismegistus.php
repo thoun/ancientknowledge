@@ -2,6 +2,7 @@
 namespace AK\Technologies;
 
 use AK\Core\Notifications;
+use AK\Core\Engine;
 use AK\Managers\Players;
 use AK\Managers\Cards;
 
@@ -104,7 +105,8 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
     $player = $this->getPlayer();
     Notifications::keep($player, $card);
 
-    if ($this->getCtxArg('lastSelection') ?? false) {
+    $node = Engine::getNextUnresolved();
+    if ($node->getArgs()['lastSelection'] ?? false) {
       $cards = Cards::getInLocation('pending');
       Cards::move($cards->getIds(), 'discard');
     }
