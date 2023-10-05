@@ -474,6 +474,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
   
     private onEnteringSpecialEffect(args: EnteringSpecialEffectArgs) {
+        if (args.automaticAction) {
+            return;
+        }
+
+        if (args.descSuffix) {
+            this.gamedatas.gamestate[`description${args.descSuffix}`] = args.description;
+            this.gamedatas.gamestate[`descriptionmyturn${args.descSuffix}`] = args.description;
+            this.changePageTitle(args.descSuffix);
+
+            $('pagemaintitletext').insertAdjacentHTML(
+                'beforeend',
+                ` (<span class="title-log-card-name" id="tooltip-${this._last_tooltip_id}">${_(args.source)}</span>)`
+            );
+        }
+
         if ((this as any).isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
@@ -702,19 +717,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     document.getElementById('actAddKnowledgeFromBoard_button').classList.add('disabled');
                     break;
                 case 'specialEffect':
-                    const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
-                    switch (specialEffectArgs.sourceId) {
-                        case 'T17_EarthquakeEngineering':
-                            (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
-                            break;
-                        case 'T22_AncientGreek':
-                            if (specialEffectArgs._private?.canCreate) {
-                                (this as any).addActionButton(`actPickAndDiscard_button`, _("Build selected artifact"), () => this.actPickAndDiscard());
-                                document.getElementById('actPickAndDiscard_button').classList.add('disabled');
-                            } else {
-                                (this as any).addActionButton(`actPickAndDiscard_button`, _("Pass (you cannot build an artifact)"), () => this.actPickAndDiscard(null));
-                            }
-                            break;
+                    const specialEffectArgs = args as EnteringSpecialEffectArgs;
+                    if (!specialEffectArgs.automaticAction) {
+                        switch (specialEffectArgs.sourceId) {
+                            case 'T17_EarthquakeEngineering':
+                                (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
+                                break;
+                            case 'T22_AncientGreek':
+                                if (specialEffectArgs._private?.canCreate) {
+                                    (this as any).addActionButton(`actPickAndDiscard_button`, _("Build selected artifact"), () => this.actPickAndDiscard());
+                                    document.getElementById('actPickAndDiscard_button').classList.add('disabled');
+                                } else {
+                                    (this as any).addActionButton(`actPickAndDiscard_button`, _("Pass (you cannot build an artifact)"), () => this.actPickAndDiscard(null));
+                                }
+                                break;
+                        }
                     }
                     break;
             }
@@ -1234,11 +1251,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actDrawAndKeep', cardsIds);
     }
   	
-    public actPickAndDiscard(forcedValue = undefined) {
+    public actPickAndDiscard(pass: boolean = false) {
         const selectedCards = this.market.getSelection();
-        const cardsIds = selectedCards.map(card => card.id).sort();
-
-        this.takeAtomicAction('actPickAndDiscard', forcedValue === null ? null : [cardsIds]);
+        this.takeAtomicAction('actPickAndDiscard', [pass ? null : selectedCards[0]?.id]);
     }
   	
     public actSelectCardsToDiscard() {

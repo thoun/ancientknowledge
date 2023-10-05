@@ -164,6 +164,11 @@ interface EnteringMoveBuildingArgs {
 }
 
 interface EnteringSpecialEffectArgs {
+    automaticAction: boolean;
+    descSuffix: string;
+    description: string;
+    descriptionmyturn: string;
+    source: string;
     sourceId: string;
     _private: {
         cardIds: string[];

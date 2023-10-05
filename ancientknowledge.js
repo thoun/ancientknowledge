@@ -3671,6 +3671,15 @@ var AncientKnowledge = /** @class */ (function () {
         this.market = null;
     };
     AncientKnowledge.prototype.onEnteringSpecialEffect = function (args) {
+        if (args.automaticAction) {
+            return;
+        }
+        if (args.descSuffix) {
+            this.gamedatas.gamestate["description".concat(args.descSuffix)] = args.description;
+            this.gamedatas.gamestate["descriptionmyturn".concat(args.descSuffix)] = args.description;
+            this.changePageTitle(args.descSuffix);
+            $('pagemaintitletext').insertAdjacentHTML('beforeend', " (<span class=\"title-log-card-name\" id=\"tooltip-".concat(this._last_tooltip_id, "\">").concat(_(args.source), "</span>)"));
+        }
         if (this.isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
@@ -3889,20 +3898,22 @@ var AncientKnowledge = /** @class */ (function () {
                     document.getElementById('actAddKnowledgeFromBoard_button').classList.add('disabled');
                     break;
                 case 'specialEffect':
-                    var specialEffectArgs = this.gamedatas.gamestate.args;
-                    switch (specialEffectArgs.sourceId) {
-                        case 'T17_EarthquakeEngineering':
-                            this.addActionButton("actDiscardAndDraw_button", _("Discard selected cards"), function () { return _this.actDiscardAndDraw(); });
-                            break;
-                        case 'T22_AncientGreek':
-                            if ((_b = specialEffectArgs._private) === null || _b === void 0 ? void 0 : _b.canCreate) {
-                                this.addActionButton("actPickAndDiscard_button", _("Build selected artifact"), function () { return _this.actPickAndDiscard(); });
-                                document.getElementById('actPickAndDiscard_button').classList.add('disabled');
-                            }
-                            else {
-                                this.addActionButton("actPickAndDiscard_button", _("Pass (you cannot build an artifact)"), function () { return _this.actPickAndDiscard(null); });
-                            }
-                            break;
+                    var specialEffectArgs = args;
+                    if (!specialEffectArgs.automaticAction) {
+                        switch (specialEffectArgs.sourceId) {
+                            case 'T17_EarthquakeEngineering':
+                                this.addActionButton("actDiscardAndDraw_button", _("Discard selected cards"), function () { return _this.actDiscardAndDraw(); });
+                                break;
+                            case 'T22_AncientGreek':
+                                if ((_b = specialEffectArgs._private) === null || _b === void 0 ? void 0 : _b.canCreate) {
+                                    this.addActionButton("actPickAndDiscard_button", _("Build selected artifact"), function () { return _this.actPickAndDiscard(); });
+                                    document.getElementById('actPickAndDiscard_button').classList.add('disabled');
+                                }
+                                else {
+                                    this.addActionButton("actPickAndDiscard_button", _("Pass (you cannot build an artifact)"), function () { return _this.actPickAndDiscard(null); });
+                                }
+                                break;
+                        }
                     }
                     break;
             }
@@ -4339,11 +4350,11 @@ var AncientKnowledge = /** @class */ (function () {
         var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
         this.takeAtomicAction('actDrawAndKeep', cardsIds);
     };
-    AncientKnowledge.prototype.actPickAndDiscard = function (forcedValue) {
-        if (forcedValue === void 0) { forcedValue = undefined; }
+    AncientKnowledge.prototype.actPickAndDiscard = function (pass) {
+        var _a;
+        if (pass === void 0) { pass = false; }
         var selectedCards = this.market.getSelection();
-        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
-        this.takeAtomicAction('actPickAndDiscard', forcedValue === null ? null : [cardsIds]);
+        this.takeAtomicAction('actPickAndDiscard', [pass ? null : (_a = selectedCards[0]) === null || _a === void 0 ? void 0 : _a.id]);
     };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {

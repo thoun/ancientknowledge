@@ -186,6 +186,7 @@ $machinestates = [
     'descriptionmyturnSelectSlot' => clienttranslate('${you} must choose a place for the selected monument'),
     'descriptionmyturnSelectDiscard' => clienttranslate('${you} must choose ${discard_number} card(s) to discard'),
     'descriptionmyturnConfirm' => clienttranslate('${you} must confirm creation'),
+    'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actCreate', 'actRestart', 'actPassOptionalAction'],
   ],
@@ -353,16 +354,10 @@ $machinestates = [
     'name' => 'specialEffect',
     'description' => '',
     'descriptionmyturn' => '',
-    'descriptionEarthquakeEngineering' => clienttranslate(
-      '${actplayer} may discard up to 3 cards to draw 1 card for each discarded card'
-    ),
-    'descriptionmyturnEarthquakeEngineering' => clienttranslate(
-      'You may discard up to 3 cards to draw 1 card for each discarded card'
-    ),
     'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'type' => 'activeplayer',
-    'possibleactions' => ['actPassOptionalAction', 'actRestart', 'actDiscardAndDraw'],
+    'possibleactions' => ['actPassOptionalAction', 'actRestart', 'actDiscardAndDraw', 'actPickAndDiscard'],
   ],
 
   //////////////////////////////////////////////////////////////////
