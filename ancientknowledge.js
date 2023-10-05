@@ -3697,6 +3697,15 @@ var AncientKnowledge = /** @class */ (function () {
             this.changePageTitle(args.sourceId);
             $('pagemaintitletext').insertAdjacentHTML('beforeend', " (<span class=\"title-log-card-name\" id=\"tooltip-".concat(this._last_tooltip_id, "\">").concat(_(args.source), "</span>)"));
         }
+        switch (args.sourceId) {
+            case 'T3_HermesTrismegistus':
+                this.initMarketStock();
+                this.market.addCards(this.builderCardsManager.getFullCardsByIds(args.cardIds));
+                if (this.isCurrentPlayerActive()) {
+                    this.market.setSelectionMode('single');
+                }
+                break;
+        }
         if (this.isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
@@ -3802,6 +3811,7 @@ var AncientKnowledge = /** @class */ (function () {
             case 'specialEffect':
                 var specialEffectArgs = this.gamedatas.gamestate.args;
                 switch (specialEffectArgs.sourceId) {
+                    case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
                         break;
@@ -3924,6 +3934,10 @@ var AncientKnowledge = /** @class */ (function () {
                     var specialEffectArgs = args;
                     if (!specialEffectArgs.automaticAction) {
                         switch (specialEffectArgs.sourceId) {
+                            case 'T3_HermesTrismegistus':
+                                this.addActionButton("actChooseCardToKeep_button", _("Keep selected card"), function () { return _this.actChooseCardToKeep(); });
+                                document.getElementById('actChooseCardToKeep_button').classList.add('disabled');
+                                break;
                             case 'T17_EarthquakeEngineering':
                                 this.addActionButton("actDiscardAndDraw_button", _("Discard selected cards"), function () { return _this.actDiscardAndDraw(); });
                                 break;
@@ -4188,6 +4202,9 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onMarketSelectionChange = function (selection) {
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T3_HermesTrismegistus':
+                    document.getElementById("actChooseCardToKeep_button").classList.toggle('disabled', selection.length != 1);
+                    break;
                 case 'T22_AncientGreek':
                     document.getElementById("actPickAndDiscard_button").classList.toggle('disabled', selection.length != 1);
                     break;
@@ -4387,6 +4404,11 @@ var AncientKnowledge = /** @class */ (function () {
         if (pass === void 0) { pass = false; }
         var selectedCards = this.market.getSelection();
         this.takeAtomicAction('actPickAndDiscard', [pass ? null : (_a = selectedCards[0]) === null || _a === void 0 ? void 0 : _a.id]);
+    };
+    AncientKnowledge.prototype.actChooseCardToKeep = function () {
+        var _a;
+        var selectedCards = this.market.getSelection();
+        this.takeAtomicAction('actChooseCardToKeep', [(_a = selectedCards[0]) === null || _a === void 0 ? void 0 : _a.id]);
     };
     AncientKnowledge.prototype.actSelectCardsToDiscard = function () {
         if (!this.checkAction('actSelectCardsToDiscard')) {

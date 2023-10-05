@@ -489,6 +489,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
             );
         }
 
+        switch (args.sourceId) {
+            case 'T3_HermesTrismegistus':
+                this.initMarketStock();
+                this.market.addCards(this.builderCardsManager.getFullCardsByIds(args.cardIds));
+                if ((this as any).isCurrentPlayerActive()) {
+                    this.market.setSelectionMode('single');
+                }
+                break;
+        }
+
         if ((this as any).isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
@@ -600,6 +610,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'specialEffect':
                 const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
                 switch (specialEffectArgs.sourceId) {
+                    case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
                         break;
@@ -726,6 +737,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     const specialEffectArgs = args as EnteringSpecialEffectArgs;
                     if (!specialEffectArgs.automaticAction) {
                         switch (specialEffectArgs.sourceId) {
+                            case 'T3_HermesTrismegistus':
+                                (this as any).addActionButton(`actChooseCardToKeep_button`, _("Keep selected card"), () => this.actChooseCardToKeep());
+                                document.getElementById('actChooseCardToKeep_button').classList.add('disabled');
+                                break;
                             case 'T17_EarthquakeEngineering':
                                 (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
                                 break;
@@ -1064,6 +1079,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public onMarketSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T3_HermesTrismegistus':
+                    document.getElementById(`actChooseCardToKeep_button`).classList.toggle('disabled', selection.length != 1);
+                    break;
                 case 'T22_AncientGreek':
                     document.getElementById(`actPickAndDiscard_button`).classList.toggle('disabled', selection.length != 1);
                     break;
@@ -1268,6 +1286,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public actPickAndDiscard(pass: boolean = false) {
         const selectedCards = this.market.getSelection();
         this.takeAtomicAction('actPickAndDiscard', [pass ? null : selectedCards[0]?.id]);
+    }
+  	
+    public actChooseCardToKeep() {
+        const selectedCards = this.market.getSelection();
+        this.takeAtomicAction('actChooseCardToKeep', [selectedCards[0]?.id]);
     }
   	
     public actSelectCardsToDiscard() {

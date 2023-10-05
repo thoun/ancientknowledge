@@ -176,6 +176,7 @@ interface EnteringSpecialEffectArgs {
         canCreate?: boolean;
         techIds?: string[];
     };
+    cardIds?: string[]; // T3_HermesTrismegistus
 }
 
 // pDrawCards
