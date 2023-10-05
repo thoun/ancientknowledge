@@ -2,6 +2,7 @@
 namespace AK\Technologies;
 
 use AK\Managers\Cards;
+use AK\Core\Notifications;
 
 class T22_AncientGreek extends \AK\Models\Technology
 {
@@ -20,6 +21,7 @@ class T22_AncientGreek extends \AK\Models\Technology
 • choose and CREATE 1 <ARTIFACT>;
 • and discard the remaining cards."),
     ];
+    $this->implemented = true;
   }
 
   public function getImmediateEffect()
@@ -94,8 +96,13 @@ class T22_AncientGreek extends \AK\Models\Technology
         throw new \BgaVisibleSystemException('Invalid cards to create. Should not happen');
       }
 
+      $card = Cards::getSingle($cardId);
       $card->setLocation('hand');
       $card->setPId($this->pId);
+
+      $player = $this->getPlayer();
+      $cards = Cards::getInLocation('pending');
+      Notifications::keep($player, $card, $cards);
 
       $flow = [
         'action' => CREATE,
@@ -104,7 +111,7 @@ class T22_AncientGreek extends \AK\Models\Technology
     }
 
     $cards = Cards::getInLocation('pending');
-    Cards::move($card->getIds(), 'discard');
+    Cards::move($cards->getIds(), 'discard');
     return $flow;
   }
 }
