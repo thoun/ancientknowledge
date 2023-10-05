@@ -132,6 +132,9 @@ class Actions
 
     $action = self::get($actionId, $ctx);
     $methodName = $ctx->getArgs()['method'] ?? 'st' . $action->getClassName();
+    if ($actionId == \SPECIAL_EFFECT) {
+      $methodName = 'st' . $action->getClassName();
+    }
     if (\method_exists($action, $methodName)) {
       $action->$methodName();
     }

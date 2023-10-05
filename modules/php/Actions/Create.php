@@ -26,6 +26,15 @@ class Create extends \AK\Models\Action
     return clienttranslate('Create');
   }
 
+  public function stCreate()
+  {
+    $player = Players::getActive();
+    $cardId = $this->getCtxArg('autoplayArtefact');
+    if (!is_null($cardId)) {
+      $this->actCreate($cardId, $player->getFreeArtefactSlot(), []);
+    }
+  }
+
   public function getPlayableCards($player, $isDoable = false)
   {
     $freeSlots = $player->getFreeSlots();
