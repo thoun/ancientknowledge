@@ -442,6 +442,24 @@ class Notifications
     );
   }
 
+  public static function steal($player, $target, $card)
+  {
+    self::notifyAll('stealCard', clienttranslate('${player_name} steals one card from ${player_name2}'), [
+      'player' => $player,
+      'player2' => $target,
+    ]);
+    self::notify($player, 'pStealCard', clienttranslate('You steal ${card_name} from ${player_name2}'), [
+      'card' => $card,
+      'player' => $player,
+      'player2' => $target,
+    ]);
+    self::notify($target, 'pStealCard', clienttranslate('${player_name} steal ${card_name} from you'), [
+      'card' => $card,
+      'player' => $player,
+      'player2' => $target,
+    ]);
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___
