@@ -3868,7 +3868,7 @@ var AncientKnowledge = /** @class */ (function () {
                     var specialEffectArgs = this.gamedatas.gamestate.args;
                     switch (specialEffectArgs.sourceId) {
                         case 'T17_EarthquakeEngineering':
-                            this.addActionButton("actDiscard_button", _("Discard selected cards"), function () { return _this.actDiscard(false); });
+                            this.addActionButton("actDiscardAndDraw_button", _("Discard selected cards"), function () { return _this.actDiscardAndDraw(); });
                             break;
                     }
                     break;
@@ -4144,7 +4144,7 @@ var AncientKnowledge = /** @class */ (function () {
             var args = this.gamedatas.gamestate.args;
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
-                    document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length <= 3);
+                    document.getElementById('actDiscardAndDraw_button').classList.toggle('disabled', selection.length > 3);
                     break;
             }
         }
@@ -4302,6 +4302,11 @@ var AncientKnowledge = /** @class */ (function () {
         var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
         this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);
+    };
+    AncientKnowledge.prototype.actDiscardAndDraw = function () {
+        var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actDiscardAndDraw', [cardsIds]);
     };
     AncientKnowledge.prototype.actDrawAndKeep = function () {
         var selectedCards = this.drawAndPeekStock.getSelection();
