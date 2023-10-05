@@ -336,8 +336,8 @@ class CachedPieces extends DB_Manager
     self::checkLocation($toLocation);
 
     return self::getInLocation($fromLocation, $fromState)
-      ->update('location', $location)
-      ->update('state', $state);
+      ->update('location', $toLocation)
+      ->update('state', $toState);
   }
 
   /**
@@ -399,7 +399,7 @@ class CachedPieces extends DB_Manager
     self::moveAllInLocation($discard, $fromLocation);
     self::shuffle($fromLocation);
     if (static::$autoreshuffleListener) {
-      $obj = static::$autoreshuffleListener['obj'];
+      $obj = new static::$autoreshuffleListener['obj']();
       $method = static::$autoreshuffleListener['method'];
       $obj->$method($fromLocation);
     }

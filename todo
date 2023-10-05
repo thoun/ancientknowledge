@@ -5,7 +5,6 @@ TO TEST :
 
 
 Backend:
-- Bug lorsqu'il n'y a plus de cartes Technology/Connaissance dans le deck alors que normalement on remélange.
  - S'il n'y a aucun monument avec pouvoir de déclin cela ne sert à rien de demander dans quel ordre on décline.
  - on devrait ne pas avoir à cliquer sur « pass » si on ne peut activer le pouvoir de chronique => autopass si pas d'action de marteau possible. Ou argumenter pour dire que c'est pas une bonne idée ? ça permet de voir que la phase s'est bien déclenchée, mais que nos pouvoirs ne sont pas actuellement utilisable. Perso je laisserai comme c'est, s'ils acceptent
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first

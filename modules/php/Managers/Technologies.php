@@ -20,7 +20,7 @@ class Technologies extends \AK\Helpers\CachedPieces
   protected static $autoremovePrefix = false;
   protected static $autoreshuffle = true;
   protected static $autoreshuffleCustom = ['deck_1' => 'discard_1', 'deck_2' => 'discard_2'];
-  protected static $autoreshuffleListener = ['obj' => 'Technologies', 'method' => 'onReformDeck'];
+  protected static $autoreshuffleListener = ['obj' => 'AK\Managers\Technologies', 'method' => 'onReformDeck'];
 
   protected static function cast($card)
   {
@@ -105,7 +105,7 @@ class Technologies extends \AK\Helpers\CachedPieces
   public static function getCorrespondingDeckId($board)
   {
     $t = Globals::getSecondLvl2TechTile();
-    return $board == 3 || ($board == $t && Globals::isFirstHalf()) ? 2 : 1;
+    return $board == 3 || ($board == $t && !Globals::isFirstHalf()) ? 2 : 1;
   }
 
   public static function canRefillBoard($board, $n = 3)
@@ -114,7 +114,7 @@ class Technologies extends \AK\Helpers\CachedPieces
     return self::countInLocation("deck_$deckId") + self::countInLocation("discard_$deckId") >= $n;
   }
 
-  public function onReformDeck($deck)
+  public static function onReformDeck($deck)
   {
     Notifications::reformTechDeck($deck);
   }
