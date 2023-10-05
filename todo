@@ -13,6 +13,8 @@ Backend:
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 
 Frontend:
+ - P13_Yonaguni : discardAndRemoveKnowledge => same state as discard but can discard as many as they want (including 0 cards)
+ 
  - M14_MenhirOfKerloas : le back envoie les cartes par pId si jamais tu veux afficher une box pour chaque joueur avec ses cartes en main
    => notif stealCard : une notif publique à ignorer pour la victime et l'owner
    => notif pStealCard : une notif privée envoyée aux deux joueurs, il faut checker si this.player_id == n.args.player_id ou n.args.player_id2 pour savoir si on est victime ou pas
