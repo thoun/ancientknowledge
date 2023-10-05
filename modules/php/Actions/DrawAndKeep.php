@@ -84,7 +84,7 @@ class DrawAndKeep extends \AK\Models\Action
     Cards::move($cardLeftIds, 'discard');
 
     // Notify
-    Notifications::keep($player, $card, Cards::getMany($cardLeftIds));
+    Notifications::keepAndDiscard($player, $card, Cards::getMany($cardLeftIds));
 
     $this->resolveAction();
   }

@@ -409,7 +409,7 @@ class Notifications
     ]);
   }
 
-  public static function keep($player, $card, $cards)
+  public static function keepAndDiscard($player, $card, $cards, $public = false)
   {
     self::notifyAll('keepAndDiscard', clienttranslate('${player_name} keeps 1 card'), [
       'player' => $player,
@@ -418,6 +418,14 @@ class Notifications
       'player' => $player,
       'card' => $card,
       'cards' => $cards->toArray(),
+    ]);
+  }
+
+  public static function keep($player, $card)
+  {
+    self::notifyAll('keep', clienttranslate('${player_name} keeps ${card_name}'), [
+      'player' => $player,
+      'card' => $card,
     ]);
   }
 

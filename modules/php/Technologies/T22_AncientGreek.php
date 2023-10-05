@@ -101,7 +101,7 @@ class T22_AncientGreek extends \AK\Models\Technology
 
       $player = $this->getPlayer();
       $cards = Cards::getInLocation('pending');
-      Notifications::keep($player, $card, $cards);
+      Notifications::keepAndDiscard($player, $card, $cards);
 
       $flow = [
         'action' => CREATE,
