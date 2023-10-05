@@ -1,6 +1,9 @@
 <?php
 namespace AK\Cards\Pyramids;
 
+use AK\Managers\Cards;
+use AK\Core\Notifications;
+
 class P33_Calakmul extends \AK\Models\Building
 {
   public function __construct($row)
@@ -27,5 +30,41 @@ class P33_Calakmul extends \AK\Models\Building
 • add the 2 <CITY> to your hand;
 • and discard the other revealed cards."),
     ];
+    $this->implemented = true;
+  }
+
+  public function getDeclineEffect()
+  {
+    return [
+      'action' => SPECIAL_EFFECT,
+      'args' => [
+        'sourceId' => $this->id,
+        'method' => 'drawCities',
+      ],
+    ];
+  }
+
+  public function drawCities()
+  {
+    $cards = [];
+    $discardedCards = [];
+    while (count($cards) < 2) {
+      $card = Cards::getTopOf('deck')->first();
+
+      $location = null;
+      if ($card->getType() == CITY) {
+        $cards[] = $card;
+        $card->setPId($this->pId);
+        $location = 'hand';
+      } else {
+        $discardedCards[] = $card;
+        $location = 'discard';
+      }
+
+      Cards::move($card->getId(), $location);
+    }
+
+    $player = $this->getPlayer();
+    Notifications::drawCards($player, $cards, $this->id);
   }
 }
