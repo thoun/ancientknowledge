@@ -14,5 +14,7 @@ function formatTextIcons(rawText: string, white: boolean = false) {
         .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
         .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
         .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
-        .replace(/\[n°(\d)\]/ig, (fullMatch, number) => `<span class="icon starting-space">${number}</span>`);
+        .replace(/\[n°(\d)\]/ig, (fullMatch, number) => `<span class="icon starting-space">${number}</span>`)
+        .replace(/\[I\]/ig, '<span class="icon tech-level" data-level="1"></span>')
+        .replace(/\[II\]/ig, '<span class="icon tech-level" data-level="2"></span>');
 }

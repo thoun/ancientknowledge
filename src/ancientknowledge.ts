@@ -478,15 +478,25 @@ class AncientKnowledge implements AncientKnowledgeGame {
             return;
         }
 
-        if (args.descSuffix) {
-            this.gamedatas.gamestate[`description${args.descSuffix}`] = args.description;
-            this.gamedatas.gamestate[`descriptionmyturn${args.descSuffix}`] = args.description;
-            this.changePageTitle(args.descSuffix);
+        if (args.description && args.descriptionmyturn) {
+            this.gamedatas.gamestate[`description${args.sourceId}`] = args.description;
+            this.gamedatas.gamestate[`descriptionmyturn${args.sourceId}`] = args.descriptionmyturn;
+            this.changePageTitle(args.sourceId);
 
             $('pagemaintitletext').insertAdjacentHTML(
                 'beforeend',
                 ` (<span class="title-log-card-name" id="tooltip-${this._last_tooltip_id}">${_(args.source)}</span>)`
             );
+        }
+
+        switch (args.sourceId) {
+            case 'T3_HermesTrismegistus':
+                this.initMarketStock();
+                this.market.addCards(this.builderCardsManager.getFullCardsByIds(args.cardIds));
+                if ((this as any).isCurrentPlayerActive()) {
+                    this.market.setSelectionMode('single');
+                }
+                break;
         }
 
         if ((this as any).isCurrentPlayerActive()) {
@@ -498,6 +508,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.initMarketStock();
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
+                    break;
+                case 'T27_LatinAlphabet':
+                    this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args._private.techIds));
                     break;
             }
         }
@@ -597,8 +610,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'specialEffect':
                 const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
                 switch (specialEffectArgs.sourceId) {
+                    case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'T27_LatinAlphabet':
+                        this.onLeavingLearn();
                         break;
                 }
         }
@@ -720,6 +737,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     const specialEffectArgs = args as EnteringSpecialEffectArgs;
                     if (!specialEffectArgs.automaticAction) {
                         switch (specialEffectArgs.sourceId) {
+                            case 'T3_HermesTrismegistus':
+                                (this as any).addActionButton(`actChooseCardToKeep_button`, _("Keep selected card"), () => this.actChooseCardToKeep());
+                                document.getElementById('actChooseCardToKeep_button').classList.add('disabled');
+                                break;
                             case 'T17_EarthquakeEngineering':
                                 (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
                                 break;
@@ -1040,6 +1061,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     tile.id,
                 ]);
             }
+        } else if (this.gamedatas.gamestate.name == 'specialEffect') {
+            switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T27_LatinAlphabet':
+                    this.takeAtomicAction('actChooseTech', [
+                        tile.id,
+                    ]);
+                    break;
+            }            
         }
     }
 
@@ -1050,6 +1079,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public onMarketSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T3_HermesTrismegistus':
+                    document.getElementById(`actChooseCardToKeep_button`).classList.toggle('disabled', selection.length != 1);
+                    break;
                 case 'T22_AncientGreek':
                     document.getElementById(`actPickAndDiscard_button`).classList.toggle('disabled', selection.length != 1);
                     break;
@@ -1256,6 +1288,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actPickAndDiscard', [pass ? null : selectedCards[0]?.id]);
     }
   	
+    public actChooseCardToKeep() {
+        const selectedCards = this.market.getSelection();
+        this.takeAtomicAction('actChooseCardToKeep', [selectedCards[0]?.id]);
+    }
+  	
     public actSelectCardsToDiscard() {
         if(!(this as any).checkAction('actSelectCardsToDiscard')) {
             return;
@@ -1371,6 +1408,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
+            ['placeAtDeckBottom', ANIMATION_MS],
             ['moveCard', undefined],
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
@@ -1613,6 +1651,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (card.location == 'past') {
             playerTable.past.resetPastOrder();
         }
+    }
+    
+    notif_placeAtDeckBottom(args: NotifPlaceAtDeckBottomArgs) {
+        this.tableCenter.placeAtDeckBottom(args.card, args.deck);
     }
     
     notif_mediumMessage() {}    
