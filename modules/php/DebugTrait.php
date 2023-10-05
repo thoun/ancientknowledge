@@ -3,6 +3,7 @@ namespace AK;
 use AK\Managers\Players;
 use AK\Managers\Meeples;
 use AK\Managers\Cards;
+use AK\Managers\Scores;
 use AK\Core\Globals;
 use AK\Core\Engine;
 use AK\Core\Game;
@@ -17,6 +18,11 @@ trait DebugTrait
   {
     Globals::setEndOfGameTriggered(true);
     Notifications::endOfGameTriggered(Players::getCurrent());
+  }
+
+  function scores()
+  {
+    Scores::compute(true);
   }
 
   function tp()
