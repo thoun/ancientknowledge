@@ -198,6 +198,7 @@ $machinestates = [
     'descriptionmyturn' => clienttranslate('${you} must choose a technology to learn'),
     'descriptionskippable' => clienttranslate('${actplayer} may choose a technology to learn'),
     'descriptionmyturn' => clienttranslate('${you} may choose a technology to learn'),
+    'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'possibleactions' => ['actLearn', 'actRestart', 'actPassOptionalAction'],
   ],
@@ -357,7 +358,14 @@ $machinestates = [
     'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'type' => 'activeplayer',
-    'possibleactions' => ['actPassOptionalAction', 'actRestart', 'actDiscardAndDraw', 'actPickAndDiscard', 'actChooseTech', 'actChooseCardToKeep'],
+    'possibleactions' => [
+      'actPassOptionalAction',
+      'actRestart',
+      'actDiscardAndDraw',
+      'actPickAndDiscard',
+      'actChooseTech',
+      'actChooseCardToKeep',
+    ],
   ],
 
   //////////////////////////////////////////////////////////////////

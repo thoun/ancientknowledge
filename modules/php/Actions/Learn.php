@@ -19,6 +19,14 @@ class Learn extends \AK\Models\Action
     return clienttranslate('Learn');
   }
 
+  public function stLearn()
+  {
+    $techId = $this->getCtxArg('autoplay');
+    if (!is_null($techId)) {
+      $this->actLearn($techId);
+    }
+  }
+
   public function getPlayableTechs($player, $isDoable = false)
   {
     $pool = Technologies::getPool();
