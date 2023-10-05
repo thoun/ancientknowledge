@@ -35,18 +35,16 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
 
   public function argsDiscardAndDraw()
   {
-    $cards = $player->getHand();
+    $cards = $this->getPlayer()->getHand();
 
     return [
       'sourceId' => $this->id,
-      'description' => clienttranslate(
-        '${actplayer} may discard up to 3 cards to draw 1 card for each discarded card (Earthquake Engineering)'
-      ),
-      'descriptionmyturn' => clienttranslate(
-        'You may discard up to 3 cards to draw 1 card for each discarded card (Earthquake Engineering)'
-      ),
+      'descSuffix' => 'EarthquakeEngineering',
+      'description' => clienttranslate('${actplayer} may discard up to 3 cards to draw 1 card for each discarded card'),
+      'descriptionmyturn' => clienttranslate('You may discard up to 3 cards to draw 1 card for each discarded card'),
       '_private' => [
         'active' => [
+          'n' => 3,
           'cardIds' => $cards->getIds(),
         ],
       ],
@@ -55,6 +53,30 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
 
   public function actDiscardAndDraw($cardIds)
   {
-    die('actDiscardAndDraw');
+    // Sanity checks
+    self::checkAction('actDiscardAndDraw');
+    $player = Players::getActive();
+    $args = $this->argsDiscardAndDraw();
+    $n = count($cardIds);
+    if ($n > 3) {
+      throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
+    }
+    if (!empty(array_diff($cardIds, $args['_private']['active']['cardIds']))) {
+      throw new \BgaVisibleSystemException('Invalid cards to discard. Should not happen');
+    }
+
+    if ($n > 0) {
+      // Discard cards
+      $cards = Cards::getMany($cardIds);
+      Cards::discard($cardIds);
+      Notifications::discardCards($player, $cards);
+
+      $this->insertAsChild([
+        'action' => DRAW,
+        'args' => ['n' => $n],
+      ]);
+    }
+
+    $this->resolveAction(['n' => $n]);
   }
 }
