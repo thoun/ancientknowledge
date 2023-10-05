@@ -1,6 +1,9 @@
 <?php
 namespace AK\Technologies;
 
+use AK\Managers\Cards;
+use AK\Core\Notifications;
+
 class T17_EarthquakeEngineering extends \AK\Models\Technology
 {
   public function __construct($row)
@@ -54,8 +57,7 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
   public function actDiscardAndDraw($cardIds)
   {
     // Sanity checks
-    self::checkAction('actDiscardAndDraw');
-    $player = Players::getActive();
+    $player = $this->getPlayer();
     $args = $this->argsDiscardAndDraw();
     $n = count($cardIds);
     if ($n > 3) {
@@ -71,12 +73,10 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
       Cards::discard($cardIds);
       Notifications::discardCards($player, $cards);
 
-      $this->insertAsChild([
+      return [
         'action' => DRAW,
         'args' => ['n' => $n],
-      ]);
+      ];
     }
-
-    $this->resolveAction(['n' => $n]);
   }
 }

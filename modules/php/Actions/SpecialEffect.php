@@ -73,8 +73,13 @@ class SpecialEffect extends \AK\Models\Action
     if (!\method_exists($card, $method)) {
       throw new BgaVisibleSystemException('Corresponding act function does not exists : ' . $method);
     }
+    self::checkAction($method);
 
-    $card->$method(...array_merge($actArgs, $arguments));
+    $flow = $card->$method(...array_merge($actArgs, $arguments));
+    if (!is_null($flow)) {
+      $this->insertAsChild($flow);
+    }
+
     $this->resolveAction();
   }
 }
