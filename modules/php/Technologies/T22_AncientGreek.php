@@ -66,7 +66,6 @@ class T22_AncientGreek extends \AK\Models\Technology
 
     return [
       'sourceId' => $this->id,
-      'descSuffix' => 'AncientGreek',
       'description' => clienttranslate('${actplayer} must create 1 <ARTIFACT> from the top 10 cards'),
       'descriptionmyturn' => clienttranslate('You must create 1 <ARTIFACT> from the top 10 cards'),
       '_private' => [

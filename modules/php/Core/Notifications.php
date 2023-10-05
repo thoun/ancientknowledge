@@ -421,6 +421,19 @@ class Notifications
     ]);
   }
 
+  public static function placeAtDeckBottom($player, $tech, $deck)
+  {
+    self::notifyAll(
+      'placeAtDeckBottom',
+      clienttranslate('${player_name} put ${card_name} on the bottom of the corresponding deck'),
+      [
+        'player' => $player,
+        'card' => $tech,
+        'deck' => $deck,
+      ]
+    );
+  }
+
   ///////////////////////////////////////////////////////////////
   //  _   _           _       _            _
   // | | | |_ __   __| | __ _| |_ ___     / \   _ __ __ _ ___
