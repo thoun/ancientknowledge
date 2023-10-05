@@ -171,9 +171,10 @@ interface EnteringSpecialEffectArgs {
     source: string;
     sourceId: string;
     _private: {
-        cardIds: string[];
+        cardIds?: string[];
         validCardIds?: string[];
-        canCreate: boolean;
+        canCreate?: boolean;
+        techIds?: string[];
     };
 }
 
@@ -315,6 +316,14 @@ interface NotifKeepAndDiscardArgs {
 interface NotifMoveCardArgs {
     player_id: number;
     card: BuilderCard;
+}
+
+// placeAtDeckBottom
+interface NotifPlaceAtDeckBottomArgs {
+    player_id: number;
+    card: TechnologyTile;
+    card_id: string;
+    deck: number;
 }
 
 // scoringEntry

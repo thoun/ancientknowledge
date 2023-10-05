@@ -98,6 +98,20 @@ html, .mode_3d #game_play_area_background {
     align-items: center;
     font-size: 12px;
   }
+
+  &.tech-level {
+    background-image: url('img/level-icon.png');
+    background-size: auto 100%;
+    max-width: 20px;
+    max-height: 20px;
+
+    &[data-level="1"] {
+      background-position-x: 0%;
+    }
+    &[data-level="2"] {
+      background-position-x: 100%;
+    }
+  }
 }
 
 .action-icon {

@@ -2139,7 +2139,9 @@ function formatTextIcons(rawText, white) {
         .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
         .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
         .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
-        .replace(/\[n°(\d)\]/ig, function (fullMatch, number) { return "<span class=\"icon starting-space\">".concat(number, "</span>"); });
+        .replace(/\[n°(\d)\]/ig, function (fullMatch, number) { return "<span class=\"icon starting-space\">".concat(number, "</span>"); })
+        .replace(/\[I\]/ig, '<span class="icon tech-level" data-level="1"></span>')
+        .replace(/\[II\]/ig, '<span class="icon tech-level" data-level="2"></span>');
 }
 var CARD_COLORS = {
     'A': '#734073',
@@ -2562,6 +2564,21 @@ var TableCenter = /** @class */ (function () {
     TableCenter.prototype.setTileStocksSelectable = function (selectable) {
         var stocks = Array.from(document.querySelectorAll(".table-technology-tiles".concat(selectable ? '[data-level="1"]' : '')));
         stocks.forEach(function (stock) { return stock.classList.toggle('selectable', selectable); });
+    };
+    TableCenter.prototype.placeAtDeckBottom = function (card, deckNumber) {
+        return __awaiter(this, void 0, void 0, function () {
+            var deck;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        deck = this.technologyTilesDecks[deckNumber];
+                        return [4 /*yield*/, deck.addCard({ id: card.id })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     return TableCenter;
 }());
@@ -3674,10 +3691,10 @@ var AncientKnowledge = /** @class */ (function () {
         if (args.automaticAction) {
             return;
         }
-        if (args.descSuffix) {
-            this.gamedatas.gamestate["description".concat(args.descSuffix)] = args.description;
-            this.gamedatas.gamestate["descriptionmyturn".concat(args.descSuffix)] = args.description;
-            this.changePageTitle(args.descSuffix);
+        if (args.description && args.descriptionmyturn) {
+            this.gamedatas.gamestate["description".concat(args.sourceId)] = args.description;
+            this.gamedatas.gamestate["descriptionmyturn".concat(args.sourceId)] = args.descriptionmyturn;
+            this.changePageTitle(args.sourceId);
             $('pagemaintitletext').insertAdjacentHTML('beforeend', " (<span class=\"title-log-card-name\" id=\"tooltip-".concat(this._last_tooltip_id, "\">").concat(_(args.source), "</span>)"));
         }
         if (this.isCurrentPlayerActive()) {
@@ -3689,6 +3706,9 @@ var AncientKnowledge = /** @class */ (function () {
                     this.initMarketStock();
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
+                    break;
+                case 'T27_LatinAlphabet':
+                    this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args._private.techIds));
                     break;
             }
         }
@@ -3784,6 +3804,9 @@ var AncientKnowledge = /** @class */ (function () {
                 switch (specialEffectArgs.sourceId) {
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'T27_LatinAlphabet':
+                        this.onLeavingLearn();
                         break;
                 }
         }
@@ -4149,6 +4172,15 @@ var AncientKnowledge = /** @class */ (function () {
                 ]);
             }
         }
+        else if (this.gamedatas.gamestate.name == 'specialEffect') {
+            switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T27_LatinAlphabet':
+                    this.takeAtomicAction('actChooseTech', [
+                        tile.id,
+                    ]);
+                    break;
+            }
+        }
     };
     AncientKnowledge.prototype.onTableTechnologyTileStockClick = function (number) {
         this.takeAtomicAction('actFlipTechTile', [number]);
@@ -4456,6 +4488,7 @@ var AncientKnowledge = /** @class */ (function () {
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
+            ['placeAtDeckBottom', ANIMATION_MS],
             ['moveCard', undefined],
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
@@ -4676,6 +4709,9 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
         });
+    };
+    AncientKnowledge.prototype.notif_placeAtDeckBottom = function (args) {
+        this.tableCenter.placeAtDeckBottom(args.card, args.deck);
     };
     AncientKnowledge.prototype.notif_mediumMessage = function () { };
     AncientKnowledge.prototype.notif_endOfGameTriggered = function (animate) {

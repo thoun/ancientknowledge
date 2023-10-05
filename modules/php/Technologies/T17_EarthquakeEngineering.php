@@ -43,7 +43,7 @@ class T17_EarthquakeEngineering extends \AK\Models\Technology
     return [
       'sourceId' => $this->id,
       'description' => clienttranslate('${actplayer} may discard up to 3 cards to draw 1 card for each discarded card'),
-      'descriptionmyturn' => clienttranslate('You may discard up to 3 cards to draw 1 card for each discarded card'),
+      'descriptionmyturn' => clienttranslate('${you} may discard up to 3 cards to draw 1 card for each discarded card'),
       '_private' => [
         'active' => [
           'n' => 3,

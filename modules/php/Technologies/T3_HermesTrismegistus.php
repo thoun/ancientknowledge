@@ -84,7 +84,7 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
     return [
       'sourceId' => $this->id,
       'description' => clienttranslate('${actplayer} must choose 1 card to keep'),
-      'descriptionmyturn' => clienttranslate('You must choose 1 card to keep'),
+      'descriptionmyturn' => clienttranslate('${you} must choose 1 card to keep'),
       'cardIds' => $cards->getIds(),
     ];
   }

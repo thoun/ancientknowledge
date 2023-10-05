@@ -77,5 +77,10 @@ class TableCenter {
         const stocks = Array.from(document.querySelectorAll(`.table-technology-tiles${selectable ? '[data-level="1"]' : ''}`));
         stocks.forEach(stock => stock.classList.toggle('selectable', selectable));
     }
+    
+    public async placeAtDeckBottom(card: TechnologyTile, deckNumber: number) {
+        const deck = this.technologyTilesDecks[deckNumber];
+        await deck.addCard({ id: card.id } as TechnologyTile);
+    }
 
 }

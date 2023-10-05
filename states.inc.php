@@ -357,7 +357,7 @@ $machinestates = [
     'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'type' => 'activeplayer',
-    'possibleactions' => ['actPassOptionalAction', 'actRestart', 'actDiscardAndDraw', 'actPickAndDiscard'],
+    'possibleactions' => ['actPassOptionalAction', 'actRestart', 'actDiscardAndDraw', 'actPickAndDiscard', 'actChooseTech'],
   ],
 
   //////////////////////////////////////////////////////////////////

@@ -67,7 +67,7 @@ class T22_AncientGreek extends \AK\Models\Technology
     return [
       'sourceId' => $this->id,
       'description' => clienttranslate('${actplayer} must create 1 <ARTIFACT> from the top 10 cards'),
-      'descriptionmyturn' => clienttranslate('You must create 1 <ARTIFACT> from the top 10 cards'),
+      'descriptionmyturn' => clienttranslate('${you} must create 1 <ARTIFACT> from the top 10 cards'),
       '_private' => [
         'active' => [
           'canCreate' => !is_null($player->getFreeArtefactSlot()),

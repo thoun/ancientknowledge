@@ -1,6 +1,8 @@
 <?php
 namespace AK\Technologies;
 
+use AK\Core\Notifications;
+use AK\Managers\Players;
 use AK\Managers\Technologies;
 
 class T27_LatinAlphabet extends \AK\Models\Technology
@@ -48,7 +50,7 @@ class T27_LatinAlphabet extends \AK\Models\Technology
     return [
       'sourceId' => $this->id,
       'description' => clienttranslate('${actplayer} must choose 1 Technology [II] to be placed at the bottom of the deck'),
-      'descriptionmyturn' => clienttranslate('You must choose 1 Technology [II] to be placed at the bottom of the deck'),
+      'descriptionmyturn' => clienttranslate('${you} must choose 1 Technology [II] to be placed at the bottom of the deck'),
       '_private' => [
         'active' => [
           'techIds' => $techs->getIds(),
@@ -66,6 +68,7 @@ class T27_LatinAlphabet extends \AK\Models\Technology
 
     $tech = Technologies::getSingle($techId);
     Technologies::insertAtBottom($techId, 'deck_2');
+    $player = Players::getActive();
     Notifications::placeAtDeckBottom($player, $tech, 2);
   }
 }

@@ -478,10 +478,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
             return;
         }
 
-        if (args.descSuffix) {
-            this.gamedatas.gamestate[`description${args.descSuffix}`] = args.description;
-            this.gamedatas.gamestate[`descriptionmyturn${args.descSuffix}`] = args.description;
-            this.changePageTitle(args.descSuffix);
+        if (args.description && args.descriptionmyturn) {
+            this.gamedatas.gamestate[`description${args.sourceId}`] = args.description;
+            this.gamedatas.gamestate[`descriptionmyturn${args.sourceId}`] = args.descriptionmyturn;
+            this.changePageTitle(args.sourceId);
 
             $('pagemaintitletext').insertAdjacentHTML(
                 'beforeend',
@@ -498,6 +498,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.initMarketStock();
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
+                    break;
+                case 'T27_LatinAlphabet':
+                    this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args._private.techIds));
                     break;
             }
         }
@@ -599,6 +602,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 switch (specialEffectArgs.sourceId) {
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'T27_LatinAlphabet':
+                        this.onLeavingLearn();
                         break;
                 }
         }
@@ -1040,6 +1046,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     tile.id,
                 ]);
             }
+        } else if (this.gamedatas.gamestate.name == 'specialEffect') {
+            switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T27_LatinAlphabet':
+                    this.takeAtomicAction('actChooseTech', [
+                        tile.id,
+                    ]);
+                    break;
+            }            
         }
     }
 
@@ -1371,6 +1385,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['rotateCards', ANIMATION_MS],
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
+            ['placeAtDeckBottom', ANIMATION_MS],
             ['moveCard', undefined],
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
@@ -1613,6 +1628,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (card.location == 'past') {
             playerTable.past.resetPastOrder();
         }
+    }
+    
+    notif_placeAtDeckBottom(args: NotifPlaceAtDeckBottomArgs) {
+        this.tableCenter.placeAtDeckBottom(args.card, args.deck);
     }
     
     notif_mediumMessage() {}    
