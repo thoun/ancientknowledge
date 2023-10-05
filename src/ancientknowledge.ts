@@ -676,7 +676,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
                     switch (specialEffectArgs.sourceId) {
                         case 'T17_EarthquakeEngineering':
-                            (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(false));
+                            (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
                             break;
                     }
                     break;
@@ -1025,7 +1025,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
-                    document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length <= 3);
+                    document.getElementById('actDiscardAndDraw_button').classList.toggle('disabled', selection.length > 3);
                     break;
             }
         }
@@ -1189,6 +1189,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);
+    }
+  	
+    public actDiscardAndDraw() {
+        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actDiscardAndDraw', [cardsIds]);
     }
   	
     public actDrawAndKeep() {
