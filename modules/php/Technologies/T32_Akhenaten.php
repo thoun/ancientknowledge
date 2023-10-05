@@ -20,7 +20,7 @@ class T32_Akhenaten extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(PYRAMID) >= 4;
+    return $player->countIcon(PYRAMID) >= 4 - $player->getIconReduction();
   }
 
   public function getScore()

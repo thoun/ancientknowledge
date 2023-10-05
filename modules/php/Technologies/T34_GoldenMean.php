@@ -20,7 +20,7 @@ class T34_GoldenMean extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(CITY) >= 3;
+    return $player->countIcon(CITY) >= 3 - $player->getIconReduction();
   }
 
   public function getScore()

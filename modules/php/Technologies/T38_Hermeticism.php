@@ -20,7 +20,7 @@ class T38_Hermeticism extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(CITY) >= 5;
+    return $player->countIcon(CITY) >= 5 - $player->getIconReduction();
   }
 
   public function getScore()

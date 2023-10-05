@@ -23,7 +23,7 @@ class T37_Alchemy extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return array_sum($player->countIcons(BUILDINGS)) >= 7 && $player->getLostKnowledge() <= 3;
+    return array_sum($player->countIcons(BUILDINGS)) >= 7 - $player->getIconReduction() && $player->getLostKnowledge() <= 3;
   }
 
   public function getScore()

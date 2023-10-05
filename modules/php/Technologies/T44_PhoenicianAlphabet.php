@@ -20,7 +20,7 @@ class T44_PhoenicianAlphabet extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->getLostKnowledge() >= 15;
+    return $player->getLostKnowledge() >= 15 - $player->getIconReduction();
   }
 
   public function getScore()

@@ -23,5 +23,6 @@ class P19_CandiSukuh extends \AK\Models\Building
         'When you LEARN, you may reduce one of the values of the Technology requirements by 1 (to a minimum of 0).'
       ),
     ];
+    $this->implemented = true;
   }
 }

@@ -20,7 +20,7 @@ class T30_Thoth extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->getLostKnowledge() >= 9;
+    return $player->getLostKnowledge() >= 9 - $player->getIconReduction();
   }
 
   public function getScore()

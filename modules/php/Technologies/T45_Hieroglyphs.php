@@ -20,7 +20,7 @@ class T45_Hieroglyphs extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(\MEGALITH) >= 5;
+    return $player->countIcon(\MEGALITH) >= 5 - $player->getIconReduction();
   }
 
   public function getScore()

@@ -20,7 +20,7 @@ class T33_PlinyTheElder extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(ANCIENT) >= 3;
+    return $player->countIcon(ANCIENT) >= 3 - $player->getIconReduction();
   }
 
   public function getScore()

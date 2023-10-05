@@ -20,7 +20,7 @@ class T2_Aristotle extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(PYRAMID) >= 2;
+    return $player->countIcon(PYRAMID) >= 2 - $player->getIconReduction();
   }
 
   public function getImmediateEffect()

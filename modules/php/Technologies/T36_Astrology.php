@@ -20,7 +20,7 @@ class T36_Astrology extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->getHand()->count() >= 10;
+    return $player->getHand()->count() >= 10 - $player->getIconReduction();
   }
 
   public function getScore()

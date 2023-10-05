@@ -20,7 +20,7 @@ class T28_Imhotep extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(ARTEFACT) >= 4;
+    return $player->countIcon(ARTEFACT) >= 4 - $player->getIconReduction();
   }
 
   public function getScore()

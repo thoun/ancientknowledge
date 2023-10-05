@@ -20,7 +20,7 @@ class T40_ChineseAlphabet extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(\MEGALITH) >= 3;
+    return $player->countIcon(\MEGALITH) >= 3 - $player->getIconReduction();
   }
 
   public function getScore()

@@ -20,7 +20,17 @@ class T7_Melchizedek extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return min($player->countIcons(BUILDINGS)) >= 1;
+    // How many types are not in the past ?
+    $icons = $player->countIcons(BUILDINGS);
+    $nZeroes = 0;
+    foreach ($icons as $type => $n) {
+      if ($n == 0) {
+        $nZeroes++;
+      }
+    }
+
+    // Must be 0 or 1 if we have CandiSukuh
+    return $nZeroes <= $player->getIconReduction();
   }
 
   public function getImmediateEffect()

@@ -20,7 +20,7 @@ class T25_CopticAlphabet extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(\MEGALITH) >= 2;
+    return $player->countIcon(\MEGALITH) >= 2 - $player->getIconReduction();
   }
 
   public function getImmediateEffect()

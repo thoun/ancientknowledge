@@ -20,7 +20,17 @@ class T39_Arikat extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return min(0, $player->countIcons(BUILDINGS)) >= 3;
+    // How many types are not in the past ?
+    $icons = $player->countIcons(BUILDINGS);
+    $nNotEnough = 0;
+    foreach ($icons as $type => $n) {
+      if ($n < 3) {
+        $nNotEnough++;
+      }
+    }
+
+    // Must be 0 or 1 if we have CandiSukuh
+    return $nNotEnough <= $player->getIconReduction();
   }
 
   public function getScore()

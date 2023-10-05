@@ -20,7 +20,7 @@ class T35_RoyalCubit extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(SECRET) >= 3;
+    return $player->countIcon(SECRET) >= 3 - $player->getIconReduction();
   }
 
   public function getScore()

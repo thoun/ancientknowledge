@@ -20,7 +20,7 @@ class T15_FlowerOfLife extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(CITY) >= 2;
+    return $player->countIcon(CITY) >= 2 - $player->getIconReduction();
   }
 
   public function getImmediateEffect()

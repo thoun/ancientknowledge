@@ -20,7 +20,7 @@ class T29_Plato extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return max($player->countIcons(BUILDINGS)) >= 7;
+    return max($player->countIcons(BUILDINGS)) >= 7 - $player->getIconReduction();
   }
 
   public function getScore()

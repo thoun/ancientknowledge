@@ -20,7 +20,7 @@ class T41_EmeraldTablet extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(\WRITING) >= 3;
+    return $player->countIcon(\WRITING) >= 3 - $player->getIconReduction();
   }
 
   public function getScore()

@@ -20,7 +20,7 @@ class T1_Anaximenes extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->countIcon(\ARTEFACT) >= 3;
+    return $player->countIcon(\ARTEFACT) >= 3 - $player->getIconReduction();
   }
 
   public function getImmediateEffect()

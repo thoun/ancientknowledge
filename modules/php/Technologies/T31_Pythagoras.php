@@ -23,7 +23,8 @@ class T31_Pythagoras extends \AK\Models\Technology
     return $player
       ->getPast()
       ->where('activation', ENDGAME)
-      ->count() >= 3;
+      ->count() >=
+      3 - $player->getIconReduction();
   }
 
   public function getScore()
