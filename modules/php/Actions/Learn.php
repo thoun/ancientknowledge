@@ -76,6 +76,25 @@ class Learn extends \AK\Models\Action
     $tech->setPId($player->getId());
     Notifications::learnTech($player, $tech);
 
+    $this->refillBoardIfNeeded($board);
+
+    // Check immediate effect
+    if ($tech->getActivation() == \IMMEDIATE) {
+      $this->insertAsChild([
+        'action' => \ACTIVATE_CARD,
+        'args' => ['cardId' => $tech->getId(), 'activation' => IMMEDIATE],
+      ]);
+    }
+
+    // Check listener
+    $this->checkAfterListeners($player, ['tech' => $tech]);
+
+    $irreversible = in_array($techId, $args['irreversibleIds']);
+    $this->resolveAction(['techId' => $techId], $irreversible);
+  }
+
+  public function refillBoardIfNeeded($board)
+  {
     // Check if a row is almost empty
     $left = Technologies::getBoard($board);
     if ($left->count() == 1) {
@@ -94,19 +113,5 @@ class Learn extends \AK\Models\Action
         ]);
       }
     }
-
-    // Check immediate effect
-    if ($tech->getActivation() == \IMMEDIATE) {
-      $this->insertAsChild([
-        'action' => \ACTIVATE_CARD,
-        'args' => ['cardId' => $tech->getId(), 'activation' => IMMEDIATE],
-      ]);
-    }
-
-    // Check listener
-    $this->checkAfterListeners($player, ['tech' => $tech]);
-
-    $irreversible = in_array($techId, $args['irreversibleIds']);
-    $this->resolveAction(['techId' => $techId], $irreversible);
   }
 }

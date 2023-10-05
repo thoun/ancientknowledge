@@ -2,6 +2,7 @@
 namespace AK\Technologies;
 
 use AK\Managers\Technologies;
+use AK\Actions\Learn;
 
 class T27_LatinAlphabet extends \AK\Models\Technology
 {
@@ -65,7 +66,10 @@ class T27_LatinAlphabet extends \AK\Models\Technology
     }
 
     $tech = Technologies::getSingle($techId);
+    $board = $tech->getBoard();
     Technologies::insertAtBottom($techId, 'deck_2');
+    Learn::refillBoardIfNeeded($board);
+
     Notifications::placeAtDeckBottom($player, $tech, 2);
   }
 }
