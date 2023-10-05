@@ -61,6 +61,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private addKnowledgeSelection: { [playerId: string]: string } = {};
 
+    private market?: LineStock<BuilderCard>;
+
     constructor() {
     }
     
@@ -455,12 +457,32 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.tableCenter.setTileStocksSelectable(true);
         }
     }
+
+    private initMarketStock() {
+        if (!this.market) {
+            document.getElementById('table-center-and-market').insertAdjacentHTML('afterbegin', `
+                <div id="market"></div>
+            `);
+            this.market = new LineStock<BuilderCard>(this.builderCardsManager, document.getElementById(`market`));
+            this.market.onSelectionChange = selection => this.onMarketSelectionChange(selection);
+        }
+    }
+
+    private removeMarketStock() {
+        document.getElementById('market')?.remove();
+        this.market = null;
+    }
   
     private onEnteringSpecialEffect(args: EnteringSpecialEffectArgs) {
         if ((this as any).isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
                     this.getCurrentPlayerTable().setHandSelectable('multiple', this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
+                    break;
+                case 'T22_AncientGreek':
+                    this.initMarketStock();
+                    this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
+                    this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
                     break;
             }
         }
@@ -557,6 +579,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'flipTechTile':
                 this.onLeavingFlipTechTile();
                 break;
+            case 'specialEffect':
+                const specialEffectArgs = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
+                switch (specialEffectArgs.sourceId) {
+                    case 'T22_AncientGreek':
+                        this.removeMarketStock();
+                        break;
+                }
         }
     }
 
@@ -677,6 +706,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     switch (specialEffectArgs.sourceId) {
                         case 'T17_EarthquakeEngineering':
                             (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
+                            break;
+                        case 'T22_AncientGreek':
+                            if (specialEffectArgs._private?.canCreate) {
+                                (this as any).addActionButton(`actPickAndDiscard_button`, _("Build selected artifact"), () => this.actPickAndDiscard());
+                                document.getElementById('actPickAndDiscard_button').classList.add('disabled');
+                            } else {
+                                (this as any).addActionButton(`actPickAndDiscard_button`, _("Pass (you cannot build an artifact)"), () => this.actPickAndDiscard(null));
+                            }
                             break;
                     }
                     break;
@@ -992,24 +1029,16 @@ class AncientKnowledge implements AncientKnowledgeGame {
     public onTableTechnologyTileStockClick(number: number): void {
         this.takeAtomicAction('actFlipTechTile', [number]);
     }
-
-    public onHandCardClick(card: BuilderCard): void {
-        if (this.gamedatas.gamestate.name == 'create') {
-            /*this.takeAtomicAction('actCreate', [
-                card.id,
-                card.id[0] == 'A' ? `artefact-0` : `timeline-${card.startingSpace}-0`, // TODO space to build
-                [], // TODO cards to discard
-            ]);*/
+    
+    public onMarketSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'specialEffect') {
+            switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'T22_AncientGreek':
+                    document.getElementById(`actPickAndDiscard_button`).classList.toggle('disabled', selection.length != 1);
+                    break;
+            }            
         }
     }
-
-    /*public updateCreatePageTitle() {
-        if (this.selectedCard) {
-            // TODO 
-        } else {
-            this.changePageTitle(null);
-        }
-    }*/
     
     public onHandCardSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'initialSelection') {
@@ -1203,6 +1232,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction('actDrawAndKeep', cardsIds);
+    }
+  	
+    public actPickAndDiscard(forcedValue = undefined) {
+        const selectedCards = this.market.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actPickAndDiscard', forcedValue === null ? null : [cardsIds]);
     }
   	
     public actSelectCardsToDiscard() {

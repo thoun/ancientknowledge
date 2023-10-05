@@ -75,7 +75,6 @@ interface AncientKnowledgeGame extends Game {
     setTooltip(id: string, html: string): void;
     onTableTechnologyTileClick(destination: TechnologyTile): void;
     onTableTechnologyTileStockClick(number: number): void;
-    onHandCardClick(card: BuilderCard): void;
     onHandCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineCardSelectionChange(selection: BuilderCard[], playerId: number): void;
     onPastCardSelectionChange(selection: BuilderCard[]): void;
@@ -168,6 +167,8 @@ interface EnteringSpecialEffectArgs {
     sourceId: string;
     _private: {
         cardIds: string[];
+        validCardIds?: string[];
+        canCreate: boolean;
     };
 }
 

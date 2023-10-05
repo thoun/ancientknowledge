@@ -841,6 +841,13 @@ body > .card {
   justify-content: center;
 }
 
+#table-center-and-market {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 #table-center {
   width: 903px;
   display: flex;
