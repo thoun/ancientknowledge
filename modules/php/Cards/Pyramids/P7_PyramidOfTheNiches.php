@@ -29,7 +29,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
     $this->implemented = true;
   }
 
-  public function getImmediateEffect()
+  public function getDeclineEffect()
   {
     return [
       'type' => NODE_SEQ,
