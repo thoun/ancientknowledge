@@ -104,7 +104,7 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
   public function actStealCard($cardId, $targetId)
   {
     $args = $this->argsStealCard($targetId)['_private']['active'];
-    if (!in_array($targetId, $args['cardIds'])) {
+    if (!in_array($cardId, $args['cardIds'])) {
       throw new \BgaVisibleSystemException('Invalid card to steal. Should not happen');
     }
     $target = Players::get($targetId);
