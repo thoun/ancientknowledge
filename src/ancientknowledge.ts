@@ -519,6 +519,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         this.market.setSelectionMode('single');
                     }
                     break;
+                case 'P13_Yonaguni':
+                    this.getCurrentPlayerTable().artifacts.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
+                    break;
                 case 'T17_EarthquakeEngineering':
                     this.getCurrentPlayerTable().setHandSelectable('multiple', this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     break;
@@ -632,6 +635,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'P13_Yonaguni':
+                        this.getCurrentPlayerTable()?.artifacts.setSelectionMode('none');
                         break;
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
@@ -775,6 +781,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                                     (this as any).addActionButton(`actStealCard_button`, _("Keep selected card"), () => this.actStealCard());
                                     document.getElementById('actStealCard_button').classList.add('disabled');
                                 }
+                                break;
+                            case 'P13_Yonaguni':
+                                (this as any).addActionButton(`actDiscardAndRemoveKnowledge_button`, _("Discard selected cards"), () => this.actDiscardAndRemoveKnowledge());
                                 break;
                             case 'T3_HermesTrismegistus':
                                 (this as any).addActionButton(`actChooseCardToKeep_button`, _("Keep selected card"), () => this.actChooseCardToKeep());
@@ -1230,6 +1239,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.resolveChoiceCardClicked(card);
         }
     }
+    
+    /*public onArtifactSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'specialEffect') {
+            const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
+            switch (args.sourceId) {
+                case 'P13_Yonaguni':
+                    document.getElementById('actDiscardAndRemoveKnowledge_button').classList.toggle('disabled', selection.length > 3);
+                    break;
+            }
+        }
+    }*/
 
     public resolveChoiceCardClicked(card: BuilderCard): void {
         const choice = Object.values((this.gamedatas.gamestate.args as EnteringResolveChoiceArgs).choices).find(choice => choice.args?.cardId == card.id);
@@ -1316,6 +1336,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction('actDiscardAndDraw', [cardsIds]);
+    }
+  	
+    public actDiscardAndRemoveKnowledge() {
+        const selectedCards = this.getCurrentPlayerTable().artifacts.getSelection();
+        const cardsIds = selectedCards.map(card => card.id).sort();
+
+        this.takeAtomicAction('actDiscardAndRemoveKnowledge', [cardsIds]);
     }
   	
     public actDrawAndKeep() {
@@ -1552,15 +1579,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     notif_discardCards(args: NotifPDrawCardsArgs) {
-        const { player_id, n } = args;    
-        this.handCounters[player_id].incValue(-Number(n));  
+        const { player_id, n } = args;
+        if (!args.artifact) {
+            this.handCounters[player_id].incValue(-Number(n));
+        }
     }
 
-    notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
-        const { player_id, cards } = args;    
-        this.handCounters[player_id].incValue(-cards.length);    
-        this.getPlayerTable(player_id).hand.removeCards(cards);
-        return Promise.resolve(true);
+    async notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
+        const { player_id, cards } = args;
+        
+        if (args.artifact) {
+            await this.getPlayerTable(player_id).artifacts.removeCards(cards);
+        } else {
+            this.handCounters[player_id].incValue(-cards.length);    
+            await this.getPlayerTable(player_id).hand.removeCards(cards);
+        }
     }
 
     notif_destroyCard(args: NotifDestroyCardArgs) {

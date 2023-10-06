@@ -13,9 +13,7 @@ Backend:
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 
 Frontend:
- - P13_Yonaguni : discardAndRemoveKnowledge => same state as discard but can discard as many as they want (including 0 cards)
- 
-- special effect
+ - P7_PyramidOfTheNiches
  - Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
 
  - error : During notification declineCard

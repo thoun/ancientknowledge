@@ -80,6 +80,7 @@ interface AncientKnowledgeGame extends Game {
     onPastCardSelectionChange(selection: BuilderCard[]): void;
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onArtifactCardClick(card: BuilderCard): void;
+    //onArtifactSelectionChange(selection: BuilderCard[]): void;
     onTableCardClick(card: BuilderCard): void;
     onPlayedCardClick(card: BuilderCard): void;
     changePageTitle(suffix?: string, save?: boolean): void;
@@ -176,7 +177,7 @@ interface EnteringSpecialEffectArgs {
         canCreate?: boolean; // T22_AncientGreek
         techIds?: string[]; // T27_LatinAlphabet
     };
-    cardIds?: string[]; // T3_HermesTrismegistus
+    cardIds?: string[]; // T3_HermesTrismegistus, P13_Yonaguni
     pIds?: number[]; // M14_MenhirOfKerloas
 }
 
