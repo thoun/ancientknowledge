@@ -365,6 +365,8 @@ $machinestates = [
       'actPickAndDiscard',
       'actChooseTech',
       'actChooseCardToKeep',
+      'actChooseOpponent',
+      'actStealCard',
     ],
   ],
 

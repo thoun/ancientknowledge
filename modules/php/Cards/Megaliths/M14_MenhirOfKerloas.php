@@ -95,7 +95,7 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
       'descriptionmyturn' => clienttranslate('${you} must choose 1 card to steal'),
       '_private' => [
         'active' => [
-          'cardIds' => $cards->getIds(),
+          'cardIds' => $cardIds,
         ],
       ],
     ];

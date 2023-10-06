@@ -165,18 +165,18 @@ interface EnteringMoveBuildingArgs {
 
 interface EnteringSpecialEffectArgs {
     automaticAction: boolean;
-    descSuffix: string;
     description: string;
     descriptionmyturn: string;
     source: string;
     sourceId: string;
     _private: {
-        cardIds?: string[];
-        validCardIds?: string[];
-        canCreate?: boolean;
-        techIds?: string[];
+        cardIds?: string[]; // M14_MenhirOfKerloase, T17_EarthquakeEngineering, T22_AncientGreek
+        validCardIds?: string[]; // T22_AncientGreek
+        canCreate?: boolean; // T22_AncientGreek
+        techIds?: string[]; // T27_LatinAlphabet
     };
     cardIds?: string[]; // T3_HermesTrismegistus
+    pIds?: number[]; // M14_MenhirOfKerloas
 }
 
 // pDrawCards

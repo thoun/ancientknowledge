@@ -1443,6 +1443,14 @@ html, .mode_3d #game_play_area_background {
   padding-top: 32px;
 }
 
+#page-title .player-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .icon {
   display: inline-block;
   width: 32px;

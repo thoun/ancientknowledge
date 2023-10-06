@@ -47,7 +47,7 @@ trait DebugTrait
   }
 
   // addHand(M15_BarabarCaves)
-  // addHand(M24_TlalocsStatue)
+  // addHand(M14_MenhirOfKerloas)
   function addHand($cardId)
   {
     $player = Players::getCurrent();

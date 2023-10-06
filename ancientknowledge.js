@@ -3766,7 +3766,15 @@ var AncientKnowledge = /** @class */ (function () {
             this.gamedatas.gamestate["description".concat(args.sourceId)] = args.description;
             this.gamedatas.gamestate["descriptionmyturn".concat(args.sourceId)] = args.descriptionmyturn;
             this.changePageTitle(args.sourceId);
+            var card = args.sourceId[0] == 'T' ?
+                this.technologyTilesManager.getFullCardById(args.sourceId) :
+                this.builderCardsManager.getFullCardById(args.sourceId);
+            if (!args.source) {
+                args.source = card.name;
+            }
             $('pagemaintitletext').insertAdjacentHTML('beforeend', " (<span class=\"title-log-card-name\" id=\"tooltip-".concat(this._last_tooltip_id, "\">").concat(_(args.source), "</span>)"));
+            this.setTooltip("tooltip-".concat(this._last_tooltip_id), card.name);
+            this._last_tooltip_id++;
         }
         switch (args.sourceId) {
             case 'T3_HermesTrismegistus':
@@ -3779,6 +3787,13 @@ var AncientKnowledge = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive()) {
             switch (args.sourceId) {
+                case 'M14_MenhirOfKerloas':
+                    if (args._private.cardIds) {
+                        this.initMarketStock();
+                        this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
+                        this.market.setSelectionMode('single');
+                    }
+                    break;
                 case 'T17_EarthquakeEngineering':
                     this.getCurrentPlayerTable().setHandSelectable('multiple', this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     break;
@@ -3882,6 +3897,7 @@ var AncientKnowledge = /** @class */ (function () {
             case 'specialEffect':
                 var specialEffectArgs = this.gamedatas.gamestate.args;
                 switch (specialEffectArgs.sourceId) {
+                    case 'M14_MenhirOfKerloas':
                     case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
@@ -4009,6 +4025,22 @@ var AncientKnowledge = /** @class */ (function () {
                     var specialEffectArgs = args;
                     if (!specialEffectArgs.automaticAction) {
                         switch (specialEffectArgs.sourceId) {
+                            case 'M14_MenhirOfKerloas':
+                                if (specialEffectArgs.pIds) {
+                                    specialEffectArgs.pIds.forEach(function (playerId) {
+                                        var player = _this.getPlayer(playerId);
+                                        var url = document.getElementById("avatar_".concat(playerId)).src;
+                                        // ? Custom image : Bga Image
+                                        //url = url.replace('_32', url.indexOf('data/avatar/defaults') > 0 ? '' : '_184');
+                                        _this.addActionButton("actChooseOpponent".concat(playerId, "-button"), "<div class=\"player-avatar\" style=\"background-image: url('".concat(url, "');\"></div> ").concat(player.name, "</div>"), function () { return _this.takeAtomicAction('actChooseOpponent', [playerId]); });
+                                        document.getElementById("actChooseOpponent".concat(playerId, "-button")).style.border = "3px solid #".concat(player.color);
+                                    });
+                                }
+                                else {
+                                    this.addActionButton("actStealCard_button", _("Keep selected card"), function () { return _this.actStealCard(); });
+                                    document.getElementById('actStealCard_button').classList.add('disabled');
+                                }
+                                break;
                             case 'T3_HermesTrismegistus':
                                 this.addActionButton("actChooseCardToKeep_button", _("Keep selected card"), function () { return _this.actChooseCardToKeep(); });
                                 document.getElementById('actChooseCardToKeep_button').classList.add('disabled');
@@ -4277,6 +4309,9 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.onMarketSelectionChange = function (selection) {
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'M14_MenhirOfKerloas':
+                    document.getElementById("actStealCard_button").classList.toggle('disabled', selection.length != 1);
+                    break;
                 case 'T3_HermesTrismegistus':
                     document.getElementById("actChooseCardToKeep_button").classList.toggle('disabled', selection.length != 1);
                     break;
@@ -4479,6 +4514,11 @@ var AncientKnowledge = /** @class */ (function () {
         if (pass === void 0) { pass = false; }
         var selectedCards = this.market.getSelection();
         this.takeAtomicAction('actPickAndDiscard', [pass ? null : (_a = selectedCards[0]) === null || _a === void 0 ? void 0 : _a.id]);
+    };
+    AncientKnowledge.prototype.actStealCard = function () {
+        var _a;
+        var selectedCards = this.market.getSelection();
+        this.takeAtomicAction('actStealCard', [(_a = selectedCards[0]) === null || _a === void 0 ? void 0 : _a.id]);
     };
     AncientKnowledge.prototype.actChooseCardToKeep = function () {
         var _a;

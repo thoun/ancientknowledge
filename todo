@@ -19,8 +19,6 @@ Frontend:
    => notif stealCard : une notif publique à ignorer pour la victime et l'owner
    => notif pStealCard : une notif privée envoyée aux deux joueurs, il faut checker si this.player_id == n.args.player_id ou n.args.player_id2 pour savoir si on est victime ou pas
 
- - T3_HermesTrismegistus : notif keep
-
 - special effect
  - Pour l’inversion de cartes ou les déplacements, il y a eu de nombreux bug d’affichage (comme si les monuments ne s’étaient pas déplacés), cela s’est remis après rafraichissement
 
