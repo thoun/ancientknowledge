@@ -3685,7 +3685,7 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onEnteringRemoveKnowledge = function (args) {
-        if (this.isCurrentPlayerActive()) {
+        if (this.isCurrentPlayerActive() && !args.automaticAction) {
             this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.m, args.type);
         }
     };
@@ -3759,6 +3759,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.market = null;
     };
     AncientKnowledge.prototype.onEnteringSpecialEffect = function (args) {
+        var _a;
         if (args.automaticAction) {
             return;
         }
@@ -3788,11 +3789,14 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'M14_MenhirOfKerloas':
-                    if (args._private.cardIds) {
+                    if ((_a = args._private) === null || _a === void 0 ? void 0 : _a.cardIds) {
                         this.initMarketStock();
                         this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                         this.market.setSelectionMode('single');
                     }
+                    break;
+                case 'P13_Yonaguni':
+                    this.getCurrentPlayerTable().artifacts.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
                     break;
                 case 'T17_EarthquakeEngineering':
                     this.getCurrentPlayerTable().setHandSelectable('multiple', this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
@@ -3846,7 +3850,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
-        var _a, _b;
+        var _a, _b, _c;
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
         document.getElementById('customActions').innerHTML = '';
@@ -3901,6 +3905,9 @@ var AncientKnowledge = /** @class */ (function () {
                     case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'P13_Yonaguni':
+                        (_c = this.getCurrentPlayerTable()) === null || _c === void 0 ? void 0 : _c.artifacts.setSelectionMode('none');
                         break;
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
@@ -4040,6 +4047,9 @@ var AncientKnowledge = /** @class */ (function () {
                                     this.addActionButton("actStealCard_button", _("Keep selected card"), function () { return _this.actStealCard(); });
                                     document.getElementById('actStealCard_button').classList.add('disabled');
                                 }
+                                break;
+                            case 'P13_Yonaguni':
+                                this.addActionButton("actDiscardAndRemoveKnowledge_button", _("Discard selected cards"), function () { return _this.actDiscardAndRemoveKnowledge(); });
                                 break;
                             case 'T3_HermesTrismegistus':
                                 this.addActionButton("actChooseCardToKeep_button", _("Keep selected card"), function () { return _this.actChooseCardToKeep(); });
@@ -4307,16 +4317,17 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAtomicAction('actFlipTechTile', [number]);
     };
     AncientKnowledge.prototype.onMarketSelectionChange = function (selection) {
+        var _a, _b, _c;
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
                 case 'M14_MenhirOfKerloas':
-                    document.getElementById("actStealCard_button").classList.toggle('disabled', selection.length != 1);
+                    (_a = document.getElementById("actStealCard_button")) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', selection.length != 1);
                     break;
                 case 'T3_HermesTrismegistus':
-                    document.getElementById("actChooseCardToKeep_button").classList.toggle('disabled', selection.length != 1);
+                    (_b = document.getElementById("actChooseCardToKeep_button")) === null || _b === void 0 ? void 0 : _b.classList.toggle('disabled', selection.length != 1);
                     break;
                 case 'T22_AncientGreek':
-                    document.getElementById("actPickAndDiscard_button").classList.toggle('disabled', selection.length != 1);
+                    (_c = document.getElementById("actPickAndDiscard_button")) === null || _c === void 0 ? void 0 : _c.classList.toggle('disabled', selection.length != 1);
                     break;
             }
         }
@@ -4432,6 +4443,16 @@ var AncientKnowledge = /** @class */ (function () {
             this.resolveChoiceCardClicked(card);
         }
     };
+    /*public onArtifactSelectionChange(selection: BuilderCard[]): void {
+        if (this.gamedatas.gamestate.name == 'specialEffect') {
+            const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
+            switch (args.sourceId) {
+                case 'P13_Yonaguni':
+                    document.getElementById('actDiscardAndRemoveKnowledge_button').classList.toggle('disabled', selection.length > 3);
+                    break;
+            }
+        }
+    }*/
     AncientKnowledge.prototype.resolveChoiceCardClicked = function (card) {
         var _this = this;
         var choice = Object.values(this.gamedatas.gamestate.args.choices).find(function (choice) { var _a; return ((_a = choice.args) === null || _a === void 0 ? void 0 : _a.cardId) == card.id; });
@@ -4503,6 +4524,11 @@ var AncientKnowledge = /** @class */ (function () {
         var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
         var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
         this.takeAtomicAction('actDiscardAndDraw', [cardsIds]);
+    };
+    AncientKnowledge.prototype.actDiscardAndRemoveKnowledge = function () {
+        var selectedCards = this.getCurrentPlayerTable().artifacts.getSelection();
+        var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
+        this.takeAtomicAction('actDiscardAndRemoveKnowledge', [cardsIds]);
     };
     AncientKnowledge.prototype.actDrawAndKeep = function () {
         var selectedCards = this.drawAndPeekStock.getSelection();
@@ -4627,6 +4653,8 @@ var AncientKnowledge = /** @class */ (function () {
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
             ['placeAtDeckBottom', ANIMATION_MS],
+            ['stealCard', ANIMATION_MS],
+            ['pStealCard', ANIMATION_MS],
             ['moveCard', undefined],
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
@@ -4688,6 +4716,9 @@ var AncientKnowledge = /** @class */ (function () {
         this.notifqueue.setIgnoreNotificationCheck('keepAndDiscard', function (notif) {
             return notif.args.player_id == _this.getPlayerId() && !notif.args.card;
         });
+        this.notifqueue.setIgnoreNotificationCheck('stealCard', function (notif) {
+            return [notif.args.player_id, notif.args.player_id2].includes(_this.getPlayerId());
+        });
     };
     AncientKnowledge.prototype.notif_drawCards = function (args) {
         var player_id = args.player_id, n = args.n;
@@ -4705,13 +4736,32 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_discardCards = function (args) {
         var player_id = args.player_id, n = args.n;
-        this.handCounters[player_id].incValue(-Number(n));
+        if (!args.artifact) {
+            this.handCounters[player_id].incValue(-Number(n));
+        }
     };
     AncientKnowledge.prototype.notif_pDiscardCards = function (args) {
-        var player_id = args.player_id, cards = args.cards;
-        this.handCounters[player_id].incValue(-cards.length);
-        this.getPlayerTable(player_id).hand.removeCards(cards);
-        return Promise.resolve(true);
+        return __awaiter(this, void 0, void 0, function () {
+            var player_id, cards;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        player_id = args.player_id, cards = args.cards;
+                        if (!args.artifact) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.getPlayerTable(player_id).artifacts.removeCards(cards)];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2:
+                        this.handCounters[player_id].incValue(-cards.length);
+                        return [4 /*yield*/, this.getPlayerTable(player_id).hand.removeCards(cards)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
     };
     AncientKnowledge.prototype.notif_destroyCard = function (args) {
         var player_id = args.player_id, card = args.card;
@@ -4855,6 +4905,22 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.notif_placeAtDeckBottom = function (args) {
         this.tableCenter.placeAtDeckBottom(args.card, args.deck);
+    };
+    AncientKnowledge.prototype.notif_stealCard = function (args) {
+        var player_id = args.player_id, player_id2 = args.player_id2;
+        this.handCounters[player_id].incValue(1);
+        this.handCounters[player_id2].incValue(-1);
+    };
+    AncientKnowledge.prototype.notif_pStealCard = function (args) {
+        this.notif_stealCard(args);
+        var player_id = args.player_id, player_id2 = args.player_id2, card = args.card;
+        var currentPlayerId = this.getPlayerId();
+        if (currentPlayerId == player_id) {
+            this.getCurrentPlayerTable().hand.addCard(this.builderCardsManager.getFullCard(card));
+        }
+        else if (currentPlayerId == player_id2) {
+            this.getCurrentPlayerTable().hand.removeCard(this.builderCardsManager.getFullCard(card));
+        }
     };
     AncientKnowledge.prototype.notif_mediumMessage = function () { };
     AncientKnowledge.prototype.notif_endOfGameTriggered = function (animate) {
