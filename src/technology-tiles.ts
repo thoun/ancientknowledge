@@ -50,9 +50,6 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         div.style.backgroundPositionX = `${(backgroundIndex % tilesByRow) * 100 / (tilesByRow - 1)}%`;
         div.style.backgroundPositionY = `${Math.floor(backgroundIndex / tilesByRow) * 50}%`;
         let html = ``;
-
-        // TODO TEMP
-        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>`;
         
         if (requirement) {
             html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>`;
