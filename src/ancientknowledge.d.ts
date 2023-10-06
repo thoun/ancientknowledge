@@ -199,6 +199,7 @@ interface NotifPDiscardCardsArgs {
     n: number;
     player_id: number;
     cards: BuilderCard[];
+    fromBoard: boolean;
 }
 
 // destroyCard
