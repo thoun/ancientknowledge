@@ -391,7 +391,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onEnteringRemoveKnowledge(args: EnteringRemoveKnowledgeArgs) {
-        if ((this as any).isCurrentPlayerActive()) {
+        if ((this as any).isCurrentPlayerActive() && !args.automaticAction) {
             this.removeKnowledgeEngine = new RemoveKnowledgeEngine(this, args.cardIds, args.n, args.m, args.type);
         }
     }
@@ -513,7 +513,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if ((this as any).isCurrentPlayerActive()) {
             switch (args.sourceId) {
                 case 'M14_MenhirOfKerloas':
-                    if (args._private.cardIds) {
+                    if (args._private?.cardIds) {
                         this.initMarketStock();
                         this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                         this.market.setSelectionMode('single');
@@ -1119,13 +1119,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
                 case 'M14_MenhirOfKerloas':
-                    document.getElementById(`actStealCard_button`).classList.toggle('disabled', selection.length != 1);
+                    document.getElementById(`actStealCard_button`)?.classList.toggle('disabled', selection.length != 1);
                     break;
                 case 'T3_HermesTrismegistus':
-                    document.getElementById(`actChooseCardToKeep_button`).classList.toggle('disabled', selection.length != 1);
+                    document.getElementById(`actChooseCardToKeep_button`)?.classList.toggle('disabled', selection.length != 1);
                     break;
                 case 'T22_AncientGreek':
-                    document.getElementById(`actPickAndDiscard_button`).classList.toggle('disabled', selection.length != 1);
+                    document.getElementById(`actPickAndDiscard_button`)?.classList.toggle('disabled', selection.length != 1);
                     break;
             }            
         }
@@ -1457,6 +1457,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['straightenCards', ANIMATION_MS],
             ['keepAndDiscard', ANIMATION_MS],
             ['placeAtDeckBottom', ANIMATION_MS],
+            ['stealCard', ANIMATION_MS],
+            ['pStealCard', ANIMATION_MS],
             ['moveCard', undefined],
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
@@ -1526,6 +1528,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         );
         (this as any).notifqueue.setIgnoreNotificationCheck('keepAndDiscard', (notif: Notif<NotifKeepAndDiscardArgs>) => 
             notif.args.player_id == this.getPlayerId() && !notif.args.card
+        );
+        (this as any).notifqueue.setIgnoreNotificationCheck('stealCard', (notif: Notif<any>) => 
+            [notif.args.player_id, notif.args.player_id2].includes(this.getPlayerId())
         );
     }
 
@@ -1709,6 +1714,24 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     notif_placeAtDeckBottom(args: NotifPlaceAtDeckBottomArgs) {
         this.tableCenter.placeAtDeckBottom(args.card, args.deck);
+    }
+    
+    notif_stealCard(args: NotifStealCardArgs) {
+        const { player_id, player_id2 } = args;
+        this.handCounters[player_id].incValue(1);
+        this.handCounters[player_id2].incValue(-1);
+    }
+    
+    notif_pStealCard(args: NotifPStealCardArgs) {
+        this.notif_stealCard(args);
+
+        const { player_id, player_id2, card } = args;
+        const currentPlayerId = this.getPlayerId();
+        if (currentPlayerId == player_id) {
+            this.getCurrentPlayerTable().hand.addCard(this.builderCardsManager.getFullCard(card));
+        } else if (currentPlayerId == player_id2) {
+            this.getCurrentPlayerTable().hand.removeCard(this.builderCardsManager.getFullCard(card));
+        }
     }
     
     notif_mediumMessage() {}    

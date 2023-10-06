@@ -121,6 +121,7 @@ interface EnteringAddKnowledgeArgs {
 }
 
 interface EnteringRemoveKnowledgeArgs {
+    automaticAction: boolean;
     n: number;
     m: number;
     cardIds: string[];
@@ -340,3 +341,13 @@ interface NotifScoringEntryArgs {
     category: string;
 }
 
+// stealCard
+interface NotifStealCardArgs {
+    player_id: number;
+    player_id2: number;
+}
+
+// pStealCard
+interface NotifPStealCardArgs extends NotifStealCardArgs {
+    card: BuilderCard;
+}
