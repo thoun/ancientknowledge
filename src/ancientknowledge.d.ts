@@ -186,6 +186,12 @@ interface NotifPDrawCardsArgs {
     cards: BuilderCard[];
 }
 
+// keep
+interface NotifKeepArgs {
+    player_id: number;
+    card: BuilderCard;
+}
+
 // pDiscardCards
 interface NotifPDiscardCardsArgs {
     n: number;

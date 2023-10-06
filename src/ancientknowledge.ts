@@ -469,7 +469,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private removeMarketStock() {
-        document.getElementById('market')?.remove();
+        this.market?.remove();
         this.market = null;
     }
   
@@ -720,6 +720,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
                     this.startActionTimer(`actConfirmTurn_button`);
+                    break;
+                case 'confirmPartialTurn':
+                    (this as any).addActionButton(`actConfirmPartialTurn_button`, _("Confirm"), () => this.actConfirmPartialTurn());
+                    this.startActionTimer(`actConfirmPartialTurn_button`);
                     break;
                 case 'drawAndKeep':
                     (this as any).addActionButton(`actDrawAndKeep_button`, _("Keep selected card(s)"), () => this.actDrawAndKeep());
@@ -1386,6 +1390,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const notifs = [
             ['drawCards', ANIMATION_MS],
             ['pDrawCards', ANIMATION_MS],
+            ['keep', ANIMATION_MS],
             ['discardCards', ANIMATION_MS],
             ['pDiscardCards', ANIMATION_MS],
             ['destroyCard', ANIMATION_MS],
@@ -1489,7 +1494,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
         const { player_id, cards } = args;        
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(args.player_id).hand.addCards(this.builderCardsManager.getFullCards(args.cards));
+        return this.getPlayerTable(player_id).hand.addCards(this.builderCardsManager.getFullCards(cards));
+    }
+
+    notif_keep(args: NotifKeepArgs) {
+        const { player_id, card } = args;        
+        this.handCounters[player_id].incValue(1);
+        return this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card));
     }
 
     notif_discardCards(args: NotifPDrawCardsArgs) {
