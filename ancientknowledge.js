@@ -4735,19 +4735,19 @@ var AncientKnowledge = /** @class */ (function () {
         return this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card));
     };
     AncientKnowledge.prototype.notif_discardCards = function (args) {
-        var player_id = args.player_id, n = args.n;
-        if (!args.artifact) {
+        var player_id = args.player_id, n = args.n, fromBoard = args.fromBoard;
+        if (!fromBoard) {
             this.handCounters[player_id].incValue(-Number(n));
         }
     };
     AncientKnowledge.prototype.notif_pDiscardCards = function (args) {
         return __awaiter(this, void 0, void 0, function () {
-            var player_id, cards;
+            var player_id, cards, fromBoard;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        player_id = args.player_id, cards = args.cards;
-                        if (!args.artifact) return [3 /*break*/, 2];
+                        player_id = args.player_id, cards = args.cards, fromBoard = args.fromBoard;
+                        if (!fromBoard) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.getPlayerTable(player_id).artifacts.removeCards(cards)];
                     case 1:
                         _a.sent();

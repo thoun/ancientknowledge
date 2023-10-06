@@ -1578,17 +1578,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card));
     }
 
-    notif_discardCards(args: NotifPDrawCardsArgs) {
-        const { player_id, n } = args;
-        if (!args.artifact) {
+    notif_discardCards(args: NotifPDiscardCardsArgs) {
+        const { player_id, n, fromBoard } = args;
+        if (!fromBoard) {
             this.handCounters[player_id].incValue(-Number(n));
         }
     }
 
     async notif_pDiscardCards(args: NotifPDiscardCardsArgs) {
-        const { player_id, cards } = args;
+        const { player_id, cards, fromBoard } = args;
         
-        if (args.artifact) {
+        if (fromBoard) {
             await this.getPlayerTable(player_id).artifacts.removeCards(cards);
         } else {
             this.handCounters[player_id].incValue(-cards.length);    
