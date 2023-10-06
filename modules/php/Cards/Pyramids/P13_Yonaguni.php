@@ -69,7 +69,7 @@ class P13_Yonaguni extends \AK\Models\Building
       // Discard cards
       $cards = Cards::getMany($cardIds);
       Cards::discard($cardIds);
-      Notifications::discardCards($player, $cards);
+      Notifications::discardCards($player, $cards, null, null, ['fromBoard' => true]);
 
       return [
         'action' => REMOVE_KNOWLEDGE,
