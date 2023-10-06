@@ -63,7 +63,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
     return clienttranslate('Learn 1 Technology from top Technology [II] cards');
   }
 
-  public function argsChooseTech()
+  public function argsChooseTechAndScrapOthers()
   {
     $player = $this->getPlayer();
     $allTechs = Technologies::getInLocation('pending');
