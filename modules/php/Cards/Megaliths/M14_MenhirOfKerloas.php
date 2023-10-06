@@ -32,44 +32,79 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
       'action' => SPECIAL_EFFECT,
       'args' => [
         'sourceId' => $this->id,
-        'method' => 'stealCard',
+        'method' => 'chooseOpponent',
       ],
     ];
   }
 
-  // Prompt player to pick one artefact
-  public function getStealCardDescription()
+  // Prompt player to choose one opponent
+  public function getChooseOpponentDescription()
   {
     return clienttranslate('Steal 1 card from oppononents\' hand');
   }
 
-  public function argsStealCard()
+  public function argsChooseOpponent()
   {
-    $cardIds = [];
+    $pIds = [];
     foreach (Players::getAll() as $pId => $player) {
       if ($pId != $this->pId) {
-        $cardIds[$pId] = $player->getHand()->getIds();
+        $pIds[] = $pId;
       }
     }
 
     return [
       'sourceId' => $this->id,
-      'description' => clienttranslate('${actplayer} must choose 1 card to steal'),
-      'descriptionmyturn' => clienttranslate('${you} must choose 1 card to steal'),
-      'cardIds' => $cardIds,
+      'description' => clienttranslate('${actplayer} must choose an opponent to steal a card from their hand'),
+      'descriptionmyturn' => clienttranslate('${you} must choose an opponent to steal a card from their hand'),
+      'pIds' => $pIds,
     ];
   }
 
-  public function actStealCard($cardId)
+  public function actChooseOpponent($pId)
   {
-    $args = $this->argsStealCard();
-    $targetId = null;
-    foreach ($args['cardIds'] as $pId => $cardIds) {
-      if (in_array($cardId, $cardIds)) {
-        $targetId = $pId;
-      }
+    $args = $this->argsChooseOpponent();
+    if (!in_array($pId, $args['pIds'])) {
+      throw new \BgaVisibleSystemException('Invalid player to steal. Should not happen');
     }
-    if (is_null($targetId)) {
+    $target = Players::get($pId);
+    $player = $this->getPlayer();
+    Notifications::message(clienttranslate('${player_name} is going to steal from ${player_name2}'), [
+      'player' => $player,
+      'player2' => $target,
+    ]);
+
+    return [
+      'action' => SPECIAL_EFFECT,
+      'args' => [
+        'sourceId' => $this->id,
+        'method' => 'stealCard',
+        'args' => [$pId],
+      ],
+    ];
+  }
+
+  // Prompt player to pick one card
+  public function argsStealCard($pId)
+  {
+    $player = Players::get($pId);
+    $cardIds = $player->getHand()->getIds();
+
+    return [
+      'sourceId' => $this->id,
+      'description' => clienttranslate('${actplayer} must choose 1 card to steal'),
+      'descriptionmyturn' => clienttranslate('${you} must choose 1 card to steal'),
+      '_private' => [
+        'active' => [
+          'cardIds' => $cards->getIds(),
+        ],
+      ],
+    ];
+  }
+
+  public function actStealCard($cardId, $targetId)
+  {
+    $args = $this->argsStealCard($targetId)['_private']['active'];
+    if (!in_array($targetId, $args['cardIds'])) {
       throw new \BgaVisibleSystemException('Invalid card to steal. Should not happen');
     }
     $target = Players::get($targetId);
