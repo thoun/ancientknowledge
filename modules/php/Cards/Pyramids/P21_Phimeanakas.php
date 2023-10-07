@@ -27,7 +27,6 @@ class P21_Phimeanakas extends \AK\Models\Building
 • discard 1 <KNOWLEDGE> from any of your monuments;
 • and draw 1 card."),
     ];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

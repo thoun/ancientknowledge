@@ -22,7 +22,6 @@ class M10_TheFairiesRock extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Each of your opponents must discard 1 card from their hand.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

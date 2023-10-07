@@ -22,7 +22,6 @@ class M28_MegalithsOfCauria extends \AK\Models\Building
     $this->effect = [
       clienttranslate('Add 1 <KNOWLEDGE> from the reserve to any monument in each of your opponents\' Timelines.'),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

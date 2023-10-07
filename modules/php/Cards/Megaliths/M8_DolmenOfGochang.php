@@ -22,7 +22,6 @@ class M8_DolmenOfGochang extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('If you have 5 <MEGALITH> in your Past, discard 7 <LOST_KNOWLEDGE> from your board.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

@@ -24,7 +24,6 @@ class C3_GobekliTepe extends \AK\Models\Building
       ),
     ];
 
-    $this->implemented = true;
   }
 
   public function getScore()

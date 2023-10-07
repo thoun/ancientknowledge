@@ -22,7 +22,6 @@ class M13_CarnacStandingStones extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('If you have at least 20 <LOST_KNOWLEDGE> on your board, discard 15 <LOST_KNOWLEDGE>.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

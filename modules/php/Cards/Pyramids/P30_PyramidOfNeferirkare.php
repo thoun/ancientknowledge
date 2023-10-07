@@ -22,7 +22,6 @@ class P30_PyramidOfNeferirkare extends \AK\Models\Building
     $this->startingSpace = 5;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from any other monument.')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

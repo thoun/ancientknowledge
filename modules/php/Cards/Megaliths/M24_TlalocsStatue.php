@@ -22,7 +22,6 @@ class M24_TlalocsStatue extends \AK\Models\Building
     $this->effect = [
       clienttranslate('Add 3 <KNOWLEDGE> from the reserve to any monument in each of your opponents\' Timelines.'),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

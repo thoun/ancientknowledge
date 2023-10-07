@@ -18,7 +18,6 @@ class A19_VoynichManuscript extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Each time you LEARN 1 <SECRET>, draw 2 cards.')];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

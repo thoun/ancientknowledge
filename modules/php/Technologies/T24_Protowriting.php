@@ -15,7 +15,6 @@ class T24_Protowriting extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

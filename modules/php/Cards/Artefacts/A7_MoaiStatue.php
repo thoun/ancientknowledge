@@ -16,7 +16,6 @@ class A7_MoaiStatue extends \AK\Models\Artefact
     ];
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('You may discard 2 <ARTIFACT> from your hand. If you do, draw 4 cards.')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

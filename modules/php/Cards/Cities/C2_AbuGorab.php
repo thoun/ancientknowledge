@@ -22,7 +22,6 @@ class C2_AbuGorab extends \AK\Models\Building
       clienttranslate('If you have 3 <SECRET> or 4 <SECRET>, gain 4 <VP>.'),
       clienttranslate('or, if you have 5 <SECRET> or more, gain 7 <VP>.'),
     ];
-    $this->implemented = true;
   }
 
   public function getScore()

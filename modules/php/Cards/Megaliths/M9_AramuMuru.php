@@ -24,7 +24,6 @@ class M9_AramuMuru extends \AK\Models\Building
         'Each of your opponents must discard 2 cards from their hand. If an opponent has less than 2 cards in hand, they discard as many as they can.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

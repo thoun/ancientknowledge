@@ -24,7 +24,6 @@ class C4_Byblos extends \AK\Models\Building
       ),
     ];
 
-    $this->implemented = true;
   }
 
   public function getScore()

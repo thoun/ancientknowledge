@@ -24,7 +24,6 @@ class M30_LeshanGiantBuddha extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 3 <MEGALITH> in your Past, discard 1 <LOST_KNOWLEDGE> from your board.'),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

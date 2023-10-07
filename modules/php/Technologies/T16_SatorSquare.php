@@ -14,7 +14,6 @@ class T16_SatorSquare extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Swap 2 monuments in your Timeline.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

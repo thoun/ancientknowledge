@@ -21,7 +21,6 @@ class A9_Tzolkin extends \AK\Models\Artefact
         'If you have 3 or less <LOST_KNOWLEDGE> on your board and at least 1 monument in your Past, you may discard 1 <KNOWLEDGE> from any of your monuments.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

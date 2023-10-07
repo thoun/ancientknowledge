@@ -18,7 +18,6 @@ class C12_Timbuktu extends \AK\Models\Building
     $this->startingSpace = 1;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <LOST_KNOWLEDGE> from your board.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

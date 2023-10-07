@@ -23,7 +23,6 @@ class C11_Warangal extends \AK\Models\Building
       clienttranslate('• discard 1 <KNOWLEDGE> from any of your monuments;'),
       clienttranslate('• and draw 1 card.'),
     ];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

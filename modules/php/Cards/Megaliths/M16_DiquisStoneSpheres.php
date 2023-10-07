@@ -23,7 +23,6 @@ class M16_DiquisStoneSpheres extends \AK\Models\Building
     $this->activation = IMMEDIATE;
     $this->startingHand = 2;
     $this->effect = [clienttranslate('You may CREATE 1 <ARTIFACT>.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

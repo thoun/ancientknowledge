@@ -23,7 +23,6 @@ class A33_MichauxStone extends \AK\Models\Artefact
         'If you have at least 17 <LOST_KNOWLEDGE> on your board, you may LEARN 1 Technology if you fulfill its requirements.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

@@ -18,7 +18,6 @@ class P15_XixiaWangling extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 3 <KNOWLEDGE> or less from a monument adjacent to this one.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

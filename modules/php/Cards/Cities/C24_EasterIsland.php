@@ -18,7 +18,6 @@ class C24_EasterIsland extends \AK\Models\Building
     $this->startingSpace = 5;
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Your other <CITY> enter play with 1 <KNOWLEDGE> less.')];
-    $this->implemented = true;
   }
 
   public function getKnowledgeReduction($card)

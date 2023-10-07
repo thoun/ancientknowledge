@@ -18,7 +18,6 @@ class P23_PyramidsOfXian extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Swap this monument with another monument of your Timeline.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

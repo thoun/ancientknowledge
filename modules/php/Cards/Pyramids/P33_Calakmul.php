@@ -30,7 +30,6 @@ class P33_Calakmul extends \AK\Models\Building
 • add the 2 <CITY> to your hand;
 • and discard the other revealed cards."),
     ];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

@@ -23,7 +23,6 @@ class M34_MontguyonDolmen extends \AK\Models\Building
     $this->discard = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('You may LEARN 1 Technology without fulfilling the requirements.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

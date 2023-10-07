@@ -24,7 +24,6 @@ class C21_Mycenae extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Discard a total of 7 <KNOWLEDGE> or less from one or several of your other monuments.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

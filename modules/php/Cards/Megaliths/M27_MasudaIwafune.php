@@ -18,7 +18,6 @@ class M27_MasudaIwafune extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('You may CREATE 1 <MEGALITH>.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

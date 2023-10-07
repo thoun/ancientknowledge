@@ -19,7 +19,6 @@ class A14_KlerksdorpSpheres extends \AK\Models\Artefact
     $this->activation = TIMELINE;
     $this->startingHand = 4;
     $this->effect = [clienttranslate('If you have at least 5 <LOST_KNOWLEDGE> on your board, draw 1 card.')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

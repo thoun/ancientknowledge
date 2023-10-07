@@ -15,7 +15,6 @@ class T36_Astrology extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

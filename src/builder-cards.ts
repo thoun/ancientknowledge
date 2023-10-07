@@ -61,7 +61,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         let html = ``;
 
         // TODO TEMP
-        html += `<div class="implemented" data-implemented="${card.implemented?.toString() ?? 'false'}"></div>
+        html += `
         <div class="name-box">
             <div class="name">
                 ${card.name ?? ''}

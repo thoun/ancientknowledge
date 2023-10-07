@@ -18,7 +18,6 @@ class A2_SarcophagusOfSaqqara extends \AK\Models\Artefact
 • discard 1 <KNOWLEDGE> from any of your monument;
 • and draw 1 card."),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

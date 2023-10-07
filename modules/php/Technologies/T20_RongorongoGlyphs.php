@@ -14,7 +14,6 @@ class T20_RongorongoGlyphs extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <MEGALITH> in your Timeline.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

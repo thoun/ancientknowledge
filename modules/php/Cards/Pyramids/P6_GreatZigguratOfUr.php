@@ -25,7 +25,6 @@ class P6_GreatZigguratOfUr extends \AK\Models\Building
         'Gain 2 <VP> for each set of 3 different types of monuments (<CITY>, <MEGALITH> et <PYRAMID>) in your Past.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getScore()

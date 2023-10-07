@@ -23,7 +23,6 @@ class P35_CandiKethek extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Choose 2 available Technologies and put them on the bottom of their respective deck(s).')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

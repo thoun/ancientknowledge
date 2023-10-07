@@ -23,7 +23,6 @@ class P18_PyramideDeNice extends \AK\Models\Building
     $this->startingSpace = 1;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from any of your monuments.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

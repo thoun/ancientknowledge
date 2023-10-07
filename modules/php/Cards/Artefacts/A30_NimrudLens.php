@@ -19,7 +19,6 @@ class A30_NimrudLens extends \AK\Models\Artefact
         'Each time you LEARN a Technology (<ANCIENT>, <WRITING>, <SECRET>), you may discard 1 <KNOWLEDGE> from any of your monuments.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

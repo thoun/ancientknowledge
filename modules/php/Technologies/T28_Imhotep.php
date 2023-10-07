@@ -15,7 +15,6 @@ class T28_Imhotep extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('3 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

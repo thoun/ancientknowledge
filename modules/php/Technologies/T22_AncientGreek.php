@@ -21,7 +21,6 @@ class T22_AncientGreek extends \AK\Models\Technology
 • choose and CREATE 1 <ARTIFACT>;
 • and discard the remaining cards."),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

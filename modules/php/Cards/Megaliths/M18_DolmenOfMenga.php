@@ -23,7 +23,6 @@ class M18_DolmenOfMenga extends \AK\Models\Building
     $this->startingSpace = 6;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('You may CREATE an extra monument.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

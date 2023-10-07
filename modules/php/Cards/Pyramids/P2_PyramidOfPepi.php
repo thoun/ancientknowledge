@@ -19,7 +19,6 @@ class P2_PyramidOfPepi extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('If you have at least 7 <CITY> in your Past, gain 6 <VP> ')];
-    $this->implemented = true;
   }
 
   public function getScore()

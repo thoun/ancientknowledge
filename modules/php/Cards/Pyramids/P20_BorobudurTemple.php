@@ -21,7 +21,6 @@ class P20_BorobudurTemple extends \AK\Models\Building
     $this->effect = [
       clienttranslate('Each time you CREATE 1 <ARTIFACT>, you may LEARN 1 Technology if you fulfill its requirements.'),
     ];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

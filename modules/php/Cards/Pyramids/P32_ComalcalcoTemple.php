@@ -23,7 +23,6 @@ class P32_ComalcalcoTemple extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('Gain 1 <VP> for each monument with a <VP> activation in your Past.')];
-    $this->implemented = true;
   }
 
   public function getScore()

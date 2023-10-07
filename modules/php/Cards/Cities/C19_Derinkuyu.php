@@ -18,7 +18,6 @@ class C19_Derinkuyu extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Discard 4 <KNOWLEDGE> from any of your <CITY> with at least 6 <KNOWLEDGE>.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

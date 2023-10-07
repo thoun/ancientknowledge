@@ -14,7 +14,6 @@ class T5_NicolasFlammel extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <LOST_KNOWLEDGE> from your board and draw 1 card.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

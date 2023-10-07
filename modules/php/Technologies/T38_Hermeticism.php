@@ -15,7 +15,6 @@ class T38_Hermeticism extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('3 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

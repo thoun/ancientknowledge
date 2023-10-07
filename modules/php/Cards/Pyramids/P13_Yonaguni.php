@@ -25,7 +25,6 @@ class P13_Yonaguni extends \AK\Models\Building
         'You may discard as many <ARTIFACT> from your board as you wish. Discard 4 <KNOWLEDGE> from this monument for each <ARTIFACT> you discard.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

@@ -23,7 +23,6 @@ class M19_DolmenOfFontanaccia extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('If you have at least 10 <LOST_KNOWLEDGE> on your board, gain 4 <VP>.')];
-    $this->implemented = true;
   }
 
   public function getScore()

@@ -18,7 +18,6 @@ class A16_CrystalSkull extends \AK\Models\Artefact
         'Each time you rotate at least 3 monuments during an EXCAVATE action, LEARN 1 Technology if you fulfill its requirements.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

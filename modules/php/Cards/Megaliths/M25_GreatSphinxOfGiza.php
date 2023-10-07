@@ -24,7 +24,6 @@ class M25_GreatSphinxOfGiza extends \AK\Models\Building
     $this->effect = [
       clienttranslate('Add 2 <KNOWLEDGE> from the reserve to any monument in each of your opponents\' Timelines.'),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

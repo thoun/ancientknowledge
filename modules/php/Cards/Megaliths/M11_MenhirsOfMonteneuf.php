@@ -18,7 +18,6 @@ class M11_MenhirsOfMonteneuf extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('You may CREATE 1 monument.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

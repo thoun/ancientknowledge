@@ -20,7 +20,6 @@ class C20_Tiwanaku extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each of the other <CITY> in your Timeline.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

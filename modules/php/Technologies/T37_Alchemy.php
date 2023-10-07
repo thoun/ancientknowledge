@@ -18,7 +18,6 @@ class T37_Alchemy extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('4 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

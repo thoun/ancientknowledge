@@ -20,7 +20,6 @@ class M29_IshibutaiKofun extends \AK\Models\Building
     $this->startingSpace = 4;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('If you have at least 5 <LOST_KNOWLEDGE> on your board, discard 1 <LOST_KNOWLEDGE>')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

@@ -14,7 +14,6 @@ class T6_Anaximander extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <PYRAMID> in your Timeline.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

@@ -20,7 +20,6 @@ class P36_Janggunchong extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('If you have at least 3 monuments in your Timeline, gain 6 <VP>.')];
-    $this->implemented = true;
   }
 
   public function getScore()

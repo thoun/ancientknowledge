@@ -18,7 +18,6 @@ class A36_KhufusSolarBarque extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Your <PYRAMID> enter play with 1 <KNOWLEDGE> less.')];
-    $this->implemented = true;
   }
 
   public function getKnowledgeReduction($card)

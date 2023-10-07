@@ -21,7 +21,6 @@ class M32_GiantsTomb extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('If you have at least 20 <LOST_KNOWLEDGE> on your board, gain 12 <VP>.')];
-    $this->implemented = true;
   }
 
   public function getScore()

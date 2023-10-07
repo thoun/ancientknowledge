@@ -22,7 +22,6 @@ class P1_PyramidOfKhafre extends \AK\Models\Building
       clienttranslate("• If you have between 8 and 11 Technologies, gain 5 <VP>.
 • or, if you have 12 or more Technologies, gain 12 <VP>."),
     ];
-    $this->implemented = true;
   }
 
   public function getScore()

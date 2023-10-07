@@ -22,7 +22,6 @@ class C5_ElloraCaves extends \AK\Models\Building
     $this->discard = 2;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('Gain 1 <VP> for each <CITY> in your Past.')];
-    $this->implemented = true;
   }
 
   public function getScore()

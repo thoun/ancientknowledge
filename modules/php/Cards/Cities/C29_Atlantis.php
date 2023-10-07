@@ -22,7 +22,6 @@ class C29_Atlantis extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('If this monument has at least 1 <KNOWLEDGE>, discard this card immediately.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

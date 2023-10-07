@@ -23,7 +23,6 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
     $this->lockedSpace = true;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Look at one of your opponents\' hands and take 1 card of your choice from them.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

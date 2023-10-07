@@ -20,6 +20,5 @@ class A25_KensingtonRunestone extends \AK\Models\Artefact
         'When you EXCAVATE, if you rotate exactly 2 cards in your Past, you may discard up to 6 <KNOWLEDGE> from one or several of your monuments, instead of drawing cards.'
       ),
     ];
-    $this->implemented = true;
   }
 }

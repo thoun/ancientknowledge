@@ -27,7 +27,6 @@ class P34_PyramidsOfPlaineMagnien extends \AK\Models\Building
 • add 1 to your hand;
 • and discard the other 7 cards."),
     ];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

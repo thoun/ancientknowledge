@@ -24,7 +24,6 @@ class C7_LuxorTemple extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If this monument is adjacent to at least 2 <PYRAMID>, discard 3 <KNOWLEDGE> from this monument.'),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

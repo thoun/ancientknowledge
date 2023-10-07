@@ -26,7 +26,6 @@ class M15_BarabarCaves extends \AK\Models\Building
         'Choose 1 monument in one of your opponents\' Timelines and place up to 3 <LOST_KNOWLEDGE> from your board onto it.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

@@ -18,7 +18,6 @@ class A20_SumerianTablets extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Each time you LEARN 1 Technology (<WRITING>, <ANCIENT> or |secret]), draw 1 card.')];
-    $this->implemented = true;
   }
 
   public function isListeningTo($event)

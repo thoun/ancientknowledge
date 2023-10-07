@@ -23,6 +23,5 @@ class A32_ElongatedSkulls extends \AK\Models\Artefact
         'For each set of 3 <KNOWLEDGE> becoming <LOST_KNOWLEDGE> during your DECLINE PHASE this turn, draw 2 cards.'
       ),
     ];
-    $this->implemented = true;
   }
 }

@@ -21,7 +21,6 @@ class P14_TikalTempleI extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('You may LEARN 1 Technology if you fulfill its requirements.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

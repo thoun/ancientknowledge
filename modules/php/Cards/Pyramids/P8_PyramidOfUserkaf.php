@@ -22,7 +22,6 @@ class P8_PyramidOfUserkaf extends \AK\Models\Building
     $this->startingSpace = 3;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Each of your opponents must discard 1 <ARTIFACT> from their board.')];
-    $this->implemented = true;
   }
 
   public function getDeclineEffect()

@@ -20,7 +20,6 @@ class C31_Philae extends \AK\Models\Building
     $this->effect = [
       clienttranslate('If you have at least 4 <CITY> in your Timeline, choose 2 <CITY> and discard 3 <KNOWLEDGE> from them.'),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

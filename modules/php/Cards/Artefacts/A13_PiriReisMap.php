@@ -20,7 +20,6 @@ class A13_PiriReisMap extends \AK\Models\Artefact
     $this->effect = [
       clienttranslate('You may move a monument in your Timeline with 0 <KNOWLEDGE> to any other available space.'),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

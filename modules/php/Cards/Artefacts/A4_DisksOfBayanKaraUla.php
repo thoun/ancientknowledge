@@ -21,7 +21,6 @@ class A4_DisksOfBayanKaraUla extends \AK\Models\Artefact
         'If you have at least 1 monument of each type in your Timeline (<CITY>, <MEGALITH> and <PYRAMID>), discard 1 <KNOWLEDGE> from any of your monuments.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

@@ -15,7 +15,6 @@ class T35_RoyalCubit extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

@@ -18,7 +18,6 @@ class T4_Thales extends \AK\Models\Technology
 • take 1;
 • and discard the remaining cards."),
     ];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

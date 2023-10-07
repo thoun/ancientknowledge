@@ -22,7 +22,6 @@ class A27_IronPillarOfDelhi extends \AK\Models\Artefact
 • Discard 1 <KNOWLEDGE> from any of your monument;
 • and draw 1 card."),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

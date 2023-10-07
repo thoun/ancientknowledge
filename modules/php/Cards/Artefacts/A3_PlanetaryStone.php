@@ -19,7 +19,6 @@ class A3_PlanetaryStone extends \AK\Models\Artefact
         'You may discard 2 cards from your hand. If you do, discard up to 3 <KNOWLEDGE> from one or several of your monuments.'
       ),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

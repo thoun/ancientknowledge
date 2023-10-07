@@ -15,7 +15,6 @@ class T40_ChineseAlphabet extends \AK\Models\Technology
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('2 <VP>')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

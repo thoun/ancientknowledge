@@ -15,7 +15,6 @@ class T7_Melchizedek extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 4 cards.')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

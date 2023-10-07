@@ -21,7 +21,6 @@ class M3_AswanObelisk extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('Gain 1 <VP> for each <PYRAMID> in your past.')];
-    $this->implemented = true;
   }
 
   public function getScore()

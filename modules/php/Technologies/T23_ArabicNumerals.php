@@ -15,7 +15,6 @@ class T23_ArabicNumerals extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 3 <LOST_KNOWLEDGE> from your board.')];
-    $this->implemented = true;
   }
 
   public function canBePlayed($player)

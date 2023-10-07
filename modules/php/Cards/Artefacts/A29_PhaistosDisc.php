@@ -16,6 +16,5 @@ class A29_PhaistosDisc extends \AK\Models\Artefact
     ];
     $this->activation = ANYTIME;
     $this->effect = [clienttranslate('Each time you rotate a card during an EXCAVATE action, draw 3 cards instead of 2.')];
-    $this->implemented = true;
   }
 }

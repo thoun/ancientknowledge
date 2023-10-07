@@ -22,7 +22,6 @@ class P27_DahshurPyramid extends \AK\Models\Building
     $this->startingSpace = 2;
     $this->activation = TIMELINE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each <CITY> adjacent to this card.')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

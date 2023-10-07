@@ -16,7 +16,6 @@ class A10_IncahuasiQuipus extends \AK\Models\Artefact
     $this->effect = [
       clienttranslate('If you have 3 <LOST_KNOWLEDGE> or less on your board and at least 1 monument in your Past, draw 1 card.'),
     ];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

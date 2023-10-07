@@ -15,7 +15,6 @@ class A8_LaManAPyramid extends \AK\Models\Artefact
     $this->activation = TIMELINE;
     $this->startingHand = 1;
     $this->effect = [clienttranslate('You may discard 1 card from your hand. If you do, draw 1 card.')];
-    $this->implemented = true;
   }
 
   public function getTimelineEffect()

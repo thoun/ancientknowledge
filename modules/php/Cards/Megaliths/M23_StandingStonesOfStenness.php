@@ -21,7 +21,6 @@ class M23_StandingStonesOfStenness extends \AK\Models\Building
     $this->discard = 1;
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 1 <KNOWLEDGE> from each of your other <MEGALITH>.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()

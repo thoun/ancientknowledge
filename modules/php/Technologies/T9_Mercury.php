@@ -14,7 +14,6 @@ class T9_Mercury extends \AK\Models\Technology
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Discard 2 <LOST_KNOWLEDGE> from your board.')];
-    $this->implemented = true;
   }
 
   public function getImmediateEffect()
