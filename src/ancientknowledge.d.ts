@@ -90,6 +90,7 @@ interface AncientKnowledgeGame extends Game {
     onArchiveCardConfirm(data: ArchiveEngineData): void;
     onRemoveKnowledgeConfirm(discardTokens: { [cardId: string]: number; }): void;
     onTimelineSlotClick(slotId: string): void;
+    onPickTechDeckConfirm(selectedTechId: string | null, discard: string[]): void;
 }
 
 interface EnteringInitialSelectionArgs {
@@ -175,7 +176,8 @@ interface EnteringSpecialEffectArgs {
         cardIds?: string[]; // M14_MenhirOfKerloase, T17_EarthquakeEngineering, T22_AncientGreek
         validCardIds?: string[]; // T22_AncientGreek
         canCreate?: boolean; // T22_AncientGreek
-        techIds?: string[]; // T27_LatinAlphabet
+        techIds?: string[]; // T27_LatinAlphabet, P7_PyramidOfTheNiches
+        learnableTechIds?: string[]; // P7_PyramidOfTheNiches
     };
     cardIds?: string[]; // T3_HermesTrismegistus, P13_Yonaguni
     pIds?: number[]; // M14_MenhirOfKerloas

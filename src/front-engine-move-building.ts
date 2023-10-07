@@ -36,7 +36,6 @@ class MoveBuildingEngine extends FrontEngine<MoveBuildingEngineData> {
                     if (!this.forcedCardId) {
                         this.addCancel();
                     }
-                    console.log('engine.data.selectedCard', engine.data.selectedCard, forcedCardId);
                     // we ignore location over the selected card
                     const ignoreLocation = engine.data.selectedCard.location.substring(0, engine.data.selectedCard.location.length - 1) + '1';
                     const locations = {};

@@ -115,3 +115,24 @@
 .double-column #table-center .fold-button {
   display: none;
 }
+
+#market {
+  .created-card {
+    box-shadow: unset;
+    outline: 4px solid green;
+  }
+
+  .pick-deck-tech-number {
+    color: white;
+    text-shadow: 0 0 1px black, 0 0 2px black, 0 0 3px black, 0 0 4px black, 0 0 5px black;
+    font-size: 66pt;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: bold;
+    user-select: none;
+  }
+}

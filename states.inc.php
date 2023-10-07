@@ -355,6 +355,7 @@ $machinestates = [
     'name' => 'specialEffect',
     'description' => '',
     'descriptionmyturn' => '',
+    'descriptionmyturnOrderTechDiscard' => clienttranslate('${you} must choose the order to place back in the deck (top first)'),
     'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'type' => 'activeplayer',
@@ -368,6 +369,7 @@ $machinestates = [
       'actChooseOpponent',
       'actStealCard',
       'actDiscardAndRemoveKnowledge',
+      'actChooseTechAndScrapOthers',
     ],
   ],
 

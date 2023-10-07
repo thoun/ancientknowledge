@@ -3328,7 +3328,6 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
                 if (!_this.forcedCardId) {
                     _this.addCancel();
                 }
-                console.log('engine.data.selectedCard', engine.data.selectedCard, forcedCardId);
                 // we ignore location over the selected card
                 var ignoreLocation = engine.data.selectedCard.location.substring(0, engine.data.selectedCard.location.length - 1) + '1';
                 var locations = {};
@@ -3372,6 +3371,124 @@ var MoveBuildingEngine = /** @class */ (function (_super) {
         (_a = document.getElementById('restartMoveBuilding_btn')) === null || _a === void 0 ? void 0 : _a.remove();
     };
     return MoveBuildingEngine;
+}(FrontEngine));
+var PickDeckTechEngineData = /** @class */ (function () {
+    function PickDeckTechEngineData(selectedTech, selectedDiscard, remainingToDiscard) {
+        if (selectedTech === void 0) { selectedTech = null; }
+        if (selectedDiscard === void 0) { selectedDiscard = []; }
+        if (remainingToDiscard === void 0) { remainingToDiscard = []; }
+        this.selectedTech = selectedTech;
+        this.selectedDiscard = selectedDiscard;
+        this.remainingToDiscard = remainingToDiscard;
+    }
+    return PickDeckTechEngineData;
+}());
+var PickDeckTechEngine = /** @class */ (function (_super) {
+    __extends(PickDeckTechEngine, _super);
+    function PickDeckTechEngine(game, techs, learnableTechs) {
+        var _this = _super.call(this, game, [
+            new FrontState('init', function (engine) {
+                var _a;
+                if (engine.data.selectedTech) {
+                    (_a = _this.game.technologyTilesManager.getCardElement(engine.data.selectedTech)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
+                    _this.data.selectedTech = null;
+                }
+                engine.data.selectedDiscard = [];
+                _this.game.changePageTitle(null);
+                _this.initMarketStock();
+                _this.market.addCards(techs);
+                _this.market.setSelectionMode('single', learnableTechs);
+                if (!learnableTechs.length) {
+                    _this.game.addPrimaryActionButton('passTakeTechTile_btn', "".concat(_("Pass"), " (").concat(_("you cannot build a technology tile"), ")"), function () { return _this.nextState('discard'); });
+                }
+            }, function () {
+                var _a;
+                (_a = document.getElementById('passTakeTechTile_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+            }),
+            new FrontState('discard', function (engine) {
+                _this.game.changePageTitle("OrderTechDiscard", true);
+                _this.addConfirmAndCancel();
+                engine.data.selectedDiscard = [];
+                engine.data.remainingToDiscard = engine.data.selectedTech ? techs.filter(function (lt) { return lt.id != engine.data.selectedTech.id; }) : techs;
+                _this.market.setSelectionMode('single', engine.data.remainingToDiscard);
+            }, function (engine) {
+                var _a;
+                if (engine.data.selectedTech) {
+                    (_a = _this.game.technologyTilesManager.getCardElement(engine.data.selectedTech)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
+                }
+                engine.data.selectedDiscard.forEach(function (card) { return _this.setTechNumber(card, null); });
+                _this.market.setSelectionMode('none');
+                _this.removeConfirmAndCancel();
+            }),
+        ]) || this;
+        _this.game = game;
+        _this.techs = techs;
+        _this.learnableTechs = learnableTechs;
+        _this.data = new PickDeckTechEngineData();
+        _this.enterState('init');
+        return _this;
+    }
+    PickDeckTechEngine.prototype.initMarketStock = function () {
+        var _this = this;
+        if (!this.market) {
+            document.getElementById('table-center-and-market').insertAdjacentHTML('afterbegin', "\n                <div id=\"market\"></div>\n            ");
+            this.market = new LineStock(this.game.technologyTilesManager, document.getElementById("market"));
+            this.market.onCardClick = function (card) { return _this.onMarketClick(card); };
+        }
+    };
+    PickDeckTechEngine.prototype.onMarketClick = function (card) {
+        var _a;
+        if (this.currentState === 'init') {
+            if (this.learnableTechs.some(function (lt) { return lt.id == card.id; })) {
+                this.data.selectedTech = card;
+                (_a = this.game.technologyTilesManager.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.classList.add('created-card');
+                this.nextState('discard');
+            }
+        }
+        else {
+            if (this.data.remainingToDiscard.some(function (lt) { return lt.id == card.id; })) {
+                this.data.selectedDiscard.push(card);
+                this.setTechNumber(card, this.data.selectedDiscard.length);
+                var index = this.data.remainingToDiscard.indexOf(card);
+                this.data.remainingToDiscard.splice(index, 1);
+                this.market.setSelectionMode('single', this.data.remainingToDiscard);
+                document.getElementById('confirmPikDeckTech_btn').classList.toggle('disabled', this.data.remainingToDiscard.length > 0);
+            }
+        }
+    };
+    PickDeckTechEngine.prototype.setTechNumber = function (card, number) {
+        var _a;
+        if (!(card === null || card === void 0 ? void 0 : card.id)) {
+            return;
+        }
+        var div = this.game.technologyTilesManager.getCardElement(card);
+        if (!div) {
+            return;
+        }
+        if (number !== null) {
+            div.insertAdjacentHTML('beforeend', "<div class=\"pick-deck-tech-number\">".concat(number, "</div>"));
+        }
+        else {
+            (_a = div.querySelector('.pick-deck-tech-number')) === null || _a === void 0 ? void 0 : _a.remove();
+        }
+    };
+    PickDeckTechEngine.prototype.addConfirmAndCancel = function () {
+        var _this = this;
+        this.game.addPrimaryActionButton('confirmPikDeckTech_btn', _('Put back in selected order'), function () { var _a, _b; return _this.game.onPickTechDeckConfirm((_b = (_a = _this.data.selectedTech) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : null, _this.data.selectedDiscard.map(function (card) { return card.id; })); });
+        document.getElementById('confirmPikDeckTech_btn').classList.add('disabled');
+        this.game.addSecondaryActionButton('restartPikDeckTech_btn', _('Restart'), function () { return _this.nextState('init'); });
+    };
+    PickDeckTechEngine.prototype.removeConfirmAndCancel = function () {
+        var _a, _b;
+        (_a = document.getElementById('confirmPikDeckTech_btn')) === null || _a === void 0 ? void 0 : _a.remove();
+        (_b = document.getElementById('restartPikDeckTech_btn')) === null || _b === void 0 ? void 0 : _b.remove();
+    };
+    PickDeckTechEngine.prototype.remove = function () {
+        var _a;
+        (_a = this.market) === null || _a === void 0 ? void 0 : _a.remove();
+        this.market = null;
+    };
+    return PickDeckTechEngine;
 }(FrontEngine));
 var ANIMATION_MS = 500;
 var MIN_NOTIFICATION_MS = 1200;
@@ -3795,6 +3912,9 @@ var AncientKnowledge = /** @class */ (function () {
                         this.market.setSelectionMode('single');
                     }
                     break;
+                case 'P7_PyramidOfTheNiches':
+                    this.pickDeckTechEngine = new PickDeckTechEngine(this, this.technologyTilesManager.getFullCardsByIds(args._private.techIds), this.technologyTilesManager.getFullCardsByIds(args._private.learnableTechIds));
+                    break;
                 case 'P13_Yonaguni':
                     this.getCurrentPlayerTable().artifacts.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
                     break;
@@ -3850,7 +3970,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
         document.getElementById('customActions').innerHTML = '';
@@ -3906,8 +4026,13 @@ var AncientKnowledge = /** @class */ (function () {
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
                         break;
+                    case 'P7_PyramidOfTheNiches':
+                        (_c = this.pickDeckTechEngine) === null || _c === void 0 ? void 0 : _c.leaveState();
+                        (_d = this.pickDeckTechEngine) === null || _d === void 0 ? void 0 : _d.remove();
+                        this.pickDeckTechEngine = null;
+                        break;
                     case 'P13_Yonaguni':
-                        (_c = this.getCurrentPlayerTable()) === null || _c === void 0 ? void 0 : _c.artifacts.setSelectionMode('none');
+                        (_e = this.getCurrentPlayerTable()) === null || _e === void 0 ? void 0 : _e.artifacts.setSelectionMode('none');
                         break;
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
@@ -4064,7 +4189,7 @@ var AncientKnowledge = /** @class */ (function () {
                                     document.getElementById('actPickAndDiscard_button').classList.add('disabled');
                                 }
                                 else {
-                                    this.addActionButton("actPickAndDiscard_button", _("Pass (you cannot build an artifact)"), function () { return _this.actPickAndDiscard(null); });
+                                    this.addActionButton("actPickAndDiscard_button", "".concat(_("Pass"), " (").concat(_("you cannot build an artifact"), ")"), function () { return _this.actPickAndDiscard(null); });
                                 }
                                 break;
                         }
@@ -4442,6 +4567,12 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.gamedatas.gamestate.name == 'resolveChoice') {
             this.resolveChoiceCardClicked(card);
         }
+    };
+    AncientKnowledge.prototype.onPickTechDeckConfirm = function (selectedTechId, discard) {
+        this.takeAtomicAction('actChooseTechAndScrapOthers', [
+            selectedTechId,
+            discard,
+        ]);
     };
     /*public onArtifactSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'specialEffect') {

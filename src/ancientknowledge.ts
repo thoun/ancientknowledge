@@ -58,6 +58,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private archiveEngine: ArchiveEngine;
     private removeKnowledgeEngine: RemoveKnowledgeEngine;
     private moveBuildingEngine: MoveBuildingEngine;
+    private pickDeckTechEngine: PickDeckTechEngine;
 
     private addKnowledgeSelection: { [playerId: string]: string } = {};
 
@@ -519,6 +520,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         this.market.setSelectionMode('single');
                     }
                     break;
+                case 'P7_PyramidOfTheNiches':
+                    this.pickDeckTechEngine = new PickDeckTechEngine(this, this.technologyTilesManager.getFullCardsByIds(args._private.techIds), this.technologyTilesManager.getFullCardsByIds(args._private.learnableTechIds));
+                    break;
                 case 'P13_Yonaguni':
                     this.getCurrentPlayerTable().artifacts.setSelectionMode('multiple', this.builderCardsManager.getFullCardsByIds(args.cardIds));
                     break;
@@ -635,6 +639,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        break;
+                    case 'P7_PyramidOfTheNiches':                        
+                        this.pickDeckTechEngine?.leaveState();
+                        this.pickDeckTechEngine?.remove();
+                        this.pickDeckTechEngine = null;
                         break;
                     case 'P13_Yonaguni':
                         this.getCurrentPlayerTable()?.artifacts.setSelectionMode('none');
@@ -797,7 +806,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                                     (this as any).addActionButton(`actPickAndDiscard_button`, _("Build selected artifact"), () => this.actPickAndDiscard());
                                     document.getElementById('actPickAndDiscard_button').classList.add('disabled');
                                 } else {
-                                    (this as any).addActionButton(`actPickAndDiscard_button`, _("Pass (you cannot build an artifact)"), () => this.actPickAndDiscard(null));
+                                    (this as any).addActionButton(`actPickAndDiscard_button`, `${_("Pass")} (${_("you cannot build an artifact")})`, () => this.actPickAndDiscard(null));
                                 }
                                 break;
                         }
@@ -1238,6 +1247,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'resolveChoice') {
             this.resolveChoiceCardClicked(card);
         }
+    }
+
+    public onPickTechDeckConfirm(selectedTechId: string | null, discard: string[]): void {
+        this.takeAtomicAction('actChooseTechAndScrapOthers', [
+            selectedTechId,
+            discard,
+        ]);
     }
     
     /*public onArtifactSelectionChange(selection: BuilderCard[]): void {

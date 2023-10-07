@@ -88,7 +88,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
 
   public function actChooseTechAndScrapOthers($techId, $otherIds)
   {
-    $args = $this->argsChooseTech()['_private']['active'];
+    $args = $this->argsChooseTechAndScrapOthers()['_private']['active'];
     if (!is_null($techId) && !in_array($techId, $args['learnableTechIds'])) {
       throw new \BgaVisibleSystemException('Invalid tech to select. Should not happen');
     }
