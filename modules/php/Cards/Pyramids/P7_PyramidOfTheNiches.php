@@ -26,6 +26,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
 • LEARN 1 if you fulfill its requirements;
 • and put the remaining cards on the bottom of the deck, in any order."),
     ];
+    $this->implemented = true;
   }
 
   public function getDeclineEffect()

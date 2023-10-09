@@ -6,7 +6,6 @@ TO TEST :
 
 Backend:
  - add irreversibility => maybe add a flag "irreversibilityCheck" for automatic action to disable auto entering this state (even if it's the only one pending) and give the user a chance to confirm first
- - end implementation of cards
 
  - improve discard multi: awake only players that have choices + bypass action if no other players can discard
 

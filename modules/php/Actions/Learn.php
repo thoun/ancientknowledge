@@ -29,6 +29,11 @@ class Learn extends \AK\Models\Action
 
   public function getPlayableTechs($player, $isDoable = false)
   {
+    $techId = $this->getCtxArg('autoplay');
+    if (!is_null($techId)) {
+      return [[$techId], []];
+    }
+
     $pool = Technologies::getPool();
     $techs = [];
     $check = $this->getCtxArg('checkRequirements') ?? true;
