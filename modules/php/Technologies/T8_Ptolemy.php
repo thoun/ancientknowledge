@@ -19,7 +19,7 @@ class T8_Ptolemy extends \AK\Models\Technology
 
   public function canBePlayed($player)
   {
-    return $player->getHand()->count() <= 1 + $player->getIconReduction();
+    return $player->getHand()->count() <= 1 - $player->getIconReduction();
   }
 
   public function getImmediateEffect()
