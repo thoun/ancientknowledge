@@ -27,6 +27,7 @@ class A13_PiriReisMap extends \AK\Models\Artefact
     return [
       'action' => \MOVE_BUILDING,
       'args' => ['constraint' => 'no_knowledge'],
+      'optional' => true,
     ];
   }
 }

@@ -63,11 +63,23 @@ class MoveBuilding extends \AK\Models\Action
       return [$cardId];
     }
 
-    $ids = $player->getTimeline()->getIds();
+    $cards = $player->getTimeline();
+
+    // Potential constraint on movable cards
+    $constraint = $this->getCtxArg('constraint');
+    if ($constraint == 'no_knowledge') {
+      $cards = $cards->filter(function ($card) {
+        return $card->getKnowledge() == 0;
+      });
+    }
+
+    // Some cards cant be moved (eg card saying "exchange two OTHER cards")
+    $ids = $cards->getIds();
     $excludedId = $this->getCtxArg('excluded');
     if (!is_null($excludedId)) {
       $ids = array_diff($ids, [$excludedId]);
     }
+
     return $ids;
   }
 

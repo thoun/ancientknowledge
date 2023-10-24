@@ -59,7 +59,8 @@ trait DebugTrait
   }
 
   // addTech(T3_HermesTrismegistus)
-  function addTech($techId) {
+  function addTech($techId)
+  {
     self::DbQuery("UPDATE `technologies` SET `technology_location`='deck_1' WHERE `technology_location`='board_1'");
     self::DbQuery("UPDATE `technologies` SET `technology_location`='board_1' WHERE `technology_id`='$techId'");
   }
@@ -186,7 +187,7 @@ trait DebugTrait
 
   function loadDebugUpdateEngine(&$node, $map)
   {
-    if (isset($node['pId'])) {
+    if (isset($node['pId']) && $node['pId'] != 0) {
       $node['pId'] = $map[(int) $node['pId']];
     }
 
