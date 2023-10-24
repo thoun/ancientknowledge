@@ -47,7 +47,6 @@ class DeclineCard extends \AK\Models\Action
   {
     $player = Players::getActive();
     $card = $this->getCard();
-    // TODO listeners
 
     // Effect
     if ($card->getActivation() == DECLINE) {

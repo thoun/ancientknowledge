@@ -54,7 +54,7 @@ class DeclinePhase extends \AK\Models\Action
       $cardsInThePast = $player->getPast()->count() + count($childs);
       if ($cardsInThePast > 7 && Globals::isFirstHalf()) {
         $this->insertAsChild([
-          'action' => 'TODO', // Flip techs
+          'action' => FLIP_TECH_TILE, // Flip techs
         ]);
       } elseif ($cardsInThePast > 14) {
         Globals::setEndOfGameTriggered(true);

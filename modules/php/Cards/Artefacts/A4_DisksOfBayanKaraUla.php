@@ -25,7 +25,7 @@ class A4_DisksOfBayanKaraUla extends \AK\Models\Artefact
 
   public function getTimelineEffect()
   {
-    return min($player->countIconsInTimeline(BUILDINGS)) < 1
+    return min($this->getPlayer()->countIconsInTimeline(BUILDINGS)) < 1
       ? null
       : [
         'action' => \REMOVE_KNOWLEDGE,
