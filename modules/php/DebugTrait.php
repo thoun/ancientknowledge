@@ -138,7 +138,8 @@ trait DebugTrait
       $sql[] = "UPDATE stats SET stats_player_id=$studioPlayer WHERE stats_player_id=$pId";
 
       // Add game-specific SQL update the tables for your game
-      $sql[] = "UPDATE meeples SET player_id=$studioPlayer WHERE player_id=$pId";
+      $sql[] = "UPDATE cards SET player_id=$studioPlayer WHERE player_id=$pId";
+      $sql[] = "UPDATE technologies SET player_id=$studioPlayer WHERE player_id=$pId";
       $sql[] = "UPDATE user_preferences SET player_id=$studioPlayer WHERE player_id=$pId";
 
       // This could be improved, it assumes you had sequential studio accounts before loading

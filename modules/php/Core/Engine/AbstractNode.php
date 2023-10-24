@@ -235,6 +235,11 @@ class AbstractNode
   }
   public function getUndoableMandatoryNode($player)
   {
+    $pId = $this->getPId();
+    if (!is_null($pId) && $pId != $player->getId()) {
+      return null;
+    }
+
     if (!$this->isResolved() && !$this->isDoable($player) && ($this->isMandatory() || !$this->isOptional())) {
       return $this;
     }

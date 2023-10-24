@@ -35,6 +35,10 @@ class SeqNode extends AbstractNode
 
   public function getUndoableMandatoryNode($player)
   {
+    $pId = $this->getPId();
+    if (!is_null($pId) && $pId != $player->getId()) {
+      return null;
+    }
     if ($this->isOptional()) {
       return null;
     }
