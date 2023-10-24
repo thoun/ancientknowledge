@@ -41,6 +41,12 @@ $writingColor: #633c37;
 html, .mode_3d #game_play_area_background {
   background: url('img/background.jpg') #f1f0f3;
   background-size: 100% auto;
+
+  @for $bg from 1 through 10 {
+    &[data-bg="#{$bg}"] {
+      background-image: url('img/bg/Ancient-Knolwedge_Background_BGA_Test_#{$bg}.png'); 
+    }
+  }
 }
 
 #bga-zoom-wrapper {

@@ -4281,6 +4281,9 @@ var AncientKnowledge = /** @class */ (function () {
             var prefId = +match[1];
             var prefValue = +e.target.value;
             _this.prefs[prefId].value = prefValue;
+            if (prefId == 299) {
+                document.querySelector('html').dataset.bg = '' + prefValue;
+            }
         };
         // Call onPreferenceChange() when any value changes
         dojo.query(".preference_control").connect("onchange", onchange);
@@ -4790,6 +4793,7 @@ var AncientKnowledge = /** @class */ (function () {
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
             ['scoringEntry', SCORE_ANIMATION_MS],
+            ['loadBug', 1],
         ];
         notifs.forEach(function (notif) {
             dojo.subscribe(notif[0], _this, function (notifDetails) {
@@ -5063,6 +5067,47 @@ var AncientKnowledge = /** @class */ (function () {
             this.onEnteringEndScore();
         }
         document.getElementById("score-".concat(args.category, "-").concat(args.player_id)).innerHTML = "".concat(args.n);
+    };
+    /**
+    * Load production bug report handler
+    */
+    AncientKnowledge.prototype.notif_loadBug = function (args) {
+        var that = this;
+        function fetchNextUrl() {
+            var url = args.urls.shift();
+            console.log('Fetching URL', url, '...');
+            // all the calls have to be made with ajaxcall in order to add the csrf token, otherwise you'll get "Invalid session information for this action. Please try reloading the page or logging in again"
+            that.ajaxcall(url, {
+                lock: true,
+            }, that, function (success) {
+                console.log('=> Success ', success);
+                if (args.urls.length > 1) {
+                    fetchNextUrl();
+                }
+                else if (args.urls.length > 0) {
+                    //except the last one, clearing php cache
+                    url = args.urls.shift();
+                    dojo.xhrGet({
+                        url: url,
+                        headers: {
+                            'X-Request-Token': bgaConfig.requestToken,
+                        },
+                        load: function (success) {
+                            console.log('Success for URL', url, success);
+                            console.log('Done, reloading page');
+                            window.location.reload();
+                        },
+                        handleAs: 'text',
+                        error: function (error) { return console.log('Error while loading : ', error); },
+                    });
+                }
+            }, function (error) {
+                if (error)
+                    console.log('=> Error ', error);
+            });
+        }
+        console.log('Notif: load bug', args);
+        fetchNextUrl();
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message
