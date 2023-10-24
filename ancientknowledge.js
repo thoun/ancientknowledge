@@ -4281,6 +4281,9 @@ var AncientKnowledge = /** @class */ (function () {
             var prefId = +match[1];
             var prefValue = +e.target.value;
             _this.prefs[prefId].value = prefValue;
+            if (prefId == 299) {
+                document.querySelector('html').dataset.bg = '' + prefValue;
+            }
         };
         // Call onPreferenceChange() when any value changes
         dojo.query(".preference_control").connect("onchange", onchange);

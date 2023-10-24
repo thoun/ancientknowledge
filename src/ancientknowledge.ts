@@ -910,6 +910,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
           var prefId = +match[1];
           var prefValue = +e.target.value;
           (this as any).prefs[prefId].value = prefValue;
+
+          if (prefId == 299) {
+            document.querySelector('html').dataset.bg = ''+prefValue;
+          }
         }
         
         // Call onPreferenceChange() when any value changes
