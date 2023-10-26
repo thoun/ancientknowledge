@@ -26,7 +26,7 @@ class A7_MoaiStatue extends \AK\Models\Artefact
       'childs' => [
         [
           'action' => DISCARD,
-          'args' => ['n' => 2, 'constraint' => [ARTEFACT]],
+          'args' => ['n' => 2, 'precondition' => true, 'constraint' => [ARTEFACT]],
         ],
         [
           'action' => DRAW,

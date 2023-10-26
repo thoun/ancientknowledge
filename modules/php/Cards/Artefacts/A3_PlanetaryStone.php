@@ -29,7 +29,7 @@ class A3_PlanetaryStone extends \AK\Models\Artefact
       'childs' => [
         [
           'action' => DISCARD,
-          'args' => ['n' => 2],
+          'args' => ['n' => 2, 'precondition' => true],
         ],
         [
           'action' => \REMOVE_KNOWLEDGE,

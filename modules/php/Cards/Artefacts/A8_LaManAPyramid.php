@@ -25,7 +25,7 @@ class A8_LaManAPyramid extends \AK\Models\Artefact
       'childs' => [
         [
           'action' => DISCARD,
-          'args' => ['n' => 1],
+          'args' => ['n' => 1, 'precondition' => true],
         ],
         [
           'action' => DRAW,

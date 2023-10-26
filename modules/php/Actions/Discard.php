@@ -23,9 +23,20 @@ class Discard extends \AK\Models\Action
     ];
   }
 
+  public function mustDiscard()
+  {
+    return $this->getCtxArg('precondition') ?? false;
+  }
+
+  public function isOptional()
+  {
+    $player = Players::getActive();
+    return !$this->isDoable($player) && !$this->mustDiscard();
+  }
+
   public function isDoable($player)
   {
-    return $player->getHand()->count() >= $this->getN();
+    return $player->getHand()->count() >= ($this->mustDiscard() ? $this->getN() : 1);
   }
 
   public function getN()
@@ -60,14 +71,25 @@ class Discard extends \AK\Models\Action
     ];
   }
 
-  public function actDiscard($cardIds)
+  public function stDiscard()
+  {
+    $args = $this->argsDiscard();
+    $cardIds = $args['_private']['active']['cardIds'];
+    if (count($cardIds) <= $args['n']) {
+      $this->actDiscard($cardIds, true);
+    }
+  }
+
+  public function actDiscard($cardIds, $auto = false)
   {
     // Sanity checks
-    self::checkAction('actDiscard');
+    self::checkAction('actDiscard', $auto);
     $player = Players::getActive();
     $args = $this->argsDiscard();
     if (count($cardIds) != $args['n']) {
-      throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
+      if ($this->mustDiscard() || count($args['_private']['active']['cardIds']) >= $args['n']) {
+        throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
+      }
     }
     if (!empty(array_diff($cardIds, $args['_private']['active']['cardIds']))) {
       throw new \BgaVisibleSystemException('Invalid cards to discard. Should not happen');
