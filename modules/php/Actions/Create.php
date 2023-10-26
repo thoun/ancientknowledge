@@ -143,6 +143,7 @@ class Create extends \AK\Models\Action
           $knowledge -= $card2->getKnowledgeReduction($card);
         }
       }
+      $knowledge = max(0, $knowledge);
       $card->setKnowledge($knowledge);
     }
     $sourceId = $this->ctx->getSourceId();
