@@ -29,7 +29,7 @@ class A2_SarcophagusOfSaqqara extends \AK\Models\Artefact
         'type' => NODE_SEQ,
         'childs' => [
           [
-            'action' => \DISCARD_LOST_KNOWLEDGE,
+            'action' => REMOVE_KNOWLEDGE,
             'args' => ['n' => 1],
           ],
           [
