@@ -18,10 +18,12 @@ class T13_MysterySchool extends \AK\Models\Technology
 
   public function getImmediateEffect()
   {
-    $n = $this->countIcon(\CITY);
-    return [
-      'action' => DRAW,
-      'args' => ['n' => $n],
-    ];
+    $n = $this->getPlayer()->countIconInTimeline(CITY);
+    return $n == 0
+      ? null
+      : [
+        'action' => DRAW,
+        'args' => ['n' => $n],
+      ];
   }
 }
