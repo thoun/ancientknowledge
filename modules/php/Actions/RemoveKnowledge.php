@@ -36,11 +36,13 @@ class RemoveKnowledge extends \AK\Models\Action
   public function getCardIds($player = null)
   {
     $player = $player ?? Players::getActive();
+    $exclude = $this->getCtxArg('except') ?? '';
+
     return $this->getCtxArg('cardIds') ??
       $player
         ->getTimeline()
-        ->filter(function ($card) {
-          return $card->getKnowledge() > 0;
+        ->filter(function ($card) use ($exclude) {
+          return $card->getKnowledge() > 0 && $card->getId() != $exclude;
         })
         ->getIds();
   }
