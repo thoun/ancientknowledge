@@ -102,7 +102,7 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
     $card->setLocation('hand');
     $card->setPId($this->pId);
 
-    $player = $this->getPlayer();
+    $player = Players::get($this->ctx->getPId());
     Notifications::keep($player, $card);
 
     $node = Engine::getNextUnresolved();
