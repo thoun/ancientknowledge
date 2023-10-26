@@ -30,7 +30,7 @@ class A11_ParacasCandelabra extends \AK\Models\Artefact
     return $n < 3
       ? null
       : [
-        'action' => \DISCARD_LOST_KNOWLEDGE,
+        'action' => REMOVE_KNOWLEDGE,
         'args' => ['n' => 2],
       ];
   }
