@@ -26,7 +26,7 @@ class A9_Tzolkin extends \AK\Models\Artefact
   public function getTimelineEffect()
   {
     $player = $this->getPlayer();
-    return $player->getLostKnowledge() < 3 || $player->getPast()->empty()
+    return $player->getLostKnowledge() > 3 || $player->getPast()->empty()
       ? null
       : [
         'action' => \REMOVE_KNOWLEDGE,
