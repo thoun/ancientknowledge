@@ -87,20 +87,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
         
         this.gamedatas = gamedatas;
 
-        // TODO TEMP
-        Object.values(gamedatas.players).forEach((player, index) => {
-            //const playerId = Number(player.id);
-            //if (playerId == this.getPlayerId()) {
-            //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
-            //}
-            //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
-        });
-
         // Create a new div for buttons to avoid BGA auto clearing it
         dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
         dojo.place("<div id='restartAction' style='display:inline-block'></div>", $('customActions'), 'after');
 
         log('gamedatas', gamedatas);
+
+        document.querySelector('html').dataset.bg = this.gamedatas.players[this.getPlayerId()]?.color ?? '6f3766';
 
         this.animationManager = new AnimationManager(this);
         this.builderCardsManager = new BuilderCardsManager(this);
@@ -172,8 +165,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (isEnd) {
             this.onEnteringEndScore(true);
         }
-
-        document.querySelector('html').dataset.bg = this.gamedatas.players[this.getPlayerId()]?.color ?? '6f3766';
 
         log( "Ending game setup" );
     }

@@ -2525,7 +2525,7 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
     };
     TechnologyTilesManager.prototype.getTooltip = function (card) {
         var _a, _b, _c;
-        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.type), "\n        <br>\n        <strong>").concat(_("Level:"), "</strong> ").concat(card.level + 1, "\n        <br>\n        <strong>").concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        ");
+        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.type), "\n        <br>\n        <strong>").concat(_("Level:"), "</strong> ").concat(card.level, "\n        <br>\n        <strong>").concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        ");
         if (card.requirement) {
             message += "\n            <br><br>\n            <strong>".concat(_("Requirement:"), "</strong> ").concat((_a = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _a !== void 0 ? _a : '', "\n            ");
         }
@@ -3538,18 +3538,11 @@ var AncientKnowledge = /** @class */ (function () {
         var _a, _b;
         log("Starting game setup");
         this.gamedatas = gamedatas;
-        // TODO TEMP
-        Object.values(gamedatas.players).forEach(function (player, index) {
-            //const playerId = Number(player.id);
-            //if (playerId == this.getPlayerId()) {
-            //    player.hand = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId);
-            //}
-            //player.handCount = gamedatas.cards.filter(card => card.location == 'hand' && card.pId == playerId).length;
-        });
         // Create a new div for buttons to avoid BGA auto clearing it
         dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
         dojo.place("<div id='restartAction' style='display:inline-block'></div>", $('customActions'), 'after');
         log('gamedatas', gamedatas);
+        document.querySelector('html').dataset.bg = (_b = (_a = this.gamedatas.players[this.getPlayerId()]) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : '6f3766';
         this.animationManager = new AnimationManager(this);
         this.builderCardsManager = new BuilderCardsManager(this);
         this.technologyTilesManager = new TechnologyTilesManager(this);
@@ -3615,7 +3608,6 @@ var AncientKnowledge = /** @class */ (function () {
         if (isEnd) {
             this.onEnteringEndScore(true);
         }
-        document.querySelector('html').dataset.bg = (_b = (_a = this.gamedatas.players[this.getPlayerId()]) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : '6f3766';
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////

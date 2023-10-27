@@ -217,7 +217,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         <br>
         <strong>${_("Type:")}</strong> ${this.getType(card.type)}
         <br>
-        <strong>${_("Level:")}</strong> ${card.level + 1}
+        <strong>${_("Level:")}</strong> ${card.level}
         <br>
         <strong>${_("Activation:")}</strong> ${this.game.getTooltipActivation(card.activation)}
         `;
