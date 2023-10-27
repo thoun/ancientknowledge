@@ -1441,39 +1441,21 @@ body > .card {
     margin-top: 8px;
   }
 }
-html, .mode_3d #game_play_area_background {
-  background: url("img/background.jpg") #f1f0f3;
+html[data-bg="6f3766"], .mode_3d #game_play_area_background[data-bg="6f3766"] {
+  background: url("img/bg/6f3766.jpg");
   background-size: 100% auto;
 }
-html[data-bg="1"], .mode_3d #game_play_area_background[data-bg="1"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_1.png");
+html[data-bg=bc6328], .mode_3d #game_play_area_background[data-bg=bc6328] {
+  background: url("img/bg/bc6328.jpg");
+  background-size: 100% auto;
 }
-html[data-bg="2"], .mode_3d #game_play_area_background[data-bg="2"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_2.png");
+html[data-bg="597f9e"], .mode_3d #game_play_area_background[data-bg="597f9e"] {
+  background: url("img/bg/597f9e.jpg");
+  background-size: 100% auto;
 }
-html[data-bg="3"], .mode_3d #game_play_area_background[data-bg="3"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_3.png");
-}
-html[data-bg="4"], .mode_3d #game_play_area_background[data-bg="4"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_4.png");
-}
-html[data-bg="5"], .mode_3d #game_play_area_background[data-bg="5"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_5.png");
-}
-html[data-bg="6"], .mode_3d #game_play_area_background[data-bg="6"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_6.png");
-}
-html[data-bg="7"], .mode_3d #game_play_area_background[data-bg="7"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_7.png");
-}
-html[data-bg="8"], .mode_3d #game_play_area_background[data-bg="8"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_8.png");
-}
-html[data-bg="9"], .mode_3d #game_play_area_background[data-bg="9"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_9.png");
-}
-html[data-bg="10"], .mode_3d #game_play_area_background[data-bg="10"] {
-  background-image: url("img/bg/Ancient-Knolwedge_Background_BGA_Test_10.png");
+html[data-bg="929f40"], .mode_3d #game_play_area_background[data-bg="929f40"] {
+  background: url("img/bg/929f40.jpg");
+  background-size: 100% auto;
 }
 
 #bga-zoom-wrapper {

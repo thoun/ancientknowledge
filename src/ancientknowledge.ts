@@ -173,6 +173,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.onEnteringEndScore(true);
         }
 
+        document.querySelector('html').dataset.bg = this.gamedatas.players[this.getPlayerId()]?.color ?? '6f3766';
+
         log( "Ending game setup" );
     }
 
@@ -912,10 +914,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
           var prefId = +match[1];
           var prefValue = +e.target.value;
           (this as any).prefs[prefId].value = prefValue;
-
-          if (prefId == 299) {
-            document.querySelector('html').dataset.bg = ''+prefValue;
-          }
         }
         
         // Call onPreferenceChange() when any value changes

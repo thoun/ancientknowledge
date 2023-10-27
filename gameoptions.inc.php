@@ -79,18 +79,4 @@ $game_preferences = [
       OPTION_CONFIRM_DISABLED => ['name' => totranslate('Disabled')],
     ],
   ],
-
-  299 => [
-    'name' => totranslate('Background'),
-    'needReload' => false,
-    'values' => [
-      0 => ['name' => 'Current'],
-      1 => ['name' => '1'],
-      2 => ['name' => '2'],
-      7 => ['name' => '7'],
-      8 => ['name' => '8'],
-      9 => ['name' => '9'],
-      10 => ['name' => '10'],
-    ],
-  ],
 ];

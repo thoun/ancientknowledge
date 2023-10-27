@@ -3535,6 +3535,7 @@ var AncientKnowledge = /** @class */ (function () {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     AncientKnowledge.prototype.setup = function (gamedatas) {
+        var _a, _b;
         log("Starting game setup");
         this.gamedatas = gamedatas;
         // TODO TEMP
@@ -3614,6 +3615,7 @@ var AncientKnowledge = /** @class */ (function () {
         if (isEnd) {
             this.onEnteringEndScore(true);
         }
+        document.querySelector('html').dataset.bg = (_b = (_a = this.gamedatas.players[this.getPlayerId()]) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : '6f3766';
         log("Ending game setup");
     };
     ///////////////////////////////////////////////////
@@ -4281,9 +4283,6 @@ var AncientKnowledge = /** @class */ (function () {
             var prefId = +match[1];
             var prefValue = +e.target.value;
             _this.prefs[prefId].value = prefValue;
-            if (prefId == 299) {
-                document.querySelector('html').dataset.bg = '' + prefValue;
-            }
         };
         // Call onPreferenceChange() when any value changes
         dojo.query(".preference_control").connect("onchange", onchange);
