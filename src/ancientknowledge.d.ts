@@ -345,6 +345,18 @@ interface NotifScoringEntryArgs {
     category: string;
 }
 
+// updateScores
+interface NotifUpdateScoresArgs {
+    scores: { [playerId: number]: {
+        past:  { total: number };  
+        effects:  { total: number };  
+        techs:  { total: number };  
+        timeline:  { total: number };  
+        knowledge: { total: number };  
+        total: number;  
+    } };
+}
+
 // stealCard
 interface NotifStealCardArgs {
     player_id: number;

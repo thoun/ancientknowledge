@@ -953,7 +953,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);   
 
-            document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<div class="vp icon"></div>`);
+            document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<div id="player_score_${player.id}-icon" class="vp icon"></div>`);
             document.getElementById(`icon_point_${player.id}`).remove();
 
             let html = `<div class="counters">
@@ -1501,6 +1501,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ['mediumMessage', 1000],
             ['endOfGameTriggered', 1],
             ['scoringEntry', SCORE_ANIMATION_MS],
+            ['updateScores', 1],
             ['loadBug', 1],
         ];
     
@@ -1793,6 +1794,31 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
 
         document.getElementById(`score-${args.category}-${args.player_id}`).innerHTML = `${args.n}`;
+    }
+
+    private setScore(playerId: number, score: number) {
+        if ((this as any).scoreCtrl[playerId]) {
+            (this as any).scoreCtrl[playerId].toValue(score);
+        } else {
+            document.getElementById(`player_score_${playerId}`).innerText = `${score}`;
+        }
+    }
+    
+    notif_updateScores(args: NotifUpdateScoresArgs) {
+        Object.entries(args.scores).forEach(([playerId, score]) => {
+            this.setScore(Number(playerId), score.total);
+
+            const tooltip = `
+                <div>${_('Cards in the past:')} <strong>${score.past.total}</strong></div>
+                <div>${_('Cards effects in the past:')} <strong>${score.effects.total}</strong></div>
+                <div>${_('Technology tiles:')} <strong>${score.techs.total}</strong></div>
+                <div>${_('Monuments remaining in timeline:')} <strong>${score.timeline.total}</strong></div>
+                <div>${_('Lost knowledge:')} <strong>${score.knowledge.total}</strong></div>
+                <div><strong>${_('Total:')} ${score.total}</strong></div>
+            `;
+            this.setTooltip(`player_score_${playerId}-icon`, tooltip);
+            this.setTooltip(`player_score_${playerId}`, tooltip);
+        });
     }
     
     /**
