@@ -47,7 +47,7 @@ trait DebugTrait
   }
 
   // addHand(M15_BarabarCaves)
-  // addHand(P7_PyramidOfTheNiches)
+  // addHand(P8_PyramidOfUserkaf)
   function addHand($cardId)
   {
     $player = Players::getCurrent();

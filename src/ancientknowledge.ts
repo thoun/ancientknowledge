@@ -39,12 +39,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private artifactCounters: Counter[] = [];
     private cityCounters: Counter[] = [];
-    //private cityTimelineCounters: Counter[] = [];
     private megalithCounters: Counter[] = [];
-    //private megalithTimelineCounters: Counter[] = [];
     private pyramidCounters: Counter[] = [];
-    //private pyramidTimelineCounters: Counter[] = [];
-
     private drawAndPeekStock: LineStock<BuilderCard>;
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
@@ -536,6 +532,21 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
+    private onEnteringDiscard(args: EnteringDiscardArgs) {
+        const cardsIds = args._private?.cardIds;
+        if (!cardsIds) {
+            return;
+        }
+        const selectableCards = cardsIds?.map(id => this.builderCardsManager.getFullCardById(id));
+        const playerTable = this.getCurrentPlayerTable();
+        if (playerTable.hand.getCards().some(card => cardsIds.includes(card.id))) {
+            playerTable.setHandSelectable('multiple', selectableCards);
+        }
+        if (playerTable.artifacts.getCards().some(card => cardsIds.includes(card.id))) {
+            playerTable.artifacts.setSelectionMode('multiple', selectableCards);
+        }
+    }
+
     private onEnteringEndScore(fromReload: boolean = false) {
         const lastTurnBar = document.getElementById('last-round');
         if (lastTurnBar) {
@@ -614,6 +625,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             case 'discard':
             case 'discardMulti':
                 this.getCurrentPlayerTable()?.setHandSelectable('none');
+                this.getCurrentPlayerTable()?.artifacts.setSelectionMode('none');
                 break;
             case 'drawAndKeep':
                 this.onLeavingDrawAndKeep();
@@ -740,9 +752,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'discard':
                 case 'discardMulti':
-                    const cardsIds = args._private?.cardIds;
-                    const selectableCards = cardsIds?.map(id => this.builderCardsManager.getFullCardById(id));
-                    this.getCurrentPlayerTable().setHandSelectable('multiple', selectableCards);
+                    this.onEnteringDiscard(args);
                     (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(stateName == 'discardMulti'));
                     document.getElementById('actDiscard_button').classList.add('disabled');
                     break;
@@ -1143,6 +1153,13 @@ class AncientKnowledge implements AncientKnowledgeGame {
             }            
         }
     }
+
+    private onDiscardSelectionChange() {
+        const args = this.gamedatas.gamestate.args as EnteringDiscardArgs;
+        const selection = [...this.getCurrentPlayerTable().hand.getSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
+        const n = Math.min(this.gamedatas.gamestate.args.n, args._private.cardIds.length);
+        document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
+    }
     
     public onHandCardSelectionChange(selection: BuilderCard[]): void {
         if (this.gamedatas.gamestate.name == 'initialSelection') {
@@ -1152,8 +1169,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         } else if (this.gamedatas.gamestate.name == 'archive') {
             this.archiveEngine?.cardSelectionChange(selection);
         } else if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
-            const n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
-            document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
+            this.onDiscardSelectionChange();
         } if (this.gamedatas.gamestate.name == 'specialEffect') {
             const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
             switch (args.sourceId) {
@@ -1251,16 +1267,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
         ]);
     }
     
-    /*public onArtifactSelectionChange(selection: BuilderCard[]): void {
-        if (this.gamedatas.gamestate.name == 'specialEffect') {
-            const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
-            switch (args.sourceId) {
-                case 'P13_Yonaguni':
-                    document.getElementById('actDiscardAndRemoveKnowledge_button').classList.toggle('disabled', selection.length > 3);
-                    break;
-            }
+    public onArtifactSelectionChange(selection: BuilderCard[]): void {
+        if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
+            this.onDiscardSelectionChange();
         }
-    }*/
+    }
 
     public resolveChoiceCardClicked(card: BuilderCard): void {
         const choice = Object.values((this.gamedatas.gamestate.args as EnteringResolveChoiceArgs).choices).find(choice => choice.args?.cardId == card.id);
@@ -1336,7 +1347,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
   	
     public actDiscard(multi: boolean) {
-        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const selectedCards = [...this.getCurrentPlayerTable().hand.getSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);

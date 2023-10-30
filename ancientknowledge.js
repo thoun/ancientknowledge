@@ -2733,6 +2733,7 @@ var PlayerTable = /** @class */ (function () {
             mapCardToSlot: function (card) { return card.location; },
             gap: '36px',
         });
+        this.artifacts.onSelectionChange = function (selection) { return _this.game.onArtifactSelectionChange(selection); };
         this.artifacts.onCardClick = function (card) { return _this.game.onArtifactCardClick(card); };
         var pastDiv = document.getElementById("player-table-".concat(this.playerId, "-past"));
         this.past = new PastDeck(this.game.builderCardsManager, pastDiv);
@@ -3510,9 +3511,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.lostKnowledgeCounters = [];
         this.artifactCounters = [];
         this.cityCounters = [];
-        //private cityTimelineCounters: Counter[] = [];
         this.megalithCounters = [];
-        //private megalithTimelineCounters: Counter[] = [];
         this.pyramidCounters = [];
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
         this.actionTimerId = null;
@@ -3926,6 +3925,22 @@ var AncientKnowledge = /** @class */ (function () {
             }
         }
     };
+    AncientKnowledge.prototype.onEnteringDiscard = function (args) {
+        var _this = this;
+        var _a;
+        var cardsIds = (_a = args._private) === null || _a === void 0 ? void 0 : _a.cardIds;
+        if (!cardsIds) {
+            return;
+        }
+        var selectableCards = cardsIds === null || cardsIds === void 0 ? void 0 : cardsIds.map(function (id) { return _this.builderCardsManager.getFullCardById(id); });
+        var playerTable = this.getCurrentPlayerTable();
+        if (playerTable.hand.getCards().some(function (card) { return cardsIds.includes(card.id); })) {
+            playerTable.setHandSelectable('multiple', selectableCards);
+        }
+        if (playerTable.artifacts.getCards().some(function (card) { return cardsIds.includes(card.id); })) {
+            playerTable.artifacts.setSelectionMode('multiple', selectableCards);
+        }
+    };
     AncientKnowledge.prototype.onEnteringEndScore = function (fromReload) {
         var _this = this;
         if (fromReload === void 0) { fromReload = false; }
@@ -3964,7 +3979,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.onLeavingState = function (stateName) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         log('Leaving state: ' + stateName);
         this.removeActionButtons();
         document.getElementById('customActions').innerHTML = '';
@@ -3999,6 +4014,7 @@ var AncientKnowledge = /** @class */ (function () {
             case 'discard':
             case 'discardMulti':
                 (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable('none');
+                (_c = this.getCurrentPlayerTable()) === null || _c === void 0 ? void 0 : _c.artifacts.setSelectionMode('none');
                 break;
             case 'drawAndKeep':
                 this.onLeavingDrawAndKeep();
@@ -4021,12 +4037,12 @@ var AncientKnowledge = /** @class */ (function () {
                         this.removeMarketStock();
                         break;
                     case 'P7_PyramidOfTheNiches':
-                        (_c = this.pickDeckTechEngine) === null || _c === void 0 ? void 0 : _c.leaveState();
-                        (_d = this.pickDeckTechEngine) === null || _d === void 0 ? void 0 : _d.remove();
+                        (_d = this.pickDeckTechEngine) === null || _d === void 0 ? void 0 : _d.leaveState();
+                        (_e = this.pickDeckTechEngine) === null || _e === void 0 ? void 0 : _e.remove();
                         this.pickDeckTechEngine = null;
                         break;
                     case 'P13_Yonaguni':
-                        (_e = this.getCurrentPlayerTable()) === null || _e === void 0 ? void 0 : _e.artifacts.setSelectionMode('none');
+                        (_f = this.getCurrentPlayerTable()) === null || _f === void 0 ? void 0 : _f.artifacts.setSelectionMode('none');
                         break;
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
@@ -4087,7 +4103,7 @@ var AncientKnowledge = /** @class */ (function () {
     //
     AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        var _a, _b;
+        var _a;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
@@ -4121,9 +4137,7 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'discard':
                 case 'discardMulti':
-                    var cardsIds = (_a = args._private) === null || _a === void 0 ? void 0 : _a.cardIds;
-                    var selectableCards = cardsIds === null || cardsIds === void 0 ? void 0 : cardsIds.map(function (id) { return _this.builderCardsManager.getFullCardById(id); });
-                    this.getCurrentPlayerTable().setHandSelectable('multiple', selectableCards);
+                    this.onEnteringDiscard(args);
                     this.addActionButton("actDiscard_button", _("Discard selected cards"), function () { return _this.actDiscard(stateName == 'discardMulti'); });
                     document.getElementById('actDiscard_button').classList.add('disabled');
                     break;
@@ -4178,7 +4192,7 @@ var AncientKnowledge = /** @class */ (function () {
                                 this.addActionButton("actDiscardAndDraw_button", _("Discard selected cards"), function () { return _this.actDiscardAndDraw(); });
                                 break;
                             case 'T22_AncientGreek':
-                                if ((_b = specialEffectArgs._private) === null || _b === void 0 ? void 0 : _b.canCreate) {
+                                if ((_a = specialEffectArgs._private) === null || _a === void 0 ? void 0 : _a.canCreate) {
                                     this.addActionButton("actPickAndDiscard_button", _("Build selected artifact"), function () { return _this.actPickAndDiscard(); });
                                     document.getElementById('actPickAndDiscard_button').classList.add('disabled');
                                 }
@@ -4451,6 +4465,12 @@ var AncientKnowledge = /** @class */ (function () {
             }
         }
     };
+    AncientKnowledge.prototype.onDiscardSelectionChange = function () {
+        var args = this.gamedatas.gamestate.args;
+        var selection = __spreadArray(__spreadArray([], this.getCurrentPlayerTable().hand.getSelection(), true), this.getCurrentPlayerTable().artifacts.getSelection(), true);
+        var n = Math.min(this.gamedatas.gamestate.args.n, args._private.cardIds.length);
+        document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
+    };
     AncientKnowledge.prototype.onHandCardSelectionChange = function (selection) {
         var _a, _b;
         if (this.gamedatas.gamestate.name == 'initialSelection') {
@@ -4463,8 +4483,7 @@ var AncientKnowledge = /** @class */ (function () {
             (_b = this.archiveEngine) === null || _b === void 0 ? void 0 : _b.cardSelectionChange(selection);
         }
         else if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
-            var n = Math.min(this.gamedatas.gamestate.args.n, this.getCurrentPlayerTable().hand.getCards().length);
-            document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
+            this.onDiscardSelectionChange();
         }
         if (this.gamedatas.gamestate.name == 'specialEffect') {
             var args = this.gamedatas.gamestate.args;
@@ -4568,16 +4587,11 @@ var AncientKnowledge = /** @class */ (function () {
             discard,
         ]);
     };
-    /*public onArtifactSelectionChange(selection: BuilderCard[]): void {
-        if (this.gamedatas.gamestate.name == 'specialEffect') {
-            const args = this.gamedatas.gamestate.args as EnteringSpecialEffectArgs;
-            switch (args.sourceId) {
-                case 'P13_Yonaguni':
-                    document.getElementById('actDiscardAndRemoveKnowledge_button').classList.toggle('disabled', selection.length > 3);
-                    break;
-            }
+    AncientKnowledge.prototype.onArtifactSelectionChange = function (selection) {
+        if (['discard', 'discardMulti'].includes(this.gamedatas.gamestate.name)) {
+            this.onDiscardSelectionChange();
         }
-    }*/
+    };
     AncientKnowledge.prototype.resolveChoiceCardClicked = function (card) {
         var _this = this;
         var choice = Object.values(this.gamedatas.gamestate.args.choices).find(function (choice) { var _a; return ((_a = choice.args) === null || _a === void 0 ? void 0 : _a.cardId) == card.id; });
@@ -4641,7 +4655,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAtomicAction('actExcavate', [cardsIds], true);
     };
     AncientKnowledge.prototype.actDiscard = function (multi) {
-        var selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        var selectedCards = __spreadArray(__spreadArray([], this.getCurrentPlayerTable().hand.getSelection(), true), this.getCurrentPlayerTable().artifacts.getSelection(), true);
         var cardsIds = selectedCards.map(function (card) { return card.id; }).sort();
         this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);
     };
