@@ -48,10 +48,13 @@ class SpecialEffect extends \AK\Models\Action
     $args = $this->getCtxArgs();
     $card = Effects::get($args['sourceId']);
     $method = $args['method'];
+    $method2 = 'st' . \ucfirst($args['method']);
     $arguments = $args['args'] ?? [];
     if (\method_exists($card, $method)) {
       $card->$method(...$arguments);
       $this->resolveAction();
+    } elseif (\method_exists($card, $method2)) {
+      $card->$method2(...$arguments);
     }
   }
 

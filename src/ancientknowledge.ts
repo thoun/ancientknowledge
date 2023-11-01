@@ -807,6 +807,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                             case 'T3_HermesTrismegistus':
                                 (this as any).addActionButton(`actChooseCardToKeep_button`, _("Keep selected card"), () => this.actChooseCardToKeep());
                                 document.getElementById('actChooseCardToKeep_button').classList.add('disabled');
+                                if (specialEffectArgs.canSkip) {
+                                    (this as any).addSecondaryActionButton('actSkipChooseCardToKeep_button', _('Pass'),  () => this.actChooseCardToKeep());
+                                  }
                                 break;
                             case 'T17_EarthquakeEngineering':
                                 (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());

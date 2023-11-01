@@ -429,6 +429,13 @@ class Notifications
     ]);
   }
 
+  public static function cantkeep($player)
+  {
+    self::notifyAll('mediumMessage', clienttranslate('${player_name} already has 10 cards in hand'), [
+      'player' => $player,
+    ]);
+  }
+
   public static function placeAtDeckBottom($player, $tech, $deck)
   {
     self::notifyAll(

@@ -40,6 +40,14 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
 
     // Each player pick one
     foreach (Players::getTurnOrder($this->pId) as $pId) {
+      if (
+        Players::get($pId)
+          ->getHand()
+          ->count() == 10
+      ) {
+        continue;
+      }
+
       $childs[] = [
         'action' => SPECIAL_EFFECT,
         'args' => [
@@ -71,6 +79,7 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
   public function reveal()
   {
     Cards::pickForLocation(5, 'deck', 'pending');
+    Engine::checkpoint();
   }
 
   // Prompt player to pick one artefact
@@ -82,8 +91,10 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
   public function argsChooseCardToKeep()
   {
     $cards = Cards::getInLocation('pending');
+    $player = Players::getActive();
 
     return [
+      'canSkip' => $player->getHand()->count() == 10,
       'sourceId' => $this->id,
       'description' => clienttranslate('${actplayer} must choose 1 card to keep'),
       'descriptionmyturn' => clienttranslate('${you} must choose 1 card to keep'),
@@ -91,8 +102,41 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
     ];
   }
 
-  public function actChooseCardToKeep($cardId)
+  public function stChooseCardToKeep()
   {
+    $args = $this->argsChooseCardToKeep();
+    if ($args['canSkip']) {
+      $this->actPassChooseCardToKeep();
+      $node = Engine::getNextUnresolved();
+      Engine::resolveAction([], false, $node);
+      Engine::proceed();
+    }
+  }
+
+  public function actPassChooseCardToKeep()
+  {
+    $args = $this->argsChooseCardToKeep();
+    if (!$args['canSkip']) {
+      throw new \BgaVisibleSystemException('You cant skip unless you have 10 cards in hand. Should not happen');
+    }
+
+    $player = Players::getActive();
+    Notifications::cantKeep($player);
+
+    $node = Engine::getNextUnresolved();
+    if ($node->getArgs()['lastSelection'] ?? false) {
+      $cards = Cards::getInLocation('pending');
+      Cards::move($cards->getIds(), 'discard');
+    }
+  }
+
+  public function actChooseCardToKeep($cardId = null)
+  {
+    if (is_null($cardId)) {
+      $this->actPassChooseCardToKeep();
+      return;
+    }
+
     $args = $this->argsChooseCardToKeep();
     if (!in_array($cardId, $args['cardIds'])) {
       throw new \BgaVisibleSystemException('Invalid cards to keep. Should not happen');

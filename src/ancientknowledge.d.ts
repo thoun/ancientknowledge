@@ -181,6 +181,7 @@ interface EnteringSpecialEffectArgs {
     };
     cardIds?: string[]; // T3_HermesTrismegistus, P13_Yonaguni
     pIds?: number[]; // M14_MenhirOfKerloas
+    canSkip?: boolean;
 }
 
 interface EnteringDiscardArgs {
