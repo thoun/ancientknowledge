@@ -25,6 +25,7 @@ class M27_MasudaIwafune extends \AK\Models\Building
     return [
       'action' => CREATE,
       'args' => ['constraint' => [\MEGALITH]],
+      'optional' => true,
     ];
   }
 }
