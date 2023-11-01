@@ -62,6 +62,7 @@ class T22_AncientGreek extends \AK\Models\Technology
   {
     $cards = Cards::getInLocation('pending');
     $player = $this->getPlayer();
+    $validCardIds = $cards->filter(fn($card) => $card->isArtefact())->getIds();
 
     return [
       'sourceId' => $this->id,
@@ -69,9 +70,9 @@ class T22_AncientGreek extends \AK\Models\Technology
       'descriptionmyturn' => clienttranslate('${you} must create 1 <ARTIFACT> from the top 10 cards'),
       '_private' => [
         'active' => [
-          'canCreate' => !is_null($player->getFreeArtefactSlot()),
+          'canCreate' => !is_null($player->getFreeArtefactSlot()) && count($validCardIds) > 0,
           'cardIds' => $cards->getIds(),
-          'validCardIds' => $cards->filter(fn($card) => $card->isArtefact())->getIds(),
+          'validCardIds' => $validCardIds,
         ],
       ],
     ];

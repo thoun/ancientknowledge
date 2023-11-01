@@ -59,7 +59,7 @@ trait DebugTrait
     Engine::proceed();
   }
 
-  // addTech(T3_HermesTrismegistus)
+  // addTech(T22_AncientGreek)
   function addTech($techId)
   {
     self::DbQuery("UPDATE `technologies` SET `technology_location`='deck_1' WHERE `technology_location`='board_1'");
