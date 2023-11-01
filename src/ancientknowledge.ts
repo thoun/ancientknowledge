@@ -755,7 +755,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.onEnteringDiscard(args);
                     (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(stateName == 'discardMulti'));
                     document.getElementById('actDiscard_button').classList.add('disabled');
-                    if (args._private && args._private.canSkip) {
+                    if (args._private?.canSkip) {
                         (this as any).addSecondaryActionButton(`actSkipDiscard_button`, _('Pass'), () => this.actDiscard(stateName == 'discardMulti'));
                       }            
                     break;
@@ -1602,7 +1602,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_keep(args: NotifKeepArgs) {
         const { player_id, card } = args;        
         this.handCounters[player_id].incValue(1);
-        return this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card));
+        return card ?
+            this.getPlayerTable(player_id).hand?.addCard(this.builderCardsManager.getFullCard(card)) :
+            Promise.resolve(true);
     }
 
     notif_discardCards(args: NotifPDiscardCardsArgs) {
@@ -1757,7 +1759,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const { player_id, card } = args;
         this.handCounters[player_id].incValue(1);
         return card ?
-            this.getPlayerTable(player_id).hand.addCard(this.builderCardsManager.getFullCard(card)) :
+            this.getPlayerTable(player_id).hand?.addCard(this.builderCardsManager.getFullCard(card)) :
             Promise.resolve(true);
     }
     
