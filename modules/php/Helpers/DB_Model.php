@@ -73,7 +73,7 @@ abstract class DB_Model extends \APP_DbObject implements \JsonSerializable
             }
           }
         }
-        throw new \InvalidArgumentException("Attribute {$name} doesn't exist");
+        throw new \InvalidArgumentException("Attribute {$name} doesn't exist : " . var_export($this, true));
       }
 
       if ($match[1] == 'get') {

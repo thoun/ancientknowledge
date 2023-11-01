@@ -755,6 +755,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.onEnteringDiscard(args);
                     (this as any).addActionButton(`actDiscard_button`, _("Discard selected cards"), () => this.actDiscard(stateName == 'discardMulti'));
                     document.getElementById('actDiscard_button').classList.add('disabled');
+                    if (args._private && args._private.canSkip) {
+                        (this as any).addSecondaryActionButton(`actSkipDiscard_button`, _('Pass'), () => this.actDiscard(stateName == 'discardMulti'));
+                      }            
                     break;
                 case 'confirmTurn':
                     (this as any).addActionButton(`actConfirmTurn_button`, _("Confirm turn"), () => this.actConfirmTurn());
