@@ -2630,7 +2630,10 @@ var TableCenter = /** @class */ (function () {
         return Promise.resolve(true);
     };
     TableCenter.prototype.midGameReached = function (board) {
-        document.getElementById("table-technology-tiles-".concat(board)).dataset.level = '2';
+        var div = document.getElementById("table-technology-tiles-".concat(board));
+        if (div) {
+            div.dataset.level = '2';
+        }
     };
     TableCenter.prototype.setTileStocksSelectable = function (selectable) {
         var stocks = Array.from(document.querySelectorAll(".table-technology-tiles".concat(selectable ? '[data-level="1"]' : '')));

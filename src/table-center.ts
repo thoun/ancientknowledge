@@ -70,7 +70,10 @@ class TableCenter {
     }
     
     public midGameReached(board: number): void {
-        document.getElementById(`table-technology-tiles-${board}`).dataset.level = '2';
+        const div = document.getElementById(`table-technology-tiles-${board}`);
+        if (div) {
+            div.dataset.level = '2';
+        }
     }
 
     public setTileStocksSelectable(selectable: boolean) {
