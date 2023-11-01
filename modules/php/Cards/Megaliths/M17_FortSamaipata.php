@@ -30,6 +30,6 @@ class M17_FortSamaipata extends \AK\Models\Building
   public function getInitialKnowledgeDiscount()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
-    return $n >= 3 ? 5 : 1;
+    return $n >= 3 ? 5 : 0;
   }
 }
