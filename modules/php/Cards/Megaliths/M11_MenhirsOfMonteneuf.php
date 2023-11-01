@@ -25,6 +25,7 @@ class M11_MenhirsOfMonteneuf extends \AK\Models\Building
     return [
       'action' => CREATE,
       'args' => ['constraint' => \BUILDINGS],
+      'optional' => true,
     ];
   }
 }
