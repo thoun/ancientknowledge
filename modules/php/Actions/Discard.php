@@ -66,6 +66,7 @@ class Discard extends \AK\Models\Action
       '_private' => [
         'active' => [
           'cardIds' => $cards->getIds(),
+          'canSkip' => $this->isOptional(),
         ],
       ],
     ];
