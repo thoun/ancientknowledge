@@ -27,7 +27,7 @@ class M23_StandingStonesOfStenness extends \AK\Models\Building
   {
     $cardIds = [];
     foreach ($this->getPlayer()->getTimeline() as $card) {
-      if ($card->getType() == MEGALITH && $card->getKnowledge() > 0) {
+      if ($card->getType() == MEGALITH && $card->getKnowledge() > 0 && $card->getId() != $this->id) {
         $cardIds[] = $card->getId();
       }
     }

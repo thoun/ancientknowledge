@@ -29,8 +29,11 @@ class C21_Mycenae extends \AK\Models\Building
   public function getDeclineEffect()
   {
     return [
-      'action' => \REMOVE_KNOWLEDGE,
-      'args' => ['n' => 7],
+      'action' => REMOVE_KNOWLEDGE,
+      'args' => [
+        'n' => 7,
+        'except' => $this->id,
+      ],
     ];
   }
 }
