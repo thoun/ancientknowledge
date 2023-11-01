@@ -98,14 +98,15 @@ class T3_HermesTrismegistus extends \AK\Models\Technology
       throw new \BgaVisibleSystemException('Invalid cards to keep. Should not happen');
     }
 
+    $node = Engine::getNextUnresolved();
+    $pId = $node->getPId();
     $card = Cards::getSingle($cardId);
     $card->setLocation('hand');
-    $card->setPId($this->pId);
+    $card->setPId($pId);
 
-    $player = Players::get($this->ctx->getPId());
+    $player = Players::get($pId);
     Notifications::keep($player, $card);
 
-    $node = Engine::getNextUnresolved();
     if ($node->getArgs()['lastSelection'] ?? false) {
       $cards = Cards::getInLocation('pending');
       Cards::move($cards->getIds(), 'discard');
