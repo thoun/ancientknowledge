@@ -194,16 +194,14 @@
 
       &.discard-cost {
         &::before {
-          content: '';
+          content: '\e90a';
           position: absolute;
           bottom: 0;
           right: 0;
-          background-image: url('img/discard-icon.svg');
-          width: 36px;
-          height: 48px;
-          background-repeat: no-repeat;
-          background-position: center center;
-          background-size: contain;
+          font-family: 'ak';
+          color: white;
+          text-shadow:  0 1px gray, 0 0 2px gray;
+          font-size: 48px;
         }
 
         &::after {

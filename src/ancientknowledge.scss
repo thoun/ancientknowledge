@@ -30,6 +30,116 @@ $writingColor: #633c37;
     --selectable-card-color: gold;
 }
 
+@font-face {
+  font-family: 'ak';
+  src:
+    url('img/ak.ttf?vn5p27') format('truetype'),
+    url('img/ak.woff?vn5p27') format('woff'),
+    url('img/ak.svg?vn5p27#ak') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'ak' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-action-archive:before {
+  content: "\e900";
+  color: #fff;
+}
+.icon-action-create:before {
+  content: "\e901";
+  color: #fff;
+}
+.icon-action-excavate:before {
+  content: "\e902";
+  color: #fff;
+}
+.icon-action-learn:before {
+  content: "\e903";
+  color: #fff;
+}
+.icon-action-search:before {
+  content: "\e904";
+  color: #fff;
+}
+.icon-anytime:before {
+  content: "\e905";
+}
+.icon-artifact:before {
+  content: "\e906";
+  color: #734073;
+}
+.icon-cards:before {
+  content: "\e908";
+}
+.icon-decline:before {
+  content: "\e909";
+}
+.icon-discard:before {
+  content: "\e90a";
+  color: #fff;
+}
+.icon-immediate:before {
+  content: "\e90b";
+}
+.icon-knowledge:before {
+  content: "\e90c";
+}
+.icon-lock:before {
+  content: "\e90e";
+  color: #fff;
+}
+.icon-lost-knowledge:before {
+  content: "\e90f";
+}
+.icon-monument-city:before {
+  content: "\e911";
+  color: #d66b2a;
+}
+.icon-monument-megalith:before {
+  content: "\e913";
+  color: #4a82a3;
+}
+.icon-monument-pyramid:before {
+  content: "\e915";
+  color: #87a04f;
+}
+.icon-starting-space-icon:before {
+  content: "\e917";
+}
+.icon-technology-ancient:before {
+  content: "\e919";
+  color: #3c857f;
+}
+.icon-technology-secret:before {
+  content: "\e91b";
+  color: #b8a222;
+}
+.icon-technology-writing:before {
+  content: "\e91d";
+  color: #633c37;
+}
+.icon-timeline-icon:before {
+  content: "\e91f";
+}
+.icon-vp:before {
+  content: "\e920";
+}
+
 /* make space between buttons on touch devices */
 @media (hover: none) {
   #page-title .action-button.bgabutton, #page-title .bgabutton {

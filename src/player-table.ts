@@ -286,7 +286,7 @@ class PlayerTable {
 
             slot.classList.toggle('selectable', slotSelectable);
             //slot.style.setProperty('--discard-cost', `${discardCost > 0 ? discardCost : ''}`);
-            slot.dataset.discardCost = `${discardCost > 0 ? discardCost : ''}`;
+            slot.dataset.discardCost = `${discardCost > 0 ? discardCost : '&#e90a;'}`;
             slot.classList.toggle('discard-cost', slotSelectable && discardCost > 0);
         });
     }
