@@ -26,7 +26,7 @@ class C20_Tiwanaku extends \AK\Models\Building
   {
     $cardIds = [];
     foreach ($this->getPlayer()->getTimeline() as $card) {
-      if ($card->getType() == CITY && $card->getKnowledge() > 0) {
+      if ($card->getType() == CITY && $card->getKnowledge() > 0 && $card->getId() != $this->getId()) {
         $cardIds[] = $card->getId();
       }
     }
