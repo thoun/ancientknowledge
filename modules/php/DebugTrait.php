@@ -59,7 +59,7 @@ trait DebugTrait
     Engine::proceed();
   }
 
-  // addTech(T22_AncientGreek)
+  // addTech(T36_Astrology)
   function addTech($techId)
   {
     self::DbQuery("UPDATE `technologies` SET `technology_location`='deck_1' WHERE `technology_location`='board_1'");

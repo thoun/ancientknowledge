@@ -16,7 +16,7 @@ class C17_Jericho extends \AK\Models\Building
     $this->victoryPoint = 1;
     $this->initialKnowledge = 3;
     $this->startingSpace = 3;
-    $this->discard = 1;
+    $this->discard = 2;
     $this->activation = DECLINE;
     $this->effect = [clienttranslate('Draw 6 cards.')];
   }
