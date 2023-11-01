@@ -81,6 +81,7 @@ class DeclineCard extends \AK\Models\Action
 
     // Check if mid game is reached
     if (Globals::isFirstHalf() && $player->getPast()->count() == 7) {
+      Globals::setFirstHalf(false);
       $this->insertAsChild([
         'action' => FLIP_TECH_TILE,
       ]);

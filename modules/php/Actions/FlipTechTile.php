@@ -37,7 +37,6 @@ class FlipTechTile extends \AK\Models\Action
     $discarded = Technologies::getBoard($board);
     Technologies::move($discarded->getIds(), 'discard_1');
     Notifications::midGameReached($player, $discarded, $board);
-    Globals::setFirstHalf(false);
     Globals::setSecondLvl2TechTile($board);
 
     // Try to fill it up
