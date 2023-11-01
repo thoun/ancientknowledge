@@ -525,6 +525,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
                     break;
+                case 'P35_CandiKethek':
                 case 'T27_LatinAlphabet':
                     this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args._private.techIds));
                     break;
@@ -655,6 +656,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     case 'P13_Yonaguni':
                         this.getCurrentPlayerTable()?.artifacts.setSelectionMode('none');
                         break;
+                    case 'P35_CandiKethek':
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
                         break;
@@ -1128,6 +1130,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             }
         } else if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'P35_CandiKethek':
                 case 'T27_LatinAlphabet':
                     this.takeAtomicAction('actChooseTech', [
                         tile.id,

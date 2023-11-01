@@ -3919,6 +3919,7 @@ var AncientKnowledge = /** @class */ (function () {
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
                     this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
                     break;
+                case 'P35_CandiKethek':
                 case 'T27_LatinAlphabet':
                     this.tableCenter.setTechnologyTilesSelectable(true, this.technologyTilesManager.getFullCardsByIds(args._private.techIds));
                     break;
@@ -4044,6 +4045,7 @@ var AncientKnowledge = /** @class */ (function () {
                     case 'P13_Yonaguni':
                         (_f = this.getCurrentPlayerTable()) === null || _f === void 0 ? void 0 : _f.artifacts.setSelectionMode('none');
                         break;
+                    case 'P35_CandiKethek':
                     case 'T27_LatinAlphabet':
                         this.onLeavingLearn();
                         break;
@@ -4441,6 +4443,7 @@ var AncientKnowledge = /** @class */ (function () {
         }
         else if (this.gamedatas.gamestate.name == 'specialEffect') {
             switch (this.gamedatas.gamestate.args.sourceId) {
+                case 'P35_CandiKethek':
                 case 'T27_LatinAlphabet':
                     this.takeAtomicAction('actChooseTech', [
                         tile.id,
