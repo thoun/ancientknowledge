@@ -46,7 +46,7 @@ class Draw extends \AK\Models\Action
     $n = $this->getN();
     $m = min($n, 10 - $player->getHand()->count());
 
-    if ($m == 0) {
+    if ($m <= 0) {
       Notifications::message(\clienttranslate('${player_name} already has 10 cards in hand'), ['player' => $player]);
     } else {
       // Draw cards and notify
