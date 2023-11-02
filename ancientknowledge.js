@@ -2202,16 +2202,16 @@ function formatTextIcons(rawText, white) {
     }
     var whiteText = white ? 'white' : '';
     return rawText
-        .replace(/<KNOWLEDGE>/ig, '<span class="icon knowledge"></span>')
-        .replace(/<LOST_KNOWLEDGE>/ig, "<span class=\"icon lost-knowledge ".concat(whiteText, "\"></span>"))
-        .replace(/<VP>/ig, '<span class="icon vp"></span>')
-        .replace(/<CITY>/ig, '<span class="icon city"></span>')
-        .replace(/<MEGALITH>/ig, '<span class="icon megalith"></span>')
-        .replace(/<PYRAMID>/ig, '<span class="icon pyramid"></span>')
-        .replace(/<ARTIFACT>/ig, '<span class="icon artifact"></span>')
-        .replace(/<ANCIENT>/ig, '<span class="icon ancient"></span>')
-        .replace(/<WRITING>/ig, '<span class="icon writing"></span>')
-        .replace(/<SECRET>/ig, '<span class="icon secret"></span>')
+        .replace(/<KNOWLEDGE>/ig, '<span class="icon-knowledge"></span>')
+        .replace(/<LOST_KNOWLEDGE>/ig, "<span class=\"icon-lost-knowledge ".concat(whiteText, "\"></span>"))
+        .replace(/<VP>/ig, '<span class="icon-vp"></span>')
+        .replace(/<CITY>/ig, '<span class="icon-monument-city"></span>')
+        .replace(/<MEGALITH>/ig, '<span class="icon-monument-megalith"></span>')
+        .replace(/<PYRAMID>/ig, '<span class="icon-monument-pyramid"></span>')
+        .replace(/<ARTIFACT>/ig, '<span class="icon-artifact"></span>')
+        .replace(/<ANCIENT>/ig, '<span class="icon-technology-ancient"></span>')
+        .replace(/<WRITING>/ig, '<span class="icon-technology-writing"></span>')
+        .replace(/<SECRET>/ig, '<span class="icon-technology-secret"></span>')
         .replace(/\[n°(\d)\]/ig, function (fullMatch, number) { return "<span class=\"icon starting-space\">".concat(number, "</span>"); })
         .replace(/\[I\]/ig, '<span class="icon tech-level" data-level="1"></span>')
         .replace(/\[II\]/ig, '<span class="icon tech-level" data-level="2"></span>');
@@ -3553,7 +3553,7 @@ var AncientKnowledge = /** @class */ (function () {
         new HelpManager(this, {
             buttons: [
                 new BgaHelpPopinButton({
-                    title: _("Card help").toUpperCase(),
+                    title: _("Icons"),
                     html: this.getHelpHtml(),
                     buttonBackground: '#87a04f',
                 }),
@@ -4092,7 +4092,7 @@ var AncientKnowledge = /** @class */ (function () {
                     break;
                 case 'chooseAction':
                     ACTIONS.map(function (action) { return _this.getActionInformations(action); }).forEach(function (actionInformations) {
-                        _this.addActionButton("actChooseAction_".concat(actionInformations[0], "_button"), "<div class=\"action-icon ".concat(actionInformations[0], "\"></div> ").concat(actionInformations[1]), function () { return _this.takeAtomicAction('actChooseAction', [actionInformations[0]]); });
+                        _this.addActionButton("actChooseAction_".concat(actionInformations[0], "_button"), "<span class=\"icon-action-".concat(actionInformations[0], "\"></span> ").concat(actionInformations[1]), function () { return _this.takeAtomicAction('actChooseAction', [actionInformations[0]]); });
                         _this.setTooltip("actChooseAction_".concat(actionInformations[0], "_button"), actionInformations[2]);
                     });
                     var table = this.getCurrentPlayerTable();
@@ -4317,10 +4317,10 @@ var AncientKnowledge = /** @class */ (function () {
         var _this = this;
         Object.values(gamedatas.players).forEach(function (player) {
             var playerId = Number(player.id);
-            document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<div id=\"player_score_".concat(player.id, "-icon\" class=\"vp icon\"></div>"));
+            document.getElementById("player_score_".concat(player.id)).insertAdjacentHTML('beforebegin', "<span id=\"player_score_".concat(player.id, "-icon\" class=\"icon-vp\"></span>"));
             document.getElementById("icon_point_".concat(player.id)).remove();
-            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <div class=\"player-hand-card\"></div> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"lost-knowledge icon\"></div>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div>").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
-            html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <div class=\"").concat(type, " icon\"></div>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                </div>\n            "); }).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
+            var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\">\n                    <span class=\"icon-cards\"></span> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span>\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\">\n                    <span class=\"icon-lost-knowledge\"></span>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div>").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
+            html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <span class=\"icon-").concat(type != 'artifact' ? 'monument-' : '').concat(type, "\"></span>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                </div>\n            "); }).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
             html += "</div>";
             dojo.place(html, "player_board_".concat(player.id));
             var handCounter = new ebg.counter();
@@ -4384,7 +4384,8 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.getHelpHtml = function () {
-        var html = "\n        <div id=\"help-popin\">\n            <h1>".concat(_("Icons"), "</h2>\n            TODO help p14\n        </div>");
+        var _this = this;
+        var html = "\n        <div id=\"help-popin\">\n            <div class=\"help-icon-line\">\n                <div>\n                    <div class=\"icon-vp\"></div>\n                    ".concat(_("Victory Points"), "\n                </div>\n            </div>\n\n            <h2>").concat(_("Actions"), "</h2>\n\n            <div class=\"help-icon-line\">\n            ").concat(ACTIONS.map(function (action) { return _this.getActionInformations(action); }).map(function (actionInformations) { return "\n                <div>\n                    <div class=\"icon-action-".concat(actionInformations[0], "\"></div>\n                    ").concat(actionInformations[1], "\n                </div>\n                "); }).join(''), "\n            </div>\n            \n            <h2>").concat(_("Activation"), "</h2>\n\n            <div class=\"help-icon-line\">\n                <div>\n                    <div class=\"icon-immediate\"></div>\n                    ").concat(_("Immediate"), "\n                </div>\n                <div>\n                    <div class=\"icon-anytime\"></div>\n                    ").concat(_("Ongoing (with conditions"), "\n                </div>\n                <div>\n                    <div class=\"icon-timeline\"></div>\n                    ").concat(_("Timeline Phase"), "\n                </div>\n                <div>\n                    <div class=\"icon-decline\"></div>\n                    ").concat(_("Decline Phase"), "\n                </div>\n                <div>\n                    <div class=\"icon-vp\"></div>\n                    ").concat(_("Final Scoring"), "\n                </div>\n            </div>\n\n            <h2>").concat(_("Knowledge"), "</h2>\n\n            <div class=\"help-icon-line\">\n                <div>\n                    <div class=\"icon-knowledge\"></div>\n                    ").concat(_("Knowledge"), "\n                </div>\n\n                <div>\n                    <div class=\"icon-lost-knowledge\"></div>\n                    ").concat(_("Lost Knowledge"), "\n                </div>\n            </div>\n\n            <h2>").concat(_("Builder cards"), "</h2>\n\n            <div class=\"help-icon-line\">\n                <div>\n                    <div class=\"icon-monument-city\"></div>\n                    ").concat(_("City"), " (").concat(_("Monument"), ")\n                </div>\n                <div>\n                    <div class=\"icon-monument-megalith\"></div>\n                    ").concat(_("Megalith"), " (").concat(_("Monument"), ")\n                </div>\n                <div>\n                    <div class=\"icon-monument-pyramid\"></div>\n                    ").concat(_("Pyramid"), " (").concat(_("Monument"), ")\n                </div>\n\n                <div>\n                    <div class=\"icon-artifact\"></div>\n                    ").concat(_("Artifact"), "\n                </div>\n\n                <div>\n                    <div class=\"icon-discard\"></div>\n                    ").concat(_("Cost"), " (").concat(_("Discard cards"), ")\n                </div>\n\n                <div>\n                    <div class=\"icon-lock\"></div>\n                    ").concat(_("Required Space"), "\n                </div>\n            </div> \n            \n            <h2>").concat(_("Technology cards"), "</h2>\n\n            <div class=\"help-icon-line\">\n                <div>\n                    <div class=\"icon-technology-ancient\"></div>\n                    ").concat(_("Ancient"), "\n                </div>\n                <div>\n                    <div class=\"icon-technology-writing\"></div>\n                    ").concat(_("Writing"), "\n                </div>\n                <div>\n                    <div class=\"icon-technology-secret\"></div>\n                    ").concat(_("Secret"), "\n                </div>\n            </div>\n        </div>");
         return html;
     };
     AncientKnowledge.prototype.getActionInformations = function (action) {

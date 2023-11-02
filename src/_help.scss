@@ -1,20 +1,19 @@
 #help-popin {
-    h1 {
-        color: #5890a9;
-        font-size: 18px;
-        margin: 8px 0;
+    h2 {
+        margin: 15px 0 0 0;
     }
 
-    .help-section {    
-        padding: 5px;
-        margin: 3px 0;
-
+    .help-icon-line {
         display: flex;
+        justify-content: space-evenly;
+        text-align: center;
+        background: #eeeeee66;
+        padding: 10px 5px;
 
-        &>div:not(:first-child) {
-            margin-left: 5px;
-            flex: 1;
-        } 
+        [class^="icon-"] {
+            font-size: 250%;
+            margin-right: 5px;
+        }
     }
 }
 

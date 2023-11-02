@@ -956,7 +956,8 @@ body > .card {
 .player-board.spectator-mode * {
   background: white !important;
 }
-.player-board .icon {
+.player-board [class^=icon-] {
+  font-size: 120%;
   margin-right: 5px;
 }
 .player-board .counters {
@@ -974,33 +975,9 @@ body > .card {
   display: flex;
   align-items: center;
 }
-.player-board .counters.icons .icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 3px;
-}
 .player-board .counters .timeline-counter {
   margin-left: 2px;
   font-size: 75%;
-}
-.player-board .player-hand-card {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-image: url("img/cards.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-}
-.player-board .reputation-legend {
-  font-size: 75%;
-  vertical-align: middle;
-}
-.player-board .reputation-legend .icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 2px;
 }
 
 #first-player {
@@ -1255,19 +1232,19 @@ body > .card {
   font-size: 48px;
 }
 
-#help-popin h1 {
-  color: #5890a9;
-  font-size: 18px;
-  margin: 8px 0;
+#help-popin h2 {
+  margin: 15px 0 0 0;
 }
-#help-popin .help-section {
-  padding: 5px;
-  margin: 3px 0;
+#help-popin .help-icon-line {
   display: flex;
+  justify-content: space-evenly;
+  text-align: center;
+  background: rgba(238, 238, 238, 0.4);
+  padding: 10px 5px;
 }
-#help-popin .help-section > div:not(:first-child) {
-  margin-left: 5px;
-  flex: 1;
+#help-popin .help-icon-line [class^=icon-] {
+  font-size: 250%;
+  margin-right: 5px;
 }
 
 .help-actions {
@@ -1452,30 +1429,28 @@ body > .card {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+[class^=icon-].white, [class*=" icon-"].white {
+  color: white;
+}
 
 .icon-action-archive:before {
   content: "\e900";
-  color: #fff;
 }
 
 .icon-action-create:before {
   content: "\e901";
-  color: #fff;
 }
 
 .icon-action-excavate:before {
   content: "\e902";
-  color: #fff;
 }
 
 .icon-action-learn:before {
   content: "\e903";
-  color: #fff;
 }
 
 .icon-action-search:before {
   content: "\e904";
-  color: #fff;
 }
 
 .icon-anytime:before {
@@ -1497,7 +1472,6 @@ body > .card {
 
 .icon-discard:before {
   content: "\e90a";
-  color: #fff;
 }
 
 .icon-immediate:before {
@@ -1510,7 +1484,6 @@ body > .card {
 
 .icon-lock:before {
   content: "\e90e";
-  color: #fff;
 }
 
 .icon-lost-knowledge:before {
@@ -1551,7 +1524,7 @@ body > .card {
   color: #633c37;
 }
 
-.icon-timeline-icon:before {
+.icon-timeline:before {
   content: "\e91f";
 }
 
@@ -1594,6 +1567,13 @@ html[data-bg="929f40"], .mode_3d #game_play_area_background[data-bg="929f40"] {
   display: inline-block;
   vertical-align: middle;
 }
+#page-title [class^=icon-] {
+  font-size: 120%;
+}
+#page-title .bgabutton [class^=icon-] {
+  font-size: 150%;
+  margin-right: 5px;
+}
 
 .icon {
   display: inline-block;
@@ -1603,39 +1583,6 @@ html[data-bg="929f40"], .mode_3d #game_play_area_background[data-bg="929f40"] {
   background-repeat: no-repeat;
   background-position: center;
   vertical-align: middle;
-}
-.icon.knowledge {
-  background-image: url("img/knowledge-icon.svg");
-}
-.icon.lost-knowledge {
-  background-image: url("img/lost-knowledge-icon.svg");
-}
-.icon.lost-knowledge.white {
-  background-image: url("img/lost-knowledge-icon-white.svg");
-}
-.icon.vp {
-  background-image: url("img/vp-icon.svg");
-}
-.icon.city {
-  background-image: url("img/monument-icon-city.svg");
-}
-.icon.megalith {
-  background-image: url("img/monument-icon-megalith.svg");
-}
-.icon.pyramid {
-  background-image: url("img/monument-icon-pyramid.svg");
-}
-.icon.artifact {
-  background-image: url("img/artifact-icon.svg");
-}
-.icon.ancient {
-  background-image: url("img/technology-icon-ancient.svg");
-}
-.icon.secret {
-  background-image: url("img/technology-icon-secret.svg");
-}
-.icon.writing {
-  background-image: url("img/technology-icon-writing.svg");
 }
 .icon.starting-space {
   background-image: url("img/starting-space-icon.svg");
@@ -1655,31 +1602,6 @@ html[data-bg="929f40"], .mode_3d #game_play_area_background[data-bg="929f40"] {
 }
 .icon.tech-level[data-level="2"] {
   background-position-x: 100%;
-}
-
-.action-icon {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-}
-.action-icon.create {
-  background-image: url("img/action-create-white.svg");
-}
-.action-icon.learn {
-  background-image: url("img/action-learn-white.svg");
-}
-.action-icon.archive {
-  background-image: url("img/action-archive-white.svg");
-}
-.action-icon.excavate {
-  background-image: url("img/action-excavate-white.svg");
-}
-.action-icon.search {
-  background-image: url("img/action-search-white.svg");
 }
 
 .action-button .icon, .action-button .color, .log .icon, .log .color {
