@@ -231,12 +231,10 @@ class PlayerTable {
         }
 
         const knowledge = this.getCardKnowledge(cardId);
-        const cardDiv = document.getElementById(`builder-card-${cardId}`);
-        const direction = cardDiv.dataset.knowledgeSelectionMode == 'add' ? 1 : -1;
         document.getElementById(`${cardId}-token-counter-selected-number`).innerHTML = `${selectedKnowledge}`;
         document.getElementById(`${cardId}-token-counter-minus`).classList.toggle('disabled', selectedKnowledge == 0);
         document.getElementById(`${cardId}-token-counter-plus`).classList.toggle('disabled', selectedKnowledge >= knowledge);
-        document.getElementById(`${cardId}-token-counter-future-number`).innerHTML = `${knowledge + (direction * selectedKnowledge)}`;
+        document.getElementById(`${cardId}-token-counter-future-number`).innerHTML = `${knowledge - selectedKnowledge}`;
         if (!initial) {
             this.game.onTimelineKnowledgeClick(cardId, selectedKnowledge);
         }
@@ -291,7 +289,7 @@ class PlayerTable {
         });
     }
     
-    public setTimelineTokensSelectable(selectionMode: CardSelectionMode, type?: 'add' | 'remove', cardsIds: string[] = []) {
+    public setTimelineTokensSelectable(selectionMode: CardSelectionMode, cardsIds: string[] = []) {
         if (selectionMode == 'none') {
             document.querySelectorAll('.knowledge-selectable').forEach((cardDiv: HTMLElement) => {
                 cardDiv.classList.remove('knowledge-selectable');
@@ -301,7 +299,7 @@ class PlayerTable {
             cardsIds.forEach(cardId => {
                 const cardDiv = document.getElementById(`builder-card-${cardId}`);
                 cardDiv.classList.add('knowledge-selectable');
-                cardDiv.dataset.knowledgeSelectionMode = type;
+                cardDiv.dataset.knowledgeSelectionMode = 'remove';
             });
         }
     }

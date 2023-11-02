@@ -20,7 +20,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                 engine => {
                     engine.data.discardTokens = {};
                     cardIds.forEach(cardId => this.game.getCurrentPlayerTable().setCardSelectedKnowledge(cardId, 0, true));
-                    this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', 'remove', this.cardIds);
+                    this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', this.cardIds);
                     this.addConfirmDiscardTokenSelection();
                     this.setConfirmDiscardTokenSelectionState();
                 },
@@ -36,11 +36,15 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
     
     public cardTokenSelectionChange(cardId: string, knowledge: number) {
         if (this.currentState == 'discardTokens') {
-            this.data.discardTokens[cardId] = knowledge;
+            if (knowledge > 0) {
+                this.data.discardTokens[cardId] = knowledge;
+            } else {
+                delete this.data.discardTokens[cardId];
+            }
 
             if (this.type === 'xor') {
                 const selectableCardsIds = knowledge > 0 ? [cardId] : this.cardIds;
-                this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', 'remove', selectableCardsIds);
+                this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', selectableCardsIds);
             }
 
             this.setConfirmDiscardTokenSelectionState();
@@ -58,7 +62,6 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
 
     private setConfirmDiscardTokenSelectionState() { 
         const discardCount = Object.values(this.data.discardTokens).reduce((a, b) => a + b, 0);
-        //console.log(this.m, Object.values(this.data.discardTokens).filter(val => val > 0), discardCount, this.n * this.m);
         document.getElementById('confirmDiscardTokenSelection_btn')?.classList.toggle('disabled', 
             discardCount > this.n * this.m || 
             (this.type === 'xor' && Object.values(this.data.discardTokens).filter(val => val > 0).length > this.m) ||
