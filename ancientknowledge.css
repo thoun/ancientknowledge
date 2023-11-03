@@ -678,36 +678,29 @@ body > .card {
   justify-content: center;
   gap: 4px;
   display: none;
-  margin-top: 15px;
-}
-.token-counter .token-counter-actions .actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 24px;
-}
-.token-counter .token-counter-actions .actions .selected-group {
-  display: flex;
-  gap: 4px;
 }
 .token-counter .token-counter-actions .action {
-  width: 24px;
-  height: 24px;
   text-align: center;
   pointer-events: all;
   cursor: pointer;
-  border: 1px lightgray solid;
-  border-radius: 50%;
-  font-size: 16px;
+  margin: 5px;
+  white-space: unset;
 }
 .token-counter .token-counter-actions .action.disabled {
-  color: lightgray;
   cursor: not-allowed;
+}
+.token-counter .token-counter-actions .action.disabled.reset-btn {
+  display: none;
 }
 .token-counter .knowledge-token {
   width: 18px;
   height: 27px;
+}
+.token-counter .future {
+  display: none;
+}
+.token-counter.with-diff .future {
+  display: unset;
 }
 
 .knowledge-selectable .token-counter {
@@ -1428,6 +1421,7 @@ body > .card {
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  vertical-align: middle;
 }
 [class^=icon-].white, [class*=" icon-"].white {
   color: white;

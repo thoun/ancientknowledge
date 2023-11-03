@@ -4,7 +4,7 @@ function formatTextIcons(rawText: string, white: boolean = false) {
     }
     const whiteText = white ? 'white' : '';
     return rawText
-        .replace(/<KNOWLEDGE>/ig, '<span class="icon-knowledge"></span>')
+        .replace(/<KNOWLEDGE>/ig, `<span class="icon-knowledge ${whiteText}"></span>`)
         .replace(/<LOST_KNOWLEDGE>/ig, `<span class="icon-lost-knowledge ${whiteText}"></span>`)
         .replace(/<VP>/ig, '<span class="icon-vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon-monument-city"></span>')

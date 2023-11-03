@@ -2202,7 +2202,7 @@ function formatTextIcons(rawText, white) {
     }
     var whiteText = white ? 'white' : '';
     return rawText
-        .replace(/<KNOWLEDGE>/ig, '<span class="icon-knowledge"></span>')
+        .replace(/<KNOWLEDGE>/ig, "<span class=\"icon-knowledge ".concat(whiteText, "\"></span>"))
         .replace(/<LOST_KNOWLEDGE>/ig, "<span class=\"icon-lost-knowledge ".concat(whiteText, "\"></span>"))
         .replace(/<VP>/ig, '<span class="icon-vp"></span>')
         .replace(/<CITY>/ig, '<span class="icon-monument-city"></span>')
@@ -2823,17 +2823,12 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.createKnowledgeCounter = function (cardId, knowledge) {
         var _this = this;
         if (knowledge === void 0) { knowledge = 0; }
-        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-counter-info\">\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <div class=\"token-action-info remove\">-</div>\n                    <div class=\"token-action-info add\">+</div>\n                    <div class=\"actions\">\n                        <div class=\"action plus\" id=\"").concat(cardId, "-token-counter-plus\">\u25B2</div>\n                        <div class=\"selected-group\">\n                            <div class=\"selected-number\" id=\"").concat(cardId, "-token-counter-selected-number\">0</div>\n                            <div class=\"knowledge-token\"></div>\n                        </div>\n                        <div class=\"action minus\" id=\"").concat(cardId, "-token-counter-minus\">\u25BC</div>\n                    </div>\n                    <div class=\"token-selection\">\uD83E\uDC46</div>\n                    <div class=\"future-number\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n            </div>\n        "));
-        document.getElementById("".concat(cardId, "-token-counter-minus")).addEventListener('click', function () {
-            var current = _this.getCardSelectedKnowledge(cardId);
-            if (current > 0) {
-                _this.setCardSelectedKnowledge(cardId, current - 1);
-            }
-        });
-        document.getElementById("".concat(cardId, "-token-counter-plus")).addEventListener('click', function () {
-            var current = _this.getCardSelectedKnowledge(cardId);
-            if (current < _this.getCardKnowledge(cardId)) {
-                _this.setCardSelectedKnowledge(cardId, current + 1);
+        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-counter-info\">\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                    <div class=\"token-selection future\">\uD83E\uDC46</div>\n                    <div class=\"future-number future\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-remove-btn\" class=\"bgabutton bgabutton_blue action\">").concat(_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>'), "</button>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-reset-btn\" class=\"bgabutton bgabutton_gray action  reset-btn\">").concat(_('Reset'), "</button>\n                </div>\n            </div>\n        "));
+        document.getElementById("".concat(cardId, "-token-counter-reset-btn")).addEventListener('click', function () { return _this.resetSelectedKnowledge(cardId); });
+        document.getElementById("".concat(cardId, "-token-counter-remove-btn")).addEventListener('click', function () {
+            var future = _this.getCardFutureKnowledge(cardId);
+            if (future > 0) {
+                _this.setCardFutureKnowledge(cardId, future - 1);
             }
         });
     };
@@ -2845,30 +2840,34 @@ var PlayerTable = /** @class */ (function () {
         else {
             this.createKnowledgeCounter(cardId, knowledge);
         }
-        this.setCardSelectedKnowledge(cardId, 0);
+        this.setCardFutureKnowledge(cardId, knowledge);
     };
     PlayerTable.prototype.getCardKnowledge = function (cardId) {
         var _a;
         return Number((_a = document.getElementById("".concat(cardId, "-token-counter-number"))) === null || _a === void 0 ? void 0 : _a.innerHTML);
     };
-    PlayerTable.prototype.getCardSelectedKnowledge = function (cardId) {
+    PlayerTable.prototype.getCardFutureKnowledge = function (cardId) {
         var _a;
-        return Number((_a = document.getElementById("".concat(cardId, "-token-counter-selected-number"))) === null || _a === void 0 ? void 0 : _a.innerHTML);
+        return Number((_a = document.getElementById("".concat(cardId, "-token-counter-future-number"))) === null || _a === void 0 ? void 0 : _a.innerHTML);
     };
-    PlayerTable.prototype.setCardSelectedKnowledge = function (cardId, selectedKnowledge, initial) {
+    PlayerTable.prototype.setCardFutureKnowledge = function (cardId, future, initial) {
         if (initial === void 0) { initial = false; }
         var counter = document.getElementById("".concat(cardId, "-token-counter-number"));
         if (!counter) {
             this.createKnowledgeCounter(cardId);
         }
         var knowledge = this.getCardKnowledge(cardId);
-        document.getElementById("".concat(cardId, "-token-counter-selected-number")).innerHTML = "".concat(selectedKnowledge);
-        document.getElementById("".concat(cardId, "-token-counter-minus")).classList.toggle('disabled', selectedKnowledge == 0);
-        document.getElementById("".concat(cardId, "-token-counter-plus")).classList.toggle('disabled', selectedKnowledge >= knowledge);
-        document.getElementById("".concat(cardId, "-token-counter-future-number")).innerHTML = "".concat(knowledge - selectedKnowledge);
+        document.getElementById("".concat(cardId, "-token-counter")).classList.toggle('with-diff', future != knowledge);
+        document.getElementById("".concat(cardId, "-token-counter-reset-btn")).classList.toggle('disabled', future == knowledge);
+        document.getElementById("".concat(cardId, "-token-counter-remove-btn")).classList.toggle('disabled', future == 0);
+        document.getElementById("".concat(cardId, "-token-counter-future-number")).innerHTML = "".concat(future);
         if (!initial) {
-            this.game.onTimelineKnowledgeClick(cardId, selectedKnowledge);
+            this.game.onTimelineKnowledgeClick(cardId, knowledge - future);
         }
+    };
+    PlayerTable.prototype.resetSelectedKnowledge = function (cardId, initial) {
+        if (initial === void 0) { initial = false; }
+        this.setCardFutureKnowledge(cardId, this.getCardKnowledge(cardId), initial);
     };
     PlayerTable.prototype.incLostKnowledge = function (inc) {
         this.setLostKnowledge(this.lostKnowledge + inc);
@@ -3221,7 +3220,7 @@ var RemoveKnowledgeEngine = /** @class */ (function (_super) {
         var _this = _super.call(this, game, [
             new FrontState('discardTokens', function (engine) {
                 engine.data.discardTokens = {};
-                cardIds.forEach(function (cardId) { return _this.game.getCurrentPlayerTable().setCardSelectedKnowledge(cardId, 0, true); });
+                cardIds.forEach(function (cardId) { return _this.game.getCurrentPlayerTable().resetSelectedKnowledge(cardId, true); });
                 _this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', _this.cardIds);
                 _this.addConfirmDiscardTokenSelection();
                 _this.setConfirmDiscardTokenSelectionState();
@@ -3256,7 +3255,7 @@ var RemoveKnowledgeEngine = /** @class */ (function (_super) {
     };
     RemoveKnowledgeEngine.prototype.addConfirmDiscardTokenSelection = function () {
         var _this = this;
-        this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', _('Confirm discarded tokens'), function () { return _this.game.onRemoveKnowledgeConfirm(_this.data.discardTokens); });
+        this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', '', function () { return _this.game.onRemoveKnowledgeConfirm(_this.data.discardTokens); });
         this.setConfirmDiscardTokenSelectionState();
     };
     RemoveKnowledgeEngine.prototype.removeConfirmDiscardTokenSelection = function () {
@@ -3265,9 +3264,10 @@ var RemoveKnowledgeEngine = /** @class */ (function (_super) {
     };
     RemoveKnowledgeEngine.prototype.setConfirmDiscardTokenSelectionState = function () {
         var _this = this;
-        var _a;
+        var button = document.getElementById('confirmDiscardTokenSelection_btn');
         var discardCount = Object.values(this.data.discardTokens).reduce(function (a, b) { return a + b; }, 0);
-        (_a = document.getElementById('confirmDiscardTokenSelection_btn')) === null || _a === void 0 ? void 0 : _a.classList.toggle('disabled', discardCount > this.n * this.m ||
+        button.innerHTML = formatTextIcons(_('Confirm ${number} discarded <KNOWLEDGE>').replace('${number}', discardCount), true);
+        button === null || button === void 0 ? void 0 : button.classList.toggle('disabled', discardCount > this.n * this.m ||
             (this.type === 'xor' && Object.values(this.data.discardTokens).filter(function (val) { return val > 0; }).length > this.m) ||
             Object.keys(this.data.discardTokens).some(function (cardId) { return !_this.cardIds.includes(cardId); }));
     };

@@ -19,7 +19,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
                 'discardTokens',
                 engine => {
                     engine.data.discardTokens = {};
-                    cardIds.forEach(cardId => this.game.getCurrentPlayerTable().setCardSelectedKnowledge(cardId, 0, true));
+                    cardIds.forEach(cardId => this.game.getCurrentPlayerTable().resetSelectedKnowledge(cardId, true));
                     this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', this.cardIds);
                     this.addConfirmDiscardTokenSelection();
                     this.setConfirmDiscardTokenSelectionState();
@@ -52,7 +52,7 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
     }
 
     private addConfirmDiscardTokenSelection() {    
-        this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', _('Confirm discarded tokens'), () => this.game.onRemoveKnowledgeConfirm(this.data.discardTokens));
+        this.game.addPrimaryActionButton('confirmDiscardTokenSelection_btn', '', () => this.game.onRemoveKnowledgeConfirm(this.data.discardTokens));
         this.setConfirmDiscardTokenSelectionState();
     }
 
@@ -61,8 +61,10 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
     }
 
     private setConfirmDiscardTokenSelectionState() { 
+        const button = document.getElementById('confirmDiscardTokenSelection_btn');
         const discardCount = Object.values(this.data.discardTokens).reduce((a, b) => a + b, 0);
-        document.getElementById('confirmDiscardTokenSelection_btn')?.classList.toggle('disabled', 
+        button.innerHTML = formatTextIcons(_('Confirm ${number} discarded <KNOWLEDGE>').replace('${number}', discardCount), true);
+        button?.classList.toggle('disabled', 
             discardCount > this.n * this.m || 
             (this.type === 'xor' && Object.values(this.data.discardTokens).filter(val => val > 0).length > this.m) ||
             Object.keys(this.data.discardTokens).some(cardId => !this.cardIds.includes(cardId))
