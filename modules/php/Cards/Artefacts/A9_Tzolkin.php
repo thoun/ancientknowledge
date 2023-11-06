@@ -31,6 +31,7 @@ class A9_Tzolkin extends \AK\Models\Artefact
       : [
         'action' => \REMOVE_KNOWLEDGE,
         'args' => ['n' => 1],
+        'optional' => true,
       ];
   }
 }
