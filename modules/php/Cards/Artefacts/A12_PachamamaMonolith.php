@@ -32,6 +32,7 @@ class A12_PachamamaMonolith extends \AK\Models\Artefact
       ? null
       : [
         'action' => LEARN,
+        'optional' => true,
       ];
   }
 }
