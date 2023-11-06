@@ -48,7 +48,7 @@ class P33_Calakmul extends \AK\Models\Building
     $cards = [];
     $discardedCards = [];
     while (count($cards) < 2) {
-      $card = Cards::getTopOf('deck')->first();
+      $card = Cards::pickOneForLocation('deck', 'hand');
 
       $location = null;
       if ($card->getType() == CITY) {
