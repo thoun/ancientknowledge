@@ -172,36 +172,24 @@ class PlayerTable {
             <div id="${cardId}-token-counter" class="token-counter">
                 <div class="token-counter-info">
                     <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
+                    <div class="token-selection future">🡆</div>
+                    <div class="future-number future" id="${cardId}-token-counter-future-number">${knowledge}</div>
                     <div class="knowledge-token"></div>
                 </div>
                 <div class="token-counter-actions">
-                    <div class="token-action-info remove">-</div>
-                    <div class="token-action-info add">+</div>
-                    <div class="actions">
-                        <div class="action plus" id="${cardId}-token-counter-plus">▲</div>
-                        <div class="selected-group">
-                            <div class="selected-number" id="${cardId}-token-counter-selected-number">0</div>
-                            <div class="knowledge-token"></div>
-                        </div>
-                        <div class="action minus" id="${cardId}-token-counter-minus">▼</div>
-                    </div>
-                    <div class="token-selection">🡆</div>
-                    <div class="future-number" id="${cardId}-token-counter-future-number">${knowledge}</div>
-                    <div class="knowledge-token"></div>
+                    <button type="button" id="${cardId}-token-counter-remove-btn" class="bgabutton bgabutton_blue action">${_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>')}</button>
+                </div>
+                <div class="token-counter-actions">
+                    <button type="button" id="${cardId}-token-counter-reset-btn" class="bgabutton bgabutton_gray action  reset-btn">${_('Reset')}</button>
                 </div>
             </div>
         `);
 
-        document.getElementById(`${cardId}-token-counter-minus`).addEventListener('click', () => {
-            const current = this.getCardSelectedKnowledge(cardId);
-            if (current > 0) {
-                this.setCardSelectedKnowledge(cardId, current - 1);
-            }
-        });
-        document.getElementById(`${cardId}-token-counter-plus`).addEventListener('click', () => {
-            const current = this.getCardSelectedKnowledge(cardId);
-            if (current < this.getCardKnowledge(cardId)) {
-                this.setCardSelectedKnowledge(cardId, current + 1);
+        document.getElementById(`${cardId}-token-counter-reset-btn`).addEventListener('click', () => this.resetSelectedKnowledge(cardId));
+        document.getElementById(`${cardId}-token-counter-remove-btn`).addEventListener('click', () => {
+            const future = this.getCardFutureKnowledge(cardId);
+            if (future > 0) {
+                this.setCardFutureKnowledge(cardId, future - 1);
             }
         });
     }
@@ -213,33 +201,35 @@ class PlayerTable {
         } else {
             this.createKnowledgeCounter(cardId, knowledge);
         }
-        this.setCardSelectedKnowledge(cardId, 0);
+        this.setCardFutureKnowledge(cardId, knowledge);
     }
 
     public getCardKnowledge(cardId: string): number {
         return Number(document.getElementById(`${cardId}-token-counter-number`)?.innerHTML);
     }
 
-    public getCardSelectedKnowledge(cardId: string): number {
-        return Number(document.getElementById(`${cardId}-token-counter-selected-number`)?.innerHTML);
+    public getCardFutureKnowledge(cardId: string): number {
+        return Number(document.getElementById(`${cardId}-token-counter-future-number`)?.innerHTML);
     }
 
-    public setCardSelectedKnowledge(cardId: string, selectedKnowledge: number, initial: boolean = false) {
+    public setCardFutureKnowledge(cardId: string, future: number, initial: boolean = false) {
         const counter = document.getElementById(`${cardId}-token-counter-number`);
         if (!counter) {
             this.createKnowledgeCounter(cardId);
         }
 
         const knowledge = this.getCardKnowledge(cardId);
-        const cardDiv = document.getElementById(`builder-card-${cardId}`);
-        const direction = cardDiv.dataset.knowledgeSelectionMode == 'add' ? 1 : -1;
-        document.getElementById(`${cardId}-token-counter-selected-number`).innerHTML = `${selectedKnowledge}`;
-        document.getElementById(`${cardId}-token-counter-minus`).classList.toggle('disabled', selectedKnowledge == 0);
-        document.getElementById(`${cardId}-token-counter-plus`).classList.toggle('disabled', selectedKnowledge >= knowledge);
-        document.getElementById(`${cardId}-token-counter-future-number`).innerHTML = `${knowledge + (direction * selectedKnowledge)}`;
+        document.getElementById(`${cardId}-token-counter`).classList.toggle('with-diff', future != knowledge);
+        document.getElementById(`${cardId}-token-counter-reset-btn`).classList.toggle('disabled', future == knowledge);
+        document.getElementById(`${cardId}-token-counter-remove-btn`).classList.toggle('disabled', future == 0);
+        document.getElementById(`${cardId}-token-counter-future-number`).innerHTML = `${future}`;
         if (!initial) {
-            this.game.onTimelineKnowledgeClick(cardId, selectedKnowledge);
+            this.game.onTimelineKnowledgeClick(cardId, knowledge - future);
         }
+    }
+
+    public resetSelectedKnowledge(cardId: string, initial: boolean = false) {
+        this.setCardFutureKnowledge(cardId, this.getCardKnowledge(cardId), initial);
     }
 
     public incLostKnowledge(inc: number) {
@@ -291,7 +281,7 @@ class PlayerTable {
         });
     }
     
-    public setTimelineTokensSelectable(selectionMode: CardSelectionMode, type?: 'add' | 'remove', cardsIds: string[] = []) {
+    public setTimelineTokensSelectable(selectionMode: CardSelectionMode, cardsIds: string[] = []) {
         if (selectionMode == 'none') {
             document.querySelectorAll('.knowledge-selectable').forEach((cardDiv: HTMLElement) => {
                 cardDiv.classList.remove('knowledge-selectable');
@@ -301,7 +291,7 @@ class PlayerTable {
             cardsIds.forEach(cardId => {
                 const cardDiv = document.getElementById(`builder-card-${cardId}`);
                 cardDiv.classList.add('knowledge-selectable');
-                cardDiv.dataset.knowledgeSelectionMode = type;
+                cardDiv.dataset.knowledgeSelectionMode = 'remove';
             });
         }
     }

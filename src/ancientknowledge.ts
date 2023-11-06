@@ -129,7 +129,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         new HelpManager(this, { 
             buttons: [
                 new BgaHelpPopinButton({
-                    title: _("Card help").toUpperCase(),
+                    title: _("Icons"),
                     html: this.getHelpHtml(),
                     buttonBackground: '#87a04f',
                 }),
@@ -730,7 +730,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     break;
                 case 'chooseAction':
                     ACTIONS.map(action => this.getActionInformations(action)).forEach(actionInformations => {
-                        (this as any).addActionButton(`actChooseAction_${actionInformations[0]}_button`, `<div class="action-icon ${actionInformations[0]}"></div> ${actionInformations[1]}`, () => this.takeAtomicAction('actChooseAction', [actionInformations[0]]));
+                        (this as any).addActionButton(`actChooseAction_${actionInformations[0]}_button`, `<span class="icon-action-${actionInformations[0]}"></span> ${actionInformations[1]}`, () => this.takeAtomicAction('actChooseAction', [actionInformations[0]]));
                         this.setTooltip(`actChooseAction_${actionInformations[0]}_button`, actionInformations[2]);
                     });
                     const table = this.getCurrentPlayerTable();
@@ -971,17 +971,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
         Object.values(gamedatas.players).forEach(player => {
             const playerId = Number(player.id);   
 
-            document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<div id="player_score_${player.id}-icon" class="vp icon"></div>`);
+            document.getElementById(`player_score_${player.id}`).insertAdjacentHTML('beforebegin', `<span id="player_score_${player.id}-icon" class="icon-vp"></span>`);
             document.getElementById(`icon_point_${player.id}`).remove();
 
             let html = `<div class="counters">
                 <div id="playerhand-counter-wrapper-${player.id}">
-                    <div class="player-hand-card"></div> 
+                    <span class="icon-cards"></span> 
                     <span id="playerhand-counter-${player.id}"></span>
                 </div>
             
                 <div id="lost-knowledge-counter-wrapper-${player.id}">
-                    <div class="lost-knowledge icon"></div>
+                    <span class="icon-lost-knowledge"></span>
                     <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
@@ -991,7 +991,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             
             html += ICONS_COUNTERS_TYPES.map(type => `
                 <div id="${type}-counter-wrapper-${player.id}">
-                    <div class="${type} icon"></div>
+                    <span class="icon-${type != 'artifact' ? 'monument-' : ''}${type}"></span>
                     <span id="${type}-counter-${player.id}"></span>
                 </div>
             `).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
@@ -1067,8 +1067,113 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private getHelpHtml() {
         let html = `
         <div id="help-popin">
-            <h1>${_("Icons")}</h2>
-            TODO help p14
+            <div class="help-icon-line">
+                <div>
+                    <div class="icon-vp"></div>
+                    ${_("Victory Points")}
+                </div>
+            </div>
+
+            <h2>${_("Actions")}</h2>
+
+            <div class="help-icon-line">
+            ${
+                ACTIONS.map(action => this.getActionInformations(action)).map(actionInformations => `
+                <div>
+                    <div class="icon-action-${actionInformations[0]}"></div>
+                    ${actionInformations[1]}
+                </div>
+                `).join('')
+            }
+            </div>
+            
+            <h2>${_("Activation")}</h2>
+
+            <div class="help-icon-line">
+                <div>
+                    <div class="icon-immediate"></div>
+                    ${_("Immediate")}
+                </div>
+                <div>
+                    <div class="icon-anytime"></div>
+                    ${_("Ongoing (with conditions")}
+                </div>
+                <div>
+                    <div class="icon-timeline"></div>
+                    ${_("Timeline Phase")}
+                </div>
+                <div>
+                    <div class="icon-decline"></div>
+                    ${_("Decline Phase")}
+                </div>
+                <div>
+                    <div class="icon-vp"></div>
+                    ${_("Final Scoring")}
+                </div>
+            </div>
+
+            <h2>${_("Knowledge")}</h2>
+
+            <div class="help-icon-line">
+                <div>
+                    <div class="icon-knowledge"></div>
+                    ${_("Knowledge")}
+                </div>
+
+                <div>
+                    <div class="icon-lost-knowledge"></div>
+                    ${_("Lost Knowledge")}
+                </div>
+            </div>
+
+            <h2>${_("Builder cards")}</h2>
+
+            <div class="help-icon-line">
+                <div>
+                    <div class="icon-monument-city"></div>
+                    ${_("City")} (${_("Monument")})
+                </div>
+                <div>
+                    <div class="icon-monument-megalith"></div>
+                    ${_("Megalith")} (${_("Monument")})
+                </div>
+                <div>
+                    <div class="icon-monument-pyramid"></div>
+                    ${_("Pyramid")} (${_("Monument")})
+                </div>
+
+                <div>
+                    <div class="icon-artifact"></div>
+                    ${_("Artifact")}
+                </div>
+
+                <div>
+                    <div class="icon-discard"></div>
+                    ${_("Cost")} (${_("Discard cards")})
+                </div>
+
+                <div>
+                    <div class="icon-lock"></div>
+                    ${_("Required Space")}
+                </div>
+            </div> 
+            
+            <h2>${_("Technology cards")}</h2>
+
+            <div class="help-icon-line">
+                <div>
+                    <div class="icon-technology-ancient"></div>
+                    ${_("Ancient")}
+                </div>
+                <div>
+                    <div class="icon-technology-writing"></div>
+                    ${_("Writing")}
+                </div>
+                <div>
+                    <div class="icon-technology-secret"></div>
+                    ${_("Secret")}
+                </div>
+            </div>
         </div>`;
 
         return html;

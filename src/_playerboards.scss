@@ -7,8 +7,9 @@
       background: white !important;
     }
   }
-
-  .icon {
+    
+  [class^="icon-"] {
+    font-size: 120%;
     margin-right: 5px;
   }
 
@@ -23,21 +24,13 @@
 
     &.first-line {
       height: 48px;
-    }
-    
+    }    
 
     &.icons {
 
       >div {
         display: flex;
         align-items: center;
-      }
-
-
-      .icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 3px;
       }
     }
 
@@ -46,29 +39,6 @@
       font-size: 75%;
     }
   }
-
-  .player-hand-card {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    background-image: url('img/cards.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    vertical-align: middle;
-  }
-
-  .reputation-legend {
-    .icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 2px;
-    }
-
-    font-size: 75%;
-    vertical-align: middle;
-  }
-
 }
 
 #first-player {

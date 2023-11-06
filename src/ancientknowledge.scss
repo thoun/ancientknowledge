@@ -54,27 +54,28 @@ $writingColor: #633c37;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  vertical-align: middle;
+  
+  &.white {
+    color: white;
+  }
 }
 
 .icon-action-archive:before {
   content: "\e900";
-  color: #fff;
 }
 .icon-action-create:before {
   content: "\e901";
-  color: #fff;
 }
 .icon-action-excavate:before {
   content: "\e902";
-  color: #fff;
 }
 .icon-action-learn:before {
   content: "\e903";
-  color: #fff;
 }
 .icon-action-search:before {
   content: "\e904";
-  color: #fff;
 }
 .icon-anytime:before {
   content: "\e905";
@@ -91,7 +92,6 @@ $writingColor: #633c37;
 }
 .icon-discard:before {
   content: "\e90a";
-  color: #fff;
 }
 .icon-immediate:before {
   content: "\e90b";
@@ -101,7 +101,6 @@ $writingColor: #633c37;
 }
 .icon-lock:before {
   content: "\e90e";
-  color: #fff;
 }
 .icon-lost-knowledge:before {
   content: "\e90f";
@@ -133,7 +132,7 @@ $writingColor: #633c37;
   content: "\e91d";
   color: #633c37;
 }
-.icon-timeline-icon:before {
+.icon-timeline:before {
   content: "\e91f";
 }
 .icon-vp:before {
@@ -170,6 +169,17 @@ html, .mode_3d #game_play_area_background {
     display: inline-block;
     vertical-align: middle;
   }
+    
+  [class^="icon-"] {
+    font-size: 120%;
+  }
+
+  .bgabutton {
+    [class^="icon-"] {
+      font-size: 150%;
+      margin-right: 5px;
+    }
+  }
 }
 
 .icon {
@@ -181,40 +191,6 @@ html, .mode_3d #game_play_area_background {
   background-position: center;
   vertical-align: middle;
   
-  &.knowledge {
-    background-image: url('img/knowledge-icon.svg');
-  }
-  &.lost-knowledge {
-    background-image: url('img/lost-knowledge-icon.svg');
-
-    &.white {
-      background-image: url('img/lost-knowledge-icon-white.svg');
-    }
-  }
-  &.vp {
-    background-image: url('img/vp-icon.svg');
-  }
-  &.city {
-    background-image: url('img/monument-icon-city.svg');
-  }
-  &.megalith {
-    background-image: url('img/monument-icon-megalith.svg');
-  }
-  &.pyramid {
-    background-image: url('img/monument-icon-pyramid.svg');
-  }
-  &.artifact {
-    background-image: url('img/artifact-icon.svg');
-  }
-  &.ancient {
-    background-image: url('img/technology-icon-ancient.svg');
-  }
-  &.secret {
-      background-image: url('img/technology-icon-secret.svg');
-  }
-  &.writing {
-      background-image: url('img/technology-icon-writing.svg');
-  }
   &.starting-space {
     background-image: url('img/starting-space-icon.svg');
 
@@ -236,32 +212,6 @@ html, .mode_3d #game_play_area_background {
     &[data-level="2"] {
       background-position-x: 100%;
     }
-  }
-}
-
-.action-icon {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  vertical-align: middle;
-  
-  &.create {
-    background-image: url('img/action-create-white.svg');
-  }  
-  &.learn {
-    background-image: url('img/action-learn-white.svg');
-  }  
-  &.archive {
-    background-image: url('img/action-archive-white.svg');
-  }
-  &.excavate {
-    background-image: url('img/action-excavate-white.svg');
-  }
-  &.search {
-    background-image: url('img/action-search-white.svg');
   }
 }
 
