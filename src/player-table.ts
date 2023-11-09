@@ -38,6 +38,7 @@ class PlayerTable {
                 <div id="player-table-${this.playerId}-lost-knowledge" class="lost-knowledge-space"></div>
                 <div id="player-table-${this.playerId}-lost-knowledge-counter" class="lost-knowledge-counter bga-cards_deck-counter round" data-empty="${(!player.lostKnowledge).toString()}">${player.lostKnowledge}</div>
                 <div id="player-table-${this.playerId}-past" class="past"></div>
+                <button class="bgabutton bgabutton_gray show-past-button ${player.past.length ? 'has-cards' : ''}" id="show-past-button-${this.playerId}" title="${_('Show past cards')}">${_('Show past cards')}</button>
                 <div id="player-table-${this.playerId}-artifacts" class="artifacts"></div>
                 <div class="technology-tiles-decks">`;            
                 ['ancient', 'writing', 'secret'].forEach(type => {
@@ -51,7 +52,8 @@ class PlayerTable {
         </div>
         `;
 
-        dojo.place(html, document.getElementById('tables'));
+        document.getElementById('tables').insertAdjacentHTML('beforeend', html);
+        document.getElementById(`show-past-button-${this.playerId}`).addEventListener('click', () => this.showPastCards());
 
         if (this.currentPlayer) {
             this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, document.getElementById(`player-table-${this.playerId}-hand`), {
@@ -113,6 +115,7 @@ class PlayerTable {
         this.past.removeAll();
         this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
         this.past.resetPastOrder();
+        document.getElementById(`show-past-button-${this.playerId}`).classList.toggle('has-cards', player.past.length > 0);
         
         ['ancient', 'writing', 'secret'].forEach(type => {
             this.technologyTilesDecks[type].removeAll();
@@ -303,6 +306,8 @@ class PlayerTable {
         const promise = await this.past.addCard(this.game.builderCardsManager.getFullCard(card));
         
         this.past.resetPastOrder();
+        
+        document.getElementById(`show-past-button-${this.playerId}`).classList.add('has-cards');
 
         return promise;
     }
@@ -342,5 +347,32 @@ class PlayerTable {
     public rotateCards(cards: BuilderCard[]) {
         cards.forEach(card => this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }));
         this.past.resetPastOrder();
+    }
+
+    private showPastCards() {
+        const player = this.game.getPlayer(this.playerId);
+        const cards = this.past.getCards();
+        const excavatedCards = cards.filter(card => card.rotated);
+
+        const pastCardsDialog = new ebg.popindialog();
+        pastCardsDialog.create('showPastCardsDialog');
+        pastCardsDialog.setTitle(_("${player_name}'s cards in the past").replace('${player_name}', `<span style="color: #${player.color}; font-weight: bold;">${player.name}</span>`));
+        
+        let html = `<div id="past-cards-popin">
+            <div>${_("${total} cards in the past, ${excavated} of them excavated (rotated)").replace('${total}', `${cards.length}`).replace('${excavated}', `${excavatedCards.length}`)}</div>
+            <div id="past-cards"></div>
+        </div>`;
+        
+        // Show the dialog
+        pastCardsDialog.setContent(html);
+        pastCardsDialog.show();
+
+        cards.forEach(card => {
+            const cardDiv = this.game.builderCardsManager.generateCardDiv({...card, id: `${card.id}--past-card`});
+            document.getElementById('past-cards').appendChild(cardDiv);
+            if (card.rotated) {
+                cardDiv.querySelector('.front').insertAdjacentHTML('beforeend', `<div class="rotated-card-notice"><span class="icon-action-excavate"></span></div>`);
+            }
+        });
     }
 }
