@@ -2705,12 +2705,13 @@ var PlayerTable = /** @class */ (function () {
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }
-        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge-counter\" class=\"lost-knowledge-counter bga-cards_deck-counter round\" data-empty=\"").concat((!player.lostKnowledge).toString(), "\">").concat(player.lostKnowledge, "</div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
+        html += "\n            <div id=\"player-table-".concat(this.playerId, "-timeline\" class=\"timeline\"></div>\n            <div id=\"player-table-").concat(this.playerId, "-board\" class=\"player-board\" data-color=\"").concat(player.color, "\">\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge\" class=\"lost-knowledge-space\"></div>\n                <div id=\"player-table-").concat(this.playerId, "-lost-knowledge-counter\" class=\"lost-knowledge-counter bga-cards_deck-counter round\" data-empty=\"").concat((!player.lostKnowledge).toString(), "\">").concat(player.lostKnowledge, "</div>\n                <div id=\"player-table-").concat(this.playerId, "-past\" class=\"past\"></div>\n                <button class=\"bgabutton bgabutton_gray show-past-button ").concat(player.past.length ? 'has-cards' : '', "\" id=\"show-past-button-").concat(this.playerId, "\" title=\"").concat(_('Show past cards'), "\">").concat(_('Show past cards'), "</button>\n                <div id=\"player-table-").concat(this.playerId, "-artifacts\" class=\"artifacts\"></div>\n                <div class=\"technology-tiles-decks\">");
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             html += "\n                    <div id=\"player-table-".concat(_this.playerId, "-technology-tiles-deck-").concat(type, "\" class=\"technology-tiles-deck\" data-type=\"").concat(type, "\"></div>\n                    ");
         });
         html += "\n            </div>\n            </div>\n        </div>\n        ";
-        dojo.place(html, document.getElementById('tables'));
+        document.getElementById('tables').insertAdjacentHTML('beforeend', html);
+        document.getElementById("show-past-button-".concat(this.playerId)).addEventListener('click', function () { return _this.showPastCards(); });
         if (this.currentPlayer) {
             this.hand = new LineStock(this.game.builderCardsManager, document.getElementById("player-table-".concat(this.playerId, "-hand")), {
                 sort: function (a, b) { return a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0); },
@@ -2763,6 +2764,7 @@ var PlayerTable = /** @class */ (function () {
         this.past.removeAll();
         this.past.addCards(this.game.builderCardsManager.getFullCards(player.past));
         this.past.resetPastOrder();
+        document.getElementById("show-past-button-".concat(this.playerId)).classList.toggle('has-cards', player.past.length > 0);
         ['ancient', 'writing', 'secret'].forEach(function (type) {
             _this.technologyTilesDecks[type].removeAll();
             var tiles = _this.game.technologyTilesManager.getFullCards(player.techs).filter(function (tile) { return tile.type == type; });
@@ -2945,6 +2947,7 @@ var PlayerTable = /** @class */ (function () {
                     case 1:
                         promise = _b.sent();
                         this.past.resetPastOrder();
+                        document.getElementById("show-past-button-".concat(this.playerId)).classList.add('has-cards');
                         return [2 /*return*/, promise];
                 }
             });
@@ -2980,6 +2983,26 @@ var PlayerTable = /** @class */ (function () {
         var _this = this;
         cards.forEach(function (card) { return _this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }); });
         this.past.resetPastOrder();
+    };
+    PlayerTable.prototype.showPastCards = function () {
+        var _this = this;
+        var player = this.game.getPlayer(this.playerId);
+        var cards = this.past.getCards();
+        var excavatedCards = cards.filter(function (card) { return card.rotated; });
+        var pastCardsDialog = new ebg.popindialog();
+        pastCardsDialog.create('showPastCardsDialog');
+        pastCardsDialog.setTitle(_("${player_name}'s cards in the past").replace('${player_name}', "<span style=\"color: #".concat(player.color, "; font-weight: bold;\">").concat(player.name, "</span>")));
+        var html = "<div id=\"past-cards-popin\">\n            <div>".concat(_("${total} cards in the past, ${excavated} of them excavated (rotated)").replace('${total}', "".concat(cards.length)).replace('${excavated}', "".concat(excavatedCards.length)), "</div>\n            <div id=\"past-cards\"></div>\n        </div>");
+        // Show the dialog
+        pastCardsDialog.setContent(html);
+        pastCardsDialog.show();
+        cards.forEach(function (card) {
+            var cardDiv = _this.game.builderCardsManager.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--past-card") }));
+            document.getElementById('past-cards').appendChild(cardDiv);
+            if (card.rotated) {
+                cardDiv.querySelector('.front').insertAdjacentHTML('beforeend', "<div class=\"rotated-card-notice\"><span class=\"icon-action-excavate\"></span></div>");
+            }
+        });
     };
     return PlayerTable;
 }());

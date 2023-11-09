@@ -49,6 +49,8 @@ trait DebugTrait
   // addHand(M15_BarabarCaves)
   // addHand(P8_PyramidOfUserkaf)
   // addHand(P35_CandiKethek)
+  // addHand(M6_DolmenOfGanghwa)
+  // addHand(M8_DolmenOfGochang)
   function addHand($cardId)
   {
     $player = Players::getCurrent();

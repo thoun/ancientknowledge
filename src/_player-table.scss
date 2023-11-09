@@ -56,8 +56,20 @@
 
     .past {
       position: absolute;
-      top: 198px;
+      top: 94px;
       left: -176px;
+    }
+
+    .show-past-button {
+      position: absolute;
+      top: 341px;
+      left: -176px;
+      width: 176px;
+      display: none;
+
+      &.has-cards {
+        display: unset;
+      }
     }
 
     .artifacts {
@@ -215,6 +227,33 @@
           font-size: 48px;
         }
       }
+    }
+  }
+}
+
+#past-cards-popin {
+  width: 800px;
+  max-width: 95vw;
+
+  #past-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .rotated-card-notice {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #60605f;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 2px 2px 2px 2px #00000088;
+      border-radius: 50%;
     }
   }
 }
