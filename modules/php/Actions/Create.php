@@ -31,7 +31,7 @@ class Create extends \AK\Models\Action
     $player = Players::getActive();
     $cardId = $this->getCtxArg('autoplayArtefact');
     if (!is_null($cardId)) {
-      $this->actCreate($cardId, $player->getFreeArtefactSlot(), []);
+      $this->actCreate($cardId, $player->getFreeArtefactSlot(), $this->getCtxArg('autoplayDiscard'));
     }
   }
 
@@ -112,13 +112,14 @@ class Create extends \AK\Models\Action
     $player = Players::getActive();
     $cards = $this->argsCreate()['_private']['active']['cards'];
     $slots = $cards[$cardId] ?? null;
+    $autoCardId = $this->getCtxArg('autoplayArtefact');
     if (is_null($slots)) {
       throw new \BgaVisibleSystemException('Invalid card. Should not happen');
     }
     if (!array_key_exists($slot, $slots)) {
       throw new \BgaVisibleSystemException('Invalid place. Should not happen');
     }
-    if (count($cardIdsToDiscard) != $slots[$slot]) {
+    if (count($cardIdsToDiscard) != $slots[$slot] && is_null($autoCardId)) {
       throw new \BgaVisibleSystemException('Invalid number of cards to discard. Should not happen');
     }
     if (!empty(array_diff($cardIdsToDiscard, $player->getHand()->getIds()))) {

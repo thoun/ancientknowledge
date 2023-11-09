@@ -62,7 +62,19 @@ class T22_AncientGreek extends \AK\Models\Technology
   {
     $cards = Cards::getInLocation('pending');
     $player = $this->getPlayer();
-    $validCardIds = $cards->filter(fn($card) => $card->isArtefact())->getIds();
+    $hand = $player->getHand();
+    $validCards = $cards
+      ->filter(function ($card) use ($hand) {
+        if (!$card->isArtefact()) {
+          return false;
+        }
+        if ($card->getDiscard() > $hand->count()) {
+          return false;
+        }
+
+        return true;
+      })
+      ->map(fn($card) => $card->getDiscard());
 
     return [
       'sourceId' => $this->id,
@@ -70,15 +82,15 @@ class T22_AncientGreek extends \AK\Models\Technology
       'descriptionmyturn' => clienttranslate('${you} must create 1 <ARTIFACT> from the top 10 cards'),
       '_private' => [
         'active' => [
-          'canCreate' => !is_null($player->getFreeArtefactSlot()) && count($validCardIds) > 0,
+          'canCreate' => !is_null($player->getFreeArtefactSlot()) && count($validCards) > 0,
           'cardIds' => $cards->getIds(),
-          'validCardIds' => $validCardIds,
+          'validCards' => $validCards,
         ],
       ],
     ];
   }
 
-  public function actPickAndDiscard($cardId = null)
+  public function actPickAndDiscard($cardId = null, $discardedCardIds = [])
   {
     $args = $this->argsPickAndDiscard()['_private']['active'];
     $flow = null;
@@ -91,8 +103,12 @@ class T22_AncientGreek extends \AK\Models\Technology
     }
     // Card selected => create it
     else {
-      if (!in_array($cardId, $args['validCardIds'])) {
+      $needDiscard = $args['validCards'][$cardId] ?? null;
+      if (is_null($needDiscard)) {
         throw new \BgaVisibleSystemException('Invalid cards to create. Should not happen');
+      }
+      if (count($discardedCardIds) < $needDiscard) {
+        throw new \BgaVisibleSystemException('Invalid cards to discard. Should not happen');
       }
 
       $card = Cards::getSingle($cardId);
@@ -105,7 +121,7 @@ class T22_AncientGreek extends \AK\Models\Technology
 
       $flow = [
         'action' => CREATE,
-        'args' => ['autoplayArtefact' => $cardId],
+        'args' => ['autoplayArtefact' => $cardId, 'autoplayDiscard' => $discardedCardIds],
       ];
     }
 
