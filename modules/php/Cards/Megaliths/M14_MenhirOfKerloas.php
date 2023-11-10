@@ -27,6 +27,30 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
 
   public function getDeclineEffect()
   {
+    $player = $this->getPlayer();
+
+    // Already too much cards ? Can't steal
+    if ($player->getHand()->count() >= 10) {
+      Notifications::message(\clienttranslate('${player_name} already has 10 cards in hand and thus can\'t steal a card'), [
+        'player' => $player,
+      ]);
+      return null;
+    }
+
+    // Do we have a valid opponent ?
+    $pIds = [];
+    foreach (Players::getAll() as $pId => $player2) {
+      if ($pId != $this->pId && $player2->getHand()->count() > 0) {
+        $pIds[] = $pId;
+      }
+    }
+    if (empty($pIds)) {
+      Notifications::message(\clienttranslate('${player_name} can\'t steal a card because opponents have none'), [
+        'player' => $player,
+      ]);
+      return null;
+    }
+
     return [
       'action' => SPECIAL_EFFECT,
       'args' => [
@@ -46,7 +70,7 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
   {
     $pIds = [];
     foreach (Players::getAll() as $pId => $player) {
-      if ($pId != $this->pId) {
+      if ($pId != $this->pId && $player->getHand()->count() > 0) {
         $pIds[] = $pId;
       }
     }

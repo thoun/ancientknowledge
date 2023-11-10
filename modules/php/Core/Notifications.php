@@ -27,7 +27,7 @@ class Notifications
 
   public static function message($txt, $args = [])
   {
-    self::notifyAll('message', $txt, $args);
+    self::notifyAll('mediumMessage', $txt, $args);
   }
 
   public static function messageTo($player, $txt, $args = [])
