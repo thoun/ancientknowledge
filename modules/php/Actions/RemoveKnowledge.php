@@ -33,6 +33,13 @@ class RemoveKnowledge extends \AK\Models\Action
     return $this->getCtxArg('type') ?? \NODE_OR;
   }
 
+  public function isOptional()
+  {
+    $player = Players::getActive();
+    $cardIds = $this->getCardIds($player);
+    return empty($cardIds);
+  }
+
   public function getCardIds($player = null)
   {
     $player = $player ?? Players::getActive();

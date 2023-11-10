@@ -35,6 +35,12 @@ class Draw extends \AK\Models\Action
     return true;
   }
 
+  public function isOptional()
+  {
+    $player = Players::getActive();
+    return $player->getHand()->count() >= 10;
+  }
+
   public function getN()
   {
     return $this->getCtxArg('n') ?? 1;
