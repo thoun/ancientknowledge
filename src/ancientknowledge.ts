@@ -1546,7 +1546,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private askConfirmation(warning: boolean | string, callback: Function) {
-        if (warning === false /*|| this.prefs[104].value == 0*/) {
+        if (warning === false || (this as any).prefs[104].value == 0) {
           callback();
         } else {
             let msg = warning === true ?

@@ -4733,7 +4733,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAction('actRestart');
     };
     AncientKnowledge.prototype.askConfirmation = function (warning, callback) {
-        if (warning === false /*|| this.prefs[104].value == 0*/) {
+        if (warning === false || this.prefs[104].value == 0) {
             callback();
         }
         else {
