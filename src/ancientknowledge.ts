@@ -57,10 +57,11 @@ class AncientKnowledge implements AncientKnowledgeGame {
     private removeKnowledgeEngine: RemoveKnowledgeEngine;
     private moveBuildingEngine: MoveBuildingEngine;
     private pickDeckTechEngine: PickDeckTechEngine;
+    private ancientGreekEngine: AncientGreekEngine;
 
     private addKnowledgeSelection: { [playerId: string]: string } = {};
 
-    private market?: LineStock<BuilderCard>;
+    public market?: LineStock<BuilderCard>;
 
     constructor() {
     }
@@ -523,7 +524,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                 case 'T22_AncientGreek':
                     this.initMarketStock();
                     this.market.addCards(this.builderCardsManager.getFullCardsByIds(args._private.cardIds));
-                    this.market.setSelectionMode('single', this.builderCardsManager.getFullCardsByIds(args._private.validCardIds));
+                    this.ancientGreekEngine = new AncientGreekEngine(this, args._private.validCards, args._private.canCreate);
                     break;
                 case 'P35_CandiKethek':
                 case 'T27_LatinAlphabet':
@@ -647,6 +648,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     case 'T3_HermesTrismegistus':
                     case 'T22_AncientGreek':
                         this.removeMarketStock();
+                        this.ancientGreekEngine?.leaveState();
+                        this.ancientGreekEngine = null;
                         break;
                     case 'P7_PyramidOfTheNiches':                        
                         this.pickDeckTechEngine?.leaveState();
@@ -813,14 +816,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
                                 break;
                             case 'T17_EarthquakeEngineering':
                                 (this as any).addActionButton(`actDiscardAndDraw_button`, _("Discard selected cards"), () => this.actDiscardAndDraw());
-                                break;
-                            case 'T22_AncientGreek':
-                                if (specialEffectArgs._private?.canCreate) {
-                                    (this as any).addActionButton(`actPickAndDiscard_button`, _("Build selected artifact"), () => this.actPickAndDiscard());
-                                    document.getElementById('actPickAndDiscard_button').classList.add('disabled');
-                                } else {
-                                    (this as any).addActionButton(`actPickAndDiscard_button`, `${_("Pass")} (${_("you cannot build an artifact")})`, () => this.actPickAndDiscard(null));
-                                }
                                 break;
                         }
                     }
@@ -1262,7 +1257,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     document.getElementById(`actChooseCardToKeep_button`)?.classList.toggle('disabled', selection.length != 1);
                     break;
                 case 'T22_AncientGreek':
-                    document.getElementById(`actPickAndDiscard_button`)?.classList.toggle('disabled', selection.length != 1);
+                    if (selection.length <= 1) {
+                        this.ancientGreekEngine.selectCard(selection[0]);
+                    }
                     break;
             }            
         }
@@ -1289,6 +1286,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
             switch (args.sourceId) {
                 case 'T17_EarthquakeEngineering':
                     document.getElementById('actDiscardAndDraw_button').classList.toggle('disabled', selection.length > 3);
+                    break;
+                case 'T22_AncientGreek':
+                    this.ancientGreekEngine?.cardSelectionChange(selection);
                     break;
             }
         }
@@ -1412,20 +1412,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
         this.takeAtomicAction('actRemoveKnowledge', [discardTokens]);
     }
 
-    public onTableCardClick(card: BuilderCard): void {
-        /*if (this.gamedatas.gamestate.name == 'discardTableCard') {
-            this.discardTableCard(card.id);
+    public onAncientGreekConfirm(data: AncientGreekEngineData): void {
+        if (data) {
+            this.takeAtomicAction('actPickAndDiscard', [data.selectedCard.id, data.discardCards.map(card => card.id)]);
         } else {
-            this.chooseNewCard(card.id);
-        }*/
-    }
-
-    public onPlayedCardClick(card: BuilderCard): void {
-        /*if (this.gamedatas.gamestate.name == 'discardCard') {
-            this.discardCard(card.id);
-        } else {
-            this.setPayDestinationLabelAndState();
-        }*/
+            this.takeAtomicAction('actPickAndDiscard', [null, []]);
+        }
     }
   	
     public actSwap() {
@@ -1486,11 +1478,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction('actDrawAndKeep', cardsIds);
-    }
-  	
-    public actPickAndDiscard(pass: boolean = false) {
-        const selectedCards = this.market.getSelection();
-        this.takeAtomicAction('actPickAndDiscard', [pass ? null : selectedCards[0]?.id]);
     }
   	
     public actStealCard() {

@@ -45,6 +45,7 @@
         "src/front-engine-remove-knowledge.ts",
         "src/front-engine-move-building.ts",
         "src/front-engine-pick-deck-tech.ts",
+        "src/front-engine-ancient-greek.ts",
         "src/ancientknowledge.ts",
         "src/define.ts"
     ]
