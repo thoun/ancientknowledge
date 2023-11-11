@@ -356,6 +356,7 @@ $machinestates = [
     'description' => '',
     'descriptionmyturn' => '',
     'descriptionmyturnOrderTechDiscard' => clienttranslate('${you} must choose the order to place back in the deck (top first)'),
+    'descriptionmyturnSelectDiscard' => clienttranslate('${you} must choose ${discard_number} card(s) to discard'),
     'action' => 'stAtomicAction',
     'args' => 'argsAtomicAction',
     'type' => 'activeplayer',

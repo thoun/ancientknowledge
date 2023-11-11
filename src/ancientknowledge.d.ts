@@ -65,6 +65,7 @@ interface AncientKnowledgeGame extends Game {
     animationManager: AnimationManager;
     builderCardsManager: BuilderCardsManager;
     technologyTilesManager: TechnologyTilesManager;
+    market?: LineStock<BuilderCard>;
 
     getPlayerId(): number;
     getPlayer(playerId: number): AncientKnowledgePlayer;
@@ -81,13 +82,12 @@ interface AncientKnowledgeGame extends Game {
     onTimelineKnowledgeClick(id: string, selectionLength: number): void;
     onArtifactCardClick(card: BuilderCard): void;
     onArtifactSelectionChange(selection: BuilderCard[]): void;
-    onTableCardClick(card: BuilderCard): void;
-    onPlayedCardClick(card: BuilderCard): void;
     changePageTitle(suffix?: string, save?: boolean): void;
     addPrimaryActionButton(id, text, callback, zone?): void;
     addSecondaryActionButton(id, text, callback, zone?): void
     onCreateCardConfirm(data: CreateEngineData): void;
     onArchiveCardConfirm(data: ArchiveEngineData): void;
+    onAncientGreekConfirm(data: AncientGreekEngineData): void;
     onRemoveKnowledgeConfirm(discardTokens: { [cardId: string]: number; }): void;
     onTimelineSlotClick(slotId: string): void;
     onPickTechDeckConfirm(selectedTechId: string | null, discard: string[]): void;
@@ -174,7 +174,7 @@ interface EnteringSpecialEffectArgs {
     sourceId: string;
     _private: {
         cardIds?: string[]; // M14_MenhirOfKerloase, T17_EarthquakeEngineering, T22_AncientGreek
-        validCardIds?: string[]; // T22_AncientGreek
+        validCards?: { [cardId: string]: number }; // T22_AncientGreek, number is number to discard
         canCreate?: boolean; // T22_AncientGreek
         techIds?: string[]; // T27_LatinAlphabet, P7_PyramidOfTheNiches
         learnableTechIds?: string[]; // P7_PyramidOfTheNiches
