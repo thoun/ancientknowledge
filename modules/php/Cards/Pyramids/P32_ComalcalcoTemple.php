@@ -29,7 +29,7 @@ class P32_ComalcalcoTemple extends \AK\Models\Building
   {
     $n = 0;
     foreach ($this->getPlayer()->getPast() as $card) {
-      if ($card->getActivation()) {
+      if ($card->getActivation() == ENDGAME) {
         $n++;
       }
     }
