@@ -1,6 +1,8 @@
 <?php
 namespace AK\Cards\Artefacts;
 
+use AK\Actions\Learn;
+
 class A16_CrystalSkull extends \AK\Models\Artefact
 {
   public function __construct($row)
@@ -27,8 +29,11 @@ class A16_CrystalSkull extends \AK\Models\Artefact
 
   public function onPlayerAfterExcavate($event)
   {
-    return [
-      'action' => LEARN,
-    ];
+    $player = $this->getPlayer();
+    return Learn::getPlayableTechsAux($player, true, true)
+      ? [
+        'action' => LEARN,
+      ]
+      : null;
   }
 }

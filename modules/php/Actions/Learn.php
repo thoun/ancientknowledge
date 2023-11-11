@@ -27,16 +27,10 @@ class Learn extends \AK\Models\Action
     }
   }
 
-  public function getPlayableTechs($player, $isDoable = false)
+  public static function getPlayableTechsAux($player, $check = true, $isDoable = false)
   {
-    $techId = $this->getCtxArg('autoplay');
-    if (!is_null($techId)) {
-      return [[$techId], []];
-    }
-
     $pool = Technologies::getPool();
     $techs = [];
-    $check = $this->getCtxArg('checkRequirements') ?? true;
     $boards = [1 => [], 2 => [], 3 => []];
     foreach ($pool as $tId => $tech) {
       $boards[$tech->getBoard()][] = $tId;
@@ -61,10 +55,22 @@ class Learn extends \AK\Models\Action
     return $isDoable ? false : [$techs, $irreversibleIds];
   }
 
+  public function getPlayableTechs($player, $isDoable = false)
+  {
+    $techId = $this->getCtxArg('autoplay');
+    if (!is_null($techId)) {
+      return [[$techId], []];
+    }
+
+    $check = $this->getCtxArg('checkRequirements') ?? true;
+    return self::getPlayableTechsAux($player, $check, $isDoable);
+  }
+
   public function argsLearn()
   {
     $player = Players::getActive();
     list($techs, $irreversibleIds) = $this->getPlayableTechs($player);
+
     return [
       'techs' => $techs,
       'irreversibleIds' => $irreversibleIds,
