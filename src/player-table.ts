@@ -180,7 +180,7 @@ class PlayerTable {
                     <div class="knowledge-token"></div>
                 </div>
                 <div class="token-counter-actions">
-                    <button type="button" id="${cardId}-token-counter-remove-btn" class="bgabutton bgabutton_blue action">${_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>')}</button>
+                    <button type="button" id="${cardId}-token-counter-remove-btn" class="bgabutton bgabutton_blue action remove-knowledge-btn">${_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>')}</button>
                 </div>
                 <div class="token-counter-actions">
                     <button type="button" id="${cardId}-token-counter-reset-btn" class="bgabutton bgabutton_gray action  reset-btn">${_('Reset')}</button>
@@ -191,7 +191,7 @@ class PlayerTable {
         document.getElementById(`${cardId}-token-counter-reset-btn`).addEventListener('click', () => this.resetSelectedKnowledge(cardId));
         document.getElementById(`${cardId}-token-counter-remove-btn`).addEventListener('click', () => {
             const future = this.getCardFutureKnowledge(cardId);
-            if (future > 0) {
+            if (future > 0 && !document.getElementById(`${cardId}-token-counter-remove-btn`).classList.contains('max')) {
                 this.setCardFutureKnowledge(cardId, future - 1);
             }
         });

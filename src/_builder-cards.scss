@@ -142,8 +142,13 @@ $builderCardTypes: 'A', 'C', 'M', 'P';
             margin: 5px;
             white-space: unset;
 
-            &.disabled {
+            &.disabled, &.max {
                 cursor: not-allowed;
+                background: #787878;
+
+                &:hover {                    
+                    background: #9b9b9b;
+                }
 
                 &.reset-btn {
                     display: none;
