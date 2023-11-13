@@ -686,10 +686,14 @@ body > .card {
   margin: 5px;
   white-space: unset;
 }
-.token-counter .token-counter-actions .action.disabled {
+.token-counter .token-counter-actions .action.disabled, .token-counter .token-counter-actions .action.max {
   cursor: not-allowed;
+  background: #787878;
 }
-.token-counter .token-counter-actions .action.disabled.reset-btn {
+.token-counter .token-counter-actions .action.disabled:hover, .token-counter .token-counter-actions .action.max:hover {
+  background: #9b9b9b;
+}
+.token-counter .token-counter-actions .action.disabled.reset-btn, .token-counter .token-counter-actions .action.max.reset-btn {
   display: none;
 }
 .token-counter .knowledge-token {

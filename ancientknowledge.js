@@ -2620,14 +2620,24 @@ var TableCenter = /** @class */ (function () {
         return Promise.resolve(true);
     };
     TableCenter.prototype.fillUpTechBoard = function (board, cards, args) {
-        var _this = this;
         var _a;
-        var tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
-        this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[(_a = tiles[0]) === null || _a === void 0 ? void 0 : _a.level] : undefined });
-        [1, 2].forEach(function (level) {
-            _this.technologyTilesDecks[level].setCardNumber(args["techsDeckLvl".concat(level)]);
+        return __awaiter(this, void 0, void 0, function () {
+            var tiles;
+            var _this = this;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
+                        return [4 /*yield*/, this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[(_a = tiles[0]) === null || _a === void 0 ? void 0 : _a.level] : undefined })];
+                    case 1:
+                        _b.sent();
+                        [1, 2].forEach(function (level) {
+                            _this.technologyTilesDecks[level].setCardNumber(args["techsDeckLvl".concat(level)]);
+                        });
+                        return [2 /*return*/];
+                }
+            });
         });
-        return Promise.resolve(true);
     };
     TableCenter.prototype.midGameReached = function (board) {
         var div = document.getElementById("table-technology-tiles-".concat(board));
@@ -2825,11 +2835,11 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.createKnowledgeCounter = function (cardId, knowledge) {
         var _this = this;
         if (knowledge === void 0) { knowledge = 0; }
-        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-counter-info\">\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                    <div class=\"token-selection future\">\uD83E\uDC46</div>\n                    <div class=\"future-number future\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-remove-btn\" class=\"bgabutton bgabutton_blue action\">").concat(_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>'), "</button>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-reset-btn\" class=\"bgabutton bgabutton_gray action  reset-btn\">").concat(_('Reset'), "</button>\n                </div>\n            </div>\n        "));
+        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-counter-info\">\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                    <div class=\"token-selection future\">\uD83E\uDC46</div>\n                    <div class=\"future-number future\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-remove-btn\" class=\"bgabutton bgabutton_blue action remove-knowledge-btn\">").concat(_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>'), "</button>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-reset-btn\" class=\"bgabutton bgabutton_gray action  reset-btn\">").concat(_('Reset'), "</button>\n                </div>\n            </div>\n        "));
         document.getElementById("".concat(cardId, "-token-counter-reset-btn")).addEventListener('click', function () { return _this.resetSelectedKnowledge(cardId); });
         document.getElementById("".concat(cardId, "-token-counter-remove-btn")).addEventListener('click', function () {
             var future = _this.getCardFutureKnowledge(cardId);
-            if (future > 0) {
+            if (future > 0 && !document.getElementById("".concat(cardId, "-token-counter-remove-btn")).classList.contains('max')) {
                 _this.setCardFutureKnowledge(cardId, future - 1);
             }
         });
@@ -3272,6 +3282,11 @@ var RemoveKnowledgeEngine = /** @class */ (function (_super) {
             if (this.type === 'xor') {
                 var selectableCardsIds = knowledge > 0 ? [cardId] : this.cardIds;
                 this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', selectableCardsIds);
+            }
+            else {
+                var discardCount_1 = Object.values(this.data.discardTokens).reduce(function (a, b) { return a + b; }, 0);
+                var maxDiscard_1 = this.n * this.m;
+                document.querySelectorAll('.remove-knowledge-btn').forEach(function (elem) { return elem.classList.toggle('max', discardCount_1 >= maxDiscard_1); });
             }
             this.setConfirmDiscardTokenSelectionState();
         }

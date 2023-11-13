@@ -58,15 +58,13 @@ class TableCenter {
         return Promise.resolve(true);
     }
 
-    public fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }, args): Promise<any> {
+    public async fillUpTechBoard(board: number, cards: { [cardId: string]: TechnologyTile; }, args): Promise<any> {
         const tiles = this.game.technologyTilesManager.getFullCards(Object.values(cards));
-        this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[tiles[0]?.level] : undefined });
+        await this.technologyTilesStocks[board].addCards(tiles, { fromStock: tiles.length ? this.technologyTilesDecks[tiles[0]?.level] : undefined });
         
         [1, 2].forEach(level => {
             this.technologyTilesDecks[level].setCardNumber(args[`techsDeckLvl${level}`]);
         });
-        
-        return Promise.resolve(true);
     }
     
     public midGameReached(board: number): void {

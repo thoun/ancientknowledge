@@ -45,6 +45,10 @@ et pour actRemoveKnowleldge j'attends un tableau associatif : ['cardId' => n1, '
             if (this.type === 'xor') {
                 const selectableCardsIds = knowledge > 0 ? [cardId] : this.cardIds;
                 this.game.getCurrentPlayerTable().setTimelineTokensSelectable('multiple', selectableCardsIds);
+            } else {
+                const discardCount = Object.values(this.data.discardTokens).reduce((a, b) => a + b, 0);
+                const maxDiscard = this.n * this.m;
+                document.querySelectorAll('.remove-knowledge-btn').forEach(elem => elem.classList.toggle('max', discardCount >= maxDiscard));
             }
 
             this.setConfirmDiscardTokenSelectionState();
