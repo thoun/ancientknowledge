@@ -96,7 +96,11 @@ class AncientKnowledge extends Table
    */
   function getGameProgression()
   {
-    return 50; // TODO
+    $maxPast = 0;
+    foreach (Players::getAll() as $player) {
+      $maxPast = max($maxPast, $player->getPast()->count());
+    }
+    return (100 * $maxPast) / 14;
   }
 
   function actChangePreference($pref, $value)
