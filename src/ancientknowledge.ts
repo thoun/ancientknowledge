@@ -1723,10 +1723,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    notif_destroyCard(args: NotifDestroyCardArgs) {
+    async notif_destroyCard(args: NotifDestroyCardArgs) {
         const { player_id, card } = args;      
-        this.getPlayerTable(player_id).timeline.removeCard(card);
-        return Promise.resolve(true);
+        await this.getPlayerTable(player_id).timeline.removeCard(card);
+        await this.getPlayerTable(player_id).artifacts.removeCard(card);
     }
 
     notif_createCard(args: NotifCreateCardsArgs) {

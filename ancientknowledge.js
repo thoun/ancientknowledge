@@ -5051,9 +5051,22 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.notif_destroyCard = function (args) {
-        var player_id = args.player_id, card = args.card;
-        this.getPlayerTable(player_id).timeline.removeCard(card);
-        return Promise.resolve(true);
+        return __awaiter(this, void 0, void 0, function () {
+            var player_id, card;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        player_id = args.player_id, card = args.card;
+                        return [4 /*yield*/, this.getPlayerTable(player_id).timeline.removeCard(card)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.getPlayerTable(player_id).artifacts.removeCard(card)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
         var player_id = args.player_id, card = args.card;
