@@ -27,8 +27,9 @@ class M36_PoulnabroneDolmen extends \AK\Models\Building
   public function isListeningTo($event)
   {
     return $this->isActionEvent($event, 'Create') &&
-    !$event['card']->isArtefact() &&
-    $event['sourceId'] != $this->id && // Avoid multiple loops
+      !$event['card']->isArtefact() &&
+      $event['card']->getId() != $this->id &&
+      $event['sourceId'] != $this->id && // Avoid multiple loops
       $this->getPlayer()
         ->getPast()
         ->count() >= 11;

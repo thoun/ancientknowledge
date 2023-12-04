@@ -27,7 +27,7 @@ class T5_NicolasFlammel extends \AK\Models\Technology
         ],
         [
           'action' => DRAW,
-          'args' => ['n' => 3],
+          'args' => ['n' => 1],
         ],
       ],
     ];

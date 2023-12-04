@@ -95,7 +95,7 @@ class Learn extends \AK\Models\Action
     $tech->setPId($player->getId());
     Notifications::learnTech($player, $tech);
 
-    $this->refillBoardIfNeeded($board);
+    $irreversible = $this->refillBoardIfNeeded($board);
 
     // Check immediate effect
     if ($tech->getActivation() == \IMMEDIATE) {
@@ -108,7 +108,6 @@ class Learn extends \AK\Models\Action
     // Check listener
     $this->checkAfterListeners($player, ['tech' => $tech]);
 
-    $irreversible = in_array($techId, $args['irreversibleIds']);
     $this->resolveAction(['techId' => $techId], $irreversible);
   }
 
@@ -126,11 +125,14 @@ class Learn extends \AK\Models\Action
       if (Technologies::canRefillBoard($board)) {
         $cards = Technologies::pickForLocation(3, "deck_$deckId", "board_$board");
         Notifications::fillUpTechBoard($board, $cards);
+        return true;
       } else {
         Notifications::message(clienttranslate('Not enough cards in deck to fill up technology tile n°${board}'), [
           'board' => $board,
         ]);
+        return false;
       }
     }
+    return false;
   }
 }
