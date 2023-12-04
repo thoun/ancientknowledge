@@ -3800,11 +3800,11 @@ var AncientKnowledge = /** @class */ (function () {
             (_g = (_f = args.args) === null || _f === void 0 ? void 0 : _f.previousSteps) === null || _g === void 0 ? void 0 : _g.forEach(function (stepId) {
                 var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
                 if (logEntry) {
-                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                    _this.onClick(logEntry, function (e) { return _this.undoToStep(stepId, e); });
                 }
                 logEntry = document.querySelector(".chatwindowlogs_zone .log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
                 if (logEntry) {
-                    _this.onClick(logEntry, function () { return _this.undoToStep(stepId); });
+                    _this.onClick(logEntry, function (e) { return _this.undoToStep(stepId, e); });
                 }
             });
             // Restart turn button
@@ -3812,7 +3812,7 @@ var AncientKnowledge = /** @class */ (function () {
                 if ((_j = args.args) === null || _j === void 0 ? void 0 : _j.previousSteps) {
                     var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
                     if (lastStep_1 > 0)
-                        this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function () { return _this.undoToStep(lastStep_1); }, 'restartAction');
+                        this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function (e) { return _this.undoToStep(lastStep_1, e); }, 'restartAction');
                 }
                 // Restart whole turn
                 this.addDangerActionButton('btnRestartTurn', _('Restart turn'), function () {
@@ -5051,9 +5051,22 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.notif_destroyCard = function (args) {
-        var player_id = args.player_id, card = args.card;
-        this.getPlayerTable(player_id).timeline.removeCard(card);
-        return Promise.resolve(true);
+        return __awaiter(this, void 0, void 0, function () {
+            var player_id, card;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        player_id = args.player_id, card = args.card;
+                        return [4 /*yield*/, this.getPlayerTable(player_id).timeline.removeCard(card)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, this.getPlayerTable(player_id).artifacts.removeCard(card)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     AncientKnowledge.prototype.notif_createCard = function (args) {
         var player_id = args.player_id, card = args.card;
@@ -5347,7 +5360,10 @@ var AncientKnowledge = /** @class */ (function () {
         }
     };
     AncientKnowledge.prototype.onClick = function (elem, callback) {
-        elem.addEventListener('click', callback);
+        if (!elem.classList.contains('click-binded')) {
+            elem.addEventListener('click', callback);
+            elem.classList.add('click-binded');
+        }
     };
     AncientKnowledge.prototype.onAddingNewUndoableStepToLog = function (notif) {
         var _this = this;
@@ -5361,13 +5377,17 @@ var AncientKnowledge = /** @class */ (function () {
             $("dockedlog_".concat(notif.mobileLogId)).dataset.step = stepId;
         }
         if ((_d = (_c = (_b = (_a = this.gamedatas) === null || _a === void 0 ? void 0 : _a.gamestate) === null || _b === void 0 ? void 0 : _b.args) === null || _c === void 0 ? void 0 : _c.previousSteps) === null || _d === void 0 ? void 0 : _d.includes(parseInt(stepId))) {
-            this.onClick($("log_".concat(notif.logId)), function () { return _this.undoToStep(stepId); });
+            this.onClick($("log_".concat(notif.logId)), function (e) { return _this.undoToStep(stepId, e); });
             if ($("dockedlog_".concat(notif.mobileLogId))) {
-                this.onClick($("dockedlog_".concat(notif.mobileLogId)), function () { return _this.undoToStep(stepId); });
+                this.onClick($("dockedlog_".concat(notif.mobileLogId)), function (e) { return _this.undoToStep(stepId, e); });
             }
         }
     };
-    AncientKnowledge.prototype.undoToStep = function (stepId) {
+    AncientKnowledge.prototype.undoToStep = function (stepId, e) {
+        var _a, _b;
+        if ((_b = (_a = e === null || e === void 0 ? void 0 : e.target) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.classList.contains('cancel')) {
+            return;
+        }
         this.stopActionTimer();
         this.checkAction('actRestart');
         this.takeAction('actUndoToStep', { stepId: stepId } /*, false*/);

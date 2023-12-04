@@ -223,12 +223,12 @@ class AncientKnowledge implements AncientKnowledgeGame {
             args.args?.previousSteps?.forEach((stepId: number) => {
                 let logEntry = $('logs').querySelector(`.log.notif_newUndoableStep[data-step="${stepId}"]`);
                 if (logEntry) {
-                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                    this.onClick(logEntry, e => this.undoToStep(stepId, e));
                 }
 
                 logEntry = document.querySelector(`.chatwindowlogs_zone .log.notif_newUndoableStep[data-step="${stepId}"]`);
                 if (logEntry) {
-                    this.onClick(logEntry, () => this.undoToStep(stepId));
+                    this.onClick(logEntry, e => this.undoToStep(stepId, e));
                 }
             });
 
@@ -237,7 +237,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             if (args.args?.previousSteps) {
                 let lastStep = Math.max(...args.args.previousSteps);
                 if (lastStep > 0)
-                this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), () => this.undoToStep(lastStep), 'restartAction');
+                this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), e => this.undoToStep(lastStep, e), 'restartAction');
             }
     
             // Restart whole turn
@@ -1723,10 +1723,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
 
-    notif_destroyCard(args: NotifDestroyCardArgs) {
+    async notif_destroyCard(args: NotifDestroyCardArgs) {
         const { player_id, card } = args;      
-        this.getPlayerTable(player_id).timeline.removeCard(card);
-        return Promise.resolve(true);
+        await this.getPlayerTable(player_id).timeline.removeCard(card);
+        await this.getPlayerTable(player_id).artifacts.removeCard(card);
     }
 
     notif_createCard(args: NotifCreateCardsArgs) {
@@ -2054,7 +2054,10 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private onClick(elem: HTMLElement, callback) {
-        elem.addEventListener('click', callback);
+        if (!elem.classList.contains('click-binded')) {
+            elem.addEventListener('click', callback);
+            elem.classList.add('click-binded');
+        }
     }
 
     protected onAddingNewUndoableStepToLog(notif) {
@@ -2068,15 +2071,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
       }
 
       if (this.gamedatas?.gamestate?.args?.previousSteps?.includes(parseInt(stepId))) {
-        this.onClick($(`log_${notif.logId}`), () => this.undoToStep(stepId));
+        this.onClick($(`log_${notif.logId}`), e => this.undoToStep(stepId, e));
 
         if ($(`dockedlog_${notif.mobileLogId}`)) {
-            this.onClick($(`dockedlog_${notif.mobileLogId}`), () => this.undoToStep(stepId));
+            this.onClick($(`dockedlog_${notif.mobileLogId}`), e => this.undoToStep(stepId, e));
         }
       }
     }    
     
-    undoToStep(stepId: number) {
+    undoToStep(stepId: number, e?: Event) {
+      if ((e?.target as HTMLElement)?.parentElement?.classList.contains('cancel')) {
+        return;
+      }
+      
       this.stopActionTimer();
       (this as any).checkAction('actRestart');
       this.takeAction('actUndoToStep', { stepId }/*, false*/);
