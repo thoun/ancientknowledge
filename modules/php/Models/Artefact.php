@@ -34,8 +34,6 @@ class Artefact extends \AK\Helpers\DB_Model
     ['discard', 'int'],
     ['activation', 'string'],
     ['effect', 'obj'],
-
-    ['implemented', 'bool'],
   ];
 
   public function getType()

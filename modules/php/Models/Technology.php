@@ -34,8 +34,6 @@ class Technology extends \AK\Helpers\DB_Model
     ['requirement', 'obj'],
     ['activation', 'string'],
     ['effect', 'obj'],
-
-    ['implemented', 'bool'],
   ];
 
   public function canBePlayed($player)

@@ -42,8 +42,6 @@ class Building extends \AK\Helpers\DB_Model
     ['lockedSpace', 'bool'],
     ['activation', 'string'],
     ['effect', 'obj'],
-
-    ['implemented', 'bool'],
   ];
 
   public function isArtefact()
