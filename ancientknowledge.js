@@ -2298,7 +2298,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         }
     };
     BuilderCardsManager.prototype.getTooltip = function (card) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         var typeLetter = card.id.substring(0, 1);
         var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <i>").concat(card.country, "</i>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.id), "\n        ");
         if (card.startingSpace) {
@@ -2313,7 +2313,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             message += "\n            <br>\n            <strong>".concat(_("Initial knowledge:"), "</strong> ").concat(card.initialKnowledge, "\n            <br>\n            <strong>").concat(_("Victory point:"), "</strong> ").concat(card.victoryPoint, "\n            ");
         }
-        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        ");
+        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        <br>\n        <br>\n        ").concat((_d = (_c = card.text) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "\n        ");
         return message;
     };
     BuilderCardsManager.prototype.generateCardDiv = function (card) {

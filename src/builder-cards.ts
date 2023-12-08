@@ -160,6 +160,9 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         <br>
         <br>
         ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
+        <br>
+        <br>
+        ${card.text?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
         `;
  
         return message;
