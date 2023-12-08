@@ -17,7 +17,7 @@ class P12_GunungPadang extends \AK\Models\Building
     $this->initialKnowledge = 2;
     $this->startingSpace = 3;
     $this->activation = DECLINE;
-    $this->effect = [clienttranslate('Move another monument in your Timeline to any other available space.')];
+    $this->effect = [clienttranslate('Move 1 another monument in your Timeline to any other available space.')];
   }
 
   public function getDeclineEffect()

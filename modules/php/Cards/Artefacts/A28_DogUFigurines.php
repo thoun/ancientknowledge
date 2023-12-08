@@ -9,7 +9,7 @@ class A28_DogUFigurines extends \AK\Models\Artefact
     $this->id = 'A28_DogUFigurines';
     $this->type = ARTEFACT;
     $this->number = 28;
-    $this->name = clienttranslate('DogŪ Figurines');
+    $this->name = clienttranslate('Dogū Figurines');
     $this->country = clienttranslate('Japan');
     $this->text = [clienttranslate('The function of these enigmatic statuettes from the Jōmon period remains unknown.')];
     $this->activation = ANYTIME;

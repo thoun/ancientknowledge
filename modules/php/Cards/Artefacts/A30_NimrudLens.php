@@ -16,7 +16,7 @@ class A30_NimrudLens extends \AK\Models\Artefact
     $this->discard = 1;
     $this->effect = [
       clienttranslate(
-        'Each time you LEARN a Technology (<ANCIENT>, <WRITING>, <SECRET>), you may discard 1 <KNOWLEDGE> from any of your monuments.'
+        'Each time you LEARN a Technology (<ANCIENT>, <WRITING> or <SECRET>), you may discard 1 <KNOWLEDGE> from any of your monuments.'
       ),
     ];
   }

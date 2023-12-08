@@ -11,7 +11,7 @@ class T39_Arikat extends \AK\Models\Technology
     $this->number = 39;
     $this->level = 2;
     $this->name = clienttranslate('Ari-kat');
-    $this->requirement = [clienttranslate('3 <CITY>, 3 <MEGALITH>, 3 <PYRAMID> in your past.')];
+    $this->requirement = [clienttranslate('3 <CITY>, 3 <MEGALITH> and 3 <PYRAMID> in your past.')];
 
     $this->activation = ENDGAME;
     $this->effect = [clienttranslate('5 <VP>')];

@@ -11,7 +11,7 @@ class T18_Astronomy extends \AK\Models\Technology
     $this->number = 18;
     $this->level = 1;
     $this->name = clienttranslate('Astronomy');
-    $this->requirement = [clienttranslate('1 <CITY>, 1 <PYRAMID> in your past.')];
+    $this->requirement = [clienttranslate('1 <CITY> and 1 <PYRAMID> in your past.')];
 
     $this->activation = IMMEDIATE;
     $this->effect = [clienttranslate('Draw 3 cards.')];

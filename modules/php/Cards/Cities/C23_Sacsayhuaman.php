@@ -9,7 +9,7 @@ class C23_Sacsayhuaman extends \AK\Models\Building
     $this->id = 'C23_Sacsayhuaman';
     $this->type = CITY;
     $this->number = 23;
-    $this->name = clienttranslate('SacsayhuamÁn');
+    $this->name = clienttranslate('Sacsayhuamán');
     $this->country = clienttranslate('Peru');
     $this->text = [clienttranslate("This fortress is shaped like a puma's head, a sacred animal in Inca tradition.")];
 

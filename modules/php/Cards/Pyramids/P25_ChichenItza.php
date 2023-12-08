@@ -9,7 +9,7 @@ class P25_ChichenItza extends \AK\Models\Building
     $this->id = 'P25_ChichenItza';
     $this->type = PYRAMID;
     $this->number = 25;
-    $this->name = clienttranslate('ChichÉn ItzÁ');
+    $this->name = clienttranslate('Chichén Itzá');
     $this->country = clienttranslate('Mexico');
     $this->text = [
       clienttranslate(

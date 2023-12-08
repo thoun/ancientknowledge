@@ -17,7 +17,7 @@ class A22_NazcaLines extends \AK\Models\Artefact
       ),
     ];
     $this->activation = ANYTIME;
-    $this->effect = [clienttranslate('Each time you CREATE  1 <PYRAMID>, draw 1 card.')];
+    $this->effect = [clienttranslate('Each time you CREATE 1 <PYRAMID>, draw 1 card.')];
   }
 
   public function isListeningTo($event)

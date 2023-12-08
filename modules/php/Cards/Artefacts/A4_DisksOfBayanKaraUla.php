@@ -18,7 +18,7 @@ class A4_DisksOfBayanKaraUla extends \AK\Models\Artefact
     $this->startingHand = 1;
     $this->effect = [
       clienttranslate(
-        'If you have at least 1 monument of each type in your Timeline (<CITY>, <MEGALITH> and <PYRAMID>), discard 1 <KNOWLEDGE> from any of your monuments.'
+        'If you have at least 1 monument of each type (<CITY>, <MEGALITH> and <PYRAMID>) in your Timeline, discard 1 <KNOWLEDGE> from any of your monuments.'
       ),
     ];
   }

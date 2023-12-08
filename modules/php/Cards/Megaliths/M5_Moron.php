@@ -9,7 +9,7 @@ class M5_Moron extends \AK\Models\Building
     $this->id = 'M5_Moron';
     $this->type = MEGALITH;
     $this->number = 5;
-    $this->name = clienttranslate('MÖrÖn');
+    $this->name = clienttranslate('Mörön');
     $this->country = clienttranslate('Mongolie');
     $this->text = [clienttranslate('The stones of this megalithic site present strange indecipherable engravings.')];
 

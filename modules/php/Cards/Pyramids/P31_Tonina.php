@@ -9,7 +9,7 @@ class P31_Tonina extends \AK\Models\Building
     $this->id = 'P31_Tonina';
     $this->type = PYRAMID;
     $this->number = 31;
-    $this->name = clienttranslate('ToninÁ');
+    $this->name = clienttranslate('Toniná');
     $this->country = clienttranslate('Mexico');
     $this->text = [
       clienttranslate(

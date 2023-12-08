@@ -9,7 +9,7 @@ class M16_DiquisStoneSpheres extends \AK\Models\Building
     $this->id = 'M16_DiquisStoneSpheres';
     $this->type = MEGALITH;
     $this->number = 16;
-    $this->name = clienttranslate('DiquÍs Stone Spheres');
+    $this->name = clienttranslate('Diquís Stone Spheres');
     $this->country = clienttranslate('Costa Rica');
     $this->text = [
       clienttranslate(

@@ -9,7 +9,7 @@ class P18_PyramideDeNice extends \AK\Models\Building
     $this->id = 'P18_PyramideDeNice';
     $this->type = PYRAMID;
     $this->number = 18;
-    $this->name = clienttranslate('Pyramide De Nice');
+    $this->name = clienttranslate('Pyramid Of Nice');
     $this->country = clienttranslate('France');
     $this->text = [
       clienttranslate(

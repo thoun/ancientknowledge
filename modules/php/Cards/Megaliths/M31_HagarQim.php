@@ -9,7 +9,7 @@ class M31_HagarQim extends \AK\Models\Building
     $this->id = 'M31_HagarQim';
     $this->type = MEGALITH;
     $this->number = 31;
-    $this->name = clienttranslate('ĦaĠar Qim');
+    $this->name = clienttranslate('Ħaġar Qim');
     $this->country = clienttranslate('Malta');
     $this->text = [clienttranslate('This is a huge complex made up of four temples built over a period of a thousand years.')];
 
