@@ -2256,8 +2256,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         div.style.backgroundPositionX = "".concat(backgroundPositionX, "%");
         div.style.backgroundPositionY = "".concat(backgroundPositionY, "%");
         var html = "";
-        // TODO TEMP
-        html += "\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_a = card.name) !== null && _a !== void 0 ? _a : '', "\n                <div class=\"country\">").concat((_b = card.country) !== null && _b !== void 0 ? _b : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_d = (_c = card.effect) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>\n        ");
+        html += "\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_a = _(card.name)) !== null && _a !== void 0 ? _a : '', "\n                <div class=\"country\">").concat((_b = _(card.country)) !== null && _b !== void 0 ? _b : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_d = (_c = card.effect) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(_(text)); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>\n        ");
         div.innerHTML = html;
         this.reduceToFit(div.querySelector('.effect'));
         //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
@@ -2300,7 +2299,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
     BuilderCardsManager.prototype.getTooltip = function (card) {
         var _a, _b, _c, _d;
         var typeLetter = card.id.substring(0, 1);
-        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <i>").concat(card.country, "</i>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.id), "\n        ");
+        var message = "\n        <strong>".concat(_(card.name), "</strong>\n        <br>\n        <i>").concat(_(card.country), "</i>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.id), "\n        ");
         if (card.startingSpace) {
             message += "\n            <br>\n            <strong>".concat(_("Starting space:"), "</strong> ").concat(card.startingSpace, "\n            ");
         }
@@ -2313,7 +2312,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         if (typeLetter != 'A') {
             message += "\n            <br>\n            <strong>".concat(_("Initial knowledge:"), "</strong> ").concat(card.initialKnowledge, "\n            <br>\n            <strong>").concat(_("Victory point:"), "</strong> ").concat(card.victoryPoint, "\n            ");
         }
-        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        <br>\n        <br>\n        ").concat((_d = (_c = card.text) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "\n        ");
+        message += "\n        <br>\n        <strong>".concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        <br>\n        <br>\n        <strong>").concat(_("Effect:"), "</strong> ").concat((_b = (_a = card.effect) === null || _a === void 0 ? void 0 : _a.map(function (text) { return formatTextIcons(_(text)); }).join("<br>")) !== null && _b !== void 0 ? _b : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        <br>\n        <br>\n        ").concat((_d = (_c = card.text) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(_(text)); }).join("<br>")) !== null && _d !== void 0 ? _d : '', "\n        ");
         return message;
     };
     BuilderCardsManager.prototype.generateCardDiv = function (card) {
@@ -2380,9 +2379,9 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         div.style.backgroundPositionY = "".concat(Math.floor(backgroundIndex / tilesByRow) * 50, "%");
         var html = "";
         if (requirement) {
-            html += "<div class=\"requirement\"><div>".concat((_b = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _b !== void 0 ? _b : '', "</div></div>");
+            html += "<div class=\"requirement\"><div>".concat((_b = card.requirement.map(function (text) { return formatTextIcons(_(text)); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _b !== void 0 ? _b : '', "</div></div>");
         }
-        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_c = card.name) !== null && _c !== void 0 ? _c : '', "\n            </div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_e = (_d = card.effect) === null || _d === void 0 ? void 0 : _d.map(function (text) { return formatTextIcons(text); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _e !== void 0 ? _e : '', "</div>\n        </div>\n        ");
+        html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_c = _(card.name)) !== null && _c !== void 0 ? _c : '', "\n            </div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_e = (_d = card.effect) === null || _d === void 0 ? void 0 : _d.map(function (text) { return formatTextIcons(_(text)); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _e !== void 0 ? _e : '', "</div>\n        </div>\n        ");
         div.innerHTML = html;
         if (requirement) {
             this.reduceToFit(div.querySelector('.requirement'));
@@ -2525,11 +2524,11 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
     };
     TechnologyTilesManager.prototype.getTooltip = function (card) {
         var _a, _b, _c;
-        var message = "\n        <strong>".concat(card.name, "</strong>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.type), "\n        <br>\n        <strong>").concat(_("Level:"), "</strong> ").concat(card.level, "\n        <br>\n        <strong>").concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        ");
+        var message = "\n        <strong>".concat(_(card.name), "</strong>\n        <br>\n        <br>\n        <strong>").concat(_("Type:"), "</strong> ").concat(this.getType(card.type), "\n        <br>\n        <strong>").concat(_("Level:"), "</strong> ").concat(card.level, "\n        <br>\n        <strong>").concat(_("Activation:"), "</strong> ").concat(this.game.getTooltipActivation(card.activation), "\n        ");
         if (card.requirement) {
-            message += "\n            <br><br>\n            <strong>".concat(_("Requirement:"), "</strong> ").concat((_a = card.requirement.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _a !== void 0 ? _a : '', "\n            ");
+            message += "\n            <br><br>\n            <strong>".concat(_("Requirement:"), "</strong> ").concat((_a = card.requirement.map(function (text) { return formatTextIcons(_(text)); }).join("<br>")) !== null && _a !== void 0 ? _a : '', "\n            ");
         }
-        message += "\n        <br>\n        <br>\n        <strong>".concat(_("Effect:"), "</strong> ").concat((_c = (_b = card.effect) === null || _b === void 0 ? void 0 : _b.map(function (text) { return formatTextIcons(text); }).join("<br>")) !== null && _c !== void 0 ? _c : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        ");
+        message += "\n        <br>\n        <br>\n        <strong>".concat(_("Effect:"), "</strong> ").concat((_c = (_b = card.effect) === null || _b === void 0 ? void 0 : _b.map(function (text) { return formatTextIcons(_(text)); }).join("<br>")) !== null && _c !== void 0 ? _c : '', "\n        <br>\n        <br>\n        ").concat(this.generateCardDiv(__assign(__assign({}, card), { id: "".concat(card.id, "--tooltip-card") })).outerHTML, "\n        ");
         return message;
     };
     TechnologyTilesManager.prototype.generateCardDiv = function (card) {

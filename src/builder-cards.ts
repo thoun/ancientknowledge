@@ -60,15 +60,14 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         div.style.backgroundPositionY = `${backgroundPositionY}%`;
         let html = ``;
 
-        // TODO TEMP
         html += `
         <div class="name-box">
             <div class="name">
-                ${card.name ?? ''}
-                <div class="country">${card.country ?? ''}</div>
+                ${_(card.name) ?? ''}
+                <div class="country">${_(card.country) ?? ''}</div>
             </div>
         </div>
-        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>
+        <div class="effect"><div>${card.effect?.map(text => formatTextIcons(_(text))).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>
         `;
 
         div.innerHTML = html;
@@ -118,9 +117,9 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         const typeLetter = card.id.substring(0, 1);
 
         let message = `
-        <strong>${card.name}</strong>
+        <strong>${_(card.name)}</strong>
         <br>
-        <i>${card.country}</i>
+        <i>${_(card.country)}</i>
         <br>
         <br>
         <strong>${_("Type:")}</strong> ${this.getType(card.id)}
@@ -156,13 +155,13 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
         <strong>${_("Activation:")}</strong> ${this.game.getTooltipActivation(card.activation)}
         <br>
         <br>
-        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(_(text))).join(`<br>`) ?? ''}
         <br>
         <br>
         ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
         <br>
         <br>
-        ${card.text?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        ${card.text?.map(text => formatTextIcons(_(text))).join(`<br>`) ?? ''}
         `;
  
         return message;

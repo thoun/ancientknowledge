@@ -52,15 +52,15 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         let html = ``;
         
         if (requirement) {
-            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>`;
+            html += `<div class="requirement"><div>${card.requirement.map(text => formatTextIcons(_(text))).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div></div>`;
         }
         html += `<div class="name-box">
             <div class="name">
-                ${card.name ?? ''}
+                ${_(card.name) ?? ''}
             </div>
         </div>
         <div class="effect">
-            <div>${card.effect?.map(text => formatTextIcons(text)).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div>
+            <div>${card.effect?.map(text => formatTextIcons(_(text))).join(`<br>`).replace(/\n+/g, `<br>`) ?? ''}</div>
         </div>
         `;
 
@@ -212,7 +212,7 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
 
     public getTooltip(card: TechnologyTile): string {
         let message = `
-        <strong>${card.name}</strong>
+        <strong>${_(card.name)}</strong>
         <br>
         <br>
         <strong>${_("Type:")}</strong> ${this.getType(card.type)}
@@ -224,13 +224,13 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
         if (card.requirement) {
             message += `
             <br><br>
-            <strong>${_("Requirement:")}</strong> ${card.requirement.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+            <strong>${_("Requirement:")}</strong> ${card.requirement.map(text => formatTextIcons(_(text))).join(`<br>`) ?? ''}
             `;
         }
         message += `
         <br>
         <br>
-        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(text)).join(`<br>`) ?? ''}
+        <strong>${_("Effect:")}</strong> ${card.effect?.map(text => formatTextIcons(_(text))).join(`<br>`) ?? ''}
         <br>
         <br>
         ${this.generateCardDiv({...card, id: `${card.id}--tooltip-card`}).outerHTML}
