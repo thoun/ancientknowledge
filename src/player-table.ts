@@ -171,33 +171,41 @@ class PlayerTable {
     }
 
     private createKnowledgeCounter(cardId: string, knowledge: number = 0) {
-        document.getElementById(`builder-card-${cardId}-front`).insertAdjacentHTML('beforeend', `
-            <div id="${cardId}-token-counter" class="token-counter">
-                <div class="token-counter-info">
-                    <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
-                    <div class="token-selection future">🡆</div>
-                    <div class="future-number future" id="${cardId}-token-counter-future-number">${knowledge}</div>
-                    <div class="knowledge-token"></div>
+        const cardFront = document.getElementById(`builder-card-${cardId}-front`);
+        if (cardFront) {
+            cardFront.insertAdjacentHTML('beforeend', `
+                <div id="${cardId}-token-counter" class="token-counter">
+                    <div class="token-counter-info">
+                        <div class="token-number" id="${cardId}-token-counter-number">${knowledge}</div>
+                        <div class="token-selection future">🡆</div>
+                        <div class="future-number future" id="${cardId}-token-counter-future-number">${knowledge}</div>
+                        <div class="knowledge-token"></div>
+                    </div>
+                    <div class="token-counter-actions">
+                        <button type="button" id="${cardId}-token-counter-remove-btn" class="bgabutton bgabutton_blue action remove-knowledge-btn">${_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>')}</button>
+                    </div>
+                    <div class="token-counter-actions">
+                        <button type="button" id="${cardId}-token-counter-reset-btn" class="bgabutton bgabutton_gray action  reset-btn">${_('Reset')}</button>
+                    </div>
                 </div>
-                <div class="token-counter-actions">
-                    <button type="button" id="${cardId}-token-counter-remove-btn" class="bgabutton bgabutton_blue action remove-knowledge-btn">${_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>')}</button>
-                </div>
-                <div class="token-counter-actions">
-                    <button type="button" id="${cardId}-token-counter-reset-btn" class="bgabutton bgabutton_gray action  reset-btn">${_('Reset')}</button>
-                </div>
-            </div>
-        `);
+            `);
 
-        document.getElementById(`${cardId}-token-counter-reset-btn`).addEventListener('click', () => this.resetSelectedKnowledge(cardId));
-        document.getElementById(`${cardId}-token-counter-remove-btn`).addEventListener('click', () => {
-            const future = this.getCardFutureKnowledge(cardId);
-            if (future > 0 && !document.getElementById(`${cardId}-token-counter-remove-btn`).classList.contains('max')) {
-                this.setCardFutureKnowledge(cardId, future - 1);
-            }
-        });
+            document.getElementById(`${cardId}-token-counter-reset-btn`).addEventListener('click', () => this.resetSelectedKnowledge(cardId));
+            document.getElementById(`${cardId}-token-counter-remove-btn`).addEventListener('click', () => {
+                const future = this.getCardFutureKnowledge(cardId);
+                if (future > 0 && !document.getElementById(`${cardId}-token-counter-remove-btn`).classList.contains('max')) {
+                    this.setCardFutureKnowledge(cardId, future - 1);
+                }
+            });
+        }
     }
 
     public setCardKnowledge(cardId: string, knowledge: number) {
+        const cardFront = document.getElementById(`builder-card-${cardId}-front`);
+        if (!cardFront) {
+            return;
+        }
+
         const counterDiv = document.getElementById(`${cardId}-token-counter-number`);
         if (counterDiv) {
             counterDiv.innerHTML = `${knowledge}`;
@@ -216,6 +224,11 @@ class PlayerTable {
     }
 
     public setCardFutureKnowledge(cardId: string, future: number, initial: boolean = false) {
+        const cardFront = document.getElementById(`builder-card-${cardId}-front`);
+        if (!cardFront) {
+            return;
+        }
+        
         const counter = document.getElementById(`${cardId}-token-counter-number`);
         if (!counter) {
             this.createKnowledgeCounter(cardId);
@@ -293,8 +306,10 @@ class PlayerTable {
         } else {
             cardsIds.forEach(cardId => {
                 const cardDiv = document.getElementById(`builder-card-${cardId}`);
-                cardDiv.classList.add('knowledge-selectable');
-                cardDiv.dataset.knowledgeSelectionMode = 'remove';
+                if (cardDiv) {
+                    cardDiv.classList.add('knowledge-selectable');
+                    cardDiv.dataset.knowledgeSelectionMode = 'remove';
+                }
             });
         }
     }
