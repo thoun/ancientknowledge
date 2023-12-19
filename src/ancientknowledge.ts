@@ -1225,7 +1225,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (this.gamedatas.gamestate.name == 'learn') {
             const warning = showWarning && (this.gamedatas.gamestate.args as EnteringLearnArgs).irreversibleIds.includes(tile.id);
             if (warning) {
-                this.askConfirmation(_("the technology tiles will be refilled with new tiles"), () => this.onTableTechnologyTileClick(tile, false));
+                this.askConfirmation(_("the technology tiles will be refilled with new cards"), () => this.onTableTechnologyTileClick(tile, false));
             } else {
                 this.takeAtomicAction('actLearn', [
                     tile.id,
@@ -1925,7 +1925,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             const tooltip = `
                 <div>${_('Cards in the past:')} <strong>${score.past.total}</strong></div>
                 <div>${_('Cards effects in the past:')} <strong>${score.effects.total}</strong></div>
-                <div>${_('Technology tiles:')} <strong>${score.techs.total}</strong></div>
+                <div>${_('Technology cards:')} <strong>${score.techs.total}</strong></div>
                 <div>${_('Monuments remaining in timeline:')} <strong>${score.timeline.total}</strong></div>
                 <div>${_('Lost knowledge:')} <strong>${score.knowledge.total}</strong></div>
                 <div><strong>${_('Total:')} ${score.total}</strong></div>
