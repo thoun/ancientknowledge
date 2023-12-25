@@ -21,7 +21,7 @@ class A1_DiskOfSabu extends \AK\Models\Artefact
   public function getTimelineEffect()
   {
     $n = $this->getPlayer()->countIcon(MEGALITH);
-    return $n < 3
+    return $n < 4
       ? null
       : [
         'action' => \DISCARD_LOST_KNOWLEDGE,
