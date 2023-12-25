@@ -4,6 +4,7 @@ namespace AK\Cards\Megaliths;
 use AK\Managers\Players;
 use AK\Managers\Cards;
 use AK\Core\Notifications;
+use AK\Core\Engine;
 
 class M14_MenhirOfKerloas extends \AK\Models\Building
 {
@@ -95,6 +96,7 @@ class M14_MenhirOfKerloas extends \AK\Models\Building
       'player' => $player,
       'player2' => $target,
     ]);
+    Engine::checkpoint();
 
     return [
       'action' => SPECIAL_EFFECT,
