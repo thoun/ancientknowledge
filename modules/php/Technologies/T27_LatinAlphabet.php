@@ -29,13 +29,16 @@ class T27_LatinAlphabet extends \AK\Models\Technology
 
   public function getImmediateEffect()
   {
-    return [
-      'action' => SPECIAL_EFFECT,
-      'args' => [
-        'sourceId' => $this->id,
-        'method' => 'chooseTech',
-      ],
-    ];
+    $techs = Technologies::getPool()->filter(fn($tech) => $tech->getLevel() == 2);
+    return empty($techs)
+      ? null
+      : [
+        'action' => SPECIAL_EFFECT,
+        'args' => [
+          'sourceId' => $this->id,
+          'method' => 'chooseTech',
+        ],
+      ];
   }
 
   public function getChooseTechDescription()
