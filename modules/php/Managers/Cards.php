@@ -131,6 +131,18 @@ class Cards extends \AK\Helpers\CachedPieces
     return $cards;
   }
 
+  public static function slideDownIfNeeded($space, $player)
+  {
+    if ($space[1] == 0) {
+      $space[1] = 1;
+      $card = $player->getCardOnTimelineSpace($space);
+      if (!is_null($card)) {
+        $card->setLocation("timeline-$space[0]-0");
+        Notifications::moveBuildingDown($player, $card);
+      }
+    }
+  }
+
   ///////////////////////////////////////////////
   //    ____                                 _
   //   |  _ \ ___ _ __ ___  ___  _ __   __ _| |

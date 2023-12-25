@@ -35,8 +35,13 @@ class Destroy extends \AK\Models\Action
   {
     $player = Players::getActive();
     $card = $this->getCard();
+    $from = $card->getTimelineSpace();
     $card->setLocation('discard');
     Notifications::destroyCard($player, $card);
+
+    // Any behind above that need to slide down ??
+    Cards::slideDownIfNeeded($from, $player);
+
     $this->resolveAction();
   }
 }

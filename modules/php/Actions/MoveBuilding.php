@@ -130,6 +130,9 @@ class MoveBuilding extends \AK\Models\Action
     $card->setLocation($slot);
     Notifications::moveBuilding($player, $card, $this->getSourceId());
 
+    // Any behind above that need to slide down ??
+    Cards::slideDownIfNeeded($from, $player);
+
     // Edge case !
     if (Globals::isDeclinePhase() && $card->getTimelineSpace()[0] == 1) {
       $node = $this->ctx;

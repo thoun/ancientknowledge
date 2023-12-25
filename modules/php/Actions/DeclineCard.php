@@ -69,6 +69,7 @@ class DeclineCard extends \AK\Models\Action
     $player = Players::getActive();
     $cardId = $this->getCtxArg('cardId');
     $card = Cards::getSingle($cardId);
+    $from = $card->getTimelineSpace();
     // Some card destroy themselves if knowledge still on them
     if ($card->getLocation() != 'discard') {
       $card->setLocation('past');
@@ -77,6 +78,9 @@ class DeclineCard extends \AK\Models\Action
       $player->incLostKnowledge($knowledge);
       Globals::incDeclinedKnowledge($knowledge);
       Notifications::declineCard($player, $card, $knowledge);
+
+      // Any behind above that need to slide down ??
+      Cards::slideDownIfNeeded($from, $player);
     }
 
     // Check if mid game is reached

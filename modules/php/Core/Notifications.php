@@ -386,10 +386,17 @@ class Notifications
 
   public static function moveBuilding($player, $card, $sourceId)
   {
-    self::notifyAll('moveCard', \clienttranslate('${player_name} move ${card_name}${source}'), [
+    self::notifyAll('moveCard', \clienttranslate('${player_name} moves ${card_name}${source}'), [
       'player' => $player,
       'card' => $card,
       'sourceId' => $sourceId,
+    ]);
+  }
+  public static function moveBuildingDown($player, $card)
+  {
+    self::notifyAll('moveCard', \clienttranslate('${player_name} moves ${card_name} down since the slot is now free'), [
+      'player' => $player,
+      'card' => $card,
     ]);
   }
 
