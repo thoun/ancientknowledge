@@ -49,7 +49,7 @@ trait SetupTrait
     // Extra card for 3rd and 4th players
     Cards::extraInitialDraw();
 
-    // Setup technology tiles
+    // Setup technology cards
     Technologies::initialDraw();
 
     // Start infinite turns loop

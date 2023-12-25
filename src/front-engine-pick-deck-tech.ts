@@ -27,7 +27,7 @@ class PickDeckTechEngine extends FrontEngine<PickDeckTechEngineData> {
                     this.market.setSelectionMode('single', learnableTechs);
 
                     if (!learnableTechs.length) {
-                        this.game.addPrimaryActionButton('passTakeTechTile_btn', `${_("Pass")} (${_("you cannot build a technology tile")})`, () => this.nextState('discard'));
+                        this.game.addPrimaryActionButton('passTakeTechTile_btn', `${_("Pass")} (${_("you cannot build a technology card")})`, () => this.nextState('discard'));
                     }
                 },
                 () => {

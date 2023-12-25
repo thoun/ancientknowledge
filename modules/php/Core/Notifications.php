@@ -197,7 +197,7 @@ class Notifications
     $msgs = [
       SCORING_BUILDINGS => clienttranslate('${player_name} scores ${n} <VP> from monuments in their past'),
       SCORING_EFFECTS => clienttranslate('${player_name} scores ${n} <VP> from endgame monument effects in their past'),
-      SCORING_TECHS => clienttranslate('${player_name} scores ${n} <VP> from learnt technology tiles'),
+      SCORING_TECHS => clienttranslate('${player_name} scores ${n} <VP> from learnt technology cards'),
       SCORING_TIMELINE => clienttranslate('${player_name} scores ${n} <VP> for monuments left in their timeline'),
       SCORING_LOST_KNOWNLEDGE => clienttranslate('${player_name} lost ${m} <VP> for lost knowledge on their board'),
       SCORING_TOTAL => clienttranslate('${player_name} final score is ${n} <VP>'),

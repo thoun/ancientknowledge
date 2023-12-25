@@ -2834,16 +2834,23 @@ var PlayerTable = /** @class */ (function () {
     PlayerTable.prototype.createKnowledgeCounter = function (cardId, knowledge) {
         var _this = this;
         if (knowledge === void 0) { knowledge = 0; }
-        document.getElementById("builder-card-".concat(cardId, "-front")).insertAdjacentHTML('beforeend', "\n            <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                <div class=\"token-counter-info\">\n                    <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                    <div class=\"token-selection future\">\uD83E\uDC46</div>\n                    <div class=\"future-number future\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                    <div class=\"knowledge-token\"></div>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-remove-btn\" class=\"bgabutton bgabutton_blue action remove-knowledge-btn\">").concat(_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>'), "</button>\n                </div>\n                <div class=\"token-counter-actions\">\n                    <button type=\"button\" id=\"").concat(cardId, "-token-counter-reset-btn\" class=\"bgabutton bgabutton_gray action  reset-btn\">").concat(_('Reset'), "</button>\n                </div>\n            </div>\n        "));
-        document.getElementById("".concat(cardId, "-token-counter-reset-btn")).addEventListener('click', function () { return _this.resetSelectedKnowledge(cardId); });
-        document.getElementById("".concat(cardId, "-token-counter-remove-btn")).addEventListener('click', function () {
-            var future = _this.getCardFutureKnowledge(cardId);
-            if (future > 0 && !document.getElementById("".concat(cardId, "-token-counter-remove-btn")).classList.contains('max')) {
-                _this.setCardFutureKnowledge(cardId, future - 1);
-            }
-        });
+        var cardFront = document.getElementById("builder-card-".concat(cardId, "-front"));
+        if (cardFront) {
+            cardFront.insertAdjacentHTML('beforeend', "\n                <div id=\"".concat(cardId, "-token-counter\" class=\"token-counter\">\n                    <div class=\"token-counter-info\">\n                        <div class=\"token-number\" id=\"").concat(cardId, "-token-counter-number\">").concat(knowledge, "</div>\n                        <div class=\"token-selection future\">\uD83E\uDC46</div>\n                        <div class=\"future-number future\" id=\"").concat(cardId, "-token-counter-future-number\">").concat(knowledge, "</div>\n                        <div class=\"knowledge-token\"></div>\n                    </div>\n                    <div class=\"token-counter-actions\">\n                        <button type=\"button\" id=\"").concat(cardId, "-token-counter-remove-btn\" class=\"bgabutton bgabutton_blue action remove-knowledge-btn\">").concat(_('Remove ${knowledge}').replace('${knowledge}', '<nobr>1 <div class="knowledge-token"></div></nobr>'), "</button>\n                    </div>\n                    <div class=\"token-counter-actions\">\n                        <button type=\"button\" id=\"").concat(cardId, "-token-counter-reset-btn\" class=\"bgabutton bgabutton_gray action  reset-btn\">").concat(_('Reset'), "</button>\n                    </div>\n                </div>\n            "));
+            document.getElementById("".concat(cardId, "-token-counter-reset-btn")).addEventListener('click', function () { return _this.resetSelectedKnowledge(cardId); });
+            document.getElementById("".concat(cardId, "-token-counter-remove-btn")).addEventListener('click', function () {
+                var future = _this.getCardFutureKnowledge(cardId);
+                if (future > 0 && !document.getElementById("".concat(cardId, "-token-counter-remove-btn")).classList.contains('max')) {
+                    _this.setCardFutureKnowledge(cardId, future - 1);
+                }
+            });
+        }
     };
     PlayerTable.prototype.setCardKnowledge = function (cardId, knowledge) {
+        var cardFront = document.getElementById("builder-card-".concat(cardId, "-front"));
+        if (!cardFront) {
+            return;
+        }
         var counterDiv = document.getElementById("".concat(cardId, "-token-counter-number"));
         if (counterDiv) {
             counterDiv.innerHTML = "".concat(knowledge);
@@ -2863,6 +2870,10 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.setCardFutureKnowledge = function (cardId, future, initial) {
         if (initial === void 0) { initial = false; }
+        var cardFront = document.getElementById("builder-card-".concat(cardId, "-front"));
+        if (!cardFront) {
+            return;
+        }
         var counter = document.getElementById("".concat(cardId, "-token-counter-number"));
         if (!counter) {
             this.createKnowledgeCounter(cardId);
@@ -2937,8 +2948,10 @@ var PlayerTable = /** @class */ (function () {
         else {
             cardsIds.forEach(function (cardId) {
                 var cardDiv = document.getElementById("builder-card-".concat(cardId));
-                cardDiv.classList.add('knowledge-selectable');
-                cardDiv.dataset.knowledgeSelectionMode = 'remove';
+                if (cardDiv) {
+                    cardDiv.classList.add('knowledge-selectable');
+                    cardDiv.dataset.knowledgeSelectionMode = 'remove';
+                }
             });
         }
     };
@@ -3414,7 +3427,7 @@ var PickDeckTechEngine = /** @class */ (function (_super) {
                 _this.market.addCards(techs);
                 _this.market.setSelectionMode('single', learnableTechs);
                 if (!learnableTechs.length) {
-                    _this.game.addPrimaryActionButton('passTakeTechTile_btn', "".concat(_("Pass"), " (").concat(_("you cannot build a technology tile"), ")"), function () { return _this.nextState('discard'); });
+                    _this.game.addPrimaryActionButton('passTakeTechTile_btn', "".concat(_("Pass"), " (").concat(_("you cannot build a technology card"), ")"), function () { return _this.nextState('discard'); });
                 }
             }, function () {
                 var _a;
@@ -4576,7 +4589,7 @@ var AncientKnowledge = /** @class */ (function () {
         if (this.gamedatas.gamestate.name == 'learn') {
             var warning = showWarning && this.gamedatas.gamestate.args.irreversibleIds.includes(tile.id);
             if (warning) {
-                this.askConfirmation(_("the technology tiles will be refilled with new tiles"), function () { return _this.onTableTechnologyTileClick(tile, false); });
+                this.askConfirmation(_("the technology tiles will be refilled with new cards"), function () { return _this.onTableTechnologyTileClick(tile, false); });
             }
             else {
                 this.takeAtomicAction('actLearn', [
@@ -5246,7 +5259,7 @@ var AncientKnowledge = /** @class */ (function () {
         Object.entries(args.scores).forEach(function (_a) {
             var playerId = _a[0], score = _a[1];
             _this.setScore(Number(playerId), score.total);
-            var tooltip = "\n                <div>".concat(_('Cards in the past:'), " <strong>").concat(score.past.total, "</strong></div>\n                <div>").concat(_('Cards effects in the past:'), " <strong>").concat(score.effects.total, "</strong></div>\n                <div>").concat(_('Technology tiles:'), " <strong>").concat(score.techs.total, "</strong></div>\n                <div>").concat(_('Monuments remaining in timeline:'), " <strong>").concat(score.timeline.total, "</strong></div>\n                <div>").concat(_('Lost knowledge:'), " <strong>").concat(score.knowledge.total, "</strong></div>\n                <div><strong>").concat(_('Total:'), " ").concat(score.total, "</strong></div>\n            ");
+            var tooltip = "\n                <div>".concat(_('Cards in the past:'), " <strong>").concat(score.past.total, "</strong></div>\n                <div>").concat(_('Cards effects in the past:'), " <strong>").concat(score.effects.total, "</strong></div>\n                <div>").concat(_('Technology cards:'), " <strong>").concat(score.techs.total, "</strong></div>\n                <div>").concat(_('Monuments remaining in timeline:'), " <strong>").concat(score.timeline.total, "</strong></div>\n                <div>").concat(_('Lost knowledge:'), " <strong>").concat(score.knowledge.total, "</strong></div>\n                <div><strong>").concat(_('Total:'), " ").concat(score.total, "</strong></div>\n            ");
             _this.setTooltip("player_score_".concat(playerId, "-icon"), tooltip);
             _this.setTooltip("player_score_".concat(playerId), tooltip);
         });
