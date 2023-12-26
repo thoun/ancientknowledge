@@ -35,7 +35,7 @@ class Destroy extends \AK\Models\Action
   {
     $player = Players::getActive();
     $card = $this->getCard();
-    $from = $card->getTimelineSpace();
+    $from = $card->isArtefact() ? null : $card->getTimelineSpace();
     $card->setLocation('discard');
     Notifications::destroyCard($player, $card);
 
