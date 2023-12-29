@@ -17,7 +17,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
                     this.game.changePageTitle(null);
                     if (engine.data.selectedCard) {
                         this.game.builderCardsManager.getCardElement(engine.data.selectedCard)?.classList.remove('created-card');
-                        this.game.getCurrentPlayerTable().hand.addCard(engine.data.selectedCard);
+                        this.game.getCurrentPlayerTable().addCardsToHand([engine.data.selectedCard], false);
                     }
                     engine.data.selectedCard = null;
                     engine.data.selectedSlot = null;
@@ -107,7 +107,7 @@ class CreateEngine extends FrontEngine<CreateEngineData> {
 
         this.data.selectedCard = card;
         this.game.builderCardsManager.getCardElement(card)?.classList.add('created-card');
-        this.game.getCurrentPlayerTable().hand.unselectCard(card);
+        this.game.getCurrentPlayerTable().unselectHandCard(card);
         this.nextState('slot');
     }
 

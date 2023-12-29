@@ -562,7 +562,18 @@ body > .card {
   width: 16px;
   height: 16px;
 }
+.card.new-hand-card .front {
+  animation: new-hand-card-animation 8s 1 forwards ease-in-out;
+}
 
+@keyframes new-hand-card-animation {
+  0% {
+    outline: 8px solid gold;
+  }
+  100% {
+    outline: 0px solid gold;
+  }
+}
 .builder-card {
   width: 163px;
   height: 228px;

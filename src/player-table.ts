@@ -6,8 +6,7 @@ const timelineSlotsIds = [];
 
 class PlayerTable {
     public playerId: number;
-    public hand?: LineStock<BuilderCard>;
-    public handTech?: LineStock<TechnologyTile>;
+    private hand?: LineStock<BuilderCard>;
     public timeline: SlotStock<BuilderCard>;
     public past: PastDeck;
     public artifacts: SlotStock<BuilderCard>;
@@ -57,7 +56,7 @@ class PlayerTable {
 
         if (this.currentPlayer) {
             this.hand = new LineStock<BuilderCard>(this.game.builderCardsManager, document.getElementById(`player-table-${this.playerId}-hand`), {
-                sort: (a: BuilderCard, b: BuilderCard) => a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0),
+                // sort: (a: BuilderCard, b: BuilderCard) => a.id[0] == b.id[0] ? a.number - b.number : a.id.charCodeAt(0) - b.id.charCodeAt(0),
             });
             this.hand.onSelectionChange = (selection: BuilderCard[]) => this.game.onHandCardSelectionChange(selection);
         }
@@ -362,6 +361,32 @@ class PlayerTable {
     public rotateCards(cards: BuilderCard[]) {
         cards.forEach(card => this.game.builderCardsManager.updateCardInformations(card, { updateMain: true }));
         this.past.resetPastOrder();
+    }
+
+    public getHandCards(): BuilderCard[] {
+        return this.hand?.getCards() ?? [];
+    }
+
+    public getHandSelection(): BuilderCard[] {
+        return this.hand?.getSelection() ?? [];
+    }
+
+    public async addCardsToHand(cards: BuilderCard[], highlight: boolean = true): Promise<boolean> {
+        const result = await (this.hand?.addCards(cards) ?? Promise.resolve(false));
+
+        if (highlight) {
+            cards.forEach(card => this.game.builderCardsManager.getCardElement(card)?.classList.add('new-hand-card'));
+        }
+
+        return result;
+    }
+
+    public removeCardsFromHand(cards: BuilderCard[]): Promise<boolean> {
+        return this.hand?.removeCards(cards) ?? Promise.resolve(false);
+    }
+    
+    public unselectHandCard(card: BuilderCard) {
+        this.hand?.unselectCard(card);
     }
 
     private showPastCards() {
