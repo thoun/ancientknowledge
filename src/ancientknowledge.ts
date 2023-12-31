@@ -541,7 +541,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
         const selectableCards = cardsIds?.map(id => this.builderCardsManager.getFullCardById(id));
         const playerTable = this.getCurrentPlayerTable();
-        if (playerTable.hand.getCards().some(card => cardsIds.includes(card.id))) {
+        if (playerTable.getHandCards().some(card => cardsIds.includes(card.id))) {
             playerTable.setHandSelectable('multiple', selectableCards);
         }
         if (playerTable.artifacts.getCards().some(card => cardsIds.includes(card.id))) {
@@ -737,7 +737,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                         this.setTooltip(`actChooseAction_${actionInformations[0]}_button`, actionInformations[2]);
                     });
                     const table = this.getCurrentPlayerTable();
-                    if (!table.hand.getCards().length) {
+                    if (!table.getHandCards().length) {
                         document.getElementById('actChooseAction_create_button').classList.add('disabled');
                     }
                     if (!table.past.getCards().filter(card => !card.rotated).length) {
@@ -1267,7 +1267,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     private onDiscardSelectionChange() {
         const args = this.gamedatas.gamestate.args as EnteringDiscardArgs;
-        const selection = [...this.getCurrentPlayerTable().hand.getSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
+        const selection = [...this.getCurrentPlayerTable().getHandSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
         const n = Math.min(this.gamedatas.gamestate.args.n, args._private.cardIds.length);
         document.getElementById('actDiscard_button').classList.toggle('disabled', selection.length != n);
     }
@@ -1453,14 +1453,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
   	
     public actDiscard(multi: boolean) {
-        const selectedCards = [...this.getCurrentPlayerTable().hand.getSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
+        const selectedCards = [...this.getCurrentPlayerTable().getHandSelection(), ...this.getCurrentPlayerTable().artifacts.getSelection()];
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction(multi ? 'actDiscardMulti' : 'actDiscard', [cardsIds]);
     }
   	
     public actDiscardAndDraw() {
-        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
+        const selectedCards = this.getCurrentPlayerTable().getHandSelection();
         const cardsIds = selectedCards.map(card => card.id).sort();
 
         this.takeAtomicAction('actDiscardAndDraw', [cardsIds]);
@@ -1495,8 +1495,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
             return;
         }
 
-        const selectedCards = this.getCurrentPlayerTable().hand.getSelection();
-        const discardCards = this.getCurrentPlayerTable().hand.getCards().filter(card => !selectedCards.some(sc => sc.id == card.id));
+        const selectedCards = this.getCurrentPlayerTable().getHandSelection();
+        const discardCards = this.getCurrentPlayerTable().getHandCards().filter(card => !selectedCards.some(sc => sc.id == card.id));
         const cardsIds = discardCards.map(card => card.id).sort();
 
         this.takeAction('actSelectCardsToDiscard', {
@@ -1694,14 +1694,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
     notif_pDrawCards(args: NotifPDrawCardsArgs) {
         const { player_id, cards } = args;        
         this.handCounters[player_id].incValue(cards.length);
-        return this.getPlayerTable(player_id).hand.addCards(this.builderCardsManager.getFullCards(cards));
+        return this.getPlayerTable(player_id).addCardsToHand(this.builderCardsManager.getFullCards(cards));
     }
 
     notif_keep(args: NotifKeepArgs) {
         const { player_id, card } = args;        
         this.handCounters[player_id].incValue(1);
         return card ?
-            this.getPlayerTable(player_id).hand?.addCard(this.builderCardsManager.getFullCard(card)) :
+            this.getPlayerTable(player_id).addCardsToHand([this.builderCardsManager.getFullCard(card)]) :
             Promise.resolve(true);
     }
 
@@ -1719,7 +1719,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             await this.getPlayerTable(player_id).artifacts.removeCards(cards);
         } else {
             this.handCounters[player_id].incValue(-cards.length);    
-            await this.getPlayerTable(player_id).hand.removeCards(cards);
+            await this.getPlayerTable(player_id).removeCardsFromHand(cards);
         }
     }
 
@@ -1857,7 +1857,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const { player_id, card } = args;
         this.handCounters[player_id].incValue(1);
         return card ?
-            this.getPlayerTable(player_id).hand?.addCard(this.builderCardsManager.getFullCard(card)) :
+            this.getPlayerTable(player_id).addCardsToHand([this.builderCardsManager.getFullCard(card)]) :
             Promise.resolve(true);
     }
     
@@ -1888,9 +1888,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         const { player_id, player_id2, card } = args;
         const currentPlayerId = this.getPlayerId();
         if (currentPlayerId == player_id) {
-            this.getCurrentPlayerTable().hand.addCard(this.builderCardsManager.getFullCard(card));
+            this.getCurrentPlayerTable().addCardsToHand([this.builderCardsManager.getFullCard(card)]);
         } else if (currentPlayerId == player_id2) {
-            this.getCurrentPlayerTable().hand.removeCard(this.builderCardsManager.getFullCard(card));
+            this.getCurrentPlayerTable().removeCardsFromHand([this.builderCardsManager.getFullCard(card)]);
         }
     }
     
