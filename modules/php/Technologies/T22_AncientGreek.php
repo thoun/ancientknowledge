@@ -97,7 +97,7 @@ class T22_AncientGreek extends \AK\Models\Technology
 
     // No card selected => do nothing
     if (is_null($cardId)) {
-      if (!empty($args['validCardIds']) && $args['canCreate']) {
+      if ($args['canCreate']) {
         throw new \BgaVisibleSystemException('You must create an artefact. Should not happen');
       }
     }
