@@ -4420,7 +4420,7 @@ var AncientKnowledge = /** @class */ (function () {
         var desc = formatTextIcons(this.translate(choice.description));
         if (desc == '' && choice.args.cardId) {
             var card = this.builderCardsManager.getFullCardById(choice.args.cardId);
-            desc = card.name;
+            desc = _(card.name);
         }
         // Add source if any
         var source = _((_a = choice.source) !== null && _a !== void 0 ? _a : '');

@@ -839,7 +839,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
         let desc = formatTextIcons(this.translate(choice.description));
         if (desc == '' && choice.args.cardId) {
             const card = this.builderCardsManager.getFullCardById(choice.args.cardId);
-            desc = card.name;
+            desc = _(card.name);
         }
   
         // Add source if any
