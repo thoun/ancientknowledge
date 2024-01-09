@@ -168,7 +168,7 @@ class Create extends \AK\Models\Action
     $this->checkAfterListeners($player, ['card' => $card, 'slot' => $slot, 'sourceId' => $this->getSourceId()]);
 
     // Edge case !
-    if (Globals::isDeclinePhase() && $card->getTimelineSpace()[0] == 1) {
+    if (Globals::isDeclinePhase() && !$card->isArtefact() && $card->getTimelineSpace()[0] == 1) {
       $node = $this->ctx;
       while (!is_null($node) && $node->getAction() != 'DECLINE_CARD') {
         $node = $node->getParent();
