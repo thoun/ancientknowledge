@@ -47,7 +47,8 @@ class P33_Calakmul extends \AK\Models\Building
   {
     $cards = [];
     $discardedCards = [];
-    while (count($cards) < 2) {
+    $player = $this->getPlayer();
+    while (count($cards) < 2 && $player->getHand()->count() < 10) {
       $card = Cards::pickOneForLocation('deck', 'hand');
 
       $location = null;
@@ -63,7 +64,6 @@ class P33_Calakmul extends \AK\Models\Building
       Cards::move($card->getId(), $location);
     }
 
-    $player = $this->getPlayer();
     Notifications::drawCards($player, $cards, $this->id);
   }
 }
