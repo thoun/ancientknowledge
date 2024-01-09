@@ -32,6 +32,7 @@ class P20_BorobudurTemple extends \AK\Models\Building
   {
     return [
       'action' => LEARN,
+      'optional' => true,
     ];
   }
 }
