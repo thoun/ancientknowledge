@@ -30,25 +30,27 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
 
   public function getDeclineEffect()
   {
-    return [
-      'type' => NODE_SEQ,
-      'childs' => [
-        [
-          'action' => SPECIAL_EFFECT,
-          'args' => [
-            'sourceId' => $this->id,
-            'method' => 'reveal',
+    return Technologies::countInLocation('deck_2') == 0
+      ? null
+      : [
+        'type' => NODE_SEQ,
+        'childs' => [
+          [
+            'action' => SPECIAL_EFFECT,
+            'args' => [
+              'sourceId' => $this->id,
+              'method' => 'reveal',
+            ],
+          ],
+          [
+            'action' => SPECIAL_EFFECT,
+            'args' => [
+              'sourceId' => $this->id,
+              'method' => 'ChooseTechAndScrapOthers',
+            ],
           ],
         ],
-        [
-          'action' => SPECIAL_EFFECT,
-          'args' => [
-            'sourceId' => $this->id,
-            'method' => 'ChooseTechAndScrapOthers',
-          ],
-        ],
-      ],
-    ];
+      ];
   }
 
   // Reveal first 7 cards of tech [II]
