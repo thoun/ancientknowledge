@@ -150,10 +150,8 @@ $machinestates = [
 
   ST_IMPOSSIBLE_MANDATORY_ACTION => [
     'name' => 'impossibleAction',
-    'description' => clienttranslate('${actplayer} can\'t take the mandatory action and must restart his turn or exchange/cook'),
-    'descriptionmyturn' => clienttranslate(
-      '${you} can\'t take the mandatory action. Restart your turn or exchange/cook to make it possible'
-    ),
+    'description' => '',
+    'descriptionmyturn' => '',
     'type' => 'activeplayer',
     'args' => 'argsImpossibleAction',
     'possibleactions' => ['actRestart'],
@@ -341,7 +339,7 @@ $machinestates = [
     'name' => 'addKnowledgeFromBoard',
     'type' => 'activeplayer',
     'description' => clienttranslate(
-      '${actplayer} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from your board'
+      '${actplayer} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from its board'
     ),
     'descriptionmyturn' => clienttranslate(
       '${you} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from your board'

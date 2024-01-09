@@ -71,10 +71,10 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
     return [
       'sourceId' => $this->id,
       'description' => clienttranslate(
-        '${actplayer} must choose 1 Technology [II] to Learn and how to replace the others in the deck'
+        '${actplayer} must choose 1 Technology [II] to Learn and how to put the remaining cards in the deck'
       ),
       'descriptionmyturn' => clienttranslate(
-        '${you} must choose 1 Technology [II] to Learn and how to replace the others in the deck'
+        '${you} must choose 1 Technology [II] to Learn and how to put the remaining cards in the deck'
       ),
       '_private' => [
         'active' => [
