@@ -3567,7 +3567,7 @@ var AncientGreekEngine = /** @class */ (function (_super) {
     function AncientGreekEngine(game, validCards, canCreate) {
         var _this = _super.call(this, game, [
             new FrontState('init', function (engine) {
-                var _a;
+                var _a, _b;
                 _this.game.changePageTitle(null);
                 if (engine.data.selectedCard) {
                     (_a = _this.game.builderCardsManager.getCardElement(engine.data.selectedCard)) === null || _a === void 0 ? void 0 : _a.classList.remove('created-card');
@@ -3576,10 +3576,11 @@ var AncientGreekEngine = /** @class */ (function (_super) {
                 engine.data.selectedCard = null;
                 engine.data.discardCards = [];
                 var validCardIds = Object.keys(validCards);
-                _this.game.market.setSelectionMode('single', _this.game.builderCardsManager.getFullCardsByIds(validCardIds));
+                (_b = _this.game.market) === null || _b === void 0 ? void 0 : _b.setSelectionMode('single', _this.game.builderCardsManager.getFullCardsByIds(validCardIds));
                 _this.addConfirmCardSelection();
             }, function () {
-                _this.game.market.setSelectionMode('none');
+                var _a;
+                (_a = _this.game.market) === null || _a === void 0 ? void 0 : _a.setSelectionMode('none');
                 _this.removeConfirmCardSelection();
             }),
             new FrontState('discard', function (engine) {
