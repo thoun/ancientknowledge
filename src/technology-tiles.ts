@@ -66,141 +66,8 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
 
         div.innerHTML = html;
 
-        if (requirement) {
-            this.reduceToFit(div.querySelector('.requirement'));
-            //setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
-        }
-        this.reduceToFit(div.querySelector('.effect'));
-        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
-
-        if (!ignoreTooltip) {            
-            this.game.setTooltip(div.id, this.getTooltip(card));
-        }
+        this.refreshTextSize(card, div, ignoreTooltip);
     }
-
-    private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        if (!innerDiv) {
-            return;
-        }
-        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
-        if (!match) {
-            return;
-        }
-        let fontSize = Number(match[0]);
-        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-        }
-
-        if (attemps < 5) {
-            attemps++;
-            setTimeout(() => this.reduceToFit(outerDiv, attemps));
-        }
-    }
-
-    /*private reduceToFit(outerDiv: HTMLDivElement) {        
-        //if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
-
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        while (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-
-            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
-            
-            console.log('outer div',
-                outerDiv.style.height, 
-                window.getComputedStyle(outerDiv).height, 
-                outerDiv.clientHeight, 
-                outerDiv.offsetHeight, 
-                outerDiv.scrollHeight, 
-                outerDiv.getBoundingClientRect().height
-            );
-            
-            console.log('inner div',
-                innerDiv.style.height, 
-                window.getComputedStyle(innerDiv).height, 
-                innerDiv.clientHeight, 
-                innerDiv.offsetHeight, 
-                innerDiv.scrollHeight, 
-                innerDiv.getBoundingClientRect().height
-            );
-
-            setTimeout(() => {
-                console.log('outer div',
-                    outerDiv.style.height, 
-                    window.getComputedStyle(outerDiv).height, 
-                    outerDiv.clientHeight, 
-                    outerDiv.offsetHeight, 
-                    outerDiv.scrollHeight, 
-                    outerDiv.getBoundingClientRect().height
-                );
-                
-                console.log('inner div',
-                    innerDiv.style.height, 
-                    window.getComputedStyle(innerDiv).height, 
-                    innerDiv.clientHeight, 
-                    innerDiv.offsetHeight, 
-                    innerDiv.scrollHeight, 
-                    innerDiv.getBoundingClientRect().height
-                );
-            }, 0);
-        }
-    }*/
-
-    /*private reduceToFit(outerDiv: HTMLDivElement, fontSize: number | null = null) {        
-        if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
-
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        fontSize = fontSize ?? Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        if (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-
-            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
-            
-            console.log('outer div',
-                outerDiv.style.height, 
-                window.getComputedStyle(outerDiv).height, 
-                outerDiv.clientHeight, 
-                outerDiv.offsetHeight, 
-                outerDiv.scrollHeight, 
-                outerDiv.getBoundingClientRect().height
-            );
-            
-            console.log('inner div',
-                innerDiv.style.height, 
-                window.getComputedStyle(innerDiv).height, 
-                innerDiv.clientHeight, 
-                innerDiv.offsetHeight, 
-                innerDiv.scrollHeight, 
-                innerDiv.getBoundingClientRect().height
-            );
-
-            setTimeout(() => {
-                /_*console.log('outer div',
-                    outerDiv.style.height, 
-                    window.getComputedStyle(outerDiv).height, 
-                    outerDiv.clientHeight, 
-                    outerDiv.offsetHeight, 
-                    outerDiv.scrollHeight, 
-                    outerDiv.getBoundingClientRect().height
-                );
-                
-                console.log('inner div',
-                    innerDiv.style.height, 
-                    window.getComputedStyle(innerDiv).height, 
-                    innerDiv.clientHeight, 
-                    innerDiv.offsetHeight, 
-                    innerDiv.scrollHeight, 
-                    innerDiv.getBoundingClientRect().height
-                );*_/
-                this.reduceToFit(outerDiv, fontSize);
-            }, 100);
-        }
-    }*/
 
     private getType(type: string) {
         switch (type) {
@@ -290,5 +157,41 @@ class TechnologyTilesManager extends CardManager<TechnologyTile> {
 
     public getFullCardsByIds(ids: string[]): TechnologyTile[] {
         return ids.map(id => this.getFullCardById(id));
+    }
+    
+    public onGameLoadingComplete() {
+        (this as any).stocks.forEach((stock: CardStock<TechnologyTile>) => stock.getCards().forEach(card => {
+            const frontDiv = this.getCardElement(card)?.querySelector('.front') as HTMLElement;
+            if (frontDiv) {
+                this.refreshTextSize(card, frontDiv);
+            }
+        }));
+    }
+
+    private refreshTextSize(card: TechnologyTile, frontDiv: HTMLElement, ignoreTooltip: boolean = false) {
+        if (card.requirement?.length > 0) {
+            this.reduceToFit(frontDiv.querySelector('.requirement'));
+        }
+        this.reduceToFit(frontDiv.querySelector('.effect'));
+
+        if (!ignoreTooltip) {            
+            this.game.setTooltip(frontDiv.id, this.getTooltip(card));
+        }
+    }
+
+    private reduceToFit(outerDiv: HTMLDivElement) {
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        if (!innerDiv) {
+            return;
+        }
+        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        let fontSize = Number(match[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+        }
     }
 }

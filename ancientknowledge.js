@@ -2258,34 +2258,7 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         var html = "";
         html += "\n        <div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_a = _(card.name)) !== null && _a !== void 0 ? _a : '', "\n                <div class=\"country\">").concat((_b = _(card.country)) !== null && _b !== void 0 ? _b : '', "</div>\n            </div>\n        </div>\n        <div class=\"effect\"><div>").concat((_d = (_c = card.effect) === null || _c === void 0 ? void 0 : _c.map(function (text) { return formatTextIcons(_(text)); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _d !== void 0 ? _d : '', "</div></div>\n        ");
         div.innerHTML = html;
-        this.reduceToFit(div.querySelector('.effect'));
-        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
-        if (!ignoreTooltip) {
-            this.game.setTooltip(div.id, this.getTooltip(card));
-        }
-    };
-    BuilderCardsManager.prototype.reduceToFit = function (outerDiv, attemps) {
-        var _this = this;
-        if (attemps === void 0) { attemps = 0; }
-        var innerDiv = outerDiv.getElementsByTagName('div')[0];
-        if (!innerDiv) {
-            return;
-        }
-        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
-        if (!match) {
-            return;
-        }
-        var fontSize = Number(match[0]);
-        //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
-        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
-            fontSize--;
-            innerDiv.style.fontSize = "".concat(fontSize, "px");
-        }
-        if (attemps < 5) {
-            attemps++;
-            setTimeout(function () { return _this.reduceToFit(outerDiv, attemps); });
-        }
+        this.refreshTextSize(card, div, ignoreTooltip);
     };
     BuilderCardsManager.prototype.getType = function (cardId) {
         var typeLetter = cardId.substring(0, 1);
@@ -2338,6 +2311,38 @@ var BuilderCardsManager = /** @class */ (function (_super) {
         var _this = this;
         return ids.map(function (id) { return _this.getFullCardById(id); });
     };
+    BuilderCardsManager.prototype.onGameLoadingComplete = function () {
+        var _this = this;
+        this.stocks.forEach(function (stock) { return stock.getCards().forEach(function (card) {
+            var _a;
+            var frontDiv = (_a = _this.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.querySelector('.front');
+            if (frontDiv) {
+                _this.refreshTextSize(card, frontDiv);
+            }
+        }); });
+    };
+    BuilderCardsManager.prototype.refreshTextSize = function (card, frontDiv, ignoreTooltip) {
+        if (ignoreTooltip === void 0) { ignoreTooltip = false; }
+        this.reduceToFit(frontDiv.querySelector('.effect'));
+        if (!ignoreTooltip) {
+            this.game.setTooltip(frontDiv.id, this.getTooltip(card));
+        }
+    };
+    BuilderCardsManager.prototype.reduceToFit = function (outerDiv) {
+        var innerDiv = outerDiv.getElementsByTagName('div')[0];
+        if (!innerDiv) {
+            return;
+        }
+        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        var fontSize = Number(match[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = "".concat(fontSize, "px");
+        }
+    };
     return BuilderCardsManager;
 }(CardManager));
 var TILE_COLORS = {
@@ -2383,138 +2388,8 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
         }
         html += "<div class=\"name-box\">\n            <div class=\"name\">\n                ".concat((_c = _(card.name)) !== null && _c !== void 0 ? _c : '', "\n            </div>\n        </div>\n        <div class=\"effect\">\n            <div>").concat((_e = (_d = card.effect) === null || _d === void 0 ? void 0 : _d.map(function (text) { return formatTextIcons(_(text)); }).join("<br>").replace(/\n+/g, "<br>")) !== null && _e !== void 0 ? _e : '', "</div>\n        </div>\n        ");
         div.innerHTML = html;
-        if (requirement) {
-            this.reduceToFit(div.querySelector('.requirement'));
-            //setTimeout(() => this.reduceToFit(div.querySelector('.requirement')), 2000);
-        }
-        this.reduceToFit(div.querySelector('.effect'));
-        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
-        if (!ignoreTooltip) {
-            this.game.setTooltip(div.id, this.getTooltip(card));
-        }
+        this.refreshTextSize(card, div, ignoreTooltip);
     };
-    TechnologyTilesManager.prototype.reduceToFit = function (outerDiv, attemps) {
-        var _this = this;
-        if (attemps === void 0) { attemps = 0; }
-        var innerDiv = outerDiv.getElementsByTagName('div')[0];
-        if (!innerDiv) {
-            return;
-        }
-        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
-        if (!match) {
-            return;
-        }
-        var fontSize = Number(match[0]);
-        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = "".concat(fontSize, "px");
-        }
-        if (attemps < 5) {
-            attemps++;
-            setTimeout(function () { return _this.reduceToFit(outerDiv, attemps); });
-        }
-    };
-    /*private reduceToFit(outerDiv: HTMLDivElement) {
-        //if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
-
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        let fontSize = Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        while (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-
-            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
-            
-            console.log('outer div',
-                outerDiv.style.height,
-                window.getComputedStyle(outerDiv).height,
-                outerDiv.clientHeight,
-                outerDiv.offsetHeight,
-                outerDiv.scrollHeight,
-                outerDiv.getBoundingClientRect().height
-            );
-            
-            console.log('inner div',
-                innerDiv.style.height,
-                window.getComputedStyle(innerDiv).height,
-                innerDiv.clientHeight,
-                innerDiv.offsetHeight,
-                innerDiv.scrollHeight,
-                innerDiv.getBoundingClientRect().height
-            );
-
-            setTimeout(() => {
-                console.log('outer div',
-                    outerDiv.style.height,
-                    window.getComputedStyle(outerDiv).height,
-                    outerDiv.clientHeight,
-                    outerDiv.offsetHeight,
-                    outerDiv.scrollHeight,
-                    outerDiv.getBoundingClientRect().height
-                );
-                
-                console.log('inner div',
-                    innerDiv.style.height,
-                    window.getComputedStyle(innerDiv).height,
-                    innerDiv.clientHeight,
-                    innerDiv.offsetHeight,
-                    innerDiv.scrollHeight,
-                    innerDiv.getBoundingClientRect().height
-                );
-            }, 0);
-        }
-    }*/
-    /*private reduceToFit(outerDiv: HTMLDivElement, fontSize: number | null = null) {
-        if (!outerDiv.closest('#technology-tile-T12_Mummification')) { return; }
-
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        fontSize = fontSize ?? Number(window.getComputedStyle(innerDiv).fontSize.match(/\d+/)[0]);
-        if (innerDiv.clientHeight > outerDiv.clientHeight && fontSize > 5) {
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-
-            //console.log(innerDiv.clientHeight, outerDiv.clientHeight);
-            
-            console.log('outer div',
-                outerDiv.style.height,
-                window.getComputedStyle(outerDiv).height,
-                outerDiv.clientHeight,
-                outerDiv.offsetHeight,
-                outerDiv.scrollHeight,
-                outerDiv.getBoundingClientRect().height
-            );
-            
-            console.log('inner div',
-                innerDiv.style.height,
-                window.getComputedStyle(innerDiv).height,
-                innerDiv.clientHeight,
-                innerDiv.offsetHeight,
-                innerDiv.scrollHeight,
-                innerDiv.getBoundingClientRect().height
-            );
-
-            setTimeout(() => {
-                /_*console.log('outer div',
-                    outerDiv.style.height,
-                    window.getComputedStyle(outerDiv).height,
-                    outerDiv.clientHeight,
-                    outerDiv.offsetHeight,
-                    outerDiv.scrollHeight,
-                    outerDiv.getBoundingClientRect().height
-                );
-                
-                console.log('inner div',
-                    innerDiv.style.height,
-                    window.getComputedStyle(innerDiv).height,
-                    innerDiv.clientHeight,
-                    innerDiv.offsetHeight,
-                    innerDiv.scrollHeight,
-                    innerDiv.getBoundingClientRect().height
-                );*_/
-                this.reduceToFit(outerDiv, fontSize);
-            }, 100);
-        }
-    }*/
     TechnologyTilesManager.prototype.getType = function (type) {
         switch (type) {
             case 'ancient': return _('Ancient');
@@ -2561,6 +2436,42 @@ var TechnologyTilesManager = /** @class */ (function (_super) {
     TechnologyTilesManager.prototype.getFullCardsByIds = function (ids) {
         var _this = this;
         return ids.map(function (id) { return _this.getFullCardById(id); });
+    };
+    TechnologyTilesManager.prototype.onGameLoadingComplete = function () {
+        var _this = this;
+        this.stocks.forEach(function (stock) { return stock.getCards().forEach(function (card) {
+            var _a;
+            var frontDiv = (_a = _this.getCardElement(card)) === null || _a === void 0 ? void 0 : _a.querySelector('.front');
+            if (frontDiv) {
+                _this.refreshTextSize(card, frontDiv);
+            }
+        }); });
+    };
+    TechnologyTilesManager.prototype.refreshTextSize = function (card, frontDiv, ignoreTooltip) {
+        var _a;
+        if (ignoreTooltip === void 0) { ignoreTooltip = false; }
+        if (((_a = card.requirement) === null || _a === void 0 ? void 0 : _a.length) > 0) {
+            this.reduceToFit(frontDiv.querySelector('.requirement'));
+        }
+        this.reduceToFit(frontDiv.querySelector('.effect'));
+        if (!ignoreTooltip) {
+            this.game.setTooltip(frontDiv.id, this.getTooltip(card));
+        }
+    };
+    TechnologyTilesManager.prototype.reduceToFit = function (outerDiv) {
+        var innerDiv = outerDiv.getElementsByTagName('div')[0];
+        if (!innerDiv) {
+            return;
+        }
+        var match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        var fontSize = Number(match[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = "".concat(fontSize, "px");
+        }
     };
     return TechnologyTilesManager;
 }(CardManager));
@@ -3709,6 +3620,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.megalithCounters = [];
         this.pyramidCounters = [];
         this.TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
+        this.isLoadingComplete = false;
         this.actionTimerId = null;
         this._notif_uid_to_log_id = [];
         this._notif_uid_to_mobile_log_id = [];
@@ -3803,6 +3715,17 @@ var AncientKnowledge = /** @class */ (function () {
             this.onEnteringEndScore(true);
         }
         log("Ending game setup");
+    };
+    /*
+     * [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done
+     */
+    AncientKnowledge.prototype.setLoader = function (value, max) {
+        this.inherited(arguments);
+        if (!this.isLoadingComplete && value >= 100) {
+            this.isLoadingComplete = true;
+            this.builderCardsManager.onGameLoadingComplete();
+            this.technologyTilesManager.onGameLoadingComplete();
+        }
     };
     ///////////////////////////////////////////////////
     //// Game & client states
