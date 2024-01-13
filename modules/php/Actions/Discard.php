@@ -99,7 +99,7 @@ class Discard extends \AK\Models\Action
     // Discard cards
     $cards = Cards::getMany($cardIds);
     Cards::discard($cardIds);
-    Notifications::discardCards($player, $cards);
+    Notifications::discardCards($player, $cards, null, null, ['fromBoard' => $this->getCtxArg('constraint') === ARTEFACT]);
 
     $this->resolveAction(['n' => count($cardIds)]);
   }

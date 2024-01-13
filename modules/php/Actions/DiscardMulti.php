@@ -104,7 +104,7 @@ class DiscardMulti extends \AK\Models\Action
     if (count($cardIds) > 0) {
       $cards = Cards::getMany($cardIds);
       Cards::discard($cardIds);
-      Notifications::discardCards($player, $cards);
+      Notifications::discardCards($player, $cards, null, null, ['fromBoard' => $this->getLocation() != 'hand']);
     }
 
     // Make the player inactive
