@@ -45,6 +45,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     
     private TOOLTIP_DELAY = document.body.classList.contains('touch-device') ? 1500 : undefined;
 
+    private isLoadingComplete = false;
     private actionTimerId = null;
     private _notif_uid_to_log_id = [];
     private _notif_uid_to_mobile_log_id = [];
@@ -164,6 +165,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
 
         log( "Ending game setup" );
+    }
+
+    /*
+     * [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done
+     */
+    setLoader(value,max){
+        (this as any).inherited(arguments);
+        if (!this.isLoadingComplete && value >= 100) {
+          this.isLoadingComplete = true;
+          
+          this.builderCardsManager.onGameLoadingComplete();
+          this.technologyTilesManager.onGameLoadingComplete();
+        }
     }
 
     ///////////////////////////////////////////////////

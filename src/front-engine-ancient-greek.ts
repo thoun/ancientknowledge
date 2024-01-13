@@ -22,11 +22,11 @@ class AncientGreekEngine extends FrontEngine<AncientGreekEngineData> {
                     engine.data.discardCards = [];
 
                     const validCardIds = Object.keys(validCards);
-                    this.game.market.setSelectionMode('single', this.game.builderCardsManager.getFullCardsByIds(validCardIds));
+                    this.game.market?.setSelectionMode('single', this.game.builderCardsManager.getFullCardsByIds(validCardIds));
                     this.addConfirmCardSelection();
                 },
                 () => {
-                    this.game.market.setSelectionMode('none');
+                    this.game.market?.setSelectionMode('none');
                     this.removeConfirmCardSelection();
                 }
             ),

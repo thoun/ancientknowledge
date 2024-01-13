@@ -72,35 +72,7 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
 
         div.innerHTML = html;
 
-        this.reduceToFit(div.querySelector('.effect'));
-        //setTimeout(() => this.reduceToFit(div.querySelector('.effect')), 2000);
-
-        if (!ignoreTooltip) {            
-            this.game.setTooltip(div.id, this.getTooltip(card));
-        }
-    }
-
-    private reduceToFit(outerDiv: HTMLDivElement, attemps: number = 0) {
-        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
-        if (!innerDiv) {
-            return;
-        }
-        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
-        if (!match) {
-            return;
-        }
-        let fontSize = Number(match[0]);
-        //console.log('card', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
-        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
-            //console.log('card while', innerDiv.clientHeight, outerDiv.clientHeight, fontSize);
-            fontSize--;
-            innerDiv.style.fontSize = `${fontSize}px`;
-        }
-
-        if (attemps < 5) {
-            attemps++;
-            setTimeout(() => this.reduceToFit(outerDiv, attemps));
-        }
+        this.refreshTextSize(card, div, ignoreTooltip);
     }
 
     private getType(cardId: string) {
@@ -206,5 +178,38 @@ class BuilderCardsManager extends CardManager<BuilderCard> {
 
     public getFullCardsByIds(ids: string[]): BuilderCard[] {
         return ids.map(id => this.getFullCardById(id));
+    }
+    
+    public onGameLoadingComplete() {
+        (this as any).stocks.forEach((stock: CardStock<BuilderCard>) => stock.getCards().forEach(card => {
+            const frontDiv = this.getCardElement(card)?.querySelector('.front') as HTMLElement;
+            if (frontDiv) {
+                this.refreshTextSize(card, frontDiv);
+            }
+        }));
+    }
+
+    private refreshTextSize(card: BuilderCard, frontDiv: HTMLElement, ignoreTooltip: boolean = false) {
+        this.reduceToFit(frontDiv.querySelector('.effect'));
+
+        if (!ignoreTooltip) {            
+            this.game.setTooltip(frontDiv.id, this.getTooltip(card));
+        }
+    }
+
+    private reduceToFit(outerDiv: HTMLDivElement) {
+        const innerDiv = outerDiv.getElementsByTagName('div')[0] as HTMLDivElement;
+        if (!innerDiv) {
+            return;
+        }
+        const match = window.getComputedStyle(innerDiv).fontSize.match(/\d+/);
+        if (!match) {
+            return;
+        }
+        let fontSize = Number(match[0]);
+        while ((innerDiv.clientHeight > outerDiv.clientHeight) && fontSize > 5) {
+            fontSize--;
+            innerDiv.style.fontSize = `${fontSize}px`;
+        }
     }
 }
