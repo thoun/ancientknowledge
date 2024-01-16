@@ -339,7 +339,7 @@ $machinestates = [
     'name' => 'addKnowledgeFromBoard',
     'type' => 'activeplayer',
     'description' => clienttranslate(
-      '${actplayer} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from its board'
+      '${actplayer} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from their own board'
     ),
     'descriptionmyturn' => clienttranslate(
       '${you} must choose one building in one opponent\'s timeline to add ${n} <KNOWLEDGE> on it from your board'
