@@ -23,6 +23,9 @@ $gameinfos = [
   // Year of FIRST publication of this game. Can be negative.
   'year' => 2023,
 
+  // Game publisher (use empty string if there is no publisher)
+  'publisher' => 'iello',
+
   // Url of game publisher website
   'publisher_website' => 'https://www.iello.fr/co.uk',
 
@@ -61,7 +64,7 @@ $gameinfos = [
   // Note: if you are NOT using any tie breaker, leave the empty string.
   //
   // Example: 'tie_breaker_description' => totranslate( "Number of remaining cards in hand" ),
-  'tie_breaker_description' => totranslate("Fewer lost knowledge"),
+  'tie_breaker_description' => totranslate('Fewer lost knowledge'),
 
   // If in the game, all losers are equal (no score to rank them or explicit in the rules that losers are not ranked between them), set this to true
   // The game end result will display "Winner" for the 1st player and "Loser" for all other players
