@@ -24,7 +24,7 @@ $gameinfos = [
   'year' => 2023,
 
   // Game publisher (use empty string if there is no publisher)
-  'publisher' => 'iello',
+  'publisher' => 'IELLO',
 
   // Url of game publisher website
   'publisher_website' => 'https://www.iello.fr/co.uk',
