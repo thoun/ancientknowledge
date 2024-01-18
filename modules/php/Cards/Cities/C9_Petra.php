@@ -27,7 +27,7 @@ class C9_Petra extends \AK\Models\Building
   public function getTimelineEffect()
   {
     $player = $this->getPlayer();
-    return $player->getLostKnowledge() > 3 || max($player->countIcons(BUILDINGS)) == 0
+    return $player->getLostKnowledge() > 2 || max($player->countIcons(BUILDINGS)) == 0
       ? null
       : [
         'action' => DRAW,
