@@ -2723,14 +2723,21 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.createTimelineCard = function (card) {
         return __awaiter(this, void 0, void 0, function () {
-            var promise;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.timeline.addCard(card)];
+                    case 0:
+                        if (!(card.location === 'past')) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.past.addCard(card)];
                     case 1:
-                        promise = _a.sent();
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.timeline.addCard(card)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
                         this.setCardKnowledge(card.id, card.knowledge);
-                        return [2 /*return*/, promise];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -2887,8 +2894,28 @@ var PlayerTable = /** @class */ (function () {
         });
     };
     PlayerTable.prototype.declineSlideLeft = function () {
-        var shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
-        return this.timeline.addCards(shiftedCards, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) });
+        return __awaiter(this, void 0, void 0, function () {
+            var shiftedCards, shiftedCardsPast, shiftedCardsTimeline, promises;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
+                        shiftedCardsPast = shiftedCards.filter(function (card) { return card.location === 'past'; });
+                        shiftedCardsTimeline = shiftedCards.filter(function (card) { return card.location !== 'past'; });
+                        promises = [];
+                        if (shiftedCardsPast.length) {
+                            promises.push(this.past.addCards(shiftedCardsPast));
+                        }
+                        if (shiftedCardsTimeline.length) {
+                            promises.push(this.timeline.addCards(shiftedCardsTimeline, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) }));
+                        }
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     PlayerTable.prototype.enterSwap = function (cardIds, fixedCardId) {
         var _a;
