@@ -841,7 +841,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     (this as any).addActionButton(`actCancelSelection_button`, _('Cancel'), () => this.actCancelSelection(), null, null, 'gray');
                     break;
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('none');
+                    this.getCurrentPlayerTable()?.setHandSelectable('none');
                     break;
             }
         }

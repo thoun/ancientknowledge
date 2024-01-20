@@ -4252,7 +4252,7 @@ var AncientKnowledge = /** @class */ (function () {
     //
     AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        var _a;
+        var _a, _b;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
@@ -4357,7 +4357,7 @@ var AncientKnowledge = /** @class */ (function () {
                     this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
                     break;
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('none');
+                    (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable('none');
                     break;
             }
         }
