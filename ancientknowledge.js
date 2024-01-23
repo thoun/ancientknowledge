@@ -2723,14 +2723,21 @@ var PlayerTable = /** @class */ (function () {
     };
     PlayerTable.prototype.createTimelineCard = function (card) {
         return __awaiter(this, void 0, void 0, function () {
-            var promise;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.timeline.addCard(card)];
+                    case 0:
+                        if (!(card.location === 'past')) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.past.addCard(card)];
                     case 1:
-                        promise = _a.sent();
+                        _a.sent();
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.timeline.addCard(card)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
                         this.setCardKnowledge(card.id, card.knowledge);
-                        return [2 /*return*/, promise];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -2887,8 +2894,28 @@ var PlayerTable = /** @class */ (function () {
         });
     };
     PlayerTable.prototype.declineSlideLeft = function () {
-        var shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
-        return this.timeline.addCards(shiftedCards, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) });
+        return __awaiter(this, void 0, void 0, function () {
+            var shiftedCards, shiftedCardsPast, shiftedCardsTimeline, promises;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
+                        shiftedCardsPast = shiftedCards.filter(function (card) { return card.location === 'past'; });
+                        shiftedCardsTimeline = shiftedCards.filter(function (card) { return card.location !== 'past'; });
+                        promises = [];
+                        if (shiftedCardsPast.length) {
+                            promises.push(this.past.addCards(shiftedCardsPast));
+                        }
+                        if (shiftedCardsTimeline.length) {
+                            promises.push(this.timeline.addCards(shiftedCardsTimeline, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) }));
+                        }
+                        return [4 /*yield*/, Promise.all(promises)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     PlayerTable.prototype.enterSwap = function (cardIds, fixedCardId) {
         var _a;
@@ -4225,7 +4252,7 @@ var AncientKnowledge = /** @class */ (function () {
     //
     AncientKnowledge.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
-        var _a;
+        var _a, _b;
         if (this.isCurrentPlayerActive()) {
             switch (stateName) {
                 case 'initialSelection':
@@ -4330,7 +4357,7 @@ var AncientKnowledge = /** @class */ (function () {
                     this.addActionButton("actCancelSelection_button", _('Cancel'), function () { return _this.actCancelSelection(); }, null, null, 'gray');
                     break;
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('none');
+                    (_b = this.getCurrentPlayerTable()) === null || _b === void 0 ? void 0 : _b.setHandSelectable('none');
                     break;
             }
         }
@@ -4880,58 +4907,50 @@ var AncientKnowledge = /** @class */ (function () {
             _this.addLogClass();
         });
         var notifs = [
-            ['drawCards', ANIMATION_MS],
-            ['pDrawCards', ANIMATION_MS],
-            ['keep', ANIMATION_MS],
-            ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', ANIMATION_MS],
-            ['destroyCard', ANIMATION_MS],
-            ['createCard', undefined],
-            ['fillPool', undefined],
-            ['discardLostKnowledge', 1],
-            ['learnTech', undefined],
-            ['clearTurn', 1],
-            ['refreshUI', 1],
-            ['refreshHand', 1],
-            ['declineCard', undefined],
-            ['declineSlideLeft', undefined],
-            ['addKnowledge', ANIMATION_MS],
-            ['addKnowledgeFromBoard', ANIMATION_MS],
-            ['removeKnowledge', ANIMATION_MS],
-            ['clearTechBoard', ANIMATION_MS],
-            ['midGameReached', ANIMATION_MS],
-            ['fillUpTechBoard', ANIMATION_MS],
-            ['swapCards', ANIMATION_MS],
-            ['rotateCards', ANIMATION_MS],
-            ['straightenCards', ANIMATION_MS],
-            ['keepAndDiscard', ANIMATION_MS],
-            ['placeAtDeckBottom', ANIMATION_MS],
-            ['stealCard', ANIMATION_MS],
-            ['pStealCard', ANIMATION_MS],
-            ['moveCard', undefined],
-            ['mediumMessage', 1000],
-            ['endOfGameTriggered', 1],
-            ['scoringEntry', SCORE_ANIMATION_MS],
-            ['updateScores', 1],
-            ['loadBug', 1],
+            'drawCards',
+            'pDrawCards',
+            'keep',
+            'discardCards',
+            'pDiscardCards',
+            'destroyCard',
+            'createCard',
+            'fillPool',
+            'discardLostKnowledge',
+            'learnTech',
+            'clearTurn',
+            'refreshUI',
+            'refreshHand',
+            'declineCard',
+            'declineSlideLeft',
+            'addKnowledge',
+            'addKnowledgeFromBoard',
+            'removeKnowledge',
+            'clearTechBoard',
+            'midGameReached',
+            'fillUpTechBoard',
+            'swapCards',
+            'rotateCards',
+            'straightenCards',
+            'keepAndDiscard',
+            'placeAtDeckBottom',
+            'stealCard',
+            'pStealCard',
+            'moveCard',
+            'mediumMessage',
+            'endOfGameTriggered',
+            'scoringEntry',
+            'updateScores',
+            'loadBug',
         ];
-        notifs.forEach(function (notif) {
-            dojo.subscribe(notif[0], _this, function (notifDetails) {
-                log("notif_".concat(notif[0]), notifDetails.args);
-                var promise = _this["notif_".concat(notif[0])](notifDetails.args);
+        notifs.forEach(function (notifName) {
+            dojo.subscribe(notifName, _this, function (notifDetails) {
+                log("notif_".concat(notifName), notifDetails.args);
                 if (notifDetails.args.player_id && notifDetails.args.icons) {
                     _this.updateIcons(notifDetails.args.player_id, notifDetails.args.icons);
                 }
-                var promises = [];
-                if (!isNaN(notif[1])) {
-                    promises.push(sleep(notif[1]));
-                }
-                if (promise) {
-                    promises.push(promise);
-                }
+                var promise = _this["notif_".concat(notifName)](notifDetails.args);
+                var promises = promise ? [promise] : [];
                 var minDuration = 1;
-                // tell the UI notification ends, if the function returned a promise
-                promise === null || promise === void 0 ? void 0 : promise.then(function () { return _this.notifqueue.onSynchronousNotificationEnd(); });
                 var msg = _this.format_string_recursive(notifDetails.log, notifDetails.args);
                 if (msg != '') {
                     $('gameaction_status').innerHTML = msg;
@@ -4948,16 +4967,16 @@ var AncientKnowledge = /** @class */ (function () {
                     _this.notifqueue.setSynchronousDuration(0);
                 }
             });
-            _this.notifqueue.setSynchronous(notif[0], undefined);
+            _this.notifqueue.setSynchronous(notifName, undefined);
         });
         if (isDebug) {
-            notifs.forEach(function (notif) {
-                if (!_this["notif_".concat(notif[0])]) {
-                    console.warn("notif_".concat(notif[0], " function is not declared, but listed in setupNotifications"));
+            notifs.forEach(function (notifName) {
+                if (!_this["notif_".concat(notifName)]) {
+                    console.warn("notif_".concat(notifName, " function is not declared, but listed in setupNotifications"));
                 }
             });
             Object.getOwnPropertyNames(AncientKnowledge.prototype).filter(function (item) { return item.startsWith('notif_'); }).map(function (item) { return item.slice(6); }).forEach(function (item) {
-                if (!notifs.some(function (notif) { return notif[0] == item; })) {
+                if (!notifs.some(function (notifName) { return notifName == item; })) {
                     console.warn("notif_".concat(item, " function is declared, but not listed in setupNotifications"));
                 }
             });
@@ -5192,16 +5211,38 @@ var AncientKnowledge = /** @class */ (function () {
             this.getCurrentPlayerTable().removeCardsFromHand([this.builderCardsManager.getFullCard(card)]);
         }
     };
-    AncientKnowledge.prototype.notif_mediumMessage = function () { };
+    AncientKnowledge.prototype.notif_mediumMessage = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, sleep(1000)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     AncientKnowledge.prototype.notif_endOfGameTriggered = function (animate) {
         if (animate === void 0) { animate = true; }
         dojo.place("<div id=\"last-round\">\n            <span class=\"last-round-text ".concat(animate ? 'animate' : '', "\">").concat(_("This is the final round!"), "</span>\n        </div>"), 'page-title');
     };
     AncientKnowledge.prototype.notif_scoringEntry = function (args) {
-        if (!document.getElementById('scoretr').childElementCount) {
-            this.onEnteringEndScore();
-        }
-        document.getElementById("score-".concat(args.category, "-").concat(args.player_id)).innerHTML = "".concat(args.n);
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!document.getElementById('scoretr').childElementCount) {
+                            this.onEnteringEndScore();
+                        }
+                        document.getElementById("score-".concat(args.category, "-").concat(args.player_id)).innerHTML = "".concat(args.n);
+                        return [4 /*yield*/, sleep(SCORE_ANIMATION_MS)];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
     };
     AncientKnowledge.prototype.setScore = function (playerId, score) {
         if (this.scoreCtrl[playerId]) {

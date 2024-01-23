@@ -841,7 +841,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     (this as any).addActionButton(`actCancelSelection_button`, _('Cancel'), () => this.actCancelSelection(), null, null, 'gray');
                     break;
                 case 'discardMulti':
-                    this.getCurrentPlayerTable().setHandSelectable('none');
+                    this.getCurrentPlayerTable()?.setHandSelectable('none');
                     break;
             }
         }
@@ -1595,63 +1595,53 @@ class AncientKnowledge implements AncientKnowledgeGame {
         });
 
         const notifs = [
-            ['drawCards', ANIMATION_MS],
-            ['pDrawCards', ANIMATION_MS],
-            ['keep', ANIMATION_MS],
-            ['discardCards', ANIMATION_MS],
-            ['pDiscardCards', ANIMATION_MS],
-            ['destroyCard', ANIMATION_MS],
-            ['createCard', undefined],
-            ['fillPool', undefined],
-            ['discardLostKnowledge', 1],
-            ['learnTech', undefined],
-            ['clearTurn', 1],
-            ['refreshUI', 1],
-            ['refreshHand', 1],
-            ['declineCard', undefined],
-            ['declineSlideLeft', undefined],
-            ['addKnowledge', ANIMATION_MS],
-            ['addKnowledgeFromBoard', ANIMATION_MS],
-            ['removeKnowledge', ANIMATION_MS],
-            ['clearTechBoard', ANIMATION_MS],
-            ['midGameReached', ANIMATION_MS],
-            ['fillUpTechBoard', ANIMATION_MS],
-            ['swapCards', ANIMATION_MS],
-            ['rotateCards', ANIMATION_MS],
-            ['straightenCards', ANIMATION_MS],
-            ['keepAndDiscard', ANIMATION_MS],
-            ['placeAtDeckBottom', ANIMATION_MS],
-            ['stealCard', ANIMATION_MS],
-            ['pStealCard', ANIMATION_MS],
-            ['moveCard', undefined],
-            ['mediumMessage', 1000],
-            ['endOfGameTriggered', 1],
-            ['scoringEntry', SCORE_ANIMATION_MS],
-            ['updateScores', 1],
-            ['loadBug', 1],
+            'drawCards',
+            'pDrawCards',
+            'keep',
+            'discardCards',
+            'pDiscardCards',
+            'destroyCard',
+            'createCard',
+            'fillPool',
+            'discardLostKnowledge',
+            'learnTech',
+            'clearTurn',
+            'refreshUI',
+            'refreshHand',
+            'declineCard',
+            'declineSlideLeft',
+            'addKnowledge',
+            'addKnowledgeFromBoard',
+            'removeKnowledge',
+            'clearTechBoard',
+            'midGameReached',
+            'fillUpTechBoard',
+            'swapCards',
+            'rotateCards',
+            'straightenCards',
+            'keepAndDiscard',
+            'placeAtDeckBottom',
+            'stealCard',
+            'pStealCard',
+            'moveCard',
+            'mediumMessage',
+            'endOfGameTriggered',
+            'scoringEntry',
+            'updateScores',
+            'loadBug',
         ];
     
-        notifs.forEach((notif) => {
-            dojo.subscribe(notif[0], this, (notifDetails: Notif<any>) => {
-                log(`notif_${notif[0]}`, notifDetails.args);
-
-                const promise = this[`notif_${notif[0]}`](notifDetails.args);
+        notifs.forEach((notifName) => {
+            dojo.subscribe(notifName, this, (notifDetails: Notif<any>) => {
+                log(`notif_${notifName}`, notifDetails.args);
 
                 if (notifDetails.args.player_id && notifDetails.args.icons) {
                     this.updateIcons(notifDetails.args.player_id, notifDetails.args.icons);
                 }
 
-                const promises = [];
-                if (!isNaN(notif[1] as number)) {
-                    promises.push(sleep(notif[1] as number));
-                }
-                if (promise) {
-                    promises.push(promise);
-                }
+                const promise = this[`notif_${notifName}`](notifDetails.args);
+                const promises = promise ? [promise] : [];
                 let minDuration = 1;
-                // tell the UI notification ends, if the function returned a promise
-                promise?.then(() => (this as any).notifqueue.onSynchronousNotificationEnd());
-
                 let msg = this.format_string_recursive(notifDetails.log, notifDetails.args);
                 if (msg != '') {
                     $('gameaction_status').innerHTML = msg;
@@ -1669,18 +1659,18 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     (this as any).notifqueue.setSynchronousDuration(0);
                 }
             });
-            (this as any).notifqueue.setSynchronous(notif[0], undefined);
+            (this as any).notifqueue.setSynchronous(notifName, undefined);
         });
 
         if (isDebug) {
-            notifs.forEach((notif) => {
-                if (!this[`notif_${notif[0]}`]) {
-                    console.warn(`notif_${notif[0]} function is not declared, but listed in setupNotifications`);
+            notifs.forEach(notifName => {
+                if (!this[`notif_${notifName}`]) {
+                    console.warn(`notif_${notifName} function is not declared, but listed in setupNotifications`);
                 }
             });
 
             Object.getOwnPropertyNames(AncientKnowledge.prototype).filter(item => item.startsWith('notif_')).map(item => item.slice(6)).forEach(item => {
-                if (!notifs.some(notif => notif[0] == item)) {
+                if (!notifs.some(notifName => notifName == item)) {
                     console.warn(`notif_${item} function is declared, but not listed in setupNotifications`);
                 }
             });
@@ -1908,7 +1898,9 @@ class AncientKnowledge implements AncientKnowledgeGame {
         }
     }
     
-    notif_mediumMessage() {}    
+    async notif_mediumMessage() {
+        await sleep(1000);
+    }    
     
     notif_endOfGameTriggered(animate: boolean = true) {
         dojo.place(`<div id="last-round">
@@ -1916,12 +1908,14 @@ class AncientKnowledge implements AncientKnowledgeGame {
         </div>`, 'page-title');
     }
     
-    notif_scoringEntry(args: NotifScoringEntryArgs) {
+    async notif_scoringEntry(args: NotifScoringEntryArgs) {
         if (!document.getElementById('scoretr').childElementCount) {
             this.onEnteringEndScore();
         }
 
         document.getElementById(`score-${args.category}-${args.player_id}`).innerHTML = `${args.n}`;
+
+        await sleep(SCORE_ANIMATION_MS);
     }
 
     private setScore(playerId: number, score: number) {

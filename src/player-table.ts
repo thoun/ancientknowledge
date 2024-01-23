@@ -155,9 +155,12 @@ class PlayerTable {
     }
     
     private async createTimelineCard(card: BuilderCard): Promise<any> {
-        const promise = await this.timeline.addCard(card);
+        if (card.location === 'past') {
+            await this.past.addCard(card);
+        } else {
+            await this.timeline.addCard(card);
+        }
         this.setCardKnowledge(card.id, card.knowledge);
-        return promise;
     }
     
     public addTechnologyTile(card: TechnologyTile): Promise<any> {
@@ -326,12 +329,24 @@ class PlayerTable {
         return promise;
     }
     
-    public declineSlideLeft(): Promise<any> {
+    public async declineSlideLeft(): Promise<any> {
         const shiftedCards = this.timeline.getCards().map(card => ({
             ...card,
             location: card.location.replace(/(\d)/, a => `${Number(a) - 1}`)
         }));
-        return this.timeline.addCards(shiftedCards, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) });
+
+        const shiftedCardsPast = shiftedCards.filter(card => card.location === 'past');
+        const shiftedCardsTimeline = shiftedCards.filter(card => card.location !== 'past');
+
+        const promises = [];
+        if (shiftedCardsPast.length) {
+            promises.push(this.past.addCards(shiftedCardsPast));
+        }
+        if (shiftedCardsTimeline.length) {
+            promises.push(this.timeline.addCards(shiftedCardsTimeline, { animation: new BgaSlideAnimation({ duration: ANIMATION_MS * 3, transitionTimingFunction: 'ease-in-out', }) }));
+        }
+
+        await Promise.all(promises);
     }
     
     public enterSwap(cardIds: string[], fixedCardId: string) {
