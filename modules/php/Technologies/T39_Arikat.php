@@ -22,14 +22,18 @@ class T39_Arikat extends \AK\Models\Technology
     // How many types are not in the past ?
     $icons = $player->countIcons(BUILDINGS);
     $nNotEnough = 0;
+    $nAlmostEnough = 0;
     foreach ($icons as $type => $n) {
       if ($n < 3) {
         $nNotEnough++;
+        if($n == 2){
+          $nAlmostEnough++;
+        }
       }
     }
 
     // Must be 0 or 1 if we have CandiSukuh
-    return $nNotEnough <= $player->getIconReduction();
+    return $nNotEnough == 0 || ($player->getIconReduction() == 1 && $nNotEnough == 1 && $nAlmostEnough == 1);
   }
 
   public function getScore()
