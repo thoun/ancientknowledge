@@ -268,10 +268,10 @@ interface NotifRefreshHandArgs {
     hand: BuilderCard[];
 }
 
-// declineCard
-interface NotifDeclineCardArgs {
+// declineSlideLeft
+interface NotifDeclineSlideLeftArgs {
     player_id: number;
-    card: BuilderCard;
+    cards: { [cardId: string]: BuilderCard };
 }
 
 // declineCard

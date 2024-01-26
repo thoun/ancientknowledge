@@ -305,7 +305,7 @@ class Notifications
     ]);
   }
 
-  public static function declineSlideLeft($player, $n)
+  public static function declineSlideLeft($player, $n, $cards)
   {
     self::notifyAll(
       'declineSlideLeft',
@@ -313,6 +313,7 @@ class Notifications
       [
         'player' => $player,
         'n' => $n,
+        'cards' => $cards,
       ]
     );
   }

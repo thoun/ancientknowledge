@@ -2893,15 +2893,21 @@ var PlayerTable = /** @class */ (function () {
             });
         });
     };
-    PlayerTable.prototype.declineSlideLeft = function () {
+    PlayerTable.prototype.declineSlideLeft = function (cards) {
         return __awaiter(this, void 0, void 0, function () {
-            var shiftedCards, shiftedCardsPast, shiftedCardsTimeline, promises;
+            var shiftedCardsPast, shiftedCardsTimeline, promises;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        shiftedCards = this.timeline.getCards().map(function (card) { return (__assign(__assign({}, card), { location: card.location.replace(/(\d)/, function (a) { return "".concat(Number(a) - 1); }) })); });
-                        shiftedCardsPast = shiftedCards.filter(function (card) { return card.location === 'past'; });
-                        shiftedCardsTimeline = shiftedCards.filter(function (card) { return card.location !== 'past'; });
+                        // for debug purposes
+                        try {
+                            if (cards.some(function (card) { return card.location.startsWith('timeline-0'); })) {
+                                console.warn('timeline-0', cards.filter(function (card) { return card.location.startsWith('timeline-0'); }));
+                            }
+                        }
+                        catch (e) { }
+                        shiftedCardsPast = cards.filter(function (card) { return card.location === 'past'; });
+                        shiftedCardsTimeline = cards.filter(function (card) { return card.location !== 'past'; });
                         promises = [];
                         if (shiftedCardsPast.length) {
                             promises.push(this.past.addCards(shiftedCardsPast));
@@ -5129,7 +5135,7 @@ var AncientKnowledge = /** @class */ (function () {
         return this.getPlayerTable(player_id).declineCard(card, n);
     };
     AncientKnowledge.prototype.notif_declineSlideLeft = function (args) {
-        return this.getPlayerTable(args.player_id).declineSlideLeft();
+        return this.getPlayerTable(args.player_id).declineSlideLeft(this.builderCardsManager.getFullCards(Object.values(args.cards)));
     };
     AncientKnowledge.prototype.notif_addKnowledge = function (args) {
         var _this = this;
