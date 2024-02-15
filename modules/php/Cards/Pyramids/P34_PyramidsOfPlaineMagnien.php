@@ -1,4 +1,5 @@
 <?php
+
 namespace AK\Cards\Pyramids;
 
 class P34_PyramidsOfPlaineMagnien extends \AK\Models\Building
@@ -31,7 +32,7 @@ class P34_PyramidsOfPlaineMagnien extends \AK\Models\Building
 
   public function getDeclineEffect()
   {
-    return [
+    return $this->getPlayer()->getHand()->count() == 10 ? null : [
       'action' => DRAW_AND_KEEP,
       'args' => [
         'n' => 8,
