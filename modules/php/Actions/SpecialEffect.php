@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Effects;
 
 class SpecialEffect extends \AK\Models\Action
@@ -54,7 +56,10 @@ class SpecialEffect extends \AK\Models\Action
       $card->$method(...$arguments);
       $this->resolveAction();
     } elseif (\method_exists($card, $method2)) {
-      $card->$method2(...$arguments);
+      $result = $card->$method2(...$arguments);
+      if ($result === true) {
+        $this->resolveAction();
+      }
     }
   }
 
