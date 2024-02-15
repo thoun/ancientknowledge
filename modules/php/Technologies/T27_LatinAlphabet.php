@@ -1,4 +1,5 @@
 <?php
+
 namespace AK\Technologies;
 
 use AK\Core\Notifications;
@@ -29,8 +30,8 @@ class T27_LatinAlphabet extends \AK\Models\Technology
 
   public function getImmediateEffect()
   {
-    $techs = Technologies::getPool()->filter(fn($tech) => $tech->getLevel() == 2);
-    return empty($techs)
+    $techs = Technologies::getPool()->filter(fn ($tech) => $tech->getLevel() == 2);
+    return $techs->empty()
       ? null
       : [
         'action' => SPECIAL_EFFECT,
@@ -48,7 +49,7 @@ class T27_LatinAlphabet extends \AK\Models\Technology
 
   public function argsChooseTech()
   {
-    $techs = Technologies::getPool()->filter(fn($tech) => $tech->getLevel() == 2);
+    $techs = Technologies::getPool()->filter(fn ($tech) => $tech->getLevel() == 2);
 
     return [
       'sourceId' => $this->id,
