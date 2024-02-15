@@ -329,14 +329,16 @@ class PlayerTable {
         return promise;
     }
     
-    public async declineSlideLeft(): Promise<any> {
-        const shiftedCards = this.timeline.getCards().map(card => ({
-            ...card,
-            location: card.location.replace(/(\d)/, a => `${Number(a) - 1}`)
-        }));
+    public async declineSlideLeft(cards: BuilderCard[]): Promise<any> {
+        // for debug purposes
+        try {
+            if (cards.some(card => card.location.startsWith('timeline-0'))) {
+                console.warn('timeline-0', cards.filter(card => card.location.startsWith('timeline-0')));
+            }
+        } catch (e) {}
 
-        const shiftedCardsPast = shiftedCards.filter(card => card.location === 'past');
-        const shiftedCardsTimeline = shiftedCards.filter(card => card.location !== 'past');
+        const shiftedCardsPast = cards.filter(card => card.location === 'past');
+        const shiftedCardsTimeline = cards.filter(card => card.location !== 'past');
 
         const promises = [];
         if (shiftedCardsPast.length) {

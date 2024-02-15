@@ -87,7 +87,8 @@ class DeclinePhase extends \AK\Models\Action
     }
 
     $n = 0;
-    foreach ($player->getTimeline() as $card) {
+    $cards = $player->getTimeline();
+    foreach ($cards as &$card) {
       $n++;
       $spot = $card->getTimelineSpace();
       $spot[0]--;
@@ -95,7 +96,7 @@ class DeclinePhase extends \AK\Models\Action
     }
 
     if ($n > 0) {
-      Notifications::declineSlideLeft($player, $n);
+      Notifications::declineSlideLeft($player, $n, $cards);
     }
     Globals::setDeclinePhase(false);
     $this->resolveAction();

@@ -1811,8 +1811,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.getPlayerTable(player_id).declineCard(card, n);
     }  
 
-    notif_declineSlideLeft(args: NotifDeclineCardArgs) {
-        return this.getPlayerTable(args.player_id).declineSlideLeft();
+    notif_declineSlideLeft(args: NotifDeclineSlideLeftArgs) {
+        return this.getPlayerTable(args.player_id).declineSlideLeft(this.builderCardsManager.getFullCards(Object.values(args.cards)));
     }
     
     notif_addKnowledge(args: NotifAddKnowledgeArgs) {
