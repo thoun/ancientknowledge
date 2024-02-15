@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\States;
+
 use AK\Core\Globals;
 use AK\Core\Engine;
 use AK\Core\Game;
@@ -235,6 +237,10 @@ trait EngineTrait
   public function actUndoToStep($stepId)
   {
     self::checkAction('actRestart');
+    $steps = Log::getUndoableSteps();
+    if (!in_array($stepId, $steps)) {
+      throw new \BgaVisibleSystemException('You cant undo here');
+    }
     Engine::undoToStep($stepId);
   }
 }

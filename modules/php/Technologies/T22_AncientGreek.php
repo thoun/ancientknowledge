@@ -1,8 +1,10 @@
 <?php
+
 namespace AK\Technologies;
 
 use AK\Managers\Cards;
 use AK\Core\Notifications;
+use AK\Core\Engine;
 
 class T22_AncientGreek extends \AK\Models\Technology
 {
@@ -50,6 +52,7 @@ class T22_AncientGreek extends \AK\Models\Technology
   public function reveal()
   {
     Cards::pickForLocation(10, 'deck', 'pending');
+    Engine::checkpoint();
   }
 
   // Prompt player to pick one artefact
@@ -74,7 +77,7 @@ class T22_AncientGreek extends \AK\Models\Technology
 
         return true;
       })
-      ->map(fn($card) => $card->getDiscard());
+      ->map(fn ($card) => $card->getDiscard());
 
     return [
       'sourceId' => $this->id,

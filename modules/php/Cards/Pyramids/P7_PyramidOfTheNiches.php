@@ -1,7 +1,9 @@
 <?php
+
 namespace AK\Cards\Pyramids;
 
 use AK\Managers\Technologies;
+use AK\Core\Engine;
 
 class P7_PyramidOfTheNiches extends \AK\Models\Building
 {
@@ -57,6 +59,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
   public function reveal()
   {
     Technologies::pickForLocation(7, 'deck_2', 'pending');
+    Engine::checkpoint();
   }
 
   public function getChooseTechAndScrapOthersDescription()
@@ -68,7 +71,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
   {
     $player = $this->getPlayer();
     $allTechs = Technologies::getInLocation('pending');
-    $learnableTechs = $allTechs->filter(fn($tech) => $tech->canBePlayed($player));
+    $learnableTechs = $allTechs->filter(fn ($tech) => $tech->canBePlayed($player));
 
     return [
       'sourceId' => $this->id,

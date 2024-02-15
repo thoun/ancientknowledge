@@ -1,8 +1,10 @@
 <?php
+
 namespace AK\Cards\Pyramids;
 
 use AK\Managers\Cards;
 use AK\Core\Notifications;
+use AK\Core\Engine;
 
 class P33_Calakmul extends \AK\Models\Building
 {
@@ -65,5 +67,6 @@ class P33_Calakmul extends \AK\Models\Building
     }
 
     Notifications::drawCards($player, $cards, $this->id);
+    Engine::checkpoint();
   }
 }
