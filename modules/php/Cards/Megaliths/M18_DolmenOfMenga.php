@@ -1,4 +1,5 @@
 <?php
+
 namespace AK\Cards\Megaliths;
 
 class M18_DolmenOfMenga extends \AK\Models\Building
@@ -29,6 +30,7 @@ class M18_DolmenOfMenga extends \AK\Models\Building
   {
     return [
       'action' => CREATE,
+      'optional' => true,
       'args' => ['constraint' => BUILDINGS],
     ];
   }
