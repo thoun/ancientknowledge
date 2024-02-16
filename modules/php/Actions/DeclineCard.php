@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Managers\Technologies;
@@ -47,6 +49,7 @@ class DeclineCard extends \AK\Models\Action
   {
     $player = Players::getActive();
     $card = $this->getCard();
+    $card->setState(-1);
     $space = $card->getTimelineSpace();
     if ($space[0] != 1) {
       $this->resolveAction();

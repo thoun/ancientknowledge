@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
@@ -49,7 +51,7 @@ class Swap extends \AK\Models\Action
     $player = Players::getActive();
     $cardId = $this->getCardId();
     return [
-      'cardIds' => $player->getTimeline()->getIds(),
+      'cardIds' => $player->getTimeline()->filter(fn ($card) => $card->getState() != -1)->getIds(),
       'descSuffix' => is_null($cardId) ? '' : 'fixed',
       'card_id' => $cardId,
       'card_name' => is_null($cardId) ? '' : Cards::getSingle($cardId)->getName(),

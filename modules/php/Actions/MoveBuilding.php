@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
@@ -63,7 +65,7 @@ class MoveBuilding extends \AK\Models\Action
       return [$cardId];
     }
 
-    $cards = $player->getTimeline();
+    $cards = $player->getTimeline()->filter(fn ($card) => $card->getState() != -1);
 
     // Potential constraint on movable cards
     $constraint = $this->getCtxArg('constraint');
