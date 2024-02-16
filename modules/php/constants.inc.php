@@ -147,6 +147,7 @@ const ICONS = [CITY, MEGALITH, PYRAMID, ARTEFACT, ANCIENT, WRITING, SECRET];
 
 const KNOWLEDGE = 'knowledge';
 const LOST_KNOWLEDGE = 'lost-knowledge';
+const DECLINING = -100000;
 
 /*
  * Scoring categories

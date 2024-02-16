@@ -65,7 +65,7 @@ class MoveBuilding extends \AK\Models\Action
       return [$cardId];
     }
 
-    $cards = $player->getTimeline()->filter(fn ($card) => $card->getState() != -1);
+    $cards = $player->getTimeline()->filter(fn ($card) => $card->getState() != DECLINING);
 
     // Potential constraint on movable cards
     $constraint = $this->getCtxArg('constraint');

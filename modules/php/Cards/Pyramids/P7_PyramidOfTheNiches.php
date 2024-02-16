@@ -106,7 +106,7 @@ class P7_PyramidOfTheNiches extends \AK\Models\Building
     foreach ($otherIds as $tId) {
       $tech = Technologies::getSingle($tId);
       $board = $tech->getBoard();
-      $level = $tech->getId();
+      $level = $tech->getLevel();
       Technologies::insertAtBottom($tId, "deck_$level");
     }
 
