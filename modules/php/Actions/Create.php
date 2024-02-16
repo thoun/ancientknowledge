@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
@@ -160,7 +162,7 @@ class Create extends \AK\Models\Action
     }
 
     // PotalaPalace => flag global to skip Decline
-    if ($card->getId() == 'C30_PotalaPalace') {
+    if ($card->getId() == 'C30_PotalaPalace' && !Globals::isDeclinePhase()) {
       Globals::setSkipDecline(true);
     }
 
