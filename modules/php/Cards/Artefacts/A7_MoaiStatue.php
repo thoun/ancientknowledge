@@ -1,4 +1,5 @@
 <?php
+
 namespace AK\Cards\Artefacts;
 
 class A7_MoaiStatue extends \AK\Models\Artefact

@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Core\Notifications;
@@ -52,7 +54,7 @@ class Discard extends \AK\Models\Action
     // Do we have any constraint on the type of card to discard ?
     $constraint = $this->getCtxArg('constraint');
     if (!is_null($constraint)) {
-      if ($constraint == ARTEFACT) {
+      if ($constraint == [ARTEFACT]) {
         $cards = $player->getArtefacts();
       } else {
         $cards = $cards->filter(function ($card) use ($constraint) {
