@@ -66,3 +66,9 @@ Pyramids Of Plaine Magnien with already 10 cards in hand, allowed to look at car
 https://boardgamearena.com/bug?id=112580
 Allowed to use a decline effect of a card and then switch it with another monument ?
 => ???
+
+Pyramid of Coba: is it a real up to ??
+=> ???
+
+Xixia Wanling: what if I have one adjacent building with 3 knowledge and another one with 2 knowledge ? Can I choose or not ?
+=> ???
