@@ -25,8 +25,7 @@ class C18_AngkorWat extends \AK\Models\Building
 
   public function getKnowledgeReduction($card)
   {
-    return $card->getType() == CITY &&
-      !$this->getPlayer()->countIcon(CITY) > 0
+    return $card->getType() == CITY && $this->getPlayer()->countIcon(CITY) > 0
       ? 1
       : 0;
   }
