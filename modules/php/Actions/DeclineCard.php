@@ -49,7 +49,6 @@ class DeclineCard extends \AK\Models\Action
   {
     $player = Players::getActive();
     $card = $this->getCard();
-    $card->setState(DECLINING);
     $space = $card->getTimelineSpace();
     if ($space[0] != 1) {
       $this->resolveAction();

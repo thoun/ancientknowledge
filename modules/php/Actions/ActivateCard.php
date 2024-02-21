@@ -1,5 +1,7 @@
 <?php
+
 namespace AK\Actions;
+
 use AK\Managers\Meeples;
 use AK\Managers\Players;
 use AK\Managers\Cards;
@@ -104,6 +106,13 @@ class ActivateCard extends \AK\Models\Action
     $player = $this->getPlayer();
     $node = $this->ctx;
     $flow = $this->getFlow($player);
+
+    $card = $this->getCard();
+    $activation = $this->getCtxArg('activation');
+    if (!is_null($activation) && $activation == DECLINE) {
+      $card->setState(DECLINING);
+    }
+
     if ($node->isOptional() && ($flow['type'] ?? NODE_LEAF) != NODE_LEAF) {
       $flow['optional'] = false; // Remove optional to avoid double confirmation UX
     }
