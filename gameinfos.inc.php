@@ -14,15 +14,6 @@ $gameinfos = [
   // Name of the game in English (will serve as the basis for translation)
   'game_name' => 'Ancient Knowledge',
 
-  // Game designer (or game designers, separated by commas)
-  'designer' => 'Rémi Mathieu',
-
-  // Game artist (or game artists, separated by commas)
-  'artist' => 'Pierre Ples, Adrien Rives, Emilien Rotival',
-
-  // Year of FIRST publication of this game. Can be negative.
-  'year' => 2023,
-
   // Game publisher (use empty string if there is no publisher)
   'publisher' => 'IELLO',
 
@@ -84,18 +75,6 @@ $gameinfos = [
   // NB: the default will be the first language in this list spoken by the player, so you should list them by popularity/preference.
   'language_dependency' => false,
 
-  // Complexity of the game, from 0 (extremely simple) to 5 (extremely complex)
-  'complexity' => 3,
-
-  // Luck of the game, from 0 (absolutely no luck in this game) to 5 (totally luck driven)
-  'luck' => 3,
-
-  // Strategy of the game, from 0 (no strategy can be setup) to 5 (totally based on strategy)
-  'strategy' => 3,
-
-  // Diplomacy of the game, from 0 (no interaction in this game) to 5 (totally based on interaction and discussion between players)
-  'diplomacy' => 3,
-
   // Colors attributed to players
   'player_colors' => ['6f3766', 'bc6328', '597f9e', '929f40'],
 
@@ -121,28 +100,6 @@ $gameinfos = [
     //  maximum possible value: unlimited
     //  minimum possible value: 740
     'max' => null,
-  ],
-
-  // Game presentation
-  // Short game presentation text that will appear on the game description page, structured as an array of paragraphs.
-  // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
-  // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
-  'presentation' => [
-    totranslate(
-      'Heirs to an exceptional knowledge that has survived the ages, it is now up to you to preserve the vestige of your civilization.'
-    ),
-
-    totranslate(
-      'Ancient Knowledge is a strategic card game in which you erect monuments and build artefacts to pass on your knowledge. Time will make your constructions ephemeral,so make the right decision and combine the many cards at your disposal, because all knowledge is doomed to disappear…'
-    ),
-
-    totranslate(
-      "It's up to you to find the best synergy so that you can pass down knowledge before the decline of the emblematic monuments you have constructed, monuments we still find nowadays in the four corners of the globe. From Mexican pyramids to the Sphinx of Giza, passing through the famous cities of Tiwanaku and Babylon, only the cleverest builder will shine through the ages and seize victory. In this game, your only enemy is time."
-    ),
-
-    totranslate(
-      'Prove to your opponents that you are the worthly representative of your Legacy! Will your monuments withstand the trial of time?'
-    ),
   ],
 
   //////// BGA SANDBOX ONLY PARAMETERS (DO NOT MODIFY)
