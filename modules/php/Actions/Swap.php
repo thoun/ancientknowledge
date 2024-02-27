@@ -23,7 +23,7 @@ class Swap extends \AK\Models\Action
 
   public function isDoable($player, $ignoreResources = false)
   {
-    return $player->getTimeline()->count() >= 2;
+    return $player->getSwappableCardIds($player)->count() >= 2;
   }
 
   public function getDescription()
@@ -46,12 +46,17 @@ class Swap extends \AK\Models\Action
     return $this->getCtxArg('cardId');
   }
 
+  public function getSwappableCardIds($player)
+  {
+    return $player->getTimeline()->filter(fn ($card) => $card->getState() != DECLINING)->getIds();
+  }
+
   public function argsSwap()
   {
     $player = Players::getActive();
     $cardId = $this->getCardId();
     return [
-      'cardIds' => $player->getTimeline()->filter(fn ($card) => $card->getState() != DECLINING)->getIds(),
+      'cardIds' => $this->getSwappableCardIds($player),
       'descSuffix' => is_null($cardId) ? '' : 'fixed',
       'card_id' => $cardId,
       'card_name' => is_null($cardId) ? '' : Cards::getSingle($cardId)->getName(),
