@@ -276,7 +276,7 @@ $machinestates = [
     'descriptionfixed' => clienttranslate('${actplayer} must swap ${card_name} with another monument in their timeline'),
     'descriptionmyturnfixed' => clienttranslate('${you} must swap ${card_name} with another building in your timeline'),
     'args' => 'argsAtomicAction',
-    'possibleactions' => ['actSwap', 'actRestart'],
+    'possibleactions' => ['actSwap', 'actRestart', 'actPassOptionalAction'],
   ],
 
   ST_MOVE_BUILDING => [

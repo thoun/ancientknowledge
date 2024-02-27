@@ -23,7 +23,7 @@ class Swap extends \AK\Models\Action
 
   public function isDoable($player, $ignoreResources = false)
   {
-    return $player->getSwappableCardIds($player)->count() >= 2;
+    return count($this->getSwappableCardIds($player)) >= 2;
   }
 
   public function getDescription()
