@@ -226,11 +226,19 @@ class AncientKnowledge implements AncientKnowledgeGame {
         if (/* TODO? this._activeStates.includes(stateName) ||*/ (this as any).isCurrentPlayerActive()) {  
             if (args.args?.optionalAction && !args.args.automaticAction) {
             this.addSecondaryActionButton(
-                'btnPassAction',
-                _('Pass'),
-                () => this.takeAction('actPassOptionalAction'),
-                'restartAction'
-            );
+                    'btnPassAction',
+                    _('Pass'),
+                    () => this.takeAction('actPassOptionalAction'),
+                    'restartAction'
+                );
+            }
+            
+            if (args.args?.previousSteps) {
+                document.getElementById('logs').querySelectorAll(`.log.notif_newUndoableStep`).forEach((undoNotif: HTMLElement) => {
+                    if (!args.args?.previousSteps.includes(Number(undoNotif.dataset.step))) {
+                        undoNotif.style.display = 'none';
+                    }
+                });
             }
 
             // Undo last steps
@@ -1647,6 +1655,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
                     $('gameaction_status').innerHTML = msg;
                     $('pagemaintitletext').innerHTML = msg;
                     $('generalactions').innerHTML = '';
+                    $('customActions').innerHTML = '';
 
                     // If there is some text, we let the message some time, to be read 
                     minDuration = MIN_NOTIFICATION_MS;

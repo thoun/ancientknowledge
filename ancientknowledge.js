@@ -3767,7 +3767,7 @@ var AncientKnowledge = /** @class */ (function () {
     //
     AncientKnowledge.prototype.onEnteringState = function (stateName, args) {
         var _this = this;
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         log('Entering state: ' + stateName, args.args);
         if ((_a = args.args) === null || _a === void 0 ? void 0 : _a.descSuffix) {
             this.changePageTitle(args.args.descSuffix);
@@ -3800,8 +3800,16 @@ var AncientKnowledge = /** @class */ (function () {
             if (((_e = args.args) === null || _e === void 0 ? void 0 : _e.optionalAction) && !args.args.automaticAction) {
                 this.addSecondaryActionButton('btnPassAction', _('Pass'), function () { return _this.takeAction('actPassOptionalAction'); }, 'restartAction');
             }
+            if ((_f = args.args) === null || _f === void 0 ? void 0 : _f.previousSteps) {
+                document.getElementById('logs').querySelectorAll(".log.notif_newUndoableStep").forEach(function (undoNotif) {
+                    var _a;
+                    if (!((_a = args.args) === null || _a === void 0 ? void 0 : _a.previousSteps.includes(Number(undoNotif.dataset.step)))) {
+                        undoNotif.style.display = 'none';
+                    }
+                });
+            }
             // Undo last steps
-            (_g = (_f = args.args) === null || _f === void 0 ? void 0 : _f.previousSteps) === null || _g === void 0 ? void 0 : _g.forEach(function (stepId) {
+            (_h = (_g = args.args) === null || _g === void 0 ? void 0 : _g.previousSteps) === null || _h === void 0 ? void 0 : _h.forEach(function (stepId) {
                 var logEntry = $('logs').querySelector(".log.notif_newUndoableStep[data-step=\"".concat(stepId, "\"]"));
                 if (logEntry) {
                     _this.onClick(logEntry, function (e) { return _this.undoToStep(stepId, e); });
@@ -3812,8 +3820,8 @@ var AncientKnowledge = /** @class */ (function () {
                 }
             });
             // Restart turn button
-            if (((_h = args.args) === null || _h === void 0 ? void 0 : _h.previousEngineChoices) >= 1 && !args.args.automaticAction) {
-                if ((_j = args.args) === null || _j === void 0 ? void 0 : _j.previousSteps) {
+            if (((_j = args.args) === null || _j === void 0 ? void 0 : _j.previousEngineChoices) >= 1 && !args.args.automaticAction) {
+                if ((_k = args.args) === null || _k === void 0 ? void 0 : _k.previousSteps) {
                     var lastStep_1 = Math.max.apply(Math, args.args.previousSteps);
                     if (lastStep_1 > 0)
                         this.addDangerActionButton('btnUndoLastStep', _('Undo last step'), function (e) { return _this.undoToStep(lastStep_1, e); }, 'restartAction');
@@ -3827,7 +3835,7 @@ var AncientKnowledge = /** @class */ (function () {
         }
         if (this.isCurrentPlayerActive() && args.args) {
             // Anytime buttons
-            (_k = args.args.anytimeActions) === null || _k === void 0 ? void 0 : _k.forEach(function (action, i) {
+            (_l = args.args.anytimeActions) === null || _l === void 0 ? void 0 : _l.forEach(function (action, i) {
                 var msg = action.desc;
                 msg = msg.log ? _this.format_string_recursive(msg.log, msg.args) : _(msg);
                 msg = formatTextIcons(msg);
@@ -4962,6 +4970,7 @@ var AncientKnowledge = /** @class */ (function () {
                     $('gameaction_status').innerHTML = msg;
                     $('pagemaintitletext').innerHTML = msg;
                     $('generalactions').innerHTML = '';
+                    $('customActions').innerHTML = '';
                     // If there is some text, we let the message some time, to be read 
                     minDuration = MIN_NOTIFICATION_MS;
                 }
