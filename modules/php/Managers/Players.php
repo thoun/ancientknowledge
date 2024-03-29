@@ -20,7 +20,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
     return new \AK\Models\Player($row);
   }
 
-  public function setupNewGame($players, $options)
+  public static function setupNewGame($players, $options)
   {
     // Create players
     $gameInfos = Game::get()->getGameinfos();
@@ -38,12 +38,12 @@ class Players extends \AK\Helpers\CachedDB_Manager
     self::invalidate();
   }
 
-  public function getActiveId()
+  public static function getActiveId()
   {
     return (int) Game::get()->getActivePlayerId();
   }
 
-  public function getCurrentId()
+  public static function getCurrentId()
   {
     return (int) Game::get()->getCurrentPId();
   }
@@ -51,35 +51,35 @@ class Players extends \AK\Helpers\CachedDB_Manager
   /*
    * get : returns the Player object for the given player ID
    */
-  public function get($pId = null)
+  public static function get($pId = null)
   {
     $pId = $pId ?: self::getActiveId();
     return parent::get($pId);
   }
 
-  public function getActive()
+  public static function getActive()
   {
     return self::get();
   }
 
-  public function getCurrent()
+  public static function getCurrent()
   {
     return self::get(self::getCurrentId());
   }
 
-  public function getNextId($player)
+  public static function getNextId($player)
   {
     $pId = is_int($player) ? $player : $player->getId();
     $table = Game::get()->getNextPlayerTable();
     return $table[$pId];
   }
 
-  public function getNext($player)
+  public static function getNext($player)
   {
     return self::get(self::getNextId($player));
   }
 
-  public function getPrevious($player)
+  public static function getPrevious($player)
   {
     $table = Game::get()->getPrevPlayerTable();
     $pId = (int) $table[$player->getId()];
@@ -89,7 +89,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
   /*
    * Return the number of players
    */
-  public function count()
+  public static function count()
   {
     return self::getAll()->count();
   }
@@ -97,7 +97,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
   /*
    * getUiData : get all ui data of all players
    */
-  public function getUiData($pId)
+  public static function getUiData($pId)
   {
     return self::getAll()
       ->map(function ($player) use ($pId) {
@@ -109,7 +109,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
   /*
    * Get current turn order according to first player variable
    */
-  public function getTurnOrder($firstPlayer = null)
+  public static function getTurnOrder($firstPlayer = null)
   {
     $firstPlayer = $firstPlayer ?? Globals::getFirstPlayer();
     $order = [];

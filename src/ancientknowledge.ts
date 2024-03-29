@@ -992,17 +992,17 @@ class AncientKnowledge implements AncientKnowledgeGame {
             document.getElementById(`icon_point_${player.id}`).remove();
 
             let html = `<div class="counters">
-                <div id="playerhand-counter-wrapper-${player.id}">
+                <div id="playerhand-counter-wrapper-${player.id}" style="flex: 4;">
                     <span class="icon-cards"></span> 
-                    <span id="playerhand-counter-${player.id}"></span>
+                    <span id="playerhand-counter-${player.id}"></span> / 10
                 </div>
             
-                <div id="lost-knowledge-counter-wrapper-${player.id}">
+                <div id="lost-knowledge-counter-wrapper-${player.id}" style="flex: 3;">
                     <span class="icon-lost-knowledge"></span>
                     <span id="lost-knowledge-counter-${player.id}"></span>
                 </div>
 
-                <div>${player.no == 1 ? `<div id="first-player"></div>` : ''}</div>
+                <div style="flex: 2;">${player.no == 1 ? `<div id="first-player"></div>` : ''}</div>
             </div>
             <div class="icons counters">`;
             

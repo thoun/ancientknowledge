@@ -14,7 +14,7 @@ class Engine
 {
   public static $tree = null;
 
-  public function boot()
+  public static function boot()
   {
     $t = Globals::getEngine();
     self::$tree = self::buildTree($t);
@@ -25,7 +25,7 @@ class Engine
    * Save current tree into Globals table
    */
 
-  public function save()
+  public static function save()
   {
     $t = self::$tree->toArray();
     Globals::setEngine($t);
@@ -34,7 +34,7 @@ class Engine
   /**
    * Ensure the root is a SEQ node to be able to insert easily in the current flow
    */
-  protected function ensureSeqRootNode()
+  protected static function ensureSeqRootNode()
   {
     if (!self::$tree instanceof \AK\Core\Engine\SeqNode) {
       self::$tree = new \AK\Core\Engine\SeqNode([], [self::$tree]);
@@ -46,7 +46,7 @@ class Engine
    * Setup the engine, given an array representing a tree
    * @param array $t
    */
-  public function setup($t, $callback)
+  public static function setup($t, $callback)
   {
     self::$tree = self::buildTree($t);
     self::save();
@@ -60,7 +60,7 @@ class Engine
    * Convert an array into a tree
    * @param array $t
    */
-  public function buildTree($t)
+  public static function buildTree($t)
   {
     $t['childs'] = $t['childs'] ?? [];
     $type = $t['type'] ?? (empty($t['childs']) ? NODE_LEAF : NODE_SEQ);
@@ -78,7 +78,7 @@ class Engine
   /**
    * Recursively compute the next unresolved node we are going to address
    */
-  public function getNextUnresolved()
+  public static function getNextUnresolved()
   {
     return self::$tree->getNextUnresolved();
   }
@@ -86,7 +86,7 @@ class Engine
   /**
    * Recursively compute the next undoable mandatory node, if any
    */
-  public function getUndoableMandatoryNode($player)
+  public static function getUndoableMandatoryNode($player)
   {
     return self::$tree->getUndoableMandatoryNode($player);
   }
@@ -94,7 +94,7 @@ class Engine
   /**
    * Proceed to next unresolved part of tree
    */
-  public function proceed($confirmedPartial = false, $isUndo = false)
+  public static function proceed($confirmedPartial = false, $isUndo = false)
   {
     $node = self::$tree->getNextUnresolved();
     // Are we done ?
@@ -174,7 +174,7 @@ class Engine
     }
   }
 
-  public function proceedToState($node, $isUndo = false)
+  public static function proceedToState($node, $isUndo = false)
   {
     $state = $node->getState();
     $args = $node->getArgs();
@@ -189,7 +189,7 @@ class Engine
   /**
    * Get the list of choices of current node
    */
-  public function getNextChoice($player = null, $displayAllChoices = false)
+  public static function getNextChoice($player = null, $displayAllChoices = false)
   {
     return self::$tree->getNextUnresolved()->getChoices($player, $displayAllChoices);
   }
@@ -197,7 +197,7 @@ class Engine
   /**
    * Choose one option
    */
-  public function chooseNode($player, $nodeId, $auto = false)
+  public static function chooseNode($player, $nodeId, $auto = false)
   {
     $node = self::$tree->getNextUnresolved();
     $args = $node->getChoices($player);
@@ -228,7 +228,7 @@ class Engine
    * Resolve the current unresolved node
    * @param array $args : store informations about the resolution (choices made by players)
    */
-  public function resolve($args = [])
+  public static function resolve($args = [])
   {
     $node = self::$tree->getNextUnresolved();
     $node->resolve($args);
@@ -238,7 +238,7 @@ class Engine
   /**
    * Resolve action : resolve the action of a leaf action node
    */
-  public function resolveAction($args = [], $checkpoint = false, &$node = null)
+  public static function resolveAction($args = [], $checkpoint = false, &$node = null)
   {
     if (is_null($node)) {
       $node = self::$tree->getNextUnresolved();
@@ -261,7 +261,7 @@ class Engine
     }
   }
 
-  public function checkpoint()
+  public static function checkpoint()
   {
     $player = Players::getActive();
     $node = self::getUndoableMandatoryNode($player);
@@ -279,7 +279,7 @@ class Engine
   /**
    * Insert a new node at root level at the end of seq node
    */
-  public function insertAtRoot($t, $last = true)
+  public static function insertAtRoot($t, $last = true)
   {
     self::ensureSeqRootNode();
     $node = self::buildTree($t);
@@ -295,7 +295,7 @@ class Engine
   /**
    * insertAsChild: turn the node into a SEQ if needed, then insert the flow tree as a child
    */
-  public function insertAsChild($t, &$node = null)
+  public static function insertAsChild($t, &$node = null)
   {
     if (is_null($t)) {
       return;
@@ -323,7 +323,7 @@ class Engine
    *  - otherwise, make the action a parallel node
    */
 
-  public function insertOrUpdateParallelChilds($childs, &$node = null)
+  public static function insertOrUpdateParallelChilds($childs, &$node = null)
   {
     if (empty($childs)) {
       return;
@@ -371,7 +371,7 @@ class Engine
   /**
    * Confirm the full resolution of current flow
    */
-  public function confirm()
+  public static function confirm()
   {
     $node = self::$tree->getNextUnresolved();
     // Are we done ?
@@ -391,7 +391,7 @@ class Engine
     }
   }
 
-  public function confirmPartialTurn()
+  public static function confirmPartialTurn()
   {
     $node = self::$tree->getNextUnresolved();
 
@@ -415,7 +415,7 @@ class Engine
   /**
    * Restart the whole flow
    */
-  public function restart()
+  public static function restart()
   {
     Log::undoTurn();
 
@@ -428,7 +428,7 @@ class Engine
   /**
    * Restart at a given step
    */
-  public function undoToStep($stepId)
+  public static function undoToStep($stepId)
   {
     Log::undoToStep($stepId);
 
@@ -441,7 +441,7 @@ class Engine
   /**
    * Clear all nodes related to the current active zombie player
    */
-  public function clearZombieNodes($pId)
+  public static function clearZombieNodes($pId)
   {
     self::$tree->clearZombieNodes($pId);
   }
@@ -449,12 +449,12 @@ class Engine
   /**
    * Get all resolved actions of given type
    */
-  public function getResolvedActions($types)
+  public static function getResolvedActions($types)
   {
     return self::$tree->getResolvedActions($types);
   }
 
-  public function getLastResolvedAction($types)
+  public static function getLastResolvedAction($types)
   {
     $actions = self::getResolvedActions($types);
     return empty($actions) ? null : $actions[count($actions) - 1];

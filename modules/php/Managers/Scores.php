@@ -47,7 +47,7 @@ class Scores
   /**
    * Update every player score in DB and on UI
    */
-  public function update($notif = false)
+  public static function update($notif = false)
   {
     if (!Globals::isLiveScoring()) {
       return;
@@ -68,7 +68,7 @@ class Scores
   /**
    * Compute the scores and return them
    */
-  public function compute($notif = false)
+  public static function compute($notif = false)
   {
     self::init();
 

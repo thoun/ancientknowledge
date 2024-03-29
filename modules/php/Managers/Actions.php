@@ -74,7 +74,7 @@ class Actions
   {
     $actionId = ucfirst(mb_strtolower($actionId));
     $msg = sprintf(
-      Game::get()::translate(
+      Game::get()->translate(
         'Attempting to take an action (%s) that is not possible. Either another card erroneously flagged this action as possible, or this action was possible until another card interfered.'
       ),
       $actionId

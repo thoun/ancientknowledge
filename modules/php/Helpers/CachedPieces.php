@@ -72,7 +72,7 @@ class CachedPieces extends DB_Manager
     }
   }
 
-  public function invalidate()
+  public static function invalidate()
   {
     static::$datas = null;
   }
@@ -83,7 +83,7 @@ class CachedPieces extends DB_Manager
    *************************************
    ************************************/
 
-  public function where($field, $value)
+  public static function where($field, $value)
   {
     return self::getAll()->where($field, $value);
   }
@@ -148,7 +148,7 @@ class CachedPieces extends DB_Manager
     }
   }
 
-  final function checkIdArray($arr)
+  final static function checkIdArray($arr)
   {
     if (is_null($arr)) {
       throw new \BgaVisibleSystemException('Class Pieces: tokens cannot be null');
@@ -211,7 +211,7 @@ class CachedPieces extends DB_Manager
     static::fetchIfNeeded();
     $result = new Collection([]);
     foreach ($ids as $id) {
-      if (array_key_exists($id, static::$datas)) {
+      if (array_key_exists($id, static::$datas->toAssoc())) {
         $result[$id] = static::$datas[$id];
       }
     }
@@ -284,7 +284,7 @@ class CachedPieces extends DB_Manager
   /**
    * getFilteredQuery : many times the DB scheme has a pId and a type extra field, this allow for a shortcut for a query for these case
    */
-  public function getFiltered($pId, $location = null, $type = null)
+  public static function getFiltered($pId, $location = null, $type = null)
   {
     return self::getSelectWhere(null, $location, null)
       ->where('pId', $pId)
@@ -448,7 +448,7 @@ class CachedPieces extends DB_Manager
    *     "state" => <state>             // Optional argument specifies integer state, if not specified and $token_state_global is not specified auto-increment is used
    */
 
-  function create($pieces, $globalLocation = null, $globalState = null, $globalId = null)
+   static function create($pieces, $globalLocation = null, $globalState = null, $globalId = null)
   {
     $pos = is_null($globalLocation) ? 0 : self::getExtremePosition(true, $globalLocation) + 1;
 
@@ -522,7 +522,7 @@ class CachedPieces extends DB_Manager
   /*
    * Create a single token
    */
-  function singleCreate($token)
+  static function singleCreate($token)
   {
     return self::create([$token])->first();
   }

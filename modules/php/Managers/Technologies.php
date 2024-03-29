@@ -97,7 +97,7 @@ class Technologies extends \AK\Helpers\CachedPieces
     return self::getInLocation('board_%')->where('type', $type);
   }
 
-  public function getBoard($board)
+  public static function getBoard($board)
   {
     return self::getInLocation("board_$board");
   }
