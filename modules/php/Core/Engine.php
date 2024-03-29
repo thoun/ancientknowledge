@@ -200,6 +200,9 @@ class Engine
   public static function chooseNode($player, $nodeId, $auto = false)
   {
     $node = self::$tree->getNextUnresolved();
+    if ($node === null) {
+      throw new \BgaVisibleSystemException('No next node');
+    }
     $args = $node->getChoices($player);
     if (!isset($args[$nodeId])) {
       throw new \BgaVisibleSystemException('This choice is not possible');
