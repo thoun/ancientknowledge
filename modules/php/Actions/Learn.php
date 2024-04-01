@@ -111,7 +111,7 @@ class Learn extends \AK\Models\Action
     $this->resolveAction(['techId' => $techId], $irreversible);
   }
 
-  public function refillBoardIfNeeded($board)
+  public static function refillBoardIfNeeded($board)
   {
     // Check if a row is almost empty
     $left = Technologies::getBoard($board);
