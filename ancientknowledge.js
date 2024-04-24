@@ -3712,6 +3712,10 @@ var AncientKnowledge = /** @class */ (function () {
                     document.getElementById("table-center").classList.remove('folded');
                 }
             },
+            autoZoom: {
+                expectedWidth: 1574,
+                minZoomLevel: 0.5,
+            }
         });
         new HelpManager(this, {
             buttons: [
