@@ -26,9 +26,9 @@ bga-jump-to@thoun/bga-jump-to#1.0.0:
   version "1.0.0"
   resolved "https://codeload.github.com/thoun/bga-jump-to/tar.gz/4aec4554cf458a56f7ea24bd257a076b34a2080e"
 
-bga-zoom@thoun/bga-zoom#1.0.3:
+bga-zoom@thoun/bga-zoom#1.0.4:
   version "1.0.3"
-  resolved "https://codeload.github.com/thoun/bga-zoom/tar.gz/35183a0c170e787116574f84325fb9c83159fabb"
+  resolved "https://codeload.github.com/thoun/bga-zoom/tar.gz/8b5fd458c3d9c92da4d66891a5b07b9e894d89f0"
 
 binary-extensions@^2.0.0:
   version "2.3.0"

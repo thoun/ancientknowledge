@@ -204,7 +204,7 @@ var ZoomManager = /** @class */ (function () {
     ZoomManager.prototype.zoomOrDimensionChanged = function () {
         var _a, _b;
         this.settings.element.style.width = "".concat(this.wrapper.offsetWidth / this._zoom, "px");
-        this.wrapper.style.height = "".concat(this.settings.element.offsetHeight, "px");
+        this.wrapper.style.height = "".concat(this.settings.element.offsetHeight * this._zoom, "px");
         (_b = (_a = this.settings).onDimensionsChange) === null || _b === void 0 ? void 0 : _b.call(_a, this._zoom);
     };
     /**
@@ -1023,7 +1023,7 @@ var CardStock = /** @class */ (function () {
      */
     CardStock.prototype.addCard = function (card, animation, settings) {
         var _this = this;
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         if (!this.canAddCard(card, settings)) {
             return Promise.resolve(false);
         }
@@ -1052,8 +1052,15 @@ var CardStock = /** @class */ (function () {
             }
         }
         if (needsCreation) {
-            var element = this.manager.createCardElement(card, ((_d = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _d !== void 0 ? _d : this.manager.isCardVisible(card)));
-            promise = this.moveFromElement(card, element, animation, settingsWithIndex);
+            var element = this.getCardElement(card);
+            if (needsCreation && element) {
+                console.warn("Card ".concat(this.manager.getId(card), " already exists, not re-created."));
+            }
+            // if the card comes from a stock but is not found in this stock, the card is probably hudden (deck with a fake top card)
+            var fromBackSide = !(settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) && !(animation === null || animation === void 0 ? void 0 : animation.originalSide) && (animation === null || animation === void 0 ? void 0 : animation.fromStock) && !((_d = animation === null || animation === void 0 ? void 0 : animation.fromStock) === null || _d === void 0 ? void 0 : _d.contains(card));
+            var createdVisible = fromBackSide ? false : (_e = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _e !== void 0 ? _e : this.manager.isCardVisible(card);
+            var newElement = element !== null && element !== void 0 ? element : this.manager.createCardElement(card, createdVisible);
+            promise = this.moveFromElement(card, newElement, animation, settingsWithIndex);
         }
         if (settingsWithIndex.index !== null && settingsWithIndex.index !== undefined) {
             this.cards.splice(index, 0, card);
@@ -1182,7 +1189,9 @@ var CardStock = /** @class */ (function () {
                     case 4:
                         if (typeof shift === 'number') {
                             _loop_2 = function (i) {
-                                setTimeout(function () { return promises.push(_this.addCard(cards[i], animation, settings)); }, i * shift);
+                                promises.push(new Promise(function (resolve) {
+                                    setTimeout(function () { return _this.addCard(cards[i], animation, settings).then(function (result) { return resolve(result); }); }, i * shift);
+                                }));
                             };
                             for (i = 0; i < cards.length; i++) {
                                 _loop_2(i);
@@ -1260,9 +1269,13 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeAll = function (settings) {
-        var _this = this;
-        var cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
-        cards.forEach(function (card) { return _this.removeCard(card, settings); });
+        return __awaiter(this, void 0, void 0, function () {
+            var cards;
+            return __generator(this, function (_a) {
+                cards = this.getCards();
+                return [2 /*return*/, this.removeCards(cards, settings)];
+            });
+        });
     };
     /**
      * Set if the stock is selectable, and if yes if it can be multiple.
@@ -1599,9 +1612,17 @@ var Deck = /** @class */ (function (_super) {
     Deck.prototype.setCardNumber = function (cardNumber, topCard) {
         var _this = this;
         if (topCard === void 0) { topCard = undefined; }
-        var promise = topCard === null || cardNumber == 0 ?
-            Promise.resolve(false) :
-            _super.prototype.addCard.call(this, topCard || this.getFakeCard(), undefined, { autoUpdateCardNumber: false });
+        var promise = Promise.resolve(false);
+        var oldTopCard = this.getTopCard();
+        if (topCard !== null && cardNumber > 0) {
+            var newTopCard = topCard || this.getFakeCard();
+            if (!oldTopCard || this.manager.getId(newTopCard) != this.manager.getId(oldTopCard)) {
+                promise = this.addCard(newTopCard, undefined, { autoUpdateCardNumber: false });
+            }
+        }
+        else if (cardNumber == 0 && oldTopCard) {
+            promise = this.removeCard(oldTopCard, { autoUpdateCardNumber: false });
+        }
         this.cardNumber = cardNumber;
         this.element.dataset.empty = (this.cardNumber == 0).toString();
         var thickness = 0;
@@ -1638,6 +1659,19 @@ var Deck = /** @class */ (function (_super) {
             this.setCardNumber(this.cardNumber - 1);
         }
         _super.prototype.cardRemoved.call(this, card, settings);
+    };
+    Deck.prototype.removeAll = function (settings) {
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            var _a, _b;
+            return __generator(this, function (_c) {
+                promise = _super.prototype.removeAll.call(this, __assign(__assign({}, settings), { autoUpdateCardNumber: (_a = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _a !== void 0 ? _a : false }));
+                if ((_b = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _b !== void 0 ? _b : true) {
+                    this.setCardNumber(0, null);
+                }
+                return [2 /*return*/, promise];
+            });
+        });
     };
     Deck.prototype.getTopCard = function () {
         var cards = this.getCards();
@@ -1826,9 +1860,15 @@ var SlotStock = /** @class */ (function (_super) {
             return true;
         }
         else {
-            var currentCardSlot = this.getCardElement(card).closest('.slot').dataset.slotId;
-            var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
-            return currentCardSlot != slotId;
+            var closestSlot = this.getCardElement(card).closest('.slot');
+            if (closestSlot) {
+                var currentCardSlot = closestSlot.dataset.slotId;
+                var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+                return currentCardSlot != slotId;
+            }
+            else {
+                return true;
+            }
         }
     };
     /**
