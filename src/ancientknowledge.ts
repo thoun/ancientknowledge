@@ -1,12 +1,3 @@
-declare const define;
-declare const ebg;
-declare const $;
-declare const dojo: Dojo;
-declare const _;
-declare const g_gamethemeurl;
-declare const bgaConfig;
-
-
 const ANIMATION_MS = 500;
 const MIN_NOTIFICATION_MS = 1200;
 const SCORE_ANIMATION_MS = 1500;
@@ -64,6 +55,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public market?: LineStock<BuilderCard>;
 
+    public bga: Bga;
+
     constructor() {
     }
     
@@ -82,6 +75,49 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public setup(gamedatas: AncientKnowledgeGamedatas) {
         log( "Starting game setup" );
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', `
+            <link rel="stylesheet" href="https://use.typekit.net/jim0ypy.css">
+
+            <div id="score">
+                <div id="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr id="scoretr">
+                            </tr>
+                        </thead>
+                        <tbody id="score-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="table">
+                <div id="draw-and-keep-pick" data-visible="false"></div>
+                <div id="tables-and-center">
+                    <div id="table-center-wrapper">
+                        <div id="table-center-and-market">
+                            <div id="table-center">
+                                <div id="table-technology">
+                                    <div id="technology-decks">
+                                        <div id="technology-deck-1"></div>
+                                        <div id="technology-deck-2"></div>
+                                    </div>
+                                    <div id="table-technology-tiles">
+                                        <div id="table-technology-tiles-1" class="table-technology-tiles" data-level="1"></div>
+                                        <div id="table-technology-tiles-2" class="table-technology-tiles" data-level="1"></div>
+                                        <div id="table-technology-tiles-3" class="table-technology-tiles" data-level="2"></div>
+                                    </div>
+                                </div>
+                                <button class="fold-button">
+                                    <div class="fold-button-arrow">▲</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tables"></div>
+                </div>
+            </div>
+        `);
         
         this.gamedatas = gamedatas;
 
@@ -158,7 +194,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
             ]
         });
         this.setupNotifications();
-        this.setupPreferences();
 
         const isEnd = this.getGameStateName() == 'gameEnd';
         if (gamedatas.endOfGameTriggered && !isEnd) {
@@ -934,30 +969,8 @@ class AncientKnowledge implements AncientKnowledgeGame {
         return this.gamedatas.gamestate.name;
     }
 
-    private setupPreferences() {
-        // Extract the ID and value from the UI control
-        const onchange = (e) => {
-          var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-          if (!match) {
-            return;
-          }
-          var prefId = +match[1];
-          var prefValue = +e.target.value;
-          (this as any).prefs[prefId].value = prefValue;
-        }
-        
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        
-        // Call onPreferenceChange() now
-        dojo.forEach(
-          dojo.query("#ingame_menu_content .preference_control"),
-          el => onchange({ target: el })
-        );
-    }
-
     private startActionTimer(buttonId: string, time: number = ACTION_TIMER_DURATION) {
-        if (Number((this as any).prefs[103]?.value) !== 3) {
+        if (this.bga.userPreferences.get(103) != 3) {
             return;
         }
 
@@ -1559,7 +1572,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private askConfirmation(warning: boolean | string, callback: Function) {
-        if (warning === false || (this as any).prefs[104].value == 0) {
+        if (warning === false || this.bga.userPreferences.get(104) == 0) {
           callback();
         } else {
             let msg = warning === true ?
@@ -1583,8 +1596,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public takeAction(action: string, data?: any) {
         data = data || {};
-        data.lock = true;
-        (this as any).ajaxcall(`/ancientknowledge/ancientknowledge/${action}.html`, data, this, () => {});
+        this.bga.actions.performAction(action, data, { checkAction: false });
     }
 
     ///////////////////////////////////////////////////
@@ -1640,7 +1652,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
             'endOfGameTriggered',
             'scoringEntry',
             'updateScores',
-            'loadBug',
         ];
     
         notifs.forEach((notifName) => {
@@ -1955,54 +1966,6 @@ class AncientKnowledge implements AncientKnowledgeGame {
             this.setTooltip(`player_score_${playerId}`, tooltip);
         });
     }
-    
-    /**
-    * Load production bug report handler
-    */
-   notif_loadBug(args) {
-     const that: any = this;
-     function fetchNextUrl() {
-       var url = args.urls.shift();
-       console.log('Fetching URL', url, '...');
-       // all the calls have to be made with ajaxcall in order to add the csrf token, otherwise you'll get "Invalid session information for this action. Please try reloading the page or logging in again"
-       that.ajaxcall(
-         url,
-         {
-           lock: true,
-         },
-         that,
-         function (success) {
-           console.log('=> Success ', success);
-
-           if (args.urls.length > 1) {
-             fetchNextUrl();
-           } else if (args.urls.length > 0) {
-             //except the last one, clearing php cache
-             url = args.urls.shift();
-             (dojo as any).xhrGet({
-               url: url,
-               headers: {
-                 'X-Request-Token': bgaConfig.requestToken,
-               },
-               load: success => {
-                 console.log('Success for URL', url, success);
-                 console.log('Done, reloading page');
-                 window.location.reload();
-               },
-               handleAs: 'text',
-               error: error => console.log('Error while loading : ', error),
-             });
-           }
-         },
-         error => {
-           if (error) console.log('=> Error ', error);
-         },
-       );
-     }
-     console.log('Notif: load bug', args);
-     fetchNextUrl();
-   }
-    
     
     /*
     * [Undocumented] Called by BGA framework on any notification message

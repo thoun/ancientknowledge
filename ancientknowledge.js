@@ -1023,7 +1023,7 @@ var CardStock = /** @class */ (function () {
      */
     CardStock.prototype.addCard = function (card, animation, settings) {
         var _this = this;
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d;
         if (!this.canAddCard(card, settings)) {
             return Promise.resolve(false);
         }
@@ -1052,15 +1052,8 @@ var CardStock = /** @class */ (function () {
             }
         }
         if (needsCreation) {
-            var element = this.getCardElement(card);
-            if (needsCreation && element) {
-                console.warn("Card ".concat(this.manager.getId(card), " already exists, not re-created."));
-            }
-            // if the card comes from a stock but is not found in this stock, the card is probably hudden (deck with a fake top card)
-            var fromBackSide = !(settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) && !(animation === null || animation === void 0 ? void 0 : animation.originalSide) && (animation === null || animation === void 0 ? void 0 : animation.fromStock) && !((_d = animation === null || animation === void 0 ? void 0 : animation.fromStock) === null || _d === void 0 ? void 0 : _d.contains(card));
-            var createdVisible = fromBackSide ? false : (_e = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _e !== void 0 ? _e : this.manager.isCardVisible(card);
-            var newElement = element !== null && element !== void 0 ? element : this.manager.createCardElement(card, createdVisible);
-            promise = this.moveFromElement(card, newElement, animation, settingsWithIndex);
+            var element = this.manager.createCardElement(card, ((_d = settingsWithIndex === null || settingsWithIndex === void 0 ? void 0 : settingsWithIndex.visible) !== null && _d !== void 0 ? _d : this.manager.isCardVisible(card)));
+            promise = this.moveFromElement(card, element, animation, settingsWithIndex);
         }
         if (settingsWithIndex.index !== null && settingsWithIndex.index !== undefined) {
             this.cards.splice(index, 0, card);
@@ -1189,9 +1182,7 @@ var CardStock = /** @class */ (function () {
                     case 4:
                         if (typeof shift === 'number') {
                             _loop_2 = function (i) {
-                                promises.push(new Promise(function (resolve) {
-                                    setTimeout(function () { return _this.addCard(cards[i], animation, settings).then(function (result) { return resolve(result); }); }, i * shift);
-                                }));
+                                setTimeout(function () { return promises.push(_this.addCard(cards[i], animation, settings)); }, i * shift);
                             };
                             for (i = 0; i < cards.length; i++) {
                                 _loop_2(i);
@@ -1269,13 +1260,9 @@ var CardStock = /** @class */ (function () {
      * @param settings a `RemoveCardSettings` object
      */
     CardStock.prototype.removeAll = function (settings) {
-        return __awaiter(this, void 0, void 0, function () {
-            var cards;
-            return __generator(this, function (_a) {
-                cards = this.getCards();
-                return [2 /*return*/, this.removeCards(cards, settings)];
-            });
-        });
+        var _this = this;
+        var cards = this.getCards(); // use a copy of the array as we iterate and modify it at the same time
+        cards.forEach(function (card) { return _this.removeCard(card, settings); });
     };
     /**
      * Set if the stock is selectable, and if yes if it can be multiple.
@@ -1612,17 +1599,9 @@ var Deck = /** @class */ (function (_super) {
     Deck.prototype.setCardNumber = function (cardNumber, topCard) {
         var _this = this;
         if (topCard === void 0) { topCard = undefined; }
-        var promise = Promise.resolve(false);
-        var oldTopCard = this.getTopCard();
-        if (topCard !== null && cardNumber > 0) {
-            var newTopCard = topCard || this.getFakeCard();
-            if (!oldTopCard || this.manager.getId(newTopCard) != this.manager.getId(oldTopCard)) {
-                promise = this.addCard(newTopCard, undefined, { autoUpdateCardNumber: false });
-            }
-        }
-        else if (cardNumber == 0 && oldTopCard) {
-            promise = this.removeCard(oldTopCard, { autoUpdateCardNumber: false });
-        }
+        var promise = topCard === null || cardNumber == 0 ?
+            Promise.resolve(false) :
+            _super.prototype.addCard.call(this, topCard || this.getFakeCard(), undefined, { autoUpdateCardNumber: false });
         this.cardNumber = cardNumber;
         this.element.dataset.empty = (this.cardNumber == 0).toString();
         var thickness = 0;
@@ -1659,19 +1638,6 @@ var Deck = /** @class */ (function (_super) {
             this.setCardNumber(this.cardNumber - 1);
         }
         _super.prototype.cardRemoved.call(this, card, settings);
-    };
-    Deck.prototype.removeAll = function (settings) {
-        return __awaiter(this, void 0, void 0, function () {
-            var promise;
-            var _a, _b;
-            return __generator(this, function (_c) {
-                promise = _super.prototype.removeAll.call(this, __assign(__assign({}, settings), { autoUpdateCardNumber: (_a = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _a !== void 0 ? _a : false }));
-                if ((_b = settings === null || settings === void 0 ? void 0 : settings.autoUpdateCardNumber) !== null && _b !== void 0 ? _b : true) {
-                    this.setCardNumber(0, null);
-                }
-                return [2 /*return*/, promise];
-            });
-        });
     };
     Deck.prototype.getTopCard = function () {
         var cards = this.getCards();
@@ -1860,15 +1826,9 @@ var SlotStock = /** @class */ (function (_super) {
             return true;
         }
         else {
-            var closestSlot = this.getCardElement(card).closest('.slot');
-            if (closestSlot) {
-                var currentCardSlot = closestSlot.dataset.slotId;
-                var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
-                return currentCardSlot != slotId;
-            }
-            else {
-                return true;
-            }
+            var currentCardSlot = this.getCardElement(card).closest('.slot').dataset.slotId;
+            var slotId = (_a = settings === null || settings === void 0 ? void 0 : settings.slot) !== null && _a !== void 0 ? _a : (_b = this.mapCardToSlot) === null || _b === void 0 ? void 0 : _b.call(this, card);
+            return currentCardSlot != slotId;
         }
     };
     /**
@@ -3793,6 +3753,7 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.setup = function (gamedatas) {
         var _a, _b;
         log("Starting game setup");
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', "\n            <link rel=\"stylesheet\" href=\"https://use.typekit.net/jim0ypy.css\">\n\n            <div id=\"score\">\n                <div id=\"table-wrapper\">\n                    <table>\n                        <thead>\n                            <tr id=\"scoretr\">\n                            </tr>\n                        </thead>\n                        <tbody id=\"score-table-body\">\n                        </tbody>\n                    </table>\n                </div>\n            </div>\n\n            <div id=\"table\">\n                <div id=\"draw-and-keep-pick\" data-visible=\"false\"></div>\n                <div id=\"tables-and-center\">\n                    <div id=\"table-center-wrapper\">\n                        <div id=\"table-center-and-market\">\n                            <div id=\"table-center\">\n                                <div id=\"table-technology\">\n                                    <div id=\"technology-decks\">\n                                        <div id=\"technology-deck-1\"></div>\n                                        <div id=\"technology-deck-2\"></div>\n                                    </div>\n                                    <div id=\"table-technology-tiles\">\n                                        <div id=\"table-technology-tiles-1\" class=\"table-technology-tiles\" data-level=\"1\"></div>\n                                        <div id=\"table-technology-tiles-2\" class=\"table-technology-tiles\" data-level=\"1\"></div>\n                                        <div id=\"table-technology-tiles-3\" class=\"table-technology-tiles\" data-level=\"2\"></div>\n                                    </div>\n                                </div>\n                                <button class=\"fold-button\">\n                                    <div class=\"fold-button-arrow\">\u25B2</div>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                    <div id=\"tables\"></div>\n                </div>\n            </div>\n        ");
         this.gamedatas = gamedatas;
         // Create a new div for buttons to avoid BGA auto clearing it
         dojo.place("<div id='customActions' style='display:inline-block'></div>", $('generalactions'), 'after');
@@ -3860,7 +3821,6 @@ var AncientKnowledge = /** @class */ (function () {
             ]
         });
         this.setupNotifications();
-        this.setupPreferences();
         var isEnd = this.getGameStateName() == 'gameEnd';
         if (gamedatas.endOfGameTriggered && !isEnd) {
             this.notif_endOfGameTriggered(false);
@@ -4559,28 +4519,10 @@ var AncientKnowledge = /** @class */ (function () {
     AncientKnowledge.prototype.getGameStateName = function () {
         return this.gamedatas.gamestate.name;
     };
-    AncientKnowledge.prototype.setupPreferences = function () {
-        var _this = this;
-        // Extract the ID and value from the UI control
-        var onchange = function (e) {
-            var match = e.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-            if (!match) {
-                return;
-            }
-            var prefId = +match[1];
-            var prefValue = +e.target.value;
-            _this.prefs[prefId].value = prefValue;
-        };
-        // Call onPreferenceChange() when any value changes
-        dojo.query(".preference_control").connect("onchange", onchange);
-        // Call onPreferenceChange() now
-        dojo.forEach(dojo.query("#ingame_menu_content .preference_control"), function (el) { return onchange({ target: el }); });
-    };
     AncientKnowledge.prototype.startActionTimer = function (buttonId, time) {
         var _this = this;
-        var _a;
         if (time === void 0) { time = ACTION_TIMER_DURATION; }
-        if (Number((_a = this.prefs[103]) === null || _a === void 0 ? void 0 : _a.value) !== 3) {
+        if (this.bga.userPreferences.get(103) != 3) {
             return;
         }
         var button = document.getElementById(buttonId);
@@ -4999,7 +4941,7 @@ var AncientKnowledge = /** @class */ (function () {
         this.takeAction('actRestart');
     };
     AncientKnowledge.prototype.askConfirmation = function (warning, callback) {
-        if (warning === false || this.prefs[104].value == 0) {
+        if (warning === false || this.bga.userPreferences.get(104) == 0) {
             callback();
         }
         else {
@@ -5021,8 +4963,7 @@ var AncientKnowledge = /** @class */ (function () {
     };
     AncientKnowledge.prototype.takeAction = function (action, data) {
         data = data || {};
-        data.lock = true;
-        this.ajaxcall("/ancientknowledge/ancientknowledge/".concat(action, ".html"), data, this, function () { });
+        this.bga.actions.performAction(action, data, { checkAction: false });
     };
     ///////////////////////////////////////////////////
     //// Reaction to cometD notifications
@@ -5075,7 +5016,6 @@ var AncientKnowledge = /** @class */ (function () {
             'endOfGameTriggered',
             'scoringEntry',
             'updateScores',
-            'loadBug',
         ];
         notifs.forEach(function (notifName) {
             dojo.subscribe(notifName, _this, function (notifDetails) {
@@ -5397,47 +5337,6 @@ var AncientKnowledge = /** @class */ (function () {
             _this.setTooltip("player_score_".concat(playerId, "-icon"), tooltip);
             _this.setTooltip("player_score_".concat(playerId), tooltip);
         });
-    };
-    /**
-    * Load production bug report handler
-    */
-    AncientKnowledge.prototype.notif_loadBug = function (args) {
-        var that = this;
-        function fetchNextUrl() {
-            var url = args.urls.shift();
-            console.log('Fetching URL', url, '...');
-            // all the calls have to be made with ajaxcall in order to add the csrf token, otherwise you'll get "Invalid session information for this action. Please try reloading the page or logging in again"
-            that.ajaxcall(url, {
-                lock: true,
-            }, that, function (success) {
-                console.log('=> Success ', success);
-                if (args.urls.length > 1) {
-                    fetchNextUrl();
-                }
-                else if (args.urls.length > 0) {
-                    //except the last one, clearing php cache
-                    url = args.urls.shift();
-                    dojo.xhrGet({
-                        url: url,
-                        headers: {
-                            'X-Request-Token': bgaConfig.requestToken,
-                        },
-                        load: function (success) {
-                            console.log('Success for URL', url, success);
-                            console.log('Done, reloading page');
-                            window.location.reload();
-                        },
-                        handleAs: 'text',
-                        error: function (error) { return console.log('Error while loading : ', error); },
-                    });
-                }
-            }, function (error) {
-                if (error)
-                    console.log('=> Error ', error);
-            });
-        }
-        console.log('Notif: load bug', args);
-        fetchNextUrl();
     };
     /*
     * [Undocumented] Called by BGA framework on any notification message

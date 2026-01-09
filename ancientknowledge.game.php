@@ -66,11 +66,6 @@ class AncientKnowledge extends Table
     return self::$instance;
   }
 
-  protected function getGameName()
-  {
-    return 'ancientknowledge';
-  }
-
   /*
    * getAllDatas:
    */
