@@ -25,6 +25,8 @@ declare const g_replayFrom: number | undefined;
 
 /**
  * The URL to the root of the game files, for example to access dynamically to an image.
+ * 
+ * @deprecated use this.bga.images.getImgUrl()
  */
 declare const g_gamethemeurl: string;
 
@@ -59,6 +61,20 @@ declare function $(text: ElementOrId): HTMLElement;
  */
 declare function getLibUrl(name: string, version: string): string;
 
+/**
+ * Loads a versionned ESM lib.
+ * 
+ * Example of usage: `const BgaAnimations = await importEsmLib('bga-animations', '1.x');`
+ */
+declare function importEsmLib(name: string, version: string): Promise<any>;
+
+/**
+ * Loads Dojo (UMD) libs.
+ * 
+ * Example of usage: `const [Counter, Stock] = await importDojoLibs(["ebg/counter", "ebg/stock"]);`
+ */
+declare function importDojoLibs(names: string[]): Promise<any[]>;
+
 interface Gamestate {
     active_player?: string;
     args: any;
@@ -70,7 +86,7 @@ interface Gamestate {
     private_state?: Gamestate;
 }
 
-interface Gamedatas<P = Player> {
+interface Gamedatas<P extends Player = Player> {
   gamestate: Gamestate;
   gamestates: { [gamestateId: number]: Gamestate };
   playerorder: (string | number)[];
@@ -80,7 +96,6 @@ interface Gamedatas<P = Player> {
 interface Player {
   beginner: boolean;
   color: string;
-  color_back: any | null;
   eliminated: number;
   id: string;
   is_ai: string;
@@ -152,7 +167,7 @@ declare class StatusBar {
     disabled?: boolean;
     tooltip?: string;
     confirm?: string | (() => string | undefined | null); 
-    autoclick?: boolean;
+    autoclick?: boolean | { abortSignal?: AbortSignal, pausable?: boolean };
   }): HTMLButtonElement;
 
   /**
@@ -189,11 +204,21 @@ declare class Images {
    * @param {string[]} images the filenames
    */
   preloadImages(images: string[]): void;
+
+  /**
+   * Returns the img root url, or the image url if a file name is provided.
+   * 
+   * @param {string | undefined} filename 
+   * @returns string
+   */
+  getImgUrl(filename?: string): string;
 }
 
 declare class Sounds {
   /**
-   * Load a sound file to be used with play.
+   * Load a sound file (from img folder) to be used with play.
+   * 
+   * @deprecated move the sounds in the `sounds` folder to benefit from autoloading, then remove this call.
    * 
    * @param {string} id the id to be used by play
    * @param {string} fileName the file name, without extension (there should be a .ogg and a .mp3 with that file name in the img folder). If unset, it will try with the id as file name.
@@ -201,11 +226,25 @@ declare class Sounds {
   load(id: string, fileName: string): void;
 
   /**
-   * Play the sound with the given id.
+   * Play the sound with the given id (or filename without extension for preloaded sounds in the `sounds` folder).
    * 
    * @param {string} id the sound id
    */
   play(id: string): void;
+
+  /**
+   * Tell the interface to not preload specific sounds in your sound root directory.
+   * 
+   * @param {string[]} sounds the filenames (without extension)
+   */
+  dontPreloadSounds(sounds: string[]): void;
+
+  /**
+   * Tell the interface to preload specific sounds in your sound directory.
+   * 
+   * @param {string[]} sounds the filenames (without extension)
+   */
+  preloadSounds(sounds: string[]): void;
 }
 
 declare class UserPreferences {
@@ -220,9 +259,14 @@ declare class UserPreferences {
    * Method to programmatically change a game-specific user preference.
    */
   set(prefId: number, value: number): void;
+
+  /**
+   * Hide or show a game-specific user preference.
+   */
+  toggleVisibility(prefId: number, visible?: boolean): void;
 }
 
-declare class Players {
+declare class Players<P extends Player = Player> {
   /**
    * Return the id of the player who is looking at the game. The player may not be part of the game (i.e. spectator)
    * @returns {number} the current player id
@@ -230,12 +274,18 @@ declare class Players {
   getCurrentPlayerId(): number;
 
   /**
+   * Return the no of the player who is looking at the game. The player may not be part of the game (i.e. spectator)
+   * @returns {number | null} the current player no
+   */
+  getCurrentPlayerNo(): number | null;
+
+  /**
    * Return the current player data stored in gamedatas.players.
    * Can be undefined, if the player isn't at this table (spectator).
    * 
-   * @returns {Object | undefined} the player
+   * @returns {P | undefined} the player
    */
-  getCurrentPlayer(): Object | undefined;
+  getCurrentPlayer(): P | undefined;
 
   /**
    * Returns true if the player on whose browser the code is running is a spectator.
@@ -266,11 +316,22 @@ declare class Players {
   getActivePlayerId(): number | null;
 
   /**
+   * Return the no of the active player, or null if we are not in an ACTIVE_PLAYER type state.
+   * @returns {number | null} the active player no
+   */
+  getActivePlayerNo(): number | null;
+
+  /**
    * Return the active player, or null if we are not in an ACTIVE_PLAYER type state.
    * 
-   * @returns {Object | null} the active player
+   * @returns {P | null} the active player
    */
-  getActivePlayer(): Object | null;
+  getActivePlayer(): P | null;
+
+  /**
+   * @deprecated use getPlayerById.
+   */
+  getPlayer(playerId: number) : P | undefined;
 
   /**
    * Return the player data stored in gamedatas.players.
@@ -278,7 +339,15 @@ declare class Players {
    * 
    * @returns {Object | undefined} the player
    */
-  getPlayer(playerId: number) : Object | undefined;
+  getPlayerById(playerId: number) : P | undefined;
+
+  /**
+   * Return the player data stored in gamedatas.players.
+   * Can be undefined, if the player isn't at this table (spectator).
+   * 
+   * @returns {Object | undefined} the player
+   */
+  getPlayerByNo(playerNo: number) : P | undefined;
 
   /**
    * Return the HTML code for a player name, colored and with optional background.
@@ -297,6 +366,27 @@ declare class Players {
    * @returns {number[]} the active player ids
    */
   getActivePlayerIds(): number[];
+
+  /**
+   * Get the avatar url of a player.
+   * 
+   * @param {number} playerId the player id to get the avatar from (or 0 to get the default avatar)
+   * @param {32 | 50 | 92 | 184} size the size of the avatar, can be 32, 50, 92 or 184 (default)
+   * @returns the avatar url
+   */
+  getPlayerAvatarUrl(playerId: number, size?: number): string;
+
+  /**
+   * Return the no of the player, by id
+   * @returns {number | null} the player no, or null if the player id is not a player on this table
+   */
+  getPlayerNoById(playerId: number): number | null;
+
+  /**
+   * Return the id of the player, by no
+   * @returns {number} the player id
+   */
+  getPlayerIdByNo(playerNo: number): number;
 }
 
 declare class Actions {
@@ -365,6 +455,173 @@ declare class Notifications {
     }): void;
 }
 
+declare class Display3D {
+        /**
+         * Initializes the 3D display mode.
+         *
+         * @param {Object} [settings]
+         * @param {HTMLElement[]} [settings.elements] Elements transformed by the 3D view.
+         * @param {boolean} [settings.showControls=true] Whether to show the legacy 3D controls.
+         * @param {Object} [settings.view] Initial view values and optional min/max bounds.
+         * @param {boolean|number|Object} [settings.draggable] Enables drag controls, optionally with multipliers.
+         * @param {boolean|number|Object} [settings.zoomByWheel] Enables wheel zoom, optionally with a multiplier.
+         */
+        init3d(settings = undefined): void;
+
+        /**
+         * Replaces the elements transformed by this 3D view.
+         *
+         * @param {HTMLElement[]} elements
+         */
+        setElements(elements: HTMLElement[]): void;
+
+        /**
+         * Add new elements transformed by this 3D view.
+         *
+         * @param {HTMLElement[]} elements
+         */
+        addElements(elements: HTMLElement[]): void;
+
+        /**
+         * Applies relative changes to the current 3D view.
+         *
+         * @param {number} xaxis Relative X-axis rotation delta.
+         * @param {number} xpos Relative X-position delta.
+         * @param {number} ypos Relative Y-position delta.
+         * @param {number} zaxis Relative Z-axis rotation delta.
+         * @param {number} scale Relative zoom delta.
+         */
+        change3d(xaxis: number, xpos: number, ypos: number, zaxis: number, scale: number): void;
+
+        /**
+         * Resets the 3D view to the neutral position, respecting configured bounds.
+         */
+        resetView(): void;
+
+        /**
+         * Applies a relative rotation to the 3D view.
+         *
+         * @param {number} x Relative X-axis rotation delta.
+         * @param {number} y Relative Z-axis rotation delta.
+         */
+        rotate(x: number, y: number): void;
+
+        /**
+         * Applies a relative translation to the 3D view.
+         *
+         * @param {number} x Relative X-position delta.
+         * @param {number} y Relative Y-position delta.
+         */
+        slide(x: number, y: number): void;
+
+        /**
+         * Applies a relative zoom change to the 3D view.
+         *
+         * @param {number} inc Relative zoom delta.
+         */
+        zoom(inc: number): void;
+
+        /**
+         * Sets the zoom to an absolute value.
+         *
+         * @param {number} value
+         */
+        setZoom(value: number): void;
+
+        /**
+         * Enables or disables right-button rotation and middle-button slide dragging.
+         *
+         * @param {boolean|number|Object} [enabled=true] Enable flag, shared multiplier, or settings object.
+         * @param {Object|number} [settings] Drag multipliers, or a shared multiplier.
+         * @param {boolean} [settings.enabled=true] Enable flag when using object form.
+         * @param {number} [settings.multiplier] Shared rotation and slide multiplier.
+         * @param {number} [settings.rotationMultiplier=0.1] Right-button rotation multiplier.
+         * @param {number} [settings.slideMultiplier=1] Middle-button slide multiplier.
+         */
+        setDraggable(enabled: boolean, settings = {}): void;
+
+        /**
+         * Enables or disables mouse wheel zoom.
+         *
+         * @param {boolean|number|Object} [enabled=true] Enable flag, zoom multiplier, or settings object.
+         * @param {Object|number} [settings] Wheel zoom settings, or a zoom multiplier.
+         * @param {boolean} [settings.enabled=true] Enable flag when using object form.
+         * @param {number} [settings.multiplier=0.1] Wheel zoom multiplier.
+         * @param {number} [settings.zoomMultiplier=0.1] Wheel zoom multiplier alias.
+         */
+        setZoomByWheel(enabled: boolean, settings = {}): void;
+
+        /**
+         * Sets the minimum X-axis rotation, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMinXAxis(value?: number): void;
+
+        /**
+         * Sets the maximum X-axis rotation, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMaxXAxis(value?: number): void;
+
+        /**
+         * Sets the minimum Z-axis rotation, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMinZAxis(value?: number): void;
+
+        /**
+         * Sets the maximum Z-axis rotation, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMaxZAxis(value?: number): void;
+
+        /**
+         * Sets the minimum X-position, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMinXPos(value?: number): void;
+
+        /**
+         * Sets the maximum X-position, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMaxXPos(value?: number): void;
+
+        /**
+         * Sets the minimum Y-position, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMinYPos(value?: number): void;
+
+        /**
+         * Sets the maximum Y-position, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMaxYPos(value?: number): void;
+
+        /**
+         * Sets the minimum zoom, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMinZoom(value?: number): void
+
+        /**
+         * Sets the maximum zoom, or clears it with null.
+         *
+         * @param {?number} [value=null]
+         */
+        setMaxZoom(value?: number): void;
+    }
+
 declare class GameArea {
   /**
    * Return the Game Area div (for all displayed game components).
@@ -403,6 +660,30 @@ declare class PlayerPanels {
    * @returns the div element for game specific content on player panels
    */
   getElement(playerId: number): HTMLDivElement;
+
+  /**
+   * Return the div on the player board where the dev can add counters and other game specific indicators.
+   *
+   * @param {number} playerNo the player no
+   * @returns the div element for game specific content on player panels
+   */
+  getElementByNo(playerNo: number): HTMLDivElement;
+
+  /**
+   * Return the score counter of a player.
+   *
+   * @param {number} playerId the player id
+   * @returns the score counter
+   */
+  getScoreCounter(playerId: number): Counter;
+
+  /**
+   * Return the score counter of a player.
+   *
+   * @param {number} playerNo the player no
+   * @returns the score counter
+   */
+  getScoreCounterByNo(playerNo: number): Counter;
 
   /**
    * Add a player panel for an automata.
@@ -530,13 +811,14 @@ declare class States {
     isOnClientState(): boolean;
 }
 
-interface Bga<G = Gamedatas> {
-  gameui: GameGui<G>;
+interface Bga<P extends Player = Player, G extends Gamedatas<P> = Gamedatas<P>> {
+  gameui: GameGui<P, G>;
+  display3D: Display3D;
   statusBar: StatusBar;
   images: Images;
   sounds: Sounds;
   userPreferences: UserPreferences;
-  players: Players;
+  players: Players<P>;
   actions: Actions;
   notifications: Notifications;
   gameArea: GameArea;
@@ -545,7 +827,7 @@ interface Bga<G = Gamedatas> {
   states: States;
 }
 
-declare class GameGui<G = Gamedatas> {
+declare class GameGui<P extends Player = Player, G extends Gamedatas<P> = Gamedatas<P>> {
   /**
    * Return true if the game is in realtime. Note that having a distinct behavior in realtime and turn-based should be exceptional.
    */
@@ -582,10 +864,12 @@ declare class GameGui<G = Gamedatas> {
 
   /**
    * The player panel score counters.
+   * 
+   * @deprecated use this.bga.playerPanels.getScoreCounter
    */
   scoreCtrl: {[player_id: number]: Counter};
 
-  bga: Bga;
+  bga: Bga<P, G>;
 
   statusBar: StatusBar;
   sounds: Sounds;

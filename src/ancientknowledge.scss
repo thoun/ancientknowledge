@@ -147,13 +147,20 @@ $writingColor: #633c37;
   }
 }
 
-html, .mode_3d #game_play_area_background {
-  
+html {  
   @each $playerColor in $playerColors {
     &[data-bg="#{$playerColor}"] { 
       background: url('img/bg/#{$playerColor}.jpg');
       background-size: 100% auto;
     }
+  }
+}
+
+html[data-theme="dark"] {
+  background-blend-mode: soft-light;
+
+  .icon-artifact {
+    filter: drop-shadow(0px 0px 1px white);
   }
 }
 

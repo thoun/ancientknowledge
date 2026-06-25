@@ -55,7 +55,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
 
     public market?: LineStock<BuilderCard>;
 
-    public bga: Bga;
+    public bga: Bga<AncientKnowledgePlayer, AncientKnowledgeGamedatas>;
 
     constructor() {
     }

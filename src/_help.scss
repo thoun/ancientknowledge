@@ -29,6 +29,7 @@
 #help-action-popin {
     position: relative;
     text-align: left;
+    color: black;
 
     h1 {
         position: absolute;
@@ -77,6 +78,7 @@
 #help-turn-popin {
     position: relative;
     text-align: left;
+    color: black;
 
     h1 {
         position: absolute;
@@ -131,5 +133,11 @@
                 }
             }
         }
+    }
+}
+
+html[data-theme="dark"] {
+    #popin_bgaHelpDialog {
+        background: var(--game-palette-bga-gray-244);
     }
 }

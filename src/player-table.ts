@@ -22,7 +22,7 @@ class PlayerTable {
 
         let html = `
         <div id="player-table-${this.playerId}" class="player-table" style="--player-color: #${player.color};">
-            <div id="player-table-${this.playerId}-name" class="name-wrapper">${player.name}</div>
+            <div id="player-table-${this.playerId}-name" class="name-wrapper">${this.game.bga.players.getFormattedPlayerName(this.playerId)}</div>
         `;
         if (this.currentPlayer) {
             html += `

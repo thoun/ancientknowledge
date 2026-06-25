@@ -2698,7 +2698,7 @@ var PlayerTable = /** @class */ (function () {
         this.technologyTilesDecks = [];
         this.playerId = Number(player.id);
         this.currentPlayer = this.playerId == this.game.getPlayerId();
-        var html = "\n        <div id=\"player-table-".concat(this.playerId, "\" class=\"player-table\" style=\"--player-color: #").concat(player.color, ";\">\n            <div id=\"player-table-").concat(this.playerId, "-name\" class=\"name-wrapper\">").concat(player.name, "</div>\n        ");
+        var html = "\n        <div id=\"player-table-".concat(this.playerId, "\" class=\"player-table\" style=\"--player-color: #").concat(player.color, ";\">\n            <div id=\"player-table-").concat(this.playerId, "-name\" class=\"name-wrapper\">").concat(this.game.bga.players.getFormattedPlayerName(this.playerId), "</div>\n        ");
         if (this.currentPlayer) {
             html += "\n            <div class=\"block-with-text hand-wrapper\">\n                <div class=\"block-label\">".concat(_('Your hand'), "</div>\n                <div id=\"player-table-").concat(this.playerId, "-hand\" class=\"hand cards\"></div>\n            </div>");
         }

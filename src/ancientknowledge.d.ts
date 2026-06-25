@@ -62,6 +62,7 @@ interface AncientKnowledgeGamedatas {
 }
 
 interface AncientKnowledgeGame extends Game {
+    bga: Bga<AncientKnowledgePlayer, AncientKnowledgeGamedatas>;
     animationManager: AnimationManager;
     builderCardsManager: BuilderCardsManager;
     technologyTilesManager: TechnologyTilesManager;

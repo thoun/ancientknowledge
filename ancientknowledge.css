@@ -896,6 +896,7 @@ body > .card {
   width: 48px;
   height: 48px;
   border-radius: 24px;
+  color: black;
   background: white;
   font-size: 16px;
   cursor: pointer;
@@ -955,15 +956,10 @@ body > .card {
   user-select: none;
 }
 
-.player-board {
-  background-color: white;
+html[data-theme=light] .player-board {
+  --game-bga-player-panel-background: white;
 }
-.player-board.spectator-mode {
-  color: black;
-}
-.player-board.spectator-mode * {
-  background: white !important;
-}
+
 .player-board [class^=icon-] {
   font-size: 120%;
   margin-right: 5px;
@@ -1303,6 +1299,7 @@ body > .card {
 #help-action-popin {
   position: relative;
   text-align: left;
+  color: black;
 }
 #help-action-popin h1 {
   position: absolute;
@@ -1355,6 +1352,7 @@ body > .card {
 #help-turn-popin {
   position: relative;
   text-align: left;
+  color: black;
 }
 #help-turn-popin h1 {
   position: absolute;
@@ -1408,6 +1406,10 @@ body > .card {
   background-position: center;
   vertical-align: middle;
   background-image: url("img/timeline-icon.svg");
+}
+
+html[data-theme=dark] #popin_bgaHelpDialog {
+  background: var(--game-palette-bga-gray-244);
 }
 
 #score {
@@ -1583,21 +1585,28 @@ body > .card {
     margin-top: 8px;
   }
 }
-html[data-bg="6f3766"], .mode_3d #game_play_area_background[data-bg="6f3766"] {
+html[data-bg="6f3766"] {
   background: url("img/bg/6f3766.jpg");
   background-size: 100% auto;
 }
-html[data-bg=bc6328], .mode_3d #game_play_area_background[data-bg=bc6328] {
+html[data-bg=bc6328] {
   background: url("img/bg/bc6328.jpg");
   background-size: 100% auto;
 }
-html[data-bg="597f9e"], .mode_3d #game_play_area_background[data-bg="597f9e"] {
+html[data-bg="597f9e"] {
   background: url("img/bg/597f9e.jpg");
   background-size: 100% auto;
 }
-html[data-bg="929f40"], .mode_3d #game_play_area_background[data-bg="929f40"] {
+html[data-bg="929f40"] {
   background: url("img/bg/929f40.jpg");
   background-size: 100% auto;
+}
+
+html[data-theme=dark] {
+  background-blend-mode: soft-light;
+}
+html[data-theme=dark] .icon-artifact {
+  filter: drop-shadow(0px 0px 1px white);
 }
 
 #bga-zoom-wrapper {
