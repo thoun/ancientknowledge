@@ -1031,7 +1031,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
             `).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
             html += `</div>`;
 
-            dojo.place(html, `player_board_${player.id}`);
+            this.bga.playerPanels.getElement(playerId).insertAdjacentHTML('beforeend', html);
 
             const handCounter = new ebg.counter();
             handCounter.create(`playerhand-counter-${playerId}`);
@@ -1943,11 +1943,7 @@ class AncientKnowledge implements AncientKnowledgeGame {
     }
 
     private setScore(playerId: number, score: number) {
-        if ((this as any).scoreCtrl[playerId]) {
-            (this as any).scoreCtrl[playerId].toValue(score);
-        } else {
-            document.getElementById(`player_score_${playerId}`).innerText = `${score}`;
-        }
+       this.bga.playerPanels.getScoreCounter(playerId).toValue(score);
     }
     
     notif_updateScores(args: NotifUpdateScoresArgs) {

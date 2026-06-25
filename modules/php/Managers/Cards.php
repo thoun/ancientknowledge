@@ -5,7 +5,6 @@ use BgaVisibleSystemException;
 use AK\Core\Stats;
 use AK\Core\Globals;
 use AK\Core\Notifications;
-use AK\Helpers\UserException;
 use AK\Helpers\Collection;
 
 /* Class to manage all the cards for Ancient Knowledge */

@@ -4560,7 +4560,7 @@ var AncientKnowledge = /** @class */ (function () {
             var html = "<div class=\"counters\">\n                <div id=\"playerhand-counter-wrapper-".concat(player.id, "\" style=\"flex: 4;\">\n                    <span class=\"icon-cards\"></span> \n                    <span id=\"playerhand-counter-").concat(player.id, "\"></span> / 10\n                </div>\n            \n                <div id=\"lost-knowledge-counter-wrapper-").concat(player.id, "\" style=\"flex: 3;\">\n                    <span class=\"icon-lost-knowledge\"></span>\n                    <span id=\"lost-knowledge-counter-").concat(player.id, "\"></span>\n                </div>\n\n                <div style=\"flex: 2;\">").concat(player.no == 1 ? "<div id=\"first-player\"></div>" : '', "</div>\n            </div>\n            <div class=\"icons counters\">");
             html += ICONS_COUNTERS_TYPES.map(function (type) { return "\n                <div id=\"".concat(type, "-counter-wrapper-").concat(player.id, "\">\n                    <span class=\"icon-").concat(type != 'artifact' ? 'monument-' : '').concat(type, "\"></span>\n                    <span id=\"").concat(type, "-counter-").concat(player.id, "\"></span>\n                </div>\n            "); }).join(''); //${type == 'artifact' ? '' : `<span class="timeline-counter">(<span id="${type}-timeline-counter-${player.id}"></span>)</span>`}
             html += "</div>";
-            dojo.place(html, "player_board_".concat(player.id));
+            _this.bga.playerPanels.getElement(playerId).insertAdjacentHTML('beforeend', html);
             var handCounter = new ebg.counter();
             handCounter.create("playerhand-counter-".concat(playerId));
             handCounter.setValue(player.handCount);
@@ -5321,12 +5321,7 @@ var AncientKnowledge = /** @class */ (function () {
         });
     };
     AncientKnowledge.prototype.setScore = function (playerId, score) {
-        if (this.scoreCtrl[playerId]) {
-            this.scoreCtrl[playerId].toValue(score);
-        }
-        else {
-            document.getElementById("player_score_".concat(playerId)).innerText = "".concat(score);
-        }
+        this.bga.playerPanels.getScoreCounter(playerId).toValue(score);
     };
     AncientKnowledge.prototype.notif_updateScores = function (args) {
         var _this = this;

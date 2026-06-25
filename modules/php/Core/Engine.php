@@ -5,7 +5,7 @@ use AK\Managers\Actions;
 use AK\Managers\Scores;
 use AK\Helpers\Log;
 use AK\Helpers\QueryBuilder;
-use AK\Helpers\UserException;
+use Bga\GameFramework\UserException;
 
 /*
  * Engine: a class that allows to handle complex flow
@@ -270,7 +270,7 @@ class Engine
     $node = self::getUndoableMandatoryNode($player);
     if (!is_null($node) && $node->getPId() == $player->getId()) {
       throw new UserException(
-        totranslate("You can't take an irreversible action if there is a mandatory undoable action pending")
+        clienttranslate("You can't take an irreversible action if there is a mandatory undoable action pending")
       );
     }
 

@@ -45,7 +45,7 @@ class Players extends \AK\Helpers\CachedDB_Manager
 
   public static function getCurrentId()
   {
-    return (int) Game::get()->getCurrentPId();
+    return (int) Game::get()->getCurrentPlayerId();
   }
 
   /*

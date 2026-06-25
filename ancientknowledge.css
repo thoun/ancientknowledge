@@ -1456,7 +1456,7 @@ html[data-theme=dark] #popin_bgaHelpDialog {
 
 @font-face {
   font-family: "ak";
-  src: url("img/ak.ttf?vn5p27") format("truetype"), url("img/ak.woff?vn5p27") format("woff"), url("img/ak.svg?vn5p27#ak") format("svg");
+  src: url("fonts/ak.ttf?vn5p27") format("truetype"), url("fonts/ak.woff?vn5p27") format("woff"), url("fonts/ak.svg?vn5p27#ak") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block;

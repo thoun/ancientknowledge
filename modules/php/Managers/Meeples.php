@@ -4,7 +4,6 @@ namespace AK\Managers;
 use BgaVisibleSystemException;
 use AK\Core\Stats;
 use AK\Core\Globals;
-use AK\Helpers\UserException;
 use AK\Helpers\Collection;
 
 /* Class to manage all the meeples for Federation */

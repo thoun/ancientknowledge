@@ -30,8 +30,6 @@ $swdNamespaceAutoload = function ($class) {
 };
 spl_autoload_register($swdNamespaceAutoload, true, true);
 
-require_once APP_GAMEMODULE_PATH . 'module/table/table.game.php';
-
 use AK\Managers\Cards;
 use AK\Managers\Players;
 use AK\Managers\Technologies;
@@ -41,6 +39,7 @@ use AK\Core\Globals;
 use AK\Core\Preferences;
 use AK\Core\Stats;
 use AK\Core\Engine;
+use Bga\GameFramework\Table;
 
 class AncientKnowledge extends Table
 {
@@ -49,7 +48,7 @@ class AncientKnowledge extends Table
   use AK\States\EngineTrait;
   use AK\States\TurnTrait;
 
-  public static $instance = null;
+  public static ?AncientKnowledge $instance = null;
   function __construct()
   {
     parent::__construct();
@@ -71,7 +70,7 @@ class AncientKnowledge extends Table
    */
   public function getAllDatas()
   {
-    $pId = $this->getCurrentPId();
+    $pId = $this->getCurrentPlayerId();
     return [
       'prefs' => Preferences::getUiData($pId),
       'players' => Players::getUiData($pId),
@@ -100,7 +99,7 @@ class AncientKnowledge extends Table
 
   function actChangePreference($pref, $value)
   {
-    Preferences::set($this->getCurrentPId(), $pref, $value);
+    Preferences::set($this->getCurrentPlayerId(), $pref, $value);
   }
 
   ///////////////////////////////////////////////
@@ -269,21 +268,5 @@ class AncientKnowledge extends Table
     //   $sql = 'ALTER TABLE `DBPREFIX_player` ADD `new_score` INT(10) NOT NULL DEFAULT 0';
     //   self::applyDbUpgradeToAllDB($sql);
     // }
-  }
-
-  /////////////////////////////////////////////////////////////
-  // Exposing protected methods, please use at your own risk //
-  /////////////////////////////////////////////////////////////
-
-  // Exposing protected method getCurrentPlayerId
-  public function getCurrentPId()
-  {
-    return $this->getCurrentPlayerId();
-  }
-
-  // Exposing protected method translation
-  public function translate($text)
-  {
-    return $this->_($text);
   }
 }

@@ -31,7 +31,7 @@ trait EngineTrait
    */
   function getCurrentAtomicAction()
   {
-    $stateId = $this->gamestate->state_id();
+    $stateId = $this->gamestate->getCurrentMainStateId();
     return Actions::getActionOfState($stateId);
   }
 
