@@ -80,6 +80,8 @@ class Cards extends \AK\Helpers\CachedPieces
       $data = [
         'id' => $cId,
         'location' => 'deck',
+        'knowledge' => 0,
+        'rotated' => 0,
       ];
 
       if ($isPreMadeHands) {
